@@ -31,6 +31,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
+import timber.log.Timber
 import java.util.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -74,8 +75,14 @@ class SpeakerTts(
 
         return if (initSuccessful) {
             when(speech?.isLanguageAvailable(locale)) {
-                TextToSpeech.LANG_NOT_SUPPORTED -> Speaker.TtsInitResult.LANGUAGE_NOT_SUPPORTED
-                TextToSpeech.LANG_MISSING_DATA -> Speaker.TtsInitResult.LANGUAGE_DATA_MISSING
+                TextToSpeech.LANG_NOT_SUPPORTED -> {
+                    Timber.w("TTS language not supported.")
+                    Speaker.TtsInitResult.LANGUAGE_NOT_SUPPORTED
+                }
+                TextToSpeech.LANG_MISSING_DATA -> {
+                    Timber.w("TTS language data missing.")
+                    Speaker.TtsInitResult.LANGUAGE_DATA_MISSING
+                }
                 null -> Speaker.TtsInitResult.INIT_CANCELLED
                 else -> Speaker.TtsInitResult.READY
             }
@@ -89,7 +96,9 @@ class SpeakerTts(
             val id = UUID.randomUUID().toString()
             speech?.speak(text, TextToSpeech.QUEUE_FLUSH, null, id)
             val event = utteranceEvents.first { it.utteranceId == id }
-            // TODO: log error
+            if (event is UtteranceListener.Event.Error) {
+                Timber.w("Utterance error: %d.", event.errorCode)
+            }
             return event is UtteranceListener.Event.Success
         } else {
             return false

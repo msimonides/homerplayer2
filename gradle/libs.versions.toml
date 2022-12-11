@@ -26,3 +26,5 @@ junit = 'junit:junit:4.13.2'
 
 koin-android = { module = 'io.insert-koin:koin-android', version.ref = 'koin-android' }
 koin-androidx-compose = { module = 'io.insert-koin:koin-androidx-compose', version.ref = 'koin-android' }
+
+timber = 'com.jakewharton.timber:timber:5.0.1'
