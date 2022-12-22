@@ -24,19 +24,34 @@
 
 package com.studio4plus.homerplayer2.di
 
+import com.studio4plus.homerplayer2.audiobooks.AudiobookFolderManager
+import com.studio4plus.homerplayer2.audiobooks.AudiobookFoldersDao
+import com.studio4plus.homerplayer2.audiobooks.Scanner
+import com.studio4plus.homerplayer2.concurrency.DefaultDispatcherProvider
+import com.studio4plus.homerplayer2.concurrency.DispatcherProvider
+import com.studio4plus.homerplayer2.onboarding.OnboardingAudiobookFoldersViewModel
 import com.studio4plus.homerplayer2.onboarding.OnboardingSpeechViewModel
 import com.studio4plus.homerplayer2.speech.Speaker
 import com.studio4plus.homerplayer2.speech.SpeakerTts
+import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
-import java.util.*
+import java.util.Locale
 
 val appModule = module {
     factory { Locale.getDefault() }
+    factory { androidContext().contentResolver }
 
     factoryOf(::SpeakerTts) { bind<Speaker>() }
+    singleOf(::DefaultDispatcherProvider) { bind<DispatcherProvider>() }
+    singleOf(::Scanner)
 
-    factoryOf(::OnboardingSpeechViewModel)
+    singleOf(::AudiobookFoldersDao)
+    factoryOf(::AudiobookFolderManager)
+
+    viewModelOf(::OnboardingSpeechViewModel)
+    viewModelOf(::OnboardingAudiobookFoldersViewModel)
 }

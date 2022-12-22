@@ -1,14 +1,21 @@
 <resources>
     <string name="app_name" translatable="false">Homer Player 2</string>
 
+    <string name="audiobook_folder_add_button">Add folder…</string>
+
+    <string name="onboarding_audiobook_folders_title">Audiobooks</string>
+    <string name="onboarding_audiobook_folders_description">Please select at least one folder with your audiobooks.</string>
     <string name="onboarding_speech_description">Homer Player uses text-to-speech engine to read book titles.\nPlease test that </string>
     <string name="onboarding_speech_test_phrase">Alice in Wonderland</string>
     <string name="onboarding_speech_play_test_phrase">Play test phrase</string>
     <string name="onboarding_speech_open_settings">Open text-to-speech settings</string>
     <string name="onboarding_speech_tts_checkbox_label">Speak book titles</string>
     <string name="onboarding_speech_tts_checkbox_note">Disable if already using a screen reader</string>
+    <string name="onboarding_step_back">Back</string>
+    <string name="onboarding_step_done">Done</string>
     <string name="onboarding_step_next">Next</string>
     <string name="onboarding_step_skip">Skip</string>
+
 
     <string name="speech_init_say_failed">Playing test phrase failed. Check your text-to-speech settings.</string>
     <string name="speech_init_tts_error">Unable to initialize text-to-speech. Try a different TTS engine.</string>

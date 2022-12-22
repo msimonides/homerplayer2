@@ -98,9 +98,11 @@ fun OnboardingSpeechScreen(
         modifier = modifier,
         bottomBar = {
             OnboardingNavigationButtons(
-                canProceed = currentViewState.canProceed,
-                onSkip = navigateNext,
+                nextEnabled = currentViewState.canProceed,
+                nextLabel = R.string.onboarding_step_next,
                 onNext = navigateNext,
+                secondaryLabel = R.string.onboarding_step_skip,
+                onSecondary = navigateNext,
                 modifier = Modifier.padding(DefaultSpacing.ScreenContentPadding)
             )
         },
@@ -179,24 +181,6 @@ private fun ScreenContent(
                     Text(text = stringResource(id = R.string.onboarding_speech_open_settings))
                 }
             }
-        }
-    }
-}
-
-@Composable
-private fun OnboardingNavigationButtons(
-    canProceed: Boolean,
-    onSkip: () -> Unit,
-    onNext: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Row(modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-        TextButton(onClick = onSkip) {
-            Text(text = stringResource(id = R.string.onboarding_step_skip))
-        }
-        Spacer(modifier = Modifier.width(DefaultSpacing.ButtonSpacing))
-        Button(onClick = onNext, enabled = canProceed) {
-            Text(text = stringResource(id = R.string.onboarding_step_next))
         }
     }
 }

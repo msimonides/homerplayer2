@@ -21,44 +21,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.studio4plus.homerplayer2
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
+package com.studio4plus.homerplayer2.onboarding
+
+import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import com.studio4plus.homerplayer2.onboarding.OnboardingAudiobookFoldersScreen
-import com.studio4plus.homerplayer2.onboarding.OnboardingSpeechScreen
-import com.studio4plus.homerplayer2.ui.theme.HomerPlayer2Theme
-
-class MainActivity : ComponentActivity() {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            HomerPlayer2Theme {
-                MainNavHost()
-            }
-        }
-    }
-}
+import androidx.compose.ui.res.stringResource
+import com.studio4plus.homerplayer2.ui.theme.DefaultSpacing
 
 @Composable
-fun MainNavHost(
+fun OnboardingNavigationButtons(
     modifier: Modifier = Modifier,
-    navController: NavHostController = rememberNavController()
+    nextEnabled: Boolean,
+    @StringRes nextLabel: Int,
+    onNext: () -> Unit,
+    @StringRes secondaryLabel: Int,
+    onSecondary: () -> Unit,
 ) {
-    NavHost(modifier = modifier, navController = navController, startDestination = "onboarding/tts") {
-        composable("onboarding/tts") {
-            OnboardingSpeechScreen(navigateNext = { navController.navigate("onboarding/folders") })
+    Row(modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+        TextButton(onClick = onSecondary) {
+            Text(text = stringResource(id = secondaryLabel))
         }
-        composable("onboarding/folders") {
-            OnboardingAudiobookFoldersScreen(navigateNext = { }, navigateBack = { navController.popBackStack() })
+        Spacer(modifier = Modifier.width(DefaultSpacing.ButtonSpacing))
+        Button(onClick = onNext, enabled = nextEnabled) {
+            Text(text = stringResource(id = nextLabel))
         }
     }
 }
