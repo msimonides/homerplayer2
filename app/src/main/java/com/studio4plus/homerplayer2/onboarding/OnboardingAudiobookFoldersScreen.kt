@@ -96,12 +96,16 @@ private fun ScreenContent(
             Text(stringResource(id = R.string.audiobook_folder_add_button))
         }
         LazyColumn {
-            items(folders, key = OnboardingAudiobookFoldersViewModel.FolderItem::uri, itemContent = { item ->
-                Row {
-                    Text(item.displayName)
-                    Text(item.bookCount?.toString()?.let { " ($it)" } ?: "")
+            items(
+                folders,
+                key = OnboardingAudiobookFoldersViewModel.FolderItem::uri,
+                itemContent = { item ->
+                    Row {
+                        Text(item.displayName)
+                        Text(item.bookCount?.toString()?.let { " ($it)" } ?: "")
+                    }
                 }
-            })
+            )
         }
     }
 }

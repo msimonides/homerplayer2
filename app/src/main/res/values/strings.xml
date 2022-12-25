@@ -16,6 +16,8 @@
     <string name="onboarding_step_next">Next</string>
     <string name="onboarding_step_skip">Skip</string>
 
+    <string name="playback_play_button_description">Play</string>
+    <string name="playback_pause_button_description">Pause</string>
 
     <string name="speech_init_say_failed">Playing test phrase failed. Check your text-to-speech settings.</string>
     <string name="speech_init_tts_error">Unable to initialize text-to-speech. Try a different TTS engine.</string>

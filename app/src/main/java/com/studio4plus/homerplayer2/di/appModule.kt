@@ -27,6 +27,7 @@ package com.studio4plus.homerplayer2.di
 import com.studio4plus.homerplayer2.audiobooks.AudiobookFolderManager
 import com.studio4plus.homerplayer2.audiobooks.AudiobookFoldersDao
 import com.studio4plus.homerplayer2.audiobooks.Scanner
+import com.studio4plus.homerplayer2.browsing.BrowseViewModel
 import com.studio4plus.homerplayer2.concurrency.DefaultDispatcherProvider
 import com.studio4plus.homerplayer2.concurrency.DispatcherProvider
 import com.studio4plus.homerplayer2.onboarding.OnboardingAudiobookFoldersViewModel
@@ -54,4 +55,5 @@ val appModule = module {
 
     viewModelOf(::OnboardingSpeechViewModel)
     viewModelOf(::OnboardingAudiobookFoldersViewModel)
+    viewModelOf(::BrowseViewModel)
 }

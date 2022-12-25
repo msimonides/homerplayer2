@@ -17,11 +17,14 @@ androidx-test-espresso-core = 'androidx.test.espresso:espresso-core:3.5.0'
 androidx-test-junit = 'androidx.test.ext:junit:1.1.4'
 
 compose-material3 = 'androidx.compose.material3:material3:1.1.0-alpha02'
+compose-material-icons-extended = { module = 'androidx.compose.material:material-icons-extended', version.ref = 'compose' }
 compose-ui-ui = { module = 'androidx.compose.ui:ui', version.ref = 'compose' }
 compose-ui-test-junit = { module = 'androidx.compose.ui:ui-test-junit4', version.ref = 'compose' }
 compose-ui-test-manifest = { module = 'androidx.compose.ui:ui-test-manifest', version.ref = 'compose' }
 compose-ui-tooling = { module = 'androidx.compose.ui:ui-tooling', version.ref = 'compose' }
 compose-ui-tooling-preview = { module = 'androidx.compose.ui:ui-tooling-preview', version.ref = 'compose' }
+
+accompanist-pager = "com.google.accompanist:accompanist-pager:0.28.0"
 
 junit = 'junit:junit:4.13.2'
 

@@ -48,6 +48,8 @@ private const val COLUMN_DISPLAY_NAME = 1
 private const val COLUMN_MIME_TYPE = 2
 private const val COLUMN_SIZE = 3
 
+private val SORT_BY_DISPLAY_NAME = DocumentsContract.Document.COLUMN_DISPLAY_NAME + " ASC"
+
 class Scanner(
     private val contentResolver: ContentResolver,
     private val dispatcherProvider: DispatcherProvider
@@ -103,7 +105,13 @@ class Scanner(
     private fun scanAudiobookFiles(rootUri: Uri, folderDocumentId: String, path: String): List<Triple<Uri, String, Long>> {
         val childrenUri =
             DocumentsContract.buildChildDocumentsUriUsingTree(rootUri, folderDocumentId)
-        val cursor = contentResolver.query(childrenUri, DOCUMENTS_PROJECTION, null, null, null)
+        val cursor = contentResolver.query(
+            childrenUri,
+            DOCUMENTS_PROJECTION,
+            null,
+            null,
+            SORT_BY_DISPLAY_NAME
+        )
         return if (cursor == null) {
             Timber.w("null cursor returned for query %s", childrenUri.toString())
             emptyList()

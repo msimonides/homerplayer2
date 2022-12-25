@@ -32,6 +32,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.studio4plus.homerplayer2.browsing.BrowseScreen
 import com.studio4plus.homerplayer2.onboarding.OnboardingAudiobookFoldersScreen
 import com.studio4plus.homerplayer2.onboarding.OnboardingSpeechScreen
 import com.studio4plus.homerplayer2.ui.theme.HomerPlayer2Theme
@@ -58,7 +59,15 @@ fun MainNavHost(
             OnboardingSpeechScreen(navigateNext = { navController.navigate("onboarding/folders") })
         }
         composable("onboarding/folders") {
-            OnboardingAudiobookFoldersScreen(navigateNext = { }, navigateBack = { navController.popBackStack() })
+            OnboardingAudiobookFoldersScreen(
+                navigateNext = { navController.navigate("books/browse") {
+                    popUpTo("onboarding/tts") { inclusive = true }
+                } },
+                navigateBack = { navController.popBackStack() }
+            )
+        }
+        composable("books/browse") {
+            BrowseScreen()
         }
     }
 }
