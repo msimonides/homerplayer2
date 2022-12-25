@@ -22,20 +22,18 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.browsing
+package com.studio4plus.homerplayer2.audiobooks
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.studio4plus.homerplayer2.audiobooks.Audiobook
-import com.studio4plus.homerplayer2.audiobooks.AudiobooksDao
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 
-class BrowseViewModel(
-    audiobooksDao: AudiobooksDao
-) : ViewModel() {
+class AudiobooksDao {
 
-    val audiobooks: StateFlow<List<Audiobook>> = audiobooksDao.getAll()
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), emptyList())
+    private val audiobooks = MutableStateFlow<List<Audiobook>>(emptyList())
+
+    fun updateBooks(newAudiobooks: List<Audiobook>) {
+        audiobooks.value = newAudiobooks
+    }
+
+    fun getAll(): Flow<List<Audiobook>> = audiobooks
 }

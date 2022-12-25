@@ -31,7 +31,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.studio4plus.homerplayer2.audiobooks.Audiobook
 import com.studio4plus.homerplayer2.audiobooks.AudiobookFolderManager
-import com.studio4plus.homerplayer2.audiobooks.Scanner
+import com.studio4plus.homerplayer2.audiobooks.AudiobooksDao
 import com.studio4plus.homerplayer2.concurrency.DispatcherProvider
 import kotlinx.coroutines.flow.*
 
@@ -39,7 +39,7 @@ class OnboardingAudiobookFoldersViewModel(
     private val appContext: Context,
     dispatcherProvider: DispatcherProvider,
     private val audiobookFolderManager: AudiobookFolderManager,
-    private val scanner: Scanner
+    audiobooksDao: AudiobooksDao
 ) : ViewModel() {
 
     data class FolderItem(val displayName: String, val uri: Uri, val bookCount: Int?)
@@ -57,11 +57,7 @@ class OnboardingAudiobookFoldersViewModel(
         }
     }.flowOn(dispatcherProvider.Io)
 
-    private val scannedBooks = audiobookFolderManager.folders.map { folderUris ->
-        scanner.scan(folderUris)
-    }
-
-    val viewState = combine(folders, scannedBooks, this::combineBookCounts)
+    val viewState = combine(folders, audiobooksDao.getAll(), this::combineBookCounts)
         .map { ViewState(it, it.isNotEmpty()) }
         .stateIn(
             viewModelScope,
