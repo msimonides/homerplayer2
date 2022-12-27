@@ -26,8 +26,11 @@ package com.studio4plus.homerplayer2.audiobooks
 
 import android.net.Uri
 
+@JvmInline
+value class BookId(val id: String)
+
 data class Audiobook(
-    val id: String,
+    val id: BookId,
     val displayName: String,
     val uris: List<Uri>,
     val rootFolderUri: Uri

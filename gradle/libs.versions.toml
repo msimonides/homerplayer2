@@ -3,6 +3,8 @@
 androidx-lifecycle = '2.6.0-alpha03'
 compose = '1.3.1'
 koin-android = '3.3.0'
+kotlinx-coroutines = '1.6.4'
+media3 = '1.0.0-beta03'
 
 
 [libraries]
@@ -25,6 +27,12 @@ compose-ui-tooling = { module = 'androidx.compose.ui:ui-tooling', version.ref = 
 compose-ui-tooling-preview = { module = 'androidx.compose.ui:ui-tooling-preview', version.ref = 'compose' }
 
 accompanist-pager = "com.google.accompanist:accompanist-pager:0.28.0"
+
+kotlinx-coroutines-android = { module = 'org.jetbrains.kotlinx:kotlinx-coroutines-android', version.ref = 'kotlinx-coroutines' }
+kotlinx-coroutines-guava = { module = 'org.jetbrains.kotlinx:kotlinx-coroutines-guava', version.ref = 'kotlinx-coroutines' }
+
+media3-exoplayer = { module = 'androidx.media3:media3-exoplayer', version.ref = 'media3' }
+media3-session = { module = 'androidx.media3:media3-session', version.ref = 'media3' }
 
 junit = 'junit:junit:4.13.2'
 

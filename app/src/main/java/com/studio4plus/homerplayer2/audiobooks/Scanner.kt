@@ -25,11 +25,13 @@
 package com.studio4plus.homerplayer2.audiobooks
 
 import android.content.ContentResolver
+import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 import android.provider.DocumentsContract
 import android.util.Base64
 import androidx.annotation.WorkerThread
+import androidx.documentfile.provider.DocumentFile
 import com.studio4plus.homerplayer2.concurrency.DispatcherProvider
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -51,6 +53,7 @@ private const val COLUMN_SIZE = 3
 private val SORT_BY_DISPLAY_NAME = DocumentsContract.Document.COLUMN_DISPLAY_NAME + " ASC"
 
 class Scanner(
+    private val appContext: Context,
     private val contentResolver: ContentResolver,
     private val dispatcherProvider: DispatcherProvider
 ) {
@@ -89,9 +92,8 @@ class Scanner(
 
     private fun scanAudiobook(rootFolderUri: Uri, folderDocumentId: String, path: String): Audiobook {
         val files = scanAudiobookFiles(rootFolderUri, folderDocumentId, path)
-        val md5 = MessageDigest.getInstance("MD5")
         val sizeBuffer = ByteBuffer.allocate(Long.SIZE_BYTES)
-        val id = files.fold(md5) { md5, (_, path, size) ->
+        val id = files.fold(MessageDigest.getInstance("MD5")) { md5, (_, path, size) ->
             md5.update(path.encodeToByteArray())
             sizeBuffer.putLong(0, size)
             md5.update(sizeBuffer)
@@ -99,7 +101,7 @@ class Scanner(
         }.digest().let { digest ->
             Base64.encodeToString(digest, Base64.NO_PADDING or Base64.NO_WRAP)
         }
-        return Audiobook(id, path, files.map { it.first }, rootFolderUri)
+        return Audiobook(BookId(id), path, files.map { it.first }, rootFolderUri)
     }
 
     private fun scanAudiobookFiles(rootUri: Uri, folderDocumentId: String, path: String): List<Triple<Uri, String, Long>> {
@@ -123,13 +125,8 @@ class Scanner(
                 if (isFolder(mimeType)) {
                     scanAudiobookFiles(rootUri, documentId, filePath)
                 } else {
-                    listOf(
-                        Triple(
-                            DocumentsContract.buildDocumentUriUsingTree(rootUri, documentId),
-                            filePath,
-                            cursor.getLong(COLUMN_SIZE)
-                        )
-                    )
+                    val uri = DocumentsContract.buildDocumentUriUsingTree(rootUri, documentId)
+                    listOf(Triple(uri, filePath, cursor.getLong(COLUMN_SIZE)))
                 }
             }
         }
@@ -139,7 +136,7 @@ class Scanner(
         return DocumentsContract.Document.MIME_TYPE_DIR == mimeType
     }
 
-    private inline fun <V> Cursor.mapNotNull(transform: (Cursor) -> V?): List<V> = this.use { cursor ->
+    private inline fun <V> Cursor.mapNotNull(transform: (Cursor) -> V?): List<V> = use { cursor ->
         buildList {
             while (cursor.moveToNext()) {
                 val result = transform(cursor)

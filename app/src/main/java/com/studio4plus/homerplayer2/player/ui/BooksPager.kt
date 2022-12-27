@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.browsing
+package com.studio4plus.homerplayer2.player.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
@@ -39,30 +39,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.ui.theme.DefaultSpacing
-import org.koin.androidx.compose.koinViewModel
-
-@OptIn(ExperimentalLifecycleComposeApi::class)
-@Composable
-fun BrowseScreen(
-    modifier: Modifier = Modifier
-) {
-    val viewModel: BrowseViewModel = koinViewModel()
-    val books = viewModel.audiobooks.collectAsStateWithLifecycle()
-
-    BooksPager(
-        modifier = modifier.fillMaxSize(),
-        itemPadding = DefaultSpacing.ScreenContentPadding,
-        bookNames = books.value.map { it.displayName },
-        onPlay = {}
-    )
-}
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -74,7 +55,7 @@ fun BooksPager(
 ) {
     val initialPage = Int.MAX_VALUE / 2
     HorizontalPager(
-        count = Int.MAX_VALUE,
+        count = if (bookNames.isEmpty()) 0 else Int.MAX_VALUE,
         state = rememberPagerState(initialPage)
     ) {
         val bookIndex = (currentPage - initialPage).floorMod(bookNames.size)
@@ -84,7 +65,7 @@ fun BooksPager(
                 .padding(itemPadding)
         ) {
             Text(
-                text = bookNames.getOrNull(bookIndex) ?: "",
+                text = bookNames[bookIndex],
                 modifier = Modifier
                     .weight(2f)
                     .align(Alignment.CenterHorizontally)

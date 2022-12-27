@@ -61,6 +61,10 @@ dependencies {
     implementation libs.compose.material3
     implementation libs.koin.android
     implementation libs.koin.androidx.compose
+    implementation libs.kotlinx.coroutines.android
+    implementation libs.kotlinx.coroutines.guava
+    implementation libs.media3.exoplayer
+    implementation libs.media3.session
     implementation libs.timber
 
     testImplementation libs.junit

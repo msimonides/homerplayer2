@@ -29,11 +29,11 @@ import com.studio4plus.homerplayer2.audiobooks.AudiobookFoldersDao
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksDao
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksUpdater
 import com.studio4plus.homerplayer2.audiobooks.Scanner
-import com.studio4plus.homerplayer2.browsing.BrowseViewModel
 import com.studio4plus.homerplayer2.concurrency.DefaultDispatcherProvider
 import com.studio4plus.homerplayer2.concurrency.DispatcherProvider
 import com.studio4plus.homerplayer2.onboarding.OnboardingAudiobookFoldersViewModel
 import com.studio4plus.homerplayer2.onboarding.OnboardingSpeechViewModel
+import com.studio4plus.homerplayer2.player.ui.PlayerViewModel
 import com.studio4plus.homerplayer2.speech.Speaker
 import com.studio4plus.homerplayer2.speech.SpeakerTts
 import kotlinx.coroutines.MainScope
@@ -64,5 +64,5 @@ val appModule = module {
 
     viewModelOf(::OnboardingSpeechViewModel)
     viewModelOf(::OnboardingAudiobookFoldersViewModel)
-    viewModelOf(::BrowseViewModel)
+    viewModelOf(::PlayerViewModel)
 }

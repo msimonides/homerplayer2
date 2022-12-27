@@ -36,4 +36,6 @@ class AudiobooksDao {
     }
 
     fun getAll(): Flow<List<Audiobook>> = audiobooks
+
+    suspend fun getById(id: String): Audiobook? = audiobooks.value.find { it.id.id == id }
 }

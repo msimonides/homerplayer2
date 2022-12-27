@@ -32,9 +32,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.studio4plus.homerplayer2.browsing.BrowseScreen
-import com.studio4plus.homerplayer2.onboarding.OnboardingAudiobookFoldersScreen
-import com.studio4plus.homerplayer2.onboarding.OnboardingSpeechScreen
+import com.studio4plus.homerplayer2.onboarding.onboardingGraph
+import com.studio4plus.homerplayer2.player.ui.PlayerScreen
 import com.studio4plus.homerplayer2.ui.theme.HomerPlayer2Theme
 
 class MainActivity : ComponentActivity() {
@@ -54,20 +53,10 @@ fun MainNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController()
 ) {
-    NavHost(modifier = modifier, navController = navController, startDestination = "onboarding/tts") {
-        composable("onboarding/tts") {
-            OnboardingSpeechScreen(navigateNext = { navController.navigate("onboarding/folders") })
-        }
-        composable("onboarding/folders") {
-            OnboardingAudiobookFoldersScreen(
-                navigateNext = { navController.navigate("books/browse") {
-                    popUpTo("onboarding/tts") { inclusive = true }
-                } },
-                navigateBack = { navController.popBackStack() }
-            )
-        }
-        composable("books/browse") {
-            BrowseScreen()
+    NavHost(modifier = modifier, navController = navController, startDestination = "onboarding") {
+        onboardingGraph(navController, "player")
+        composable("player") {
+            PlayerScreen()
         }
     }
 }

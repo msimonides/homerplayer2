@@ -22,20 +22,27 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.browsing
+package com.studio4plus.homerplayer2.onboarding
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.studio4plus.homerplayer2.audiobooks.Audiobook
-import com.studio4plus.homerplayer2.audiobooks.AudiobooksDao
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.stateIn
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
 
-class BrowseViewModel(
-    audiobooksDao: AudiobooksDao
-) : ViewModel() {
-
-    val audiobooks: StateFlow<List<Audiobook>> = audiobooksDao.getAll()
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), emptyList())
+fun NavGraphBuilder.onboardingGraph(navController: NavController, destinationRoute: String) {
+    navigation("onboarding/tts", "onboarding") {
+        composable("onboarding/tts") {
+            OnboardingSpeechScreen(navigateNext = { navController.navigate("onboarding/folders") })
+        }
+        composable("onboarding/folders") {
+            OnboardingAudiobookFoldersScreen(
+                navigateNext = {
+                    navController.navigate(destinationRoute) {
+                        popUpTo("onboarding/tts") { inclusive = true }
+                    }
+                },
+                navigateBack = { navController.popBackStack() }
+            )
+        }
+    }
 }
