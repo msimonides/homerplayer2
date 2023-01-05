@@ -25,13 +25,35 @@
 package com.studio4plus.homerplayer2.audiobooks
 
 import android.net.Uri
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.PrimaryKey
 
-@JvmInline
-value class BookId(val id: String)
-
+@Entity(tableName = "audiobooks")
 data class Audiobook(
-    val id: BookId,
+    @PrimaryKey
+    val id: String,
+    @ColumnInfo(name = "display_name")
     val displayName: String,
-    val uris: List<Uri>,
+    @ColumnInfo(name = "root_folder_uri")
     val rootFolderUri: Uri
+)
+
+@Entity(
+    tableName = "audiobook_files",
+    foreignKeys = [
+        ForeignKey(
+            entity = Audiobook::class,
+            parentColumns = ["id"],
+            childColumns = ["book_id"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ]
+)
+data class AudiobookFile(
+    @PrimaryKey
+    val uri: Uri,
+    @ColumnInfo(name = "book_id")
+    val bookId: String,
 )

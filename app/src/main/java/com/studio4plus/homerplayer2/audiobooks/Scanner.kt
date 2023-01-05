@@ -57,14 +57,15 @@ class Scanner(
     private val contentResolver: ContentResolver,
     private val dispatcherProvider: DispatcherProvider
 ) {
+    data class ScanResult(val audiobook: Audiobook, val uris: List<Uri>)
 
-    suspend fun scan(folderUris: List<Uri>): List<Audiobook> =
+    suspend fun scan(folderUris: List<Uri>): List<ScanResult> =
         withContext(dispatcherProvider.Io) {
             folderUris.flatMap { scanFolder(it) }
         }
 
     @WorkerThread
-    private fun scanFolder(folderUri: Uri): List<Audiobook> {
+    private fun scanFolder(folderUri: Uri): List<ScanResult> {
         val childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(
             folderUri,
             DocumentsContract.getTreeDocumentId(folderUri)
@@ -90,7 +91,7 @@ class Scanner(
         }
     }
 
-    private fun scanAudiobook(rootFolderUri: Uri, folderDocumentId: String, path: String): Audiobook {
+    private fun scanAudiobook(rootFolderUri: Uri, folderDocumentId: String, path: String): ScanResult {
         val files = scanAudiobookFiles(rootFolderUri, folderDocumentId, path)
         val sizeBuffer = ByteBuffer.allocate(Long.SIZE_BYTES)
         val id = files.fold(MessageDigest.getInstance("MD5")) { md5, (_, path, size) ->
@@ -101,10 +102,12 @@ class Scanner(
         }.digest().let { digest ->
             Base64.encodeToString(digest, Base64.NO_PADDING or Base64.NO_WRAP)
         }
-        return Audiobook(BookId(id), path, files.map { it.first }, rootFolderUri)
+        return ScanResult(Audiobook(id, path, rootFolderUri), files.map { it.first })
     }
 
-    private fun scanAudiobookFiles(rootUri: Uri, folderDocumentId: String, path: String): List<Triple<Uri, String, Long>> {
+    private fun scanAudiobookFiles(
+        rootUri: Uri, folderDocumentId: String, path: String
+    ): List<Triple<Uri, String, Long>> {
         val childrenUri =
             DocumentsContract.buildChildDocumentsUriUsingTree(rootUri, folderDocumentId)
         val cursor = contentResolver.query(

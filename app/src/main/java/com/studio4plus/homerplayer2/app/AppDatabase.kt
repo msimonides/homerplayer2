@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Marcin Simonides
+ * Copyright (c) 2023 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,29 +22,19 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.audiobooks
+package com.studio4plus.homerplayer2.app
 
-import androidx.room.*
-import kotlinx.coroutines.flow.Flow
+import androidx.room.Database
+import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
+import com.studio4plus.homerplayer2.audiobooks.*
 
-@Dao
-interface AudiobookFoldersDao {
-
-    @Query("SELECT * FROM audiobook_folders")
-    fun getAll(): Flow<List<AudiobookFolder>>
-
-    @MapInfo(keyColumn = "folder_uri", valueColumn = "book_count")
-    @Query("""
-        SELECT audiobook_folders.uri AS folder_uri, COUNT(audiobooks.id) AS book_count
-        FROM  audiobook_folders, audiobooks
-        WHERE audiobook_folders.uri = audiobooks.root_folder_uri
-        GROUP BY audiobook_folders.uri
-        """)
-    fun getAllWithBookCounts(): Flow<Map<String, Int>>
-
-    @Insert
-    suspend fun insert(folder: AudiobookFolder)
-
-    @Delete
-    suspend fun delete(folder: AudiobookFolder)
+@Database(
+    entities = [Audiobook::class, AudiobookFile::class, AudiobookFolder::class],
+    version = 1
+)
+@TypeConverters(DbTypeConverters::class)
+abstract class AppDatabase : RoomDatabase() {
+    abstract fun audiobooksDao(): AudiobooksDao
+    abstract fun audiobookFoldersDao(): AudiobookFoldersDao
 }

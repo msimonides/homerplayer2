@@ -22,29 +22,27 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.audiobooks
+package com.studio4plus.homerplayer2.app
 
-import androidx.room.*
-import kotlinx.coroutines.flow.Flow
+import androidx.datastore.core.CorruptionException
+import androidx.datastore.core.Serializer
+import com.google.protobuf.InvalidProtocolBufferException
+import com.studio4plus.homerplayer2.app.data.StoredAppState
+import java.io.InputStream
+import java.io.OutputStream
 
-@Dao
-interface AudiobookFoldersDao {
 
-    @Query("SELECT * FROM audiobook_folders")
-    fun getAll(): Flow<List<AudiobookFolder>>
+class StoredAppStateSerializer : Serializer<StoredAppState> {
+    override val defaultValue: StoredAppState = StoredAppState.getDefaultInstance()
 
-    @MapInfo(keyColumn = "folder_uri", valueColumn = "book_count")
-    @Query("""
-        SELECT audiobook_folders.uri AS folder_uri, COUNT(audiobooks.id) AS book_count
-        FROM  audiobook_folders, audiobooks
-        WHERE audiobook_folders.uri = audiobooks.root_folder_uri
-        GROUP BY audiobook_folders.uri
-        """)
-    fun getAllWithBookCounts(): Flow<Map<String, Int>>
+    override suspend fun readFrom(input: InputStream): StoredAppState =
+        try {
+            StoredAppState.parseFrom(input)
+        } catch (exception: InvalidProtocolBufferException) {
+            throw CorruptionException("Cannot read proto.", exception)
+        }
 
-    @Insert
-    suspend fun insert(folder: AudiobookFolder)
-
-    @Delete
-    suspend fun delete(folder: AudiobookFolder)
+    override suspend fun writeTo(t: StoredAppState, output: OutputStream) {
+        t.writeTo(output)
+    }
 }

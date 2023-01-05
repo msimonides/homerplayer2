@@ -37,9 +37,10 @@ class AudiobooksUpdater(
     init {
         // TODO: trigger scan on many other events
         audiobookFoldersDao.getAll().map { audiobooksFolders ->
-            audiobooksDao.updateBooks(
-                scanner.scan(audiobooksFolders.map { it.toUri() })
-            )
+            val scannedItems = scanner.scan(audiobooksFolders.map { it.uri }).map { item ->
+                Pair(item.audiobook, item.uris.map { AudiobookFile(it, item.audiobook.id) })
+            }
+            audiobooksDao.replaceAll(scannedItems.map { it.first }, scannedItems.flatMap { it.second })
         }.launchIn(mainScope)
     }
 }

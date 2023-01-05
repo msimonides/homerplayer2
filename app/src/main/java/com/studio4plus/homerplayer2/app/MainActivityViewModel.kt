@@ -22,29 +22,23 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.audiobooks
+package com.studio4plus.homerplayer2.app
 
-import androidx.room.*
-import kotlinx.coroutines.flow.Flow
+import androidx.datastore.core.DataStore
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.studio4plus.homerplayer2.app.data.StoredAppState
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 
-@Dao
-interface AudiobookFoldersDao {
+class MainActivityViewModel(appState: DataStore<StoredAppState>) : ViewModel() {
+    val viewState = appState.data.map {
+        MainActivityViewState.Ready(!it.onboardingCompleted)
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, MainActivityViewState.Loading)
+}
 
-    @Query("SELECT * FROM audiobook_folders")
-    fun getAll(): Flow<List<AudiobookFolder>>
-
-    @MapInfo(keyColumn = "folder_uri", valueColumn = "book_count")
-    @Query("""
-        SELECT audiobook_folders.uri AS folder_uri, COUNT(audiobooks.id) AS book_count
-        FROM  audiobook_folders, audiobooks
-        WHERE audiobook_folders.uri = audiobooks.root_folder_uri
-        GROUP BY audiobook_folders.uri
-        """)
-    fun getAllWithBookCounts(): Flow<Map<String, Int>>
-
-    @Insert
-    suspend fun insert(folder: AudiobookFolder)
-
-    @Delete
-    suspend fun delete(folder: AudiobookFolder)
+sealed interface MainActivityViewState {
+    object Loading : MainActivityViewState
+    data class Ready(val needsOnboarding: Boolean) : MainActivityViewState
 }

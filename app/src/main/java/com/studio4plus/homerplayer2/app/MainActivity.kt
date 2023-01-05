@@ -21,13 +21,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.studio4plus.homerplayer2
+package com.studio4plus.homerplayer2.app
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -35,14 +40,34 @@ import androidx.navigation.compose.rememberNavController
 import com.studio4plus.homerplayer2.onboarding.onboardingGraph
 import com.studio4plus.homerplayer2.player.ui.PlayerScreen
 import com.studio4plus.homerplayer2.ui.theme.HomerPlayer2Theme
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
 
+    private val activityViewModel: MainActivityViewModel by viewModel()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // TODO: show splash screen until state is Ready.
+
+        var viewState: MainActivityViewState by mutableStateOf(MainActivityViewState.Loading)
+
+        activityViewModel.viewState
+            .flowWithLifecycle(lifecycle)
+            .onEach {
+                viewState = it
+            }
+            .launchIn(lifecycleScope)
+
         setContent {
             HomerPlayer2Theme {
-                MainNavHost()
+                when (val state = viewState) {
+                    is MainActivityViewState.Loading -> Unit
+                    is MainActivityViewState.Ready ->
+                        MainNavHost(needsOnboarding = state.needsOnboarding)
+                }
             }
         }
     }
@@ -51,9 +76,12 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainNavHost(
     modifier: Modifier = Modifier,
+    needsOnboarding: Boolean,
     navController: NavHostController = rememberNavController()
 ) {
-    NavHost(modifier = modifier, navController = navController, startDestination = "onboarding") {
+    // TODO: use constants instead of raw strings
+    val startDestination = if (needsOnboarding) "onboarding" else "player"
+    NavHost(modifier = modifier, navController = navController, startDestination = startDestination) {
         onboardingGraph(navController, "player")
         composable("player") {
             PlayerScreen()

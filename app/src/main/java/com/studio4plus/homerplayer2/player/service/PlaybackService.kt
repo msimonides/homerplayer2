@@ -73,8 +73,8 @@ class PlaybackService : MediaSessionService() {
         ): ListenableFuture<MutableList<MediaItem>> {
             val id = mediaItems.first().mediaId
             return mainScope.future {
-                val book = audiobooksDao.getById(id)
-                book?.uris?.map { MediaItem.fromUri(it) }?.toMutableList()
+                val files = audiobooksDao.getFilesForBook(id)
+                files?.map { MediaItem.fromUri(it.uri) }?.toMutableList()
                     ?: throw NoSuchElementException("No book with ID $id")
             }
         }

@@ -29,13 +29,13 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.studio4plus.homerplayer2.audiobooks.Audiobook
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksDao
-import com.studio4plus.homerplayer2.audiobooks.BookId
 import com.studio4plus.homerplayer2.concurrency.DispatcherProvider
 import com.studio4plus.homerplayer2.player.service.PlaybackService
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -132,12 +132,15 @@ class PlayerViewModel(
         super.onCleared()
     }
 
-    fun play(bookId: BookId) {
+    fun play(bookId: String) {
         val book = audiobooks.value.find { it.id == bookId }
         if (book != null) {
             mediaController?.stop()
             mediaController?.let { controller ->
                 controller.setMediaItem(book.toMediaItem())
+                controller.playlistMetadata = MediaMetadata.Builder()
+                    .setTitle(book.displayName)
+                    .build()
                 controller.playWhenReady = true
                 controller.prepare()
             }
@@ -149,5 +152,5 @@ class PlayerViewModel(
         mediaController?.stop()
     }
 
-    private fun Audiobook.toMediaItem() = MediaItem.Builder().setMediaId(id.id).build()
+    private fun Audiobook.toMediaItem() = MediaItem.Builder().setMediaId(id).build()
 }

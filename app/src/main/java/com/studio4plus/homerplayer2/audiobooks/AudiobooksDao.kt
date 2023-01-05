@@ -24,18 +24,39 @@
 
 package com.studio4plus.homerplayer2.audiobooks
 
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.Query
+import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 
-class AudiobooksDao {
+@Dao
+abstract class AudiobooksDao {
 
-    private val audiobooks = MutableStateFlow<List<Audiobook>>(emptyList())
+    @Query("SELECT * FROM audiobooks")
+    abstract fun getAll(): Flow<List<Audiobook>>
 
-    fun updateBooks(newAudiobooks: List<Audiobook>) {
-        audiobooks.value = newAudiobooks
+    @Query("SELECT * FROM audiobook_files WHERE book_id = :id")
+    abstract suspend fun getFilesForBook(id: String): List<AudiobookFile>?
+
+    @Transaction
+    open suspend fun replaceAll(newAudiobooks: List<Audiobook>, newFiles: List<AudiobookFile>) {
+        // TODO: something more efficient?
+        deleteAllAudiobookFiles()
+        deleteAllAudiobooks()
+        insertAudiobooks(newAudiobooks)
+        insertAudiobookFiles(newFiles)
     }
 
-    fun getAll(): Flow<List<Audiobook>> = audiobooks
+    @Insert
+    protected abstract suspend fun insertAudiobooks(audiobooks: List<Audiobook>)
 
-    suspend fun getById(id: String): Audiobook? = audiobooks.value.find { it.id.id == id }
+    @Insert
+    protected abstract suspend fun insertAudiobookFiles(audiobookFiles: List<AudiobookFile>)
+
+    @Query("DELETE FROM audiobooks")
+    protected abstract suspend fun deleteAllAudiobooks()
+
+    @Query("DELETE FROM audiobook_files")
+    protected abstract suspend fun deleteAllAudiobookFiles()
 }

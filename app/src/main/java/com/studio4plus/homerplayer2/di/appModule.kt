@@ -24,6 +24,14 @@
 
 package com.studio4plus.homerplayer2.di
 
+import androidx.datastore.core.DataStoreFactory
+import androidx.datastore.dataStoreFile
+import androidx.room.Room
+import com.studio4plus.homerplayer2.app.AppDatabase
+import com.studio4plus.homerplayer2.app.MainActivityViewModel
+import com.studio4plus.homerplayer2.app.OnboardingFinishedHandler
+import com.studio4plus.homerplayer2.app.StoredAppStateSerializer
+import com.studio4plus.homerplayer2.app.data.StoredAppState
 import com.studio4plus.homerplayer2.audiobooks.AudiobookFolderManager
 import com.studio4plus.homerplayer2.audiobooks.AudiobookFoldersDao
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksDao
@@ -32,17 +40,17 @@ import com.studio4plus.homerplayer2.audiobooks.Scanner
 import com.studio4plus.homerplayer2.concurrency.DefaultDispatcherProvider
 import com.studio4plus.homerplayer2.concurrency.DispatcherProvider
 import com.studio4plus.homerplayer2.onboarding.OnboardingAudiobookFoldersViewModel
+import com.studio4plus.homerplayer2.onboarding.OnboardingFinishedObserver
 import com.studio4plus.homerplayer2.onboarding.OnboardingSpeechViewModel
 import com.studio4plus.homerplayer2.player.ui.PlayerViewModel
 import com.studio4plus.homerplayer2.speech.Speaker
 import com.studio4plus.homerplayer2.speech.SpeakerTts
 import kotlinx.coroutines.MainScope
 import org.koin.android.ext.koin.androidContext
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.androidx.viewmodel.dsl.viewModelOf
-import org.koin.core.module.dsl.bind
-import org.koin.core.module.dsl.createdAtStart
-import org.koin.core.module.dsl.factoryOf
-import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.*
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import java.util.Locale
 
@@ -52,17 +60,33 @@ val appModule = module {
     factory { androidContext().contentResolver }
     single { MainScope() }
 
+    single(named("appState")) {
+        DataStoreFactory.create(StoredAppStateSerializer()) {
+            androidContext().dataStoreFile("appState.pb")
+        }
+    }
+    factory {
+        OnboardingFinishedHandler(get(), get(named("appState")))
+    } withOptions { bind<OnboardingFinishedObserver>() }
+
     singleOf(::AudiobooksUpdater) { createdAtStart() }
 
     factoryOf(::SpeakerTts) { bind<Speaker>() }
     singleOf(::DefaultDispatcherProvider) { bind<DispatcherProvider>() }
 
-    singleOf(::AudiobooksDao)
-    singleOf(::AudiobookFoldersDao)
+    single {
+        Room.databaseBuilder(androidContext(), AppDatabase::class.java, "app_database")
+            .build()
+    }
+    factory { get<AppDatabase>().audiobooksDao() }
+    factory { get<AppDatabase>().audiobookFoldersDao() }
     factoryOf(::AudiobookFolderManager)
     singleOf(::Scanner)
 
     viewModelOf(::OnboardingSpeechViewModel)
     viewModelOf(::OnboardingAudiobookFoldersViewModel)
     viewModelOf(::PlayerViewModel)
+    viewModel {
+        MainActivityViewModel(get(named("appState")))
+    }
 }

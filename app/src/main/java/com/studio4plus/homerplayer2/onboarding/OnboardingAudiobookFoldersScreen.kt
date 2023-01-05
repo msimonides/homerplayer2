@@ -62,7 +62,10 @@ fun OnboardingAudiobookFoldersScreen(
             OnboardingNavigationButtons(
                 nextEnabled = currentViewState.canProceed,
                 nextLabel = R.string.onboarding_step_done,
-                onNext = navigateNext,
+                onNext = {
+                    viewModel.onFinished()
+                    navigateNext()
+                },
                 secondaryLabel = R.string.onboarding_step_back,
                 onSecondary = navigateBack,
                 modifier = Modifier.padding(DefaultSpacing.ScreenContentPadding)

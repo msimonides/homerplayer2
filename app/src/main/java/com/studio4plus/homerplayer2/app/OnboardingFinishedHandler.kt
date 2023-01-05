@@ -22,26 +22,23 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2
+package com.studio4plus.homerplayer2.app
 
-import android.app.Application
-import com.studio4plus.homerplayer2.di.appModule
-import org.koin.android.ext.koin.androidContext
-import org.koin.core.context.startKoin
-import timber.log.Timber
+import androidx.datastore.core.DataStore
+import com.studio4plus.homerplayer2.app.data.StoredAppState
+import com.studio4plus.homerplayer2.app.data.copy
+import com.studio4plus.homerplayer2.onboarding.OnboardingFinishedObserver
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
-class HomerPlayerApp : Application() {
+class OnboardingFinishedHandler(
+    private val mainScope: CoroutineScope,
+    private val dataStore: DataStore<StoredAppState>
+) : OnboardingFinishedObserver {
 
-    override fun onCreate() {
-        super.onCreate()
-
-        startKoin {
-            androidContext(this@HomerPlayerApp)
-            modules(appModule)
-        }
-
-        if (BuildConfig.DEBUG) {
-            Timber.plant(Timber.DebugTree())
+    override fun onOnboardingFinished() {
+        mainScope.launch {
+            dataStore.updateData { it.copy { onboardingCompleted = true } }
         }
     }
 }

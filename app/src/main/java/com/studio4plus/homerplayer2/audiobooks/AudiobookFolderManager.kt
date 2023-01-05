@@ -25,24 +25,24 @@
 package com.studio4plus.homerplayer2.audiobooks
 
 import android.content.ContentResolver
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import androidx.annotation.WorkerThread
-import androidx.documentfile.provider.DocumentFile
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class AudiobookFolderManager(
+    private val mainScope: CoroutineScope,
     private val contentResolver: ContentResolver,
     private val dao: AudiobookFoldersDao
 ) {
-    val folders = dao.getAll().map { it.map { Uri.parse(it.uriString) } }
-
     fun addFolder(folder: Uri) {
         Timber.i("Adding audiobooks folder: %s", folder.toString())
         contentResolver.takePersistableUriPermission(folder, Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        dao.add(FolderUri(folder))
+        mainScope.launch {
+            dao.insert(AudiobookFolder(folder))
+        }
     }
 
     fun removeFolder(folder: Uri) {
@@ -55,6 +55,8 @@ class AudiobookFolderManager(
         } catch (e: SecurityException) {
             Timber.w(e, "Error releasing permission for: %s", folder.toString())
         }
-        dao.remove(FolderUri(folder))
+        mainScope.launch {
+            dao.delete(AudiobookFolder(folder))
+        }
     }
 }

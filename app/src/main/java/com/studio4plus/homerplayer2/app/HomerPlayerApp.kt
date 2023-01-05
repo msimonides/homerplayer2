@@ -22,29 +22,27 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.audiobooks
+package com.studio4plus.homerplayer2.app
 
-import androidx.room.*
-import kotlinx.coroutines.flow.Flow
+import android.app.Application
+import com.studio4plus.homerplayer2.BuildConfig
+import com.studio4plus.homerplayer2.di.appModule
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
+import timber.log.Timber
 
-@Dao
-interface AudiobookFoldersDao {
+class HomerPlayerApp : Application() {
 
-    @Query("SELECT * FROM audiobook_folders")
-    fun getAll(): Flow<List<AudiobookFolder>>
+    override fun onCreate() {
+        super.onCreate()
 
-    @MapInfo(keyColumn = "folder_uri", valueColumn = "book_count")
-    @Query("""
-        SELECT audiobook_folders.uri AS folder_uri, COUNT(audiobooks.id) AS book_count
-        FROM  audiobook_folders, audiobooks
-        WHERE audiobook_folders.uri = audiobooks.root_folder_uri
-        GROUP BY audiobook_folders.uri
-        """)
-    fun getAllWithBookCounts(): Flow<Map<String, Int>>
+        startKoin {
+            androidContext(this@HomerPlayerApp)
+            modules(appModule)
+        }
 
-    @Insert
-    suspend fun insert(folder: AudiobookFolder)
-
-    @Delete
-    suspend fun delete(folder: AudiobookFolder)
+        if (BuildConfig.DEBUG) {
+            Timber.plant(Timber.DebugTree())
+        }
+    }
 }

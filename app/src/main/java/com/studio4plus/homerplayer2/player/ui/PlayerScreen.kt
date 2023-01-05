@@ -64,7 +64,7 @@ fun PlayerScreen(
                 modifier = modifier.fillMaxSize().padding(DefaultSpacing.ScreenContentPadding),
                 onStop = { viewModel.stop() }
             )
-        is PlayerViewModel.ViewState.Initializing -> Text("Initializing")
+        is PlayerViewModel.ViewState.Initializing -> Unit
     }
 }
 
