@@ -56,8 +56,8 @@ fun PlayerScreen(
             BooksPager(
                 modifier = modifier.fillMaxSize(),
                 itemPadding = DefaultSpacing.ScreenContentPadding,
-                bookNames = currentViewState.books.map { it.displayName },
-                onPlay = { index -> viewModel.play(currentViewState.books[index].id) }
+                bookNames = currentViewState.books.map { it.audiobook.displayName },
+                onPlay = { index -> viewModel.play(currentViewState.books[index].audiobook.id) }
             )
         is PlayerViewModel.ViewState.Playing ->
             Playback(

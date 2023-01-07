@@ -30,21 +30,21 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface AudiobookFoldersDao {
 
-    @Query("SELECT * FROM audiobook_folders")
-    fun getAll(): Flow<List<AudiobookFolder>>
+    @Query("SELECT * FROM audiobooks_folders")
+    fun getAll(): Flow<List<AudiobooksFolder>>
 
     @MapInfo(keyColumn = "folder_uri", valueColumn = "book_count")
     @Query("""
-        SELECT audiobook_folders.uri AS folder_uri, COUNT(audiobooks.id) AS book_count
-        FROM  audiobook_folders, audiobooks
-        WHERE audiobook_folders.uri = audiobooks.root_folder_uri
-        GROUP BY audiobook_folders.uri
+        SELECT audiobooks_folders.uri AS folder_uri, COUNT(audiobooks.id) AS book_count
+        FROM  audiobooks_folders, audiobooks
+        WHERE audiobooks_folders.uri = audiobooks.root_folder_uri
+        GROUP BY audiobooks_folders.uri
         """)
     fun getAllWithBookCounts(): Flow<Map<String, Int>>
 
     @Insert
-    suspend fun insert(folder: AudiobookFolder)
+    suspend fun insert(folder: AudiobooksFolder)
 
     @Delete
-    suspend fun delete(folder: AudiobookFolder)
+    suspend fun delete(folder: AudiobooksFolder)
 }

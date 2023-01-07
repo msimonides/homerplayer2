@@ -28,9 +28,8 @@ import android.net.Uri
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "audiobook_folders")
-data class AudiobookFolder(
+@Entity(tableName = "audiobooks_folders")
+data class AudiobooksFolder(
     @PrimaryKey
     val uri: Uri
 )
-

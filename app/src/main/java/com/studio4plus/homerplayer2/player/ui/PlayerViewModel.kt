@@ -34,7 +34,6 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
-import com.studio4plus.homerplayer2.audiobooks.Audiobook
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksDao
 import com.studio4plus.homerplayer2.concurrency.DispatcherProvider
 import com.studio4plus.homerplayer2.player.service.PlaybackService
@@ -58,7 +57,7 @@ class PlayerViewModel(
 
     sealed class ViewState {
         object Initializing : ViewState()
-        data class Browse(val books: List<Audiobook>) : ViewState()
+        data class Browse(val books: List<AudiobooksDao.AudiobookWithState>) : ViewState()
         object Playing : ViewState()
     }
 
@@ -70,7 +69,8 @@ class PlayerViewModel(
 
     private var mediaController: MediaController? = null
 
-    private val audiobooks: StateFlow<List<Audiobook>> = audiobooksDao.getAll()
+    // TODO: use a separate class for audiobook-with-state, independent of the DB.
+    private val audiobooks: StateFlow<List<AudiobooksDao.AudiobookWithState>> = audiobooksDao.getAll()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), emptyList())
 
     private val mediaState = MutableStateFlow(MediaState.Initializing)
@@ -133,14 +133,20 @@ class PlayerViewModel(
     }
 
     fun play(bookId: String) {
-        val book = audiobooks.value.find { it.id == bookId }
+        val book = audiobooks.value.find { it.audiobook.id == bookId }
         if (book != null) {
             mediaController?.stop()
             mediaController?.let { controller ->
-                controller.setMediaItem(book.toMediaItem())
+                controller.setMediaItems(book.toMediaItems())
                 controller.playlistMetadata = MediaMetadata.Builder()
-                    .setTitle(book.displayName)
+                    .setTitle(book.audiobook.displayName)
                     .build()
+                if (book.playbackState != null) {
+                    controller.seekTo(
+                        book.files.indexOfFirst { it.uri == book.playbackState.currentUri },
+                        book.playbackState.currentPositionMs
+                    )
+                }
                 controller.playWhenReady = true
                 controller.prepare()
             }
@@ -152,5 +158,6 @@ class PlayerViewModel(
         mediaController?.stop()
     }
 
-    private fun Audiobook.toMediaItem() = MediaItem.Builder().setMediaId(id).build()
+    private fun AudiobooksDao.AudiobookWithState.toMediaItems() =
+        files.map { MediaItem.Builder().setMediaId(it.uri.toString()).build() }
 }

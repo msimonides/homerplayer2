@@ -24,20 +24,40 @@
 
 package com.studio4plus.homerplayer2.audiobooks
 
+import android.net.Uri
 import androidx.room.Dao
+import androidx.room.Embedded
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Relation
 import androidx.room.Transaction
+import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 abstract class AudiobooksDao {
 
-    @Query("SELECT * FROM audiobooks")
-    abstract fun getAll(): Flow<List<Audiobook>>
+    data class AudiobookWithState(
+        @Embedded val audiobook: Audiobook,
+        @Relation(parentColumn = "id", entityColumn = "book_id")
+        val playbackState: AudiobookPlaybackState?,
+        @Relation(parentColumn = "id", entityColumn = "book_id")
+        val files: List<AudiobookFileWithDuration>
+    )
 
-    @Query("SELECT * FROM audiobook_files WHERE book_id = :id")
-    abstract suspend fun getFilesForBook(id: String): List<AudiobookFile>?
+    @Transaction
+    @Query("SELECT * FROM audiobooks")
+    abstract fun getAll(): Flow<List<AudiobookWithState>>
+
+    @Query("""SELECT audiobook_files.*
+              FROM audiobook_files
+                LEFT JOIN audiobook_file_durations ON audiobook_files.uri = audiobook_file_durations.uri
+              WHERE audiobook_file_durations.uri IS NULL
+              LIMIT :maxCount""")
+    abstract fun getFilesWithoutDuration(maxCount: Int): Flow<List<AudiobookFile>>
+
+    @Insert
+    abstract suspend fun insertAudiobookFileDurations(durations: List<AudiobookFileDuration>)
 
     @Transaction
     open suspend fun replaceAll(newAudiobooks: List<Audiobook>, newFiles: List<AudiobookFile>) {
@@ -46,7 +66,22 @@ abstract class AudiobooksDao {
         deleteAllAudiobooks()
         insertAudiobooks(newAudiobooks)
         insertAudiobookFiles(newFiles)
+        deleteOrphanedDurations()
     }
+
+    @Transaction
+    open suspend fun updatePlayPosition(uri: Uri, positionMs: Long) {
+        val file = getAudiobookFile(uri)
+        if (file != null) {
+            updatePlaybackState(AudiobookPlaybackState(file.bookId, uri, positionMs))
+        }
+    }
+
+    @Upsert
+    protected abstract suspend fun updatePlaybackState(state: AudiobookPlaybackState)
+
+    @Query("SELECT * FROM audiobook_files WHERE uri = :uri")
+    protected abstract suspend fun getAudiobookFile(uri: Uri): AudiobookFile?
 
     @Insert
     protected abstract suspend fun insertAudiobooks(audiobooks: List<Audiobook>)
@@ -59,4 +94,9 @@ abstract class AudiobooksDao {
 
     @Query("DELETE FROM audiobook_files")
     protected abstract suspend fun deleteAllAudiobookFiles()
+
+    @Query("""
+        DELETE FROM audiobook_file_durations
+        WHERE uri NOT IN (SELECT uri FROM audiobook_files)""")
+    protected abstract suspend fun deleteOrphanedDurations()
 }

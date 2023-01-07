@@ -27,10 +27,24 @@ package com.studio4plus.homerplayer2.app
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.studio4plus.homerplayer2.audiobooks.*
+import com.studio4plus.homerplayer2.audiobooks.Audiobook
+import com.studio4plus.homerplayer2.audiobooks.AudiobookFile
+import com.studio4plus.homerplayer2.audiobooks.AudiobookFileDuration
+import com.studio4plus.homerplayer2.audiobooks.AudiobookFileWithDuration
+import com.studio4plus.homerplayer2.audiobooks.AudiobookFoldersDao
+import com.studio4plus.homerplayer2.audiobooks.AudiobookPlaybackState
+import com.studio4plus.homerplayer2.audiobooks.AudiobooksDao
+import com.studio4plus.homerplayer2.audiobooks.AudiobooksFolder
 
 @Database(
-    entities = [Audiobook::class, AudiobookFile::class, AudiobookFolder::class],
+    entities = [
+        Audiobook::class,
+        AudiobookFile::class,
+        AudiobookFileDuration::class,
+        AudiobookPlaybackState::class,
+        AudiobooksFolder::class
+    ],
+    views = [ AudiobookFileWithDuration::class ],
     version = 1
 )
 @TypeConverters(DbTypeConverters::class)

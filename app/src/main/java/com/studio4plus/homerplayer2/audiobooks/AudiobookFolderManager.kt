@@ -28,7 +28,6 @@ import android.content.ContentResolver
 import android.content.Intent
 import android.net.Uri
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -41,7 +40,7 @@ class AudiobookFolderManager(
         Timber.i("Adding audiobooks folder: %s", folder.toString())
         contentResolver.takePersistableUriPermission(folder, Intent.FLAG_GRANT_READ_URI_PERMISSION)
         mainScope.launch {
-            dao.insert(AudiobookFolder(folder))
+            dao.insert(AudiobooksFolder(folder))
         }
     }
 
@@ -56,7 +55,7 @@ class AudiobookFolderManager(
             Timber.w(e, "Error releasing permission for: %s", folder.toString())
         }
         mainScope.launch {
-            dao.delete(AudiobookFolder(folder))
+            dao.delete(AudiobooksFolder(folder))
         }
     }
 }

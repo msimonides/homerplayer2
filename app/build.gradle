@@ -98,7 +98,6 @@ dependencies {
     implementation libs.koin.android
     implementation libs.koin.androidx.compose
     implementation libs.kotlinx.coroutines.android
-    implementation libs.kotlinx.coroutines.guava
     implementation libs.protobuf.kotlin.lite
     implementation libs.timber
 

@@ -24,14 +24,17 @@
 
 package com.studio4plus.homerplayer2.player.service
 
+import android.net.Uri
 import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
+import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksDao
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.guava.future
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
 class PlaybackService : MediaSessionService() {
@@ -39,12 +42,14 @@ class PlaybackService : MediaSessionService() {
     private var mediaSession: MediaSession? = null
     private val mainScope: CoroutineScope by inject()
     private val audiobooksDao: AudiobooksDao by inject()
+    private val exoPlayer: ExoPlayer by inject()
 
     override fun onCreate() {
         super.onCreate()
 
-        val player = ExoPlayer.Builder(this).build()
-        mediaSession = MediaSession.Builder(this, player)
+        val playPositionUpdater = PlayPositionUpdater(mainScope, exoPlayer, audiobooksDao)
+        exoPlayer.addListener(playPositionUpdater)
+        mediaSession = MediaSession.Builder(this, exoPlayer)
             .setCallback(MediaSessionCallback(mainScope, audiobooksDao))
             .build()
     }
@@ -66,16 +71,35 @@ class PlaybackService : MediaSessionService() {
         private val mainScope: CoroutineScope,
         private val audiobooksDao: AudiobooksDao
     ) : MediaSession.Callback {
+
         override fun onAddMediaItems(
             mediaSession: MediaSession,
             controller: MediaSession.ControllerInfo,
             mediaItems: MutableList<MediaItem>
         ): ListenableFuture<MutableList<MediaItem>> {
-            val id = mediaItems.first().mediaId
-            return mainScope.future {
-                val files = audiobooksDao.getFilesForBook(id)
-                files?.map { MediaItem.fromUri(it.uri) }?.toMutableList()
-                    ?: throw NoSuchElementException("No book with ID $id")
+            val updateMediaItems = mediaItems.mapTo(mutableListOf()) {
+                it.buildUpon().setUri(Uri.parse(it.mediaId)).build()
+            }
+            return Futures.immediateFuture(updateMediaItems)
+        }
+    }
+
+    // TODO: inject it with koin?
+    private class PlayPositionUpdater(
+        private val mainScope: CoroutineScope,
+        private val player: ExoPlayer,
+        private val audiobooksDao: AudiobooksDao
+    ) : Player.Listener {
+
+        override fun onIsPlayingChanged(isPlaying: Boolean) {
+            super.onIsPlayingChanged(isPlaying)
+            if (!isPlaying) {
+                val uri = player.currentMediaItem?.localConfiguration?.uri
+                if (uri != null) {
+                    mainScope.launch {
+                        audiobooksDao.updatePlayPosition(uri, player.currentPosition)
+                    }
+                }
             }
         }
     }
