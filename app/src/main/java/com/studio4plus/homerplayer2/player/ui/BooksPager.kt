@@ -24,66 +24,42 @@
 
 package com.studio4plus.homerplayer2.player.ui
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.PlayArrow
-import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
-import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.ui.theme.DefaultSpacing
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun BooksPager(
     modifier: Modifier = Modifier,
-    itemPadding: Dp = Dp(0f),
-    bookNames: List<String>,
+    itemPadding: Dp = 0.dp,
+    books: List<PlayerViewModel.AudiobookState>,
     onPlay: (bookIndex: Int) -> Unit
 ) {
     val initialPage = Int.MAX_VALUE / 2
     HorizontalPager(
-        count = if (bookNames.isEmpty()) 0 else Int.MAX_VALUE,
+        count = if (books.isEmpty()) 0 else Int.MAX_VALUE,
         state = rememberPagerState(initialPage)
-    ) {
-        val bookIndex = (currentPage - initialPage).floorMod(bookNames.size)
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(itemPadding)
-        ) {
-            Text(
-                text = bookNames[bookIndex],
-                modifier = Modifier
-                    .weight(2f)
-                    .align(Alignment.CenterHorizontally)
-            )
-            Button(
-                onClick = { onPlay(bookIndex) },
-                modifier = Modifier
-                    .weight(1f)
-                    .aspectRatio(1f)
-                    .align(Alignment.CenterHorizontally)
-            ) {
-                Icon(
-                    Icons.Rounded.PlayArrow,
-                    contentDescription = stringResource(R.string.playback_play_button_description),
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
-        }
+    // TODO: set key
+    ) { pageIndex ->
+        val bookIndex = (pageIndex - initialPage).floorMod(books.size)
+        val book = books[bookIndex]
+        BookPage(
+            displayName = book.displayName,
+            progress = book.progress,
+            onPlay = { onPlay(bookIndex) },
+            landscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE,
+            modifier = modifier.padding(itemPadding)
+        )
     }
 }
 
@@ -92,11 +68,16 @@ private fun Int.floorMod(other: Int): Int = when (other) {
     else -> this - floorDiv(other) * other
 }
 
-@Preview()
+@Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
     BooksPager(
-        bookNames = listOf("Hamlet", "Macbeth", "Romeo and Juliet"),
+        books = listOf(
+            PlayerViewModel.AudiobookState("1", "Hamlet", 0.3f),
+            PlayerViewModel.AudiobookState("2", "Macbeth", 0f),
+            PlayerViewModel.AudiobookState("3", "Romeo and Juliet", 0.9f),
+        ),
         itemPadding = DefaultSpacing.ScreenContentPadding,
-        onPlay = {})
+        onPlay = {}
+    )
 }

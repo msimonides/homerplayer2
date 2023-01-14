@@ -50,7 +50,7 @@ class PlaybackService : MediaSessionService() {
         val playPositionUpdater = PlayPositionUpdater(mainScope, exoPlayer, audiobooksDao)
         exoPlayer.addListener(playPositionUpdater)
         mediaSession = MediaSession.Builder(this, exoPlayer)
-            .setCallback(MediaSessionCallback(mainScope, audiobooksDao))
+            .setCallback(MediaSessionCallback())
             .build()
     }
 
@@ -67,10 +67,7 @@ class PlaybackService : MediaSessionService() {
         mediaSession
 
     // TODO: inject it with koin?
-    private class MediaSessionCallback(
-        private val mainScope: CoroutineScope,
-        private val audiobooksDao: AudiobooksDao
-    ) : MediaSession.Callback {
+    private class MediaSessionCallback : MediaSession.Callback {
 
         override fun onAddMediaItems(
             mediaSession: MediaSession,

@@ -24,21 +24,14 @@
 
 package com.studio4plus.homerplayer2.player.ui
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.aspectRatio
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Stop
-import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.ui.theme.DefaultSpacing
 import org.koin.androidx.compose.koinViewModel
 
@@ -49,34 +42,22 @@ fun PlayerScreen(
     viewModel: PlayerViewModel = koinViewModel()
 ) {
     val viewState = viewModel.viewState.collectAsStateWithLifecycle()
-    val currentViewState = viewState.value
 
-    when (currentViewState) {
+    when (val currentViewState = viewState.value) {
         is PlayerViewModel.ViewState.Browse ->
             BooksPager(
                 modifier = modifier.fillMaxSize(),
                 itemPadding = DefaultSpacing.ScreenContentPadding,
-                bookNames = currentViewState.books.map { it.audiobook.displayName },
-                onPlay = { index -> viewModel.play(currentViewState.books[index].audiobook.id) }
+                books = currentViewState.books,
+                onPlay = { index -> viewModel.play(currentViewState.books[index].id) }
             )
         is PlayerViewModel.ViewState.Playing ->
             Playback(
+                landscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE,
                 modifier = modifier.fillMaxSize().padding(DefaultSpacing.ScreenContentPadding),
+                progress = currentViewState.progress,
                 onStop = { viewModel.stop() }
             )
         is PlayerViewModel.ViewState.Initializing -> Unit
-    }
-}
-
-@Composable
-fun Playback(modifier: Modifier = Modifier, onStop: () -> Unit) {
-    Box(modifier = modifier) {
-        Button(onClick = onStop, modifier = modifier.aspectRatio(1f)) {
-            Icon(
-                Icons.Rounded.Stop,
-                contentDescription = stringResource(R.string.playback_stop_button_description),
-                modifier = Modifier.fillMaxSize()
-            )
-        }
     }
 }

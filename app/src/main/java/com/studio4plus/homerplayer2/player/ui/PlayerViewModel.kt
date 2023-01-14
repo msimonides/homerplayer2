@@ -26,6 +26,7 @@ package com.studio4plus.homerplayer2.player.ui
 
 import android.content.ComponentName
 import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
@@ -38,10 +39,12 @@ import com.studio4plus.homerplayer2.audiobooks.AudiobooksDao
 import com.studio4plus.homerplayer2.concurrency.DispatcherProvider
 import com.studio4plus.homerplayer2.player.service.PlaybackService
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -55,10 +58,16 @@ class PlayerViewModel(
     audiobooksDao: AudiobooksDao
 ) : ViewModel() {
 
+    data class AudiobookState(
+        val id: String,
+        val displayName: String,
+        val progress: Float
+    )
+
     sealed class ViewState {
         object Initializing : ViewState()
-        data class Browse(val books: List<AudiobooksDao.AudiobookWithState>) : ViewState()
-        object Playing : ViewState()
+        data class Browse(val books: List<AudiobookState>) : ViewState()
+        data class Playing(val progress: Float) : ViewState()
     }
 
     private enum class MediaState {
@@ -69,18 +78,21 @@ class PlayerViewModel(
 
     private var mediaController: MediaController? = null
 
-    // TODO: use a separate class for audiobook-with-state, independent of the DB.
-    private val audiobooks: StateFlow<List<AudiobooksDao.AudiobookWithState>> = audiobooksDao.getAll()
+    private val audiobooks: StateFlow<List<Audiobook>> = audiobooksDao.getAll()
+        .map { books -> books.map { it.toAudiobook() } }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), emptyList())
 
     private val mediaState = MutableStateFlow(MediaState.Initializing)
+
+    // TODO: there should be a better way to expose the currently played book
+    private var playedAudiobook: Audiobook? = null
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val viewState: StateFlow<ViewState> = mediaState.flatMapLatest { mediaState ->
         when (mediaState) {
             MediaState.Initializing -> flowOf(ViewState.Initializing)
-            MediaState.Ready -> audiobooks.map { books -> ViewState.Browse(books) }
-            MediaState.Playing -> flowOf(ViewState.Playing)
+            MediaState.Ready -> audiobooks.map { books -> ViewState.Browse(books.toBrowsable()) }
+            MediaState.Playing -> playedBookProgressFlow().map { ViewState.Playing(it) }
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), ViewState.Initializing)
 
@@ -133,18 +145,19 @@ class PlayerViewModel(
     }
 
     fun play(bookId: String) {
-        val book = audiobooks.value.find { it.audiobook.id == bookId }
+        playedAudiobook = audiobooks.value.find { it.id == bookId }
+        val book = playedAudiobook
         if (book != null) {
             mediaController?.stop()
             mediaController?.let { controller ->
                 controller.setMediaItems(book.toMediaItems())
                 controller.playlistMetadata = MediaMetadata.Builder()
-                    .setTitle(book.audiobook.displayName)
+                    .setTitle(book.displayName)
                     .build()
-                if (book.playbackState != null) {
+                if (book.currentUri != null) {
                     controller.seekTo(
-                        book.files.indexOfFirst { it.uri == book.playbackState.currentUri },
-                        book.playbackState.currentPositionMs
+                        book.files.indexOfFirst { it.uri == book.currentUri },
+                        book.currentPositionMs
                     )
                 }
                 controller.playWhenReady = true
@@ -158,6 +171,20 @@ class PlayerViewModel(
         mediaController?.stop()
     }
 
-    private fun AudiobooksDao.AudiobookWithState.toMediaItems() =
+    private fun Audiobook.toMediaItems() =
         files.map { MediaItem.Builder().setMediaId(it.uri.toString()).build() }
+
+    private fun List<Audiobook>.toBrowsable() =
+        map { with(it) { AudiobookState(id, displayName, progress) } }
+
+    private fun playedBookProgressFlow() = flow {
+        while (true) {
+            mediaController?.let { controller ->
+                val mediaUri = controller.currentMediaItem?.mediaId.let { Uri.parse(it) }
+                val position = controller.contentPosition
+                emit(playedAudiobook?.copy(currentUri = mediaUri, currentPositionMs = position)?.progress ?: 0f)
+            }
+            delay(1000) // TODO: more precise interval, take account of playback speed and total duration (for very short books).
+        }
+    }
 }

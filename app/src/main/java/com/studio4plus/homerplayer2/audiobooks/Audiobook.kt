@@ -29,7 +29,6 @@ import androidx.room.ColumnInfo
 import androidx.room.DatabaseView
 import androidx.room.Entity
 import androidx.room.ForeignKey
-import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "audiobooks")
@@ -86,7 +85,7 @@ data class AudiobookFileDuration(
             entity = Audiobook::class,
             parentColumns = ["id"],
             childColumns = ["book_id"],
-            onDelete = ForeignKey.CASCADE,
+            onDelete = ForeignKey.NO_ACTION,
             deferred = true
         )
     ]
@@ -112,5 +111,5 @@ data class AudiobookFileWithDuration(
     val bookId: String,
     val uri: Uri,
     @ColumnInfo(name = "duration_ms")
-    val durationMs: Long
+    val durationMs: Long?
 )

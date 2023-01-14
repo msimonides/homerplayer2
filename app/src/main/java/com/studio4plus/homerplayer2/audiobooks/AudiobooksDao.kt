@@ -46,7 +46,7 @@ abstract class AudiobooksDao {
     )
 
     @Transaction
-    @Query("SELECT * FROM audiobooks")
+    @Query("SELECT * FROM audiobooks ORDER BY display_name COLLATE LOCALIZED")
     abstract fun getAll(): Flow<List<AudiobookWithState>>
 
     @Query("""SELECT audiobook_files.*
@@ -67,6 +67,7 @@ abstract class AudiobooksDao {
         insertAudiobooks(newAudiobooks)
         insertAudiobookFiles(newFiles)
         deleteOrphanedDurations()
+        deleteOrphanedPlaybackStates()
     }
 
     @Transaction
@@ -95,8 +96,11 @@ abstract class AudiobooksDao {
     @Query("DELETE FROM audiobook_files")
     protected abstract suspend fun deleteAllAudiobookFiles()
 
-    @Query("""
-        DELETE FROM audiobook_file_durations
-        WHERE uri NOT IN (SELECT uri FROM audiobook_files)""")
+    @Query("""DELETE FROM audiobook_file_durations
+                  WHERE uri NOT IN (SELECT uri FROM audiobook_files)""")
     protected abstract suspend fun deleteOrphanedDurations()
+
+    @Query("""DELETE FROM audiobook_playback_states
+                  WHERE book_id NOT IN (SELECT id FROM audiobooks)""")
+    protected abstract suspend fun deleteOrphanedPlaybackStates()
 }
