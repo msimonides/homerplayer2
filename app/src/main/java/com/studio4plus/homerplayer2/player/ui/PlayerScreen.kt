@@ -56,7 +56,15 @@ fun PlayerScreen(
                 landscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE,
                 modifier = modifier.fillMaxSize().padding(DefaultSpacing.ScreenContentPadding),
                 progress = currentViewState.progress,
-                onStop = { viewModel.stop() }
+                playerActions = PlayerActions(
+                    onSeekForward = viewModel::seekForward,
+                    onSeekBack = viewModel::seekBack,
+                    onFastForward = viewModel::seekNext,
+                    onFastRewind = viewModel::seekPrevious,
+                    onStop = viewModel::stop,
+                    onVolumeUp = viewModel::volumeUp,
+                    onVolumeDown = viewModel::volumeDown
+                ),
             )
         is PlayerViewModel.ViewState.Initializing -> Unit
     }

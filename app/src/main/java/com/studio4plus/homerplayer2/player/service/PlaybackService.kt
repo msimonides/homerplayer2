@@ -88,6 +88,8 @@ class PlaybackService : MediaSessionService() {
         private val audiobooksDao: AudiobooksDao
     ) : Player.Listener {
 
+        // TODO: handle changes via notification while paused.
+
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             super.onIsPlayingChanged(isPlaying)
             if (!isPlaying) {

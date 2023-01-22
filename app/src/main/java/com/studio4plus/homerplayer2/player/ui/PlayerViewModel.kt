@@ -26,6 +26,7 @@ package com.studio4plus.homerplayer2.player.ui
 
 import android.content.ComponentName
 import android.content.Context
+import android.media.AudioManager
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -55,7 +56,8 @@ import timber.log.Timber
 class PlayerViewModel(
     appContext: Context,
     dispatcherProvider: DispatcherProvider,
-    audiobooksDao: AudiobooksDao
+    audiobooksDao: AudiobooksDao,
+    private val audioManager: AudioManager
 ) : ViewModel() {
 
     data class AudiobookState(
@@ -120,20 +122,16 @@ class PlayerViewModel(
                     override fun onPlaybackStateChanged(playbackState: Int) {
                         super.onPlaybackStateChanged(playbackState)
                         Timber.d("Playback state changed %d", playbackState)
+                        mediaState.value = mediaStateFor(playbackState, mediaController!!.playWhenReady)
                     }
 
-                    override fun onIsPlayingChanged(isPlaying: Boolean) {
-                        super.onIsPlayingChanged(isPlaying)
-                        mediaState.value = if (isPlaying) MediaState.Playing else MediaState.Ready
-                    }
-
-                    override fun onIsLoadingChanged(isLoading: Boolean) {
-                        super.onIsLoadingChanged(isLoading)
-                        Timber.d("Is loading %b", isLoading)
+                    override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
+                        super.onPlayWhenReadyChanged(playWhenReady, reason)
+                        mediaState.value = mediaStateFor(mediaController!!.playbackState, playWhenReady)
                     }
                 }
             )
-            mediaState.value = if (mediaController!!.isPlaying) MediaState.Playing else MediaState.Ready
+            mediaState.value = mediaStateFor(mediaController!!.playbackState, mediaController!!.playWhenReady)
         }
     }
 
@@ -166,9 +164,38 @@ class PlayerViewModel(
         }
     }
 
+    fun seekForward() {
+        mediaController?.seekForward()
+    }
+
+    fun seekBack() {
+        mediaController?.seekBack()
+    }
+
+    fun seekNext() {
+        mediaController?.seekToNext()
+    }
+
+    fun seekPrevious() {
+        mediaController?.seekToPrevious()
+    }
+
     fun stop() {
         mediaController?.playWhenReady = false
         mediaController?.stop()
+    }
+
+    fun volumeUp() {
+        // TODO: implement UI for showing volume changes instead of FLAG_SHOW_UI
+        audioManager.adjustStreamVolume(
+            AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, AudioManager.FLAG_SHOW_UI
+        )
+    }
+
+    fun volumeDown() {
+        audioManager.adjustStreamVolume(
+            AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER, AudioManager.FLAG_SHOW_UI
+        )
     }
 
     private fun Audiobook.toMediaItems() =
@@ -187,4 +214,10 @@ class PlayerViewModel(
             delay(1000) // TODO: more precise interval, take account of playback speed and total duration (for very short books).
         }
     }
+
+    private fun mediaStateFor(playbackState: Int, playWhenReady: Boolean) =
+        if (playWhenReady && playbackState in arrayOf(Player.STATE_BUFFERING, Player.STATE_READY))
+            MediaState.Playing
+        else
+            MediaState.Ready
 }

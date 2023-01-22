@@ -24,6 +24,8 @@
 
 package com.studio4plus.homerplayer2.di
 
+import android.content.Context
+import android.media.AudioManager
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.dataStoreFile
 import androidx.media3.exoplayer.ExoPlayer
@@ -41,6 +43,7 @@ import com.studio4plus.homerplayer2.concurrency.DispatcherProvider
 import com.studio4plus.homerplayer2.onboarding.OnboardingAudiobookFoldersViewModel
 import com.studio4plus.homerplayer2.onboarding.OnboardingFinishedObserver
 import com.studio4plus.homerplayer2.onboarding.OnboardingSpeechViewModel
+import com.studio4plus.homerplayer2.player.service.buildAndConfigureExoPlayer
 import com.studio4plus.homerplayer2.player.ui.PlayerViewModel
 import com.studio4plus.homerplayer2.speech.Speaker
 import com.studio4plus.homerplayer2.speech.SpeakerTts
@@ -58,6 +61,7 @@ val appModule = module {
     factory { Locale.getDefault() }
     factory { androidContext().contentResolver }
     single { MainScope() }
+    factory { androidContext().getSystemService(Context.AUDIO_SERVICE) as AudioManager }
 
     single(named("appState")) {
         DataStoreFactory.create(StoredAppStateSerializer()) {
@@ -74,9 +78,7 @@ val appModule = module {
     factoryOf(::SpeakerTts) { bind<Speaker>() }
     singleOf(::DefaultDispatcherProvider) { bind<DispatcherProvider>() }
 
-    // TODO: remove non-audio renderers, enable audio offload.
-    //  consider: ConstantBitrateSeekingEnabled
-    factory { ExoPlayer.Builder(androidContext()).build() }
+    factory { buildAndConfigureExoPlayer(androidContext()) }
 
     single {
         Room.databaseBuilder(androidContext(), AppDatabase::class.java, "app_database")
