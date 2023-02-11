@@ -28,7 +28,6 @@ import android.content.Context
 import android.media.AudioManager
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.dataStoreFile
-import androidx.media3.exoplayer.ExoPlayer
 import androidx.room.Room
 import com.studio4plus.homerplayer2.app.AppDatabase
 import com.studio4plus.homerplayer2.app.MainActivityViewModel
@@ -43,8 +42,10 @@ import com.studio4plus.homerplayer2.concurrency.DispatcherProvider
 import com.studio4plus.homerplayer2.onboarding.OnboardingAudiobookFoldersViewModel
 import com.studio4plus.homerplayer2.onboarding.OnboardingFinishedObserver
 import com.studio4plus.homerplayer2.onboarding.OnboardingSpeechViewModel
+import com.studio4plus.homerplayer2.player.service.DeviceMotionDetector
 import com.studio4plus.homerplayer2.player.service.buildAndConfigureExoPlayer
 import com.studio4plus.homerplayer2.player.ui.PlayerViewModel
+import com.studio4plus.homerplayer2.sensortest.SensorTestViewModel
 import com.studio4plus.homerplayer2.speech.Speaker
 import com.studio4plus.homerplayer2.speech.SpeakerTts
 import kotlinx.coroutines.MainScope
@@ -88,6 +89,8 @@ val appModule = module {
     factory { get<AppDatabase>().audiobookFoldersDao() }
     factoryOf(::AudiobookFolderManager)
     singleOf(::Scanner)
+
+    factoryOf(::DeviceMotionDetector)
 
     viewModelOf(::OnboardingSpeechViewModel)
     viewModelOf(::OnboardingAudiobookFoldersViewModel)

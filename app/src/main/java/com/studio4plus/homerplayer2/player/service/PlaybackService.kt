@@ -34,6 +34,10 @@ import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksDao
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
@@ -43,12 +47,13 @@ class PlaybackService : MediaSessionService() {
     private val mainScope: CoroutineScope by inject()
     private val audiobooksDao: AudiobooksDao by inject()
     private val exoPlayer: ExoPlayer by inject()
+    private val deviceMotionDetector: DeviceMotionDetector by inject()
 
     override fun onCreate() {
         super.onCreate()
 
-        val playPositionUpdater = PlayPositionUpdater(mainScope, exoPlayer, audiobooksDao)
-        exoPlayer.addListener(playPositionUpdater)
+        exoPlayer.addListener(PlayPositionUpdater(mainScope, exoPlayer, audiobooksDao))
+        exoPlayer.addListener(PlayStopOnFaceDown(mainScope, exoPlayer, deviceMotionDetector))
         mediaSession = MediaSession.Builder(this, exoPlayer)
             .setCallback(MediaSessionCallback())
             .build()
@@ -99,6 +104,30 @@ class PlaybackService : MediaSessionService() {
                         audiobooksDao.updatePlayPosition(uri, player.currentPosition)
                     }
                 }
+            }
+        }
+    }
+
+    // TODO: inject it with koin?
+    private class PlayStopOnFaceDown(
+        private val mainScope: CoroutineScope,
+        private val player: ExoPlayer,
+        private val deviceMotionDetector: DeviceMotionDetector
+    ) : Player.Listener {
+
+        private var motionDetectionJob: Job? = null
+
+        override fun onIsPlayingChanged(isPlaying: Boolean) {
+            super.onIsPlayingChanged(isPlaying)
+            if (isPlaying) {
+                motionDetectionJob?.cancel()
+                motionDetectionJob =
+                    deviceMotionDetector.motionType
+                        .filter { it == DeviceMotionDetector.MotionType.FACE_DOWN }
+                        .onEach { player.stop() }
+                        .launchIn(mainScope)
+            } else {
+                motionDetectionJob?.cancel()
             }
         }
     }
