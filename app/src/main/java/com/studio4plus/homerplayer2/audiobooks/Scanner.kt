@@ -25,15 +25,14 @@
 package com.studio4plus.homerplayer2.audiobooks
 
 import android.content.ContentResolver
-import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 import android.provider.DocumentsContract
 import android.util.Base64
 import androidx.annotation.WorkerThread
-import androidx.documentfile.provider.DocumentFile
-import com.studio4plus.homerplayer2.concurrency.DispatcherProvider
+import com.studio4plus.homerplayer2.core.DispatcherProvider
 import kotlinx.coroutines.withContext
+import org.koin.core.annotation.Single
 import timber.log.Timber
 import java.nio.ByteBuffer
 import java.security.MessageDigest
@@ -52,8 +51,8 @@ private const val COLUMN_SIZE = 3
 
 private val SORT_BY_DISPLAY_NAME = DocumentsContract.Document.COLUMN_DISPLAY_NAME + " ASC"
 
+@Single
 class Scanner(
-    private val appContext: Context,
     private val contentResolver: ContentResolver,
     private val dispatcherProvider: DispatcherProvider
 ) {

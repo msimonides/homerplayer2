@@ -32,8 +32,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.suspendCancellableCoroutine
+import org.koin.core.annotation.Single
 import kotlin.coroutines.resume
 
+@Single(createdAtStart = true)
 class MediaDurationExtractor(
     mainScope: CoroutineScope,
     exoPlayer: ExoPlayer,

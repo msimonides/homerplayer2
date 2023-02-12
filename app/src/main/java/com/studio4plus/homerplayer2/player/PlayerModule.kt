@@ -22,15 +22,12 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.app
+package com.studio4plus.homerplayer2.player
 
-import android.net.Uri
-import androidx.room.TypeConverter
+import com.studio4plus.homerplayer2.exoplayer.ExoplayerModule
+import org.koin.core.annotation.ComponentScan
+import org.koin.core.annotation.Module
 
-class DbTypeConverters {
-    @TypeConverter
-    fun toUri(uriString: String): Uri = Uri.parse(uriString)
-
-    @TypeConverter
-    fun fromUri(uri: Uri): String = uri.toString()
-}
+@Module(includes = [ExoplayerModule::class])
+@ComponentScan("com.studio4plus.homerplayer2.player")
+class PlayerModule

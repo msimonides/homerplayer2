@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Marcin Simonides
+ * Copyright (c) 2023 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,19 +22,15 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.concurrency
+package com.studio4plus.homerplayer2.core
 
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
+import android.net.Uri
+import androidx.room.TypeConverter
 
-interface DispatcherProvider {
-    val Main: CoroutineDispatcher
-    val Io: CoroutineDispatcher
-    val Computation: CoroutineDispatcher
-}
+class DbTypeConverters {
+    @TypeConverter
+    fun toUri(uriString: String): Uri = Uri.parse(uriString)
 
-class DefaultDispatcherProvider : DispatcherProvider {
-    override val Main: CoroutineDispatcher = Dispatchers.Main
-    override val Io: CoroutineDispatcher = Dispatchers.IO
-    override val Computation: CoroutineDispatcher = Dispatchers.Default
+    @TypeConverter
+    fun fromUri(uri: Uri): String = uri.toString()
 }

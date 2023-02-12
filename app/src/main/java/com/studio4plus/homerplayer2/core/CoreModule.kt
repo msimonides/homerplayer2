@@ -22,18 +22,33 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.player.service
+package com.studio4plus.homerplayer2.core
 
+import android.content.ContentResolver
 import android.content.Context
-import androidx.annotation.OptIn
-import androidx.media3.common.util.UnstableApi
-import androidx.media3.exoplayer.ExoPlayer
+import android.media.AudioManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
+import org.koin.core.annotation.ComponentScan
+import org.koin.core.annotation.Factory
+import org.koin.core.annotation.Module
+import org.koin.core.annotation.Single
+import java.util.*
 
-@OptIn(UnstableApi::class)
-fun buildAndConfigureExoPlayer(appContext: Context): ExoPlayer =
-    // TODO: remove non-audio renderers, enable audio offload.
-    //  consider: ConstantBitrateSeekingEnabled
-    ExoPlayer.Builder(appContext)
-        .setSeekForwardIncrementMs(10_000)
-        .setSeekBackIncrementMs(30_000)
-        .build()
+@Module
+@ComponentScan("com.studio4plus.homerplayer2.core")
+class CoreModule {
+
+    @Factory
+    fun contentResolver(appContext: Context): ContentResolver = appContext.contentResolver
+
+    @Factory
+    fun audioManager(appContext: Context): AudioManager =
+        appContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+
+    @Factory
+    fun defaultLocale(): Locale = Locale.getDefault()
+
+    @Single
+    fun mainScope(): CoroutineScope = MainScope()
+}

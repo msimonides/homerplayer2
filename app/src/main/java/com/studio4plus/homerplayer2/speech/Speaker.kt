@@ -31,6 +31,8 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
+import org.koin.core.annotation.Factory
+import org.koin.core.annotation.Single
 import timber.log.Timber
 import java.util.*
 import kotlin.coroutines.resume
@@ -51,6 +53,7 @@ interface Speaker {
     fun shutdown()
 }
 
+@Factory
 class SpeakerTts(
     private val appContext: Context,
     private val locale: Locale

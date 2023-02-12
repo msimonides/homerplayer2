@@ -24,24 +24,35 @@
 
 package com.studio4plus.homerplayer2.app
 
+import android.content.Context
 import androidx.datastore.core.DataStore
+import androidx.datastore.core.DataStoreFactory
+import androidx.datastore.dataStoreFile
+import androidx.room.Room
 import com.studio4plus.homerplayer2.app.data.StoredAppState
-import com.studio4plus.homerplayer2.app.data.copy
-import com.studio4plus.homerplayer2.onboarding.OnboardingFinishedObserver
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import org.koin.core.annotation.Factory
+import com.studio4plus.homerplayer2.audiobooks.AudiobooksDatabase
+import com.studio4plus.homerplayer2.audiobooks.AudiobooksModule
+import com.studio4plus.homerplayer2.onboarding.OnboardingModule
+import com.studio4plus.homerplayer2.player.PlayerModule
+import org.koin.core.annotation.ComponentScan
+import org.koin.core.annotation.Module
 import org.koin.core.annotation.Named
+import org.koin.core.annotation.Single
 
-@Factory
-class OnboardingFinishedHandler(
-    private val mainScope: CoroutineScope,
-    @Named(DATASTORE_APP_STATE) private val dataStore: DataStore<StoredAppState>
-) : OnboardingFinishedObserver {
+@Module(includes = [AudiobooksModule::class, OnboardingModule::class, PlayerModule::class])
+@ComponentScan("com.studio4plus.homerplayer2.app")
+class AppModule {
 
-    override fun onOnboardingFinished() {
-        mainScope.launch {
-            dataStore.updateData { it.copy { onboardingCompleted = true } }
+    @Single
+    @Named(DATASTORE_APP_STATE)
+    fun appStateDatastore(appContext: Context): DataStore<StoredAppState> =
+        DataStoreFactory.create(StoredAppStateSerializer()) {
+            appContext.dataStoreFile("appState.pb")
         }
-    }
+
+
+    @Single(binds = [AppDatabase::class, AudiobooksDatabase::class])
+    fun database(appContext: Context): AppDatabase =
+        Room.databaseBuilder(appContext, AppDatabase::class.java, "app_database")
+            .build()
 }

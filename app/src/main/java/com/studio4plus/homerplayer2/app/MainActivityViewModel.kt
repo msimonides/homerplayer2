@@ -31,8 +31,13 @@ import com.studio4plus.homerplayer2.app.data.StoredAppState
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import org.koin.android.annotation.KoinViewModel
+import org.koin.core.annotation.Named
 
-class MainActivityViewModel(appState: DataStore<StoredAppState>) : ViewModel() {
+@KoinViewModel
+class MainActivityViewModel(
+    @Named(DATASTORE_APP_STATE) appState: DataStore<StoredAppState>
+) : ViewModel() {
     val viewState = appState.data.map {
         MainActivityViewState.Ready(!it.onboardingCompleted)
     }.stateIn(viewModelScope, SharingStarted.Eagerly, MainActivityViewState.Loading)

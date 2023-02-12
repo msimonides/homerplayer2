@@ -33,8 +33,10 @@ import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import org.koin.core.annotation.Factory
 import java.util.concurrent.TimeUnit
 
+@Factory
 class DeviceMotionDetector(
     private val appContext: Context
 ) {

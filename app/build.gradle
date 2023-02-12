@@ -56,6 +56,20 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
+
+    sourceSets {
+        main {
+            java {
+                // Add generated protobuf code for koin-annotate to see them:
+                srcDirs += "${protobuf.generatedFilesBaseDir}"
+            }
+        }
+    }
+    applicationVariants.configureEach { variant ->
+        kotlin.sourceSets {
+            getByName(name) { kotlin.srcDir("build/generated/ksp/${variant.name}/kotlin") }
+        }
+    }
 }
 
 protobuf {
@@ -79,6 +93,7 @@ protobuf {
 dependencies {
 
     ksp libs.androidx.room.compiler
+    ksp libs.koin.compiler
 
     implementation libs.accompanist.pager
     implementation libs.androidx.activity.compose
@@ -97,6 +112,7 @@ dependencies {
     implementation libs.compose.material3
     implementation libs.koin.android
     implementation libs.koin.androidx.compose
+    implementation libs.koin.annotations
     implementation libs.kotlinx.coroutines.android
     implementation libs.protobuf.kotlin.lite
     implementation libs.timber

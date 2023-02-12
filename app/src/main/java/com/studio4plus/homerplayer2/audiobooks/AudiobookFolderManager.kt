@@ -29,8 +29,10 @@ import android.content.Intent
 import android.net.Uri
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import org.koin.core.annotation.Single
 import timber.log.Timber
 
+@Single
 class AudiobookFolderManager(
     private val mainScope: CoroutineScope,
     private val contentResolver: ContentResolver,

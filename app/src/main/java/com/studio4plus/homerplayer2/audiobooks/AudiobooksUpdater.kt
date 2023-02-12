@@ -27,7 +27,9 @@ package com.studio4plus.homerplayer2.audiobooks
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import org.koin.core.annotation.Single
 
+@Single(createdAtStart = true)
 class AudiobooksUpdater(
     mainScope: CoroutineScope,
     audiobookFoldersDao: AudiobookFoldersDao,

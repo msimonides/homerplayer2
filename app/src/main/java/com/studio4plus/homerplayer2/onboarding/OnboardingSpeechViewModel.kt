@@ -37,7 +37,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
+import org.koin.android.annotation.KoinViewModel
 
+@KoinViewModel
 class OnboardingSpeechViewModel(
     appContext: Context,
     private val speaker: Speaker

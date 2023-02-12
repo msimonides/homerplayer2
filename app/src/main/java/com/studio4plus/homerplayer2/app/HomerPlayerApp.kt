@@ -26,9 +26,9 @@ package com.studio4plus.homerplayer2.app
 
 import android.app.Application
 import com.studio4plus.homerplayer2.BuildConfig
-import com.studio4plus.homerplayer2.di.appModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
+import org.koin.ksp.generated.*
 import timber.log.Timber
 
 class HomerPlayerApp : Application() {
@@ -38,7 +38,7 @@ class HomerPlayerApp : Application() {
 
         startKoin {
             androidContext(this@HomerPlayerApp)
-            modules(appModule)
+            modules(AppModule().module)
         }
 
         if (BuildConfig.DEBUG) {

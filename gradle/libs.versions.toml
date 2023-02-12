@@ -3,7 +3,9 @@
 android-gradle-plugin = '7.3.1'
 androidx-lifecycle = '2.6.0-alpha03'
 compose = '1.3.1'
-koin-android = '3.3.0'
+koin-android = '3.3.3'
+koin-android-compose = "3.4.2"
+koin-annotation= "1.1.1"
 kotlin = '1.7.20'
 kotlinx-coroutines = '1.6.4'
 media3 = '1.0.0-beta03'
@@ -37,7 +39,9 @@ compose-ui-tooling-preview = { module = 'androidx.compose.ui:ui-tooling-preview'
 accompanist-pager = "com.google.accompanist:accompanist-pager:0.28.0"
 
 koin-android = { module = 'io.insert-koin:koin-android', version.ref = 'koin-android' }
-koin-androidx-compose = { module = 'io.insert-koin:koin-androidx-compose', version.ref = 'koin-android' }
+koin-androidx-compose = { module = 'io.insert-koin:koin-androidx-compose', version.ref = 'koin-android-compose' }
+koin-annotations = { module = 'io.insert-koin:koin-annotations', version.ref = 'koin-annotation' }
+koin-compiler = { module = 'io.insert-koin:koin-ksp-compiler', version.ref = 'koin-annotation' }
 
 kotlinx-coroutines-android = { module = 'org.jetbrains.kotlinx:kotlinx-coroutines-android', version.ref = 'kotlinx-coroutines' }
 kotlinx-coroutines-guava = { module = 'org.jetbrains.kotlinx:kotlinx-coroutines-guava', version.ref = 'kotlinx-coroutines' }

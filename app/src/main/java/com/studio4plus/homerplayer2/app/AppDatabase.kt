@@ -34,7 +34,9 @@ import com.studio4plus.homerplayer2.audiobooks.AudiobookFileWithDuration
 import com.studio4plus.homerplayer2.audiobooks.AudiobookFoldersDao
 import com.studio4plus.homerplayer2.audiobooks.AudiobookPlaybackState
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksDao
+import com.studio4plus.homerplayer2.audiobooks.AudiobooksDatabase
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksFolder
+import com.studio4plus.homerplayer2.core.DbTypeConverters
 
 @Database(
     entities = [
@@ -48,7 +50,4 @@ import com.studio4plus.homerplayer2.audiobooks.AudiobooksFolder
     version = 1
 )
 @TypeConverters(DbTypeConverters::class)
-abstract class AppDatabase : RoomDatabase() {
-    abstract fun audiobooksDao(): AudiobooksDao
-    abstract fun audiobookFoldersDao(): AudiobookFoldersDao
-}
+abstract class AppDatabase : RoomDatabase(), AudiobooksDatabase

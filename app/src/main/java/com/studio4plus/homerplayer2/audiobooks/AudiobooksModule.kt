@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Marcin Simonides
+ * Copyright (c) 2023 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,26 +22,20 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.app
+package com.studio4plus.homerplayer2.audiobooks
 
-import androidx.datastore.core.DataStore
-import com.studio4plus.homerplayer2.app.data.StoredAppState
-import com.studio4plus.homerplayer2.app.data.copy
-import com.studio4plus.homerplayer2.onboarding.OnboardingFinishedObserver
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import com.studio4plus.homerplayer2.core.CoreModule
+import org.koin.core.annotation.ComponentScan
 import org.koin.core.annotation.Factory
-import org.koin.core.annotation.Named
+import org.koin.core.annotation.Module
 
-@Factory
-class OnboardingFinishedHandler(
-    private val mainScope: CoroutineScope,
-    @Named(DATASTORE_APP_STATE) private val dataStore: DataStore<StoredAppState>
-) : OnboardingFinishedObserver {
+@Module(includes = [CoreModule::class])
+@ComponentScan("com.studio4plus.homerplayer2.audiobooks")
+class AudiobooksModule {
+    @Factory
+    fun audiobooksDao(audiobooksDatabase: AudiobooksDatabase) = audiobooksDatabase.audiobooksDao()
 
-    override fun onOnboardingFinished() {
-        mainScope.launch {
-            dataStore.updateData { it.copy { onboardingCompleted = true } }
-        }
-    }
+    @Factory
+    fun audiobooksFolderDao(audiobooksDatabase: AudiobooksDatabase) =
+        audiobooksDatabase.audiobookFoldersDao()
 }

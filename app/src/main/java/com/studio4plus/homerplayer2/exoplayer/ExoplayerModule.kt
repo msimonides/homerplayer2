@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Marcin Simonides
+ * Copyright (c) 2023 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,26 +22,25 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.app
+package com.studio4plus.homerplayer2.exoplayer
 
-import androidx.datastore.core.DataStore
-import com.studio4plus.homerplayer2.app.data.StoredAppState
-import com.studio4plus.homerplayer2.app.data.copy
-import com.studio4plus.homerplayer2.onboarding.OnboardingFinishedObserver
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import android.content.Context
+import androidx.annotation.OptIn
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.ExoPlayer
 import org.koin.core.annotation.Factory
-import org.koin.core.annotation.Named
+import org.koin.core.annotation.Module
 
-@Factory
-class OnboardingFinishedHandler(
-    private val mainScope: CoroutineScope,
-    @Named(DATASTORE_APP_STATE) private val dataStore: DataStore<StoredAppState>
-) : OnboardingFinishedObserver {
+@Module
+class ExoplayerModule {
 
-    override fun onOnboardingFinished() {
-        mainScope.launch {
-            dataStore.updateData { it.copy { onboardingCompleted = true } }
-        }
-    }
+    @Factory
+    @OptIn(UnstableApi::class)
+    fun exoplayer(appContext: Context): ExoPlayer =
+        // TODO: remove non-audio renderers, enable audio offload.
+        //  consider: ConstantBitrateSeekingEnabled
+        ExoPlayer.Builder(appContext)
+            .setSeekForwardIncrementMs(10_000)
+            .setSeekBackIncrementMs(30_000)
+            .build()
 }

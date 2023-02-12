@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Marcin Simonides
+ * Copyright (c) 2023 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,26 +22,21 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.app
+package com.studio4plus.homerplayer2.core
 
-import androidx.datastore.core.DataStore
-import com.studio4plus.homerplayer2.app.data.StoredAppState
-import com.studio4plus.homerplayer2.app.data.copy
-import com.studio4plus.homerplayer2.onboarding.OnboardingFinishedObserver
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import org.koin.core.annotation.Factory
-import org.koin.core.annotation.Named
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import org.koin.core.annotation.Single
 
-@Factory
-class OnboardingFinishedHandler(
-    private val mainScope: CoroutineScope,
-    @Named(DATASTORE_APP_STATE) private val dataStore: DataStore<StoredAppState>
-) : OnboardingFinishedObserver {
+interface DispatcherProvider {
+    val Main: CoroutineDispatcher
+    val Io: CoroutineDispatcher
+    val Computation: CoroutineDispatcher
+}
 
-    override fun onOnboardingFinished() {
-        mainScope.launch {
-            dataStore.updateData { it.copy { onboardingCompleted = true } }
-        }
-    }
+@Single
+class DefaultDispatcherProvider : DispatcherProvider {
+    override val Main: CoroutineDispatcher = Dispatchers.Main
+    override val Io: CoroutineDispatcher = Dispatchers.IO
+    override val Computation: CoroutineDispatcher = Dispatchers.Default
 }

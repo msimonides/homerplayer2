@@ -30,15 +30,20 @@ import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.studio4plus.homerplayer2.audiobooks.AudiobookFolderManager
-
 import com.studio4plus.homerplayer2.audiobooks.AudiobookFoldersDao
-import com.studio4plus.homerplayer2.concurrency.DispatcherProvider
-import kotlinx.coroutines.flow.*
+import com.studio4plus.homerplayer2.core.DispatcherProvider
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import org.koin.android.annotation.KoinViewModel
 
 interface OnboardingFinishedObserver {
     fun onOnboardingFinished()
 }
 
+@KoinViewModel
 class OnboardingAudiobookFoldersViewModel(
     private val appContext: Context,
     dispatcherProvider: DispatcherProvider,

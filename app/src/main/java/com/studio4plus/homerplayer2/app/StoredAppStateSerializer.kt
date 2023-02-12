@@ -28,9 +28,11 @@ import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.Serializer
 import com.google.protobuf.InvalidProtocolBufferException
 import com.studio4plus.homerplayer2.app.data.StoredAppState
+import org.koin.core.annotation.Factory
 import java.io.InputStream
 import java.io.OutputStream
 
+const val DATASTORE_APP_STATE = "appState"
 
 class StoredAppStateSerializer : Serializer<StoredAppState> {
     override val defaultValue: StoredAppState = StoredAppState.getDefaultInstance()
