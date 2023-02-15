@@ -28,8 +28,10 @@ import android.content.res.Configuration
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studio4plus.homerplayer2.ui.theme.DefaultSpacing
@@ -43,13 +45,22 @@ fun PlayerScreen(
 ) {
     val viewState = viewModel.viewState.collectAsStateWithLifecycle()
 
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner.lifecycle) {
+        lifecycleOwner.lifecycle.addObserver(viewModel)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(viewModel)
+        }
+    }
+
     when (val currentViewState = viewState.value) {
         is PlayerViewModel.ViewState.Browse ->
             BooksPager(
                 modifier = modifier.fillMaxSize(),
                 itemPadding = DefaultSpacing.ScreenContentPadding,
                 books = currentViewState.books,
-                onPlay = { index -> viewModel.play(currentViewState.books[index].id) }
+                onPlay = viewModel::play,
+                onPageChanged = viewModel::onPageChanged
             )
         is PlayerViewModel.ViewState.Playing ->
             Playback(

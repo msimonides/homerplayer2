@@ -27,6 +27,8 @@ package com.studio4plus.homerplayer2.player.ui
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
@@ -43,12 +45,20 @@ fun BooksPager(
     modifier: Modifier = Modifier,
     itemPadding: Dp = 0.dp,
     books: List<PlayerViewModel.AudiobookState>,
-    onPlay: (bookIndex: Int) -> Unit
+    onPlay: (bookIndex: Int) -> Unit,
+    onPageChanged: (bookIndex: Int) -> Unit
 ) {
     val initialPage = Int.MAX_VALUE / 2
+    val pagerState = rememberPagerState(initialPage)
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.currentPage }.collect { pageIndex ->
+            val bookIndex = (pageIndex - initialPage).floorMod(books.size)
+            onPageChanged(bookIndex)
+        }
+    }
     HorizontalPager(
         count = if (books.isEmpty()) 0 else Int.MAX_VALUE,
-        state = rememberPagerState(initialPage)
+        state = pagerState
     // TODO: set key
     ) { pageIndex ->
         val bookIndex = (pageIndex - initialPage).floorMod(books.size)
@@ -78,6 +88,7 @@ fun DefaultPreview() {
             PlayerViewModel.AudiobookState("3", "Romeo and Juliet", 0.9f),
         ),
         itemPadding = DefaultSpacing.ScreenContentPadding,
-        onPlay = {}
+        onPlay = {},
+        onPageChanged = {}
     )
 }

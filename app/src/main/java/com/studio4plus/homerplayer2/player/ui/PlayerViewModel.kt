@@ -28,6 +28,8 @@ import android.content.ComponentName
 import android.content.Context
 import android.media.AudioManager
 import android.net.Uri
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
@@ -39,6 +41,7 @@ import androidx.media3.session.SessionToken
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksDao
 import com.studio4plus.homerplayer2.core.DispatcherProvider
 import com.studio4plus.homerplayer2.player.service.PlaybackService
+import com.studio4plus.homerplayer2.speech.Speaker
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -59,8 +62,9 @@ class PlayerViewModel(
     appContext: Context,
     dispatcherProvider: DispatcherProvider,
     audiobooksDao: AudiobooksDao,
-    private val audioManager: AudioManager
-) : ViewModel() {
+    private val audioManager: AudioManager,
+    private val speaker: Speaker
+) : ViewModel(), DefaultLifecycleObserver {
 
     data class AudiobookState(
         val id: String,
@@ -137,6 +141,16 @@ class PlayerViewModel(
         }
     }
 
+    override fun onStart(owner: LifecycleOwner) {
+        viewModelScope.launch {
+            speaker.initIfNeeded()
+        }
+    }
+
+    override fun onStop(owner: LifecycleOwner) {
+        speaker.shutdown()
+    }
+
     override fun onCleared() {
         mediaController?.run {
             release()
@@ -144,8 +158,8 @@ class PlayerViewModel(
         super.onCleared()
     }
 
-    fun play(bookId: String) {
-        playedAudiobook = audiobooks.value.find { it.id == bookId }
+    fun play(bookIndex: Int) {
+        playedAudiobook = audiobooks.value.getOrNull(bookIndex)
         val book = playedAudiobook
         if (book != null) {
             mediaController?.stop()
@@ -162,6 +176,17 @@ class PlayerViewModel(
                 }
                 controller.playWhenReady = true
                 controller.prepare()
+            }
+        }
+    }
+
+    fun onPageChanged(bookIndex: Int) {
+        val book = audiobooks.value.getOrNull(bookIndex)
+        speaker.stop()
+        if (book != null) {
+            viewModelScope.launch {
+                // TODO: only speak book titles if its enabled.
+                speaker.speakAndWait(book.displayName)
             }
         }
     }
