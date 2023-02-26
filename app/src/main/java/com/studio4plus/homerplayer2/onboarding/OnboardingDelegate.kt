@@ -22,13 +22,9 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.player
+package com.studio4plus.homerplayer2.onboarding
 
-import com.studio4plus.homerplayer2.exoplayer.ExoplayerModule
-import com.studio4plus.homerplayer2.settings.SettingsModule
-import org.koin.core.annotation.ComponentScan
-import org.koin.core.annotation.Module
-
-@Module(includes = [ExoplayerModule::class, SettingsModule::class])
-@ComponentScan("com.studio4plus.homerplayer2.player")
-class PlayerModule
+interface OnboardingDelegate {
+    fun onOnboardingFinished()
+    fun onReadBookTitlesSet(isEnabled: Boolean)
+}

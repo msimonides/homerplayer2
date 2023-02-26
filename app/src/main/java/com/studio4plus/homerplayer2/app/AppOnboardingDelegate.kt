@@ -24,45 +24,33 @@
 
 package com.studio4plus.homerplayer2.app
 
-import android.content.Context
 import androidx.datastore.core.DataStore
-import androidx.datastore.core.DataStoreFactory
-import androidx.datastore.dataStoreFile
-import androidx.room.Room
 import com.studio4plus.homerplayer2.app.data.StoredAppState
-import com.studio4plus.homerplayer2.audiobooks.AudiobooksDatabase
-import com.studio4plus.homerplayer2.audiobooks.AudiobooksModule
-import com.studio4plus.homerplayer2.onboarding.OnboardingModule
-import com.studio4plus.homerplayer2.player.PlayerModule
-import com.studio4plus.homerplayer2.settings.SettingsModule
-import org.koin.core.annotation.ComponentScan
-import org.koin.core.annotation.Module
+import com.studio4plus.homerplayer2.app.data.UiSettings
+import com.studio4plus.homerplayer2.app.data.copy
+import com.studio4plus.homerplayer2.onboarding.OnboardingDelegate
+import com.studio4plus.homerplayer2.settings.DATASTORE_UI_SETTINGS
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import org.koin.core.annotation.Factory
 import org.koin.core.annotation.Named
-import org.koin.core.annotation.Single
 
-const val DATASTORE_APP_STATE = "appState"
+@Factory
+class AppOnboardingDelegate(
+    private val mainScope: CoroutineScope,
+    @Named(DATASTORE_APP_STATE) private val appStateStore: DataStore<StoredAppState>,
+    @Named(DATASTORE_UI_SETTINGS) private val uiSettingsStore: DataStore<UiSettings>
+) : OnboardingDelegate {
 
-@Module(
-    includes = [
-        AudiobooksModule::class,
-        OnboardingModule::class,
-        PlayerModule::class,
-        SettingsModule::class
-    ]
-)
-@ComponentScan("com.studio4plus.homerplayer2.app")
-class AppModule {
-
-    @Single
-    @Named(DATASTORE_APP_STATE)
-    fun appStateDatastore(appContext: Context): DataStore<StoredAppState> =
-        DataStoreFactory.create(StoredAppStateSerializer()) {
-            appContext.dataStoreFile("$DATASTORE_APP_STATE.pb")
+    override fun onOnboardingFinished() {
+        mainScope.launch {
+            appStateStore.updateData { it.copy { onboardingCompleted = true } }
         }
+    }
 
-
-    @Single(binds = [AppDatabase::class, AudiobooksDatabase::class])
-    fun database(appContext: Context): AppDatabase =
-        Room.databaseBuilder(appContext, AppDatabase::class.java, "app_database")
-            .build()
+    override fun onReadBookTitlesSet(isEnabled: Boolean) {
+        mainScope.launch {
+            uiSettingsStore.updateData { it.copy { readBookTitles = isEnabled} }
+        }
+    }
 }

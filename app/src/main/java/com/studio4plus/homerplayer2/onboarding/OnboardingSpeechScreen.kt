@@ -39,6 +39,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studio4plus.homerplayer2.R
@@ -112,7 +113,7 @@ fun OnboardingSpeechScreen(
                 .padding(paddingValues)
                 .padding(DefaultSpacing.ScreenContentPadding),
             showTtsSettings = currentViewState.showTtsSettings,
-            ttsEnabled = currentViewState.ttsEnabled,
+            readBookTitlesEnabled = currentViewState.readBookTitlesEnabled,
             speechInProgress = currentViewState.isSpeaking,
             playTestPhraseIsCta = !currentViewState.canProceed,
             onSayTestPhrase = {
@@ -129,7 +130,7 @@ fun OnboardingSpeechScreen(
 private fun ScreenContent(
     modifier: Modifier = Modifier,
     showTtsSettings: Boolean,
-    ttsEnabled: Boolean,
+    readBookTitlesEnabled: Boolean,
     speechInProgress: Boolean,
     playTestPhraseIsCta: Boolean,
     onSayTestPhrase: () -> Unit,
@@ -148,12 +149,12 @@ private fun ScreenContent(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.toggleable(
-                    value = ttsEnabled,
+                    value = readBookTitlesEnabled,
                     role = Role.Switch,
                     onValueChange = { onTtsToggled() }
                 )
             ) {
-                Switch(ttsEnabled, onCheckedChange = null)
+                Switch(readBookTitlesEnabled, onCheckedChange = null)
                 Column(modifier = Modifier.padding(Dp(8f))) {
                     Text(text = stringResource(id = R.string.onboarding_speech_tts_checkbox_label))
                     Text(
@@ -169,13 +170,13 @@ private fun ScreenContent(
                 modifier = Modifier.fillMaxWidth(),
                 isLoading = speechInProgress,
                 isFilled = playTestPhraseIsCta,
-                enabled = ttsEnabled
+                enabled = readBookTitlesEnabled
             ) { Text(text = stringResource(id = R.string.onboarding_speech_play_test_phrase)) }
             if (showTtsSettings) {
                 OutlinedButton(
                     onClick = onOpenTtsSettings,
                     modifier = Modifier.fillMaxWidth(),
-                    enabled = ttsEnabled
+                    enabled = readBookTitlesEnabled
                 ) {
                     Text(text = stringResource(id = R.string.onboarding_speech_open_settings))
                 }
@@ -209,4 +210,18 @@ private fun ButtonWithLoadingState(
     }
     if (isFilled) Button(onClick = onClick, modifier = modifier, enabled = enabled, content = buttonContent)
     else OutlinedButton(onClick = onClick, modifier = modifier, enabled = enabled, content = buttonContent)
+}
+
+@Preview
+@Composable
+private fun ScreenContentPreview() {
+    ScreenContent(
+        showTtsSettings = true,
+        readBookTitlesEnabled = true,
+        speechInProgress = false,
+        playTestPhraseIsCta = false,
+        onSayTestPhrase = {},
+        onTtsToggled = {},
+        onOpenTtsSettings = {}
+    )
 }

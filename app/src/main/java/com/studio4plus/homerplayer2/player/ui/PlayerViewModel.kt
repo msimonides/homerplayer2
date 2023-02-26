@@ -28,6 +28,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.media.AudioManager
 import android.net.Uri
+import androidx.datastore.core.DataStore
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
@@ -38,9 +39,11 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
+import com.studio4plus.homerplayer2.app.data.UiSettings
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksDao
 import com.studio4plus.homerplayer2.core.DispatcherProvider
 import com.studio4plus.homerplayer2.player.service.PlaybackService
+import com.studio4plus.homerplayer2.settings.DATASTORE_UI_SETTINGS
 import com.studio4plus.homerplayer2.speech.Speaker
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -55,6 +58,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.android.annotation.KoinViewModel
+import org.koin.core.annotation.Named
 import timber.log.Timber
 
 @KoinViewModel
@@ -62,8 +66,9 @@ class PlayerViewModel(
     appContext: Context,
     dispatcherProvider: DispatcherProvider,
     audiobooksDao: AudiobooksDao,
+    @Named(DATASTORE_UI_SETTINGS) uiSettingsStore: DataStore<UiSettings>,
     private val audioManager: AudioManager,
-    private val speaker: Speaker
+    private val speaker: Speaker,
 ) : ViewModel(), DefaultLifecycleObserver {
 
     data class AudiobookState(
@@ -103,6 +108,9 @@ class PlayerViewModel(
             MediaState.Playing -> playedBookProgressFlow().map { ViewState.Playing(it) }
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), ViewState.Initializing)
+
+    private val uiSettings = uiSettingsStore.data
+        .stateIn(viewModelScope, SharingStarted.Eagerly, UiSettings.getDefaultInstance())
 
     init {
         val sessionToken =
@@ -183,9 +191,8 @@ class PlayerViewModel(
     fun onPageChanged(bookIndex: Int) {
         val book = audiobooks.value.getOrNull(bookIndex)
         speaker.stop()
-        if (book != null) {
+        if (book != null && uiSettings.value.readBookTitles) {
             viewModelScope.launch {
-                // TODO: only speak book titles if its enabled.
                 speaker.speakAndWait(book.displayName)
             }
         }

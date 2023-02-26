@@ -39,17 +39,13 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import org.koin.android.annotation.KoinViewModel
 
-interface OnboardingFinishedObserver {
-    fun onOnboardingFinished()
-}
-
 @KoinViewModel
 class OnboardingAudiobookFoldersViewModel(
     private val appContext: Context,
     dispatcherProvider: DispatcherProvider,
     audiobookFoldersDao: AudiobookFoldersDao,
     private val audiobookFolderManager: AudiobookFolderManager,
-    private val onboardingFinishedObserver: OnboardingFinishedObserver
+    private val onboardingDelegate: OnboardingDelegate
 ) : ViewModel() {
 
     data class FolderItem(val displayName: String, val uri: Uri, val bookCount: Int?)
@@ -80,7 +76,7 @@ class OnboardingAudiobookFoldersViewModel(
     fun removeFolder(folder: FolderItem) = audiobookFolderManager.removeFolder(folder.uri)
 
     fun onFinished() {
-        onboardingFinishedObserver.onOnboardingFinished()
+        onboardingDelegate.onOnboardingFinished()
     }
 
     private fun combineBookCounts(

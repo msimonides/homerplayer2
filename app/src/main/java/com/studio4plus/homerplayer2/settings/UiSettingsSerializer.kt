@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Marcin Simonides
+ * Copyright (c) 2023 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,26 +22,26 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.app
+package com.studio4plus.homerplayer2.settings
 
-import androidx.datastore.core.DataStore
-import com.studio4plus.homerplayer2.app.data.StoredAppState
-import com.studio4plus.homerplayer2.app.data.copy
-import com.studio4plus.homerplayer2.onboarding.OnboardingFinishedObserver
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import org.koin.core.annotation.Factory
-import org.koin.core.annotation.Named
+import androidx.datastore.core.CorruptionException
+import androidx.datastore.core.Serializer
+import com.google.protobuf.InvalidProtocolBufferException
+import com.studio4plus.homerplayer2.app.data.UiSettings
+import java.io.InputStream
+import java.io.OutputStream
 
-@Factory
-class OnboardingFinishedHandler(
-    private val mainScope: CoroutineScope,
-    @Named(DATASTORE_APP_STATE) private val dataStore: DataStore<StoredAppState>
-) : OnboardingFinishedObserver {
+class UiSettingsSerializer : Serializer<UiSettings> {
+    override val defaultValue: UiSettings = UiSettings.getDefaultInstance()
 
-    override fun onOnboardingFinished() {
-        mainScope.launch {
-            dataStore.updateData { it.copy { onboardingCompleted = true } }
+    override suspend fun readFrom(input: InputStream): UiSettings =
+        try {
+            UiSettings.parseFrom(input)
+        } catch (exception: InvalidProtocolBufferException) {
+            throw CorruptionException("Cannot read proto.", exception)
         }
+
+    override suspend fun writeTo(t: UiSettings, output: OutputStream) {
+        t.writeTo(output)
     }
 }

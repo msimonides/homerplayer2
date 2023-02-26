@@ -1,0 +1,7 @@
+syntax = "proto3";
+option java_package = "com.studio4plus.homerplayer2.app.data";
+option java_multiple_files = true;
+
+message UiSettings {
+  bool read_book_titles = 1;
+}

@@ -38,16 +38,18 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import org.koin.android.annotation.KoinViewModel
+import kotlin.properties.Delegates
 
 @KoinViewModel
 class OnboardingSpeechViewModel(
     appContext: Context,
-    private val speaker: Speaker
+    private val speaker: Speaker,
+    private val onboardingDelegate: OnboardingDelegate
 ) : ViewModel(), DefaultLifecycleObserver {
 
     data class ViewState(
         val showTtsSettings: Boolean,
-        val ttsEnabled: Boolean,
+        val readBookTitlesEnabled: Boolean,
         val canProceed: Boolean,
         val isSpeaking: Boolean
     )
@@ -58,15 +60,18 @@ class OnboardingSpeechViewModel(
     val viewState: StateFlow<ViewState> get() = currentState
 
     private val ttsSettingsIntent: Intent?
-    private var enableTts: Boolean
-    private var ttsTestSuccessful: Boolean = false // TODO: this should be saved in prefs
+    private var readBookTitles: Boolean by Delegates.observable(true) { _, _, isEnabled ->
+        onboardingDelegate.onReadBookTitlesSet(isEnabled)
+    }
+
+    private var ttsTestSuccessful: Boolean = false
 
     init {
         val intent = Intent("com.android.settings.TTS_SETTINGS")
         val resolveInfo = appContext.packageManager.resolveActivity(intent, 0)
         ttsSettingsIntent = intent.takeIf { resolveInfo != null }
-        enableTts = true // TODO: check accessibility service, if TalkBack enabled, disable in-app TTS.
-        currentState = MutableStateFlow(ViewState(ttsSettingsIntent != null, enableTts, false, false))
+        onboardingDelegate.onReadBookTitlesSet(readBookTitles)
+        currentState = MutableStateFlow(ViewState(ttsSettingsIntent != null, readBookTitles, false, false))
     }
 
     fun onTtsCheckStarted() {
@@ -79,10 +84,10 @@ class OnboardingSpeechViewModel(
     }
 
     fun onTtsToggled() {
-        enableTts = !enableTts
+        readBookTitles = !readBookTitles
         currentState.value = currentState.value.copy(
-            ttsEnabled = enableTts,
-            canProceed = ttsTestSuccessful || !enableTts
+            readBookTitlesEnabled = readBookTitles,
+            canProceed = ttsTestSuccessful || !readBookTitles
         )
     }
 
@@ -105,7 +110,7 @@ class OnboardingSpeechViewModel(
             if (errorMessage != null) errorEvent.trySend(errorMessage)
             currentState.value = currentState.value.copy(
                 isSpeaking = false,
-                canProceed = ttsTestSuccessful || !enableTts
+                canProceed = ttsTestSuccessful || !readBookTitles
             )
         }
     }
@@ -115,7 +120,7 @@ class OnboardingSpeechViewModel(
         activityContext.startActivity(ttsSettingsIntent)
     }
 
-    override fun onStop(ignored: LifecycleOwner) {
+    override fun onStop(owner: LifecycleOwner) {
         speaker.shutdown()
     }
 

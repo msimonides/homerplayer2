@@ -22,13 +22,28 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.player
+package com.studio4plus.homerplayer2.settings
 
-import com.studio4plus.homerplayer2.exoplayer.ExoplayerModule
-import com.studio4plus.homerplayer2.settings.SettingsModule
+import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.core.DataStoreFactory
+import androidx.datastore.dataStoreFile
+import com.studio4plus.homerplayer2.app.data.UiSettings
 import org.koin.core.annotation.ComponentScan
 import org.koin.core.annotation.Module
+import org.koin.core.annotation.Named
+import org.koin.core.annotation.Single
 
-@Module(includes = [ExoplayerModule::class, SettingsModule::class])
-@ComponentScan("com.studio4plus.homerplayer2.player")
-class PlayerModule
+const val DATASTORE_UI_SETTINGS = "uiSettings"
+
+@Module
+@ComponentScan("com.studio4plus.homerplayer2.settings")
+class SettingsModule {
+
+    @Single
+    @Named(DATASTORE_UI_SETTINGS)
+    fun uiSettingsDatastore(appContext: Context): DataStore<UiSettings> =
+        DataStoreFactory.create(UiSettingsSerializer()) {
+            appContext.dataStoreFile("$DATASTORE_UI_SETTINGS.pb")
+        }
+}
