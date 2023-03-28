@@ -24,6 +24,7 @@
 
 package com.studio4plus.homerplayer2.player.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
@@ -41,15 +42,20 @@ import androidx.compose.material.icons.rounded.VolumeDown
 import androidx.compose.material.icons.rounded.VolumeUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.studio4plus.homerplayer2.R
+import kotlin.math.roundToInt
 
 data class PlayerActions(
     val onSeekForward: () -> Unit,
@@ -61,7 +67,9 @@ data class PlayerActions(
     val onVolumeDown: () -> Unit
 )
 
-// TODO: implement RTL (media controls like ff and rewind should not be reversed in RTL).
+private const val VERTICAL = 0
+private const val HORIZONTAL = 1
+
 @Composable
 fun Playback(
     landscape: Boolean,
@@ -92,35 +100,22 @@ private fun VerticalPlayback(
     buttonStop: @Composable BoxScope.() -> Unit
 ) {
     Row(modifier = modifier.fillMaxSize()) {
-        Column(Modifier.weight(1f)) {
-            Row(
-                Modifier
-                    .weight(2f)
-                    .align(Alignment.CenterHorizontally)
-            ) {
-                Column {
-                    val buttonModifier = Modifier
-                        .weight(1f)
-                        .padding(16.dp)
-                    ButtonVolumeDown(modifier = buttonModifier, playerActions = playerActions)
-                    ButtonFastRewind(modifier = buttonModifier, playerActions = playerActions)
-                    ButtonSeekBack(modifier = buttonModifier, playerActions = playerActions)
-                }
-                Column {
-                    val buttonModifier = Modifier
-                        .weight(1f)
-                        .padding(16.dp)
-                    ButtonVolumeUp(modifier = buttonModifier, playerActions = playerActions)
-                    ButtonFastForward(modifier = buttonModifier, playerActions = playerActions)
-                    ButtonSeekForward(modifier = buttonModifier, playerActions = playerActions)
-                }
+        PlaybackLayout {
+            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                ControlButtonsLayout(
+                    {
+                        ButtonVolumeUp(modifier = Modifier, playerActions = playerActions)
+                        ButtonVolumeDown(modifier = Modifier, playerActions = playerActions)
+                    },
+                    {
+                        ButtonFastRewind(modifier = Modifier, playerActions = playerActions)
+                        ButtonFastForward(modifier = Modifier, playerActions = playerActions)
+                        ButtonSeekBack(modifier = Modifier, playerActions = playerActions)
+                        ButtonSeekForward(modifier = Modifier, playerActions = playerActions)
+                    }
+                )
             }
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxSize(),
-                content = buttonStop
-            )
+            Box(content = buttonStop)
         }
         VerticalBookProgressIndicator(progress, Modifier.padding(start = 8.dp))
     }
@@ -134,43 +129,143 @@ private fun HorizontalPlayback(
     buttonStop: @Composable BoxScope.() -> Unit
 ) {
     Column(modifier = modifier.fillMaxSize()) {
-        Row(Modifier.weight(1f)) {
-            Column(
-                Modifier
-                    .weight(2f)
-                    .align(Alignment.CenterVertically)
-            ) {
-                Row {
-                    val buttonModifier = Modifier
-                        .weight(1f)
-                        .padding(16.dp)
-                    ButtonVolumeUp(modifier = buttonModifier, playerActions = playerActions)
-                    ButtonFastRewind(modifier = buttonModifier, playerActions = playerActions)
-                    ButtonFastForward(modifier = buttonModifier, playerActions = playerActions)
-                }
-                Row {
-                    val buttonModifier = Modifier
-                        .weight(1f)
-                        .padding(16.dp)
-                    ButtonVolumeDown(modifier = buttonModifier, playerActions = playerActions)
-                    ButtonSeekBack(modifier = buttonModifier, playerActions = playerActions)
-                    ButtonSeekForward(modifier = buttonModifier, playerActions = playerActions)
-                }
+        PlaybackLayout {
+            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                ControlButtonsLayout(
+                    {
+                        ButtonVolumeUp(modifier = Modifier, playerActions = playerActions)
+                        ButtonVolumeDown(modifier = Modifier, playerActions = playerActions)
+                    },
+                    {
+                        ButtonFastRewind(modifier = Modifier, playerActions = playerActions)
+                        ButtonFastForward(modifier = Modifier, playerActions = playerActions)
+                        ButtonSeekBack(modifier = Modifier, playerActions = playerActions)
+                        ButtonSeekForward(modifier = Modifier, playerActions = playerActions)
+                    }
+                )
             }
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxSize(),
-                content = buttonStop
-            )
+            Box(content = buttonStop)
         }
         HorizontalBookProgressIndicator(progress, Modifier.padding(top = 8.dp))
     }
 }
 
 @Composable
+private fun PlaybackLayout(
+    modifier: Modifier = Modifier,
+    largeButtonRatio: Float = 0.5f,
+    content: @Composable () -> Unit
+) {
+    Layout(
+        modifier = modifier,
+        content = content
+    ) { measurables, constraints ->
+        require(measurables.size == 2) { "Requires exactly two children" }
+        val isVertical = constraints.maxHeight > constraints.maxWidth
+        val largeButtonSize =
+            if (isVertical) minOf(constraints.maxWidth, (constraints.maxHeight * largeButtonRatio).roundToInt())
+            else minOf(constraints.maxHeight, (constraints.maxWidth * largeButtonRatio).roundToInt())
+
+        val placeableLargeButton = measurables[1].measure(
+            Constraints(largeButtonSize, largeButtonSize, largeButtonSize, largeButtonSize)
+        )
+        val placeableRest = measurables[0].measure(
+            if (isVertical) constraints.copy(maxHeight = constraints.maxHeight - largeButtonSize)
+            else constraints.copy(maxWidth = constraints.maxWidth - largeButtonSize)
+        )
+        layout(constraints.maxWidth, constraints.maxHeight) {
+            placeableRest.placeRelative(IntOffset(0, 0))
+            if (isVertical) {
+                val offset = IntOffset(
+                    (constraints.maxWidth - largeButtonSize) / 2,
+                    constraints.maxHeight - largeButtonSize
+                )
+                placeableLargeButton.placeRelative(offset)
+            } else {
+                val offset = IntOffset(
+                    constraints.maxWidth - largeButtonSize,
+                    (constraints.maxHeight - largeButtonSize) / 2
+                )
+                placeableLargeButton.placeRelative(offset)
+            }
+        }
+    }
+}
+
+@Composable
+private fun ControlButtonsLayout(
+    verticals: @Composable () -> Unit,
+    horizontals: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
+    buttonSpacing: Dp = 4.dp,
+) {
+    Layout(
+        contents = listOf(verticals, horizontals),
+        modifier = modifier
+    ) { inputMeasurables, constraints ->
+        check(intArrayOf(0, 2).contains(inputMeasurables[VERTICAL].size))
+        check(intArrayOf(0, 2, 4).contains(inputMeasurables[HORIZONTAL].size))
+
+        val isVertical = constraints.maxHeight > constraints.maxWidth
+
+        val placeVerticalsHorizontally =
+            inputMeasurables[VERTICAL].size == 2 && inputMeasurables[HORIZONTAL].size == 2 ||
+                    isVertical && inputMeasurables[HORIZONTAL].isNotEmpty() ||
+                    !isVertical && inputMeasurables[HORIZONTAL].isEmpty()
+        val measurables = if (placeVerticalsHorizontally) {
+            listOf(
+                emptyList(),
+                inputMeasurables[VERTICAL].asReversed() + inputMeasurables[HORIZONTAL]
+            )
+        } else {
+            inputMeasurables
+        }
+
+        val horizontalsColumns = if (measurables[HORIZONTAL].isNotEmpty()) 2 else 0
+        val verticalColumns = if (measurables[VERTICAL].isNotEmpty()) 1 else 0
+        val columnCount = verticalColumns + horizontalsColumns
+        val rowCount = maxOf(measurables[HORIZONTAL].size / 2, measurables[VERTICAL].size)
+
+        val buttonSizePx: Int = minOf(
+            (constraints.maxWidth - (columnCount - 1) * buttonSpacing.toPx()) / columnCount,
+            (constraints.maxHeight - (rowCount - 1) * buttonSpacing.toPx()) / rowCount
+        ).roundToInt()
+
+        val buttonConstraints = constraints.copy(
+            minWidth = buttonSizePx,
+            maxWidth = buttonSizePx,
+            minHeight = buttonSizePx,
+            maxHeight = buttonSizePx
+        )
+        val placeables = measurables.map {
+            it.map { measurable -> measurable.measure(buttonConstraints) }
+        }
+
+        val totalWidth =
+            (columnCount * buttonSizePx + (columnCount - 1) * buttonSpacing.toPx()).roundToInt()
+        val totalHeight =
+            (rowCount * buttonSizePx + (rowCount - 1) * buttonSpacing.toPx()).roundToInt()
+
+        val buttonStep = buttonSizePx + buttonSpacing.toPx().roundToInt()
+        layout(totalWidth, totalHeight) {
+            var y = 0
+            placeables[HORIZONTAL].chunked(2) { (left, right) ->
+                right.place(IntOffset(totalWidth - buttonSizePx, y))
+                left.place(IntOffset(totalWidth - buttonStep - buttonSizePx, y))
+                y += buttonStep
+            }
+
+            placeables[VERTICAL].chunked(2) { (top, bottom) ->
+                top.place(IntOffset(0, 0))
+                bottom.place(IntOffset(0, totalHeight - buttonSizePx))
+            }
+        }
+    }
+}
+
+@Composable
 private fun RoundIconButton(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     iconImage: ImageVector,
     iconContentDescription: String?,
     onClick: () -> Unit
@@ -187,19 +282,26 @@ private fun RoundIconButton(
     }
 }
 
-// TODO: fix ripple size
+// TODO: fix ripple size and shape
 @Composable
 private fun FlatIconButton(
     modifier: Modifier,
     iconImage: ImageVector,
     iconContentDescription: String?,
     onClick: () -> Unit
-) = IconButton(modifier = modifier.aspectRatio(1f), onClick = onClick) {
-    Icon(
-        iconImage,
-        contentDescription = iconContentDescription,
-        modifier = Modifier.fillMaxSize(),
-    )
+) {
+    Box(
+        modifier = modifier
+            .minimumInteractiveComponentSize()
+            .aspectRatio(1f)
+            .clickable(onClick = onClick)
+    ) {
+        Icon(
+            iconImage,
+            contentDescription = iconContentDescription,
+            modifier = Modifier.fillMaxSize(),
+        )
+    }
 }
 
 @Composable
