@@ -26,6 +26,7 @@ package com.studio4plus.homerplayer2.app
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -63,10 +64,12 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             HomerPlayer2Theme {
-                when (val state = viewState) {
-                    is MainActivityViewState.Loading -> Unit
-                    is MainActivityViewState.Ready ->
-                        MainNavHost(needsOnboarding = state.needsOnboarding)
+                Surface {
+                    when (val state = viewState) {
+                        is MainActivityViewState.Loading -> Unit
+                        is MainActivityViewState.Ready ->
+                            MainNavHost(needsOnboarding = state.needsOnboarding)
+                    }
                 }
             }
         }

@@ -1,28 +1,57 @@
 package com.studio4plus.homerplayer2.ui.theme
 
 import android.app.Activity
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.ViewCompat
 
+@Immutable
+data class ExtendedColors(
+    val controlPlay: Color,
+    val controlStop: Color,
+    val controlVolume: Color,
+    val controlFast: Color,
+    val controlSeek: Color,
+)
+
+val LocalExtendedColors = staticCompositionLocalOf {
+    ExtendedColors(
+        controlPlay = Color.Unspecified,
+        controlStop = Color.Unspecified,
+        controlVolume = Color.Unspecified,
+        controlFast = Color.Unspecified,
+        controlSeek = Color.Unspecified
+    )
+}
+
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
+    primary = Color(0xff22b9a6),
+    onPrimary = Color.White,
     secondary = PurpleGrey80,
     tertiary = Pink80
 )
 
+private val ExtendedDarkColors = ExtendedColors(
+    controlPlay = Color(0xff22b9a6),
+    controlStop = Color(0xffc31e1e),
+    controlVolume = Color(0xffeeff00),
+    controlFast = Color(0xff1e62f7),
+    controlSeek = Color(0xffffffff)
+)
+
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
+    primary = Color(0xff22b9a6),
+    onPrimary = Color.White,
     secondary = PurpleGrey40,
     tertiary = Pink40
 
@@ -37,32 +66,42 @@ private val LightColorScheme = lightColorScheme(
     */
 )
 
+private val ExtendedLightColors = ExtendedColors(
+    controlPlay = Color(0xff22b9a6),
+    controlStop = Color(0xffc31e1e),
+    controlVolume = Color(0xffe1d41e),
+    controlFast = Color(0xff2a55b3),
+    controlSeek = Color(0xff000000)
+)
+
 @Composable
 fun HomerPlayer2Theme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
-    }
+    val materialColorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
+    val homerColorScheme = if (darkTheme) ExtendedDarkColors else ExtendedLightColors
+
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
-            (view.context as Activity).window.statusBarColor = colorScheme.primary.toArgb()
+            (view.context as Activity).window.statusBarColor = materialColorScheme.primary.toArgb()
             ViewCompat.getWindowInsetsController(view)?.isAppearanceLightStatusBars = darkTheme
         }
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
+    CompositionLocalProvider(LocalExtendedColors provides homerColorScheme) {
+        MaterialTheme(
+            colorScheme = materialColorScheme,
+            typography = Typography,
+            content = content
+        )
+    }
+}
+
+object HomerTheme {
+    val colors: ExtendedColors
+        @Composable
+        get() = LocalExtendedColors.current
 }

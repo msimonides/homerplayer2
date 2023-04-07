@@ -24,12 +24,15 @@
 
 package com.studio4plus.homerplayer2.player.ui
 
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.semantics.getTextLayoutResult
 import androidx.compose.ui.semantics.semantics
@@ -50,10 +53,12 @@ fun AutosizeText(
     modifier: Modifier = Modifier,
     minSize: TextUnit = 10.sp,
     maxSize: TextUnit = 112.sp,
-    style: TextStyle = LocalTextStyle.current
+    color: Color = LocalContentColor.current,
+    style: TextStyle = LocalTextStyle.current,
 ) {
     val textMeasurer = rememberTextMeasurer()
     val textLayoutResult = remember { mutableStateOf<TextLayoutResult?>(null) }
+    val mergedStyle = style.copy(color = color)
 
     Layout(
         modifier = modifier
@@ -77,7 +82,7 @@ fun AutosizeText(
         measurePolicy = { _, constraints ->
             val textLayout = measureText(
                 AnnotatedString(text),
-                style,
+                mergedStyle,
                 textMeasurer,
                 constraints,
                 minSize,

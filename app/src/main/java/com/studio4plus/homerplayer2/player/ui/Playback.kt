@@ -41,11 +41,14 @@ import androidx.compose.material.icons.rounded.Stop
 import androidx.compose.material.icons.rounded.VolumeDown
 import androidx.compose.material.icons.rounded.VolumeUp
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.res.stringResource
@@ -55,6 +58,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.studio4plus.homerplayer2.R
+import com.studio4plus.homerplayer2.ui.theme.HomerPlayer2Theme
+import com.studio4plus.homerplayer2.ui.theme.HomerTheme
 import kotlin.math.roundToInt
 
 data class PlayerActions(
@@ -82,6 +87,7 @@ fun Playback(
             modifier = Modifier.align(Alignment.Center),
             iconImage = Icons.Rounded.Stop,
             iconContentDescription = stringResource(R.string.playback_stop_button_description),
+            containerColor = HomerTheme.colors.controlStop,
             onClick = playerActions.onStop
         )
     }
@@ -268,11 +274,16 @@ private fun RoundIconButton(
     modifier: Modifier = Modifier,
     iconImage: ImageVector,
     iconContentDescription: String?,
+    containerColor: Color,
     onClick: () -> Unit
 ) {
     Button(
         modifier = modifier.aspectRatio(1f),
-        onClick = onClick
+        onClick = onClick,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = containerColor,
+            contentColor = Color.White // TODO: should this be configurable?
+        )
     ) {
         Icon(
             iconImage,
@@ -288,6 +299,7 @@ private fun FlatIconButton(
     modifier: Modifier,
     iconImage: ImageVector,
     iconContentDescription: String?,
+    color: Color,
     onClick: () -> Unit
 ) {
     Box(
@@ -300,6 +312,7 @@ private fun FlatIconButton(
             iconImage,
             contentDescription = iconContentDescription,
             modifier = Modifier.fillMaxSize(),
+            tint = color
         )
     }
 }
@@ -312,6 +325,7 @@ private fun ButtonVolumeUp(
     modifier = modifier,
     iconImage = Icons.Rounded.VolumeUp,
     iconContentDescription = stringResource(id = R.string.playback_volume_up_button_description),
+    color = HomerTheme.colors.controlVolume,
     onClick = playerActions.onVolumeUp
 )
 
@@ -323,6 +337,7 @@ private fun ButtonVolumeDown(
     modifier = modifier,
     iconImage = Icons.Rounded.VolumeDown,
     iconContentDescription = stringResource(id = R.string.playback_volume_down_button_description),
+    color = HomerTheme.colors.controlVolume,
     onClick = playerActions.onVolumeDown
 )
 
@@ -334,6 +349,7 @@ private fun ButtonFastRewind(
     modifier = modifier,
     iconImage = Icons.Rounded.FastRewind,
     iconContentDescription = stringResource(id = R.string.playback_fast_rewind_button_description),
+    color = HomerTheme.colors.controlFast,
     onClick = playerActions.onFastRewind
 )
 
@@ -345,6 +361,7 @@ private fun ButtonFastForward(
     modifier = modifier,
     iconImage = Icons.Rounded.FastForward,
     iconContentDescription = stringResource(id = R.string.playback_fast_forward_button_description),
+    color = HomerTheme.colors.controlFast,
     onClick = playerActions.onFastForward
 )
 
@@ -356,6 +373,7 @@ private fun ButtonSeekBack(
     modifier = modifier,
     iconImage = Icons.Rounded.Replay30,
     iconContentDescription = stringResource(id = R.string.playback_replay30_rewind_button_description),
+    color = HomerTheme.colors.controlSeek,
     onClick = playerActions.onSeekBack
 )
 
@@ -367,6 +385,7 @@ private fun ButtonSeekForward(
     modifier = modifier,
     iconImage = Icons.Rounded.Forward10,
     iconContentDescription = stringResource(id = R.string.playback_forward10_button_description),
+    color = HomerTheme.colors.controlSeek,
     onClick = playerActions.onSeekForward
 )
 
@@ -375,19 +394,27 @@ private val dummyPlayerActions = PlayerActions({}, {}, {}, {}, {}, {}, {})
 @Preview(widthDp = 300, heightDp = 450)
 @Composable
 private fun VerticalPlaybackPreviewShort() =
-    Playback(landscape = false, progress = 0.3f, playerActions = dummyPlayerActions)
+    HomerPlayer2Theme {
+        Playback(landscape = false, progress = 0.3f, playerActions = dummyPlayerActions)
+    }
 
 @Preview(widthDp = 300, heightDp = 650)
 @Composable
 private fun VerticalPlaybackPreviewTall() =
-    Playback(landscape = false, progress = 0.3f, playerActions = dummyPlayerActions)
+    HomerPlayer2Theme {
+        Playback(landscape = false, progress = 0.3f, playerActions = dummyPlayerActions)
+    }
 
 @Preview(widthDp = 800, heightDp = 600)
 @Composable
 private fun HorizontalPlaybackPreviewShort() =
-    Playback(landscape = true, progress = 0.3f, playerActions = dummyPlayerActions)
+    HomerPlayer2Theme {
+        Playback(landscape = true, progress = 0.3f, playerActions = dummyPlayerActions)
+    }
 
 @Preview(widthDp = 900, heightDp = 300)
 @Composable
 private fun HorizontalPlaybackPreviewLong() =
-    Playback(landscape = true, progress = 0.3f, playerActions = dummyPlayerActions)
+    HomerPlayer2Theme {
+        Playback(landscape = true, progress = 0.3f, playerActions = dummyPlayerActions)
+    }
