@@ -45,15 +45,17 @@ import com.studio4plus.homerplayer2.core.DispatcherProvider
 import com.studio4plus.homerplayer2.player.service.PlaybackService
 import com.studio4plus.homerplayer2.settings.DATASTORE_UI_SETTINGS
 import com.studio4plus.homerplayer2.speech.Speaker
+import com.studio4plus.homerplayer2.utils.tickerFlow
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -137,6 +139,7 @@ class PlayerViewModel(
                         super.onPlaybackStateChanged(playbackState)
                         Timber.d("Playback state changed %d", playbackState)
                         mediaState.value = mediaStateFor(playbackState, mediaController!!.playWhenReady)
+                        eventProgressUpdate.tryEmit(Unit)
                     }
 
                     override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
@@ -238,15 +241,19 @@ class PlayerViewModel(
     private fun List<Audiobook>.toBrowsable() =
         map { with(it) { AudiobookState(id, displayName, progress) } }
 
-    private fun playedBookProgressFlow() = flow {
-        while (true) {
-            mediaController?.let { controller ->
-                val mediaUri = controller.currentMediaItem?.mediaId.let { Uri.parse(it) }
-                val position = controller.contentPosition
-                emit(playedAudiobook?.copy(currentUri = mediaUri, currentPositionMs = position)?.progress ?: 0f)
-            }
-            delay(1000) // TODO: more precise interval, take account of playback speed and total duration (for very short books).
-        }
+    private val eventProgressUpdate = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+
+    private fun playedBookProgressFlow(): Flow<Float> = merge(
+        eventProgressUpdate,
+        tickerFlow(1000) // TODO: more precise interval, take account of playback speed and total duration (for very short books).
+    ).map {
+        mediaController?.let { controller ->
+            val mediaUri = controller.currentMediaItem?.mediaId.let { Uri.parse(it) }
+            val position = controller.contentPosition
+            val audiobookWithCurrentProgress =
+                playedAudiobook?.copy(currentUri = mediaUri, currentPositionMs = position)
+            audiobookWithCurrentProgress?.progress ?: 0f
+        } ?: 0f
     }
 
     private fun mediaStateFor(playbackState: Int, playWhenReady: Boolean) =

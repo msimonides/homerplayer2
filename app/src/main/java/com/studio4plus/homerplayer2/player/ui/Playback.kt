@@ -41,7 +41,6 @@ import androidx.compose.material.icons.rounded.Stop
 import androidx.compose.material.icons.rounded.VolumeDown
 import androidx.compose.material.icons.rounded.VolumeUp
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.minimumInteractiveComponentSize
@@ -106,7 +105,7 @@ private fun VerticalPlayback(
     buttonStop: @Composable BoxScope.() -> Unit
 ) {
     Row(modifier = modifier.fillMaxSize()) {
-        PlaybackLayout {
+        PlaybackLayout(Modifier.weight(1f)) {
             Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
                 ControlButtonsLayout(
                     {
@@ -135,7 +134,7 @@ private fun HorizontalPlayback(
     buttonStop: @Composable BoxScope.() -> Unit
 ) {
     Column(modifier = modifier.fillMaxSize()) {
-        PlaybackLayout {
+        PlaybackLayout(modifier = Modifier.weight(1f)) {
             Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
                 ControlButtonsLayout(
                     {
