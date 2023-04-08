@@ -25,7 +25,10 @@
 package com.studio4plus.homerplayer2.player.ui
 
 import android.content.res.Configuration
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
@@ -34,12 +37,9 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.rememberPagerState
 import com.studio4plus.homerplayer2.ui.theme.DefaultSpacing
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BooksPager(
     modifier: Modifier = Modifier,
@@ -57,7 +57,7 @@ fun BooksPager(
         }
     }
     HorizontalPager(
-        count = if (books.isEmpty()) 0 else Int.MAX_VALUE,
+        pageCount = if (books.isEmpty()) 0 else Int.MAX_VALUE,
         state = pagerState
     // TODO: set key
     ) { pageIndex ->

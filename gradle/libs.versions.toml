@@ -36,8 +36,6 @@ compose-ui-test-manifest = { module = 'androidx.compose.ui:ui-test-manifest', ve
 compose-ui-tooling = { module = 'androidx.compose.ui:ui-tooling', version.ref = 'compose' }
 compose-ui-tooling-preview = { module = 'androidx.compose.ui:ui-tooling-preview', version.ref = 'compose' }
 
-accompanist-pager = "com.google.accompanist:accompanist-pager:0.28.0"
-
 koin-android = { module = 'io.insert-koin:koin-android', version.ref = 'koin-android' }
 koin-androidx-compose = { module = 'io.insert-koin:koin-androidx-compose', version.ref = 'koin-android-compose' }
 koin-annotations = { module = 'io.insert-koin:koin-annotations', version.ref = 'koin-annotation' }
