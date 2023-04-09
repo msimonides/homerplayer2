@@ -182,6 +182,7 @@ class PlayerViewModel(
             playedAudiobook = audiobooks.first().getOrNull(bookIndex)
             val book = playedAudiobook
             if (book != null) {
+                speaker.stop()
                 mediaController?.stop()
                 mediaController?.let { controller ->
                     controller.setMediaItems(book.toMediaItems())
