@@ -24,28 +24,28 @@
 
 package com.studio4plus.homerplayer2.player
 
-import android.content.Context
 import androidx.datastore.core.DataStore
-import androidx.datastore.core.DataStoreFactory
-import androidx.datastore.dataStoreFile
-import com.studio4plus.homerplayer2.exoplayer.ExoplayerModule
 import com.studio4plus.homerplayer2.player.data.PlaybackUiState
-import com.studio4plus.homerplayer2.settings.SettingsModule
-import org.koin.core.annotation.ComponentScan
-import org.koin.core.annotation.Module
+import com.studio4plus.homerplayer2.player.data.copy
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import org.koin.core.annotation.Named
 import org.koin.core.annotation.Single
 
-const val DATASTORE_PLAYBACK_UI_STATE = "playbackUiState"
+@Single
+class PlaybackUiStateRepository(
+    private val mainScope: CoroutineScope,
+    @Named(DATASTORE_PLAYBACK_UI_STATE) private val playbackUiState: DataStore<PlaybackUiState>,
+) {
+    // TODO: handle data read exceptions
+    fun lastSelectedBookId() = playbackUiState.data.map {
+        it.lastSelectedBookId
+    }
 
-@Module(includes = [ExoplayerModule::class, SettingsModule::class])
-@ComponentScan("com.studio4plus.homerplayer2.player")
-class PlayerModule {
-
-    @Single
-    @Named(DATASTORE_PLAYBACK_UI_STATE)
-    fun playbackUiStateDatastore(appContext: Context): DataStore<PlaybackUiState> =
-        DataStoreFactory.create(PlaybackUiStateSerializer()) {
-            appContext.dataStoreFile("$DATASTORE_PLAYBACK_UI_STATE.pb")
+    fun updateLastSelectedBookId(bookId: String) {
+        mainScope.launch {
+            playbackUiState.updateData { it.copy { lastSelectedBookId = bookId } }
         }
+    }
 }

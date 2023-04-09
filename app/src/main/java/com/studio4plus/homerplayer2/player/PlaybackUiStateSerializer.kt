@@ -24,28 +24,25 @@
 
 package com.studio4plus.homerplayer2.player
 
-import android.content.Context
-import androidx.datastore.core.DataStore
-import androidx.datastore.core.DataStoreFactory
-import androidx.datastore.dataStoreFile
-import com.studio4plus.homerplayer2.exoplayer.ExoplayerModule
+import androidx.datastore.core.CorruptionException
+import androidx.datastore.core.Serializer
+import com.google.protobuf.InvalidProtocolBufferException
 import com.studio4plus.homerplayer2.player.data.PlaybackUiState
-import com.studio4plus.homerplayer2.settings.SettingsModule
-import org.koin.core.annotation.ComponentScan
-import org.koin.core.annotation.Module
-import org.koin.core.annotation.Named
-import org.koin.core.annotation.Single
+import java.io.InputStream
+import java.io.OutputStream
 
-const val DATASTORE_PLAYBACK_UI_STATE = "playbackUiState"
+class PlaybackUiStateSerializer : Serializer<PlaybackUiState> {
+    override val defaultValue: PlaybackUiState = PlaybackUiState.getDefaultInstance()
 
-@Module(includes = [ExoplayerModule::class, SettingsModule::class])
-@ComponentScan("com.studio4plus.homerplayer2.player")
-class PlayerModule {
-
-    @Single
-    @Named(DATASTORE_PLAYBACK_UI_STATE)
-    fun playbackUiStateDatastore(appContext: Context): DataStore<PlaybackUiState> =
-        DataStoreFactory.create(PlaybackUiStateSerializer()) {
-            appContext.dataStoreFile("$DATASTORE_PLAYBACK_UI_STATE.pb")
+    override suspend fun readFrom(input: InputStream): PlaybackUiState =
+        try {
+            PlaybackUiState.parseFrom(input)
+        } catch (exception: InvalidProtocolBufferException) {
+            throw CorruptionException("Cannot read proto.", exception)
         }
+
+    override suspend fun writeTo(t: PlaybackUiState, output: OutputStream) {
+        t.writeTo(output)
+    }
+
 }

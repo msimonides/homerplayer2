@@ -45,14 +45,15 @@ fun BooksPager(
     modifier: Modifier = Modifier,
     itemPadding: Dp = 0.dp,
     books: List<PlayerViewModel.AudiobookState>,
+    initialSelectedIndex: Int,
     onPlay: (bookIndex: Int) -> Unit,
     onPageChanged: (bookIndex: Int) -> Unit
 ) {
-    val initialPage = Int.MAX_VALUE / 2
-    val pagerState = rememberPagerState(initialPage)
+    val zeroPage = Int.MAX_VALUE / 2
+    val pagerState = rememberPagerState(zeroPage + initialSelectedIndex)
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.currentPage }.collect { pageIndex ->
-            val bookIndex = (pageIndex - initialPage).floorMod(books.size)
+            val bookIndex = (pageIndex - zeroPage).floorMod(books.size)
             onPageChanged(bookIndex)
         }
     }
@@ -61,7 +62,7 @@ fun BooksPager(
         state = pagerState
     // TODO: set key
     ) { pageIndex ->
-        val bookIndex = (pageIndex - initialPage).floorMod(books.size)
+        val bookIndex = (pageIndex - zeroPage).floorMod(books.size)
         val book = books[bookIndex]
         BookPage(
             displayName = book.displayName,
@@ -87,6 +88,7 @@ fun DefaultPreview() {
             PlayerViewModel.AudiobookState("2", "Macbeth", 0f),
             PlayerViewModel.AudiobookState("3", "Romeo and Juliet", 0.9f),
         ),
+        initialSelectedIndex = 1,
         itemPadding = DefaultSpacing.ScreenContentPadding,
         onPlay = {},
         onPageChanged = {}

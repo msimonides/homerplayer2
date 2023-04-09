@@ -1,0 +1,7 @@
+syntax = "proto3";
+option java_package = "com.studio4plus.homerplayer2.player.data";
+option java_multiple_files = true;
+
+message PlaybackUiState {
+  optional string last_selected_book_id = 1;
+}

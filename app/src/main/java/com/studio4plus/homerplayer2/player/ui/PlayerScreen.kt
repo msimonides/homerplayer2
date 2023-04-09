@@ -57,6 +57,7 @@ fun PlayerScreen(
                 modifier = modifier.fillMaxSize(),
                 itemPadding = DefaultSpacing.ScreenContentPadding,
                 books = currentViewState.books,
+                initialSelectedIndex = currentViewState.initialSelectedIndex,
                 onPlay = viewModel::play,
                 onPageChanged = viewModel::onPageChanged
             )

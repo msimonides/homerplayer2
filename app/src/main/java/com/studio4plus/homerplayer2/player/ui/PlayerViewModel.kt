@@ -42,6 +42,7 @@ import androidx.media3.session.SessionToken
 import com.studio4plus.homerplayer2.app.data.UiSettings
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksDao
 import com.studio4plus.homerplayer2.core.DispatcherProvider
+import com.studio4plus.homerplayer2.player.PlaybackUiStateRepository
 import com.studio4plus.homerplayer2.player.service.PlaybackService
 import com.studio4plus.homerplayer2.settings.DATASTORE_UI_SETTINGS
 import com.studio4plus.homerplayer2.speech.Speaker
@@ -52,10 +53,13 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -69,6 +73,7 @@ class PlayerViewModel(
     dispatcherProvider: DispatcherProvider,
     audiobooksDao: AudiobooksDao,
     @Named(DATASTORE_UI_SETTINGS) uiSettingsStore: DataStore<UiSettings>,
+    private val playbackUiStateRepository: PlaybackUiStateRepository,
     private val audioManager: AudioManager,
     private val speaker: Speaker,
 ) : ViewModel(), DefaultLifecycleObserver {
@@ -81,7 +86,10 @@ class PlayerViewModel(
 
     sealed class ViewState {
         object Initializing : ViewState()
-        data class Browse(val books: List<AudiobookState>) : ViewState()
+        data class Browse(
+            val books: List<AudiobookState>,
+            val initialSelectedIndex: Int
+        ) : ViewState()
         data class Playing(val progress: Float) : ViewState()
     }
 
@@ -93,9 +101,9 @@ class PlayerViewModel(
 
     private var mediaController: MediaController? = null
 
-    private val audiobooks: StateFlow<List<Audiobook>> = audiobooksDao.getAll()
+    private val audiobooks: Flow<List<Audiobook>> = audiobooksDao.getAll()
         .map { books -> books.map { it.toAudiobook() } }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), emptyList())
+        .shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
 
     private val mediaState = MutableStateFlow(MediaState.Initializing)
 
@@ -106,7 +114,7 @@ class PlayerViewModel(
     val viewState: StateFlow<ViewState> = mediaState.flatMapLatest { mediaState ->
         when (mediaState) {
             MediaState.Initializing -> flowOf(ViewState.Initializing)
-            MediaState.Ready -> audiobooks.map { books -> ViewState.Browse(books.toBrowsable()) }
+            MediaState.Ready -> audiobooksBrowseStateFlow()
             MediaState.Playing -> playedBookProgressFlow().map { ViewState.Playing(it) }
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), ViewState.Initializing)
@@ -170,33 +178,40 @@ class PlayerViewModel(
     }
 
     fun play(bookIndex: Int) {
-        playedAudiobook = audiobooks.value.getOrNull(bookIndex)
-        val book = playedAudiobook
-        if (book != null) {
-            mediaController?.stop()
-            mediaController?.let { controller ->
-                controller.setMediaItems(book.toMediaItems())
-                controller.playlistMetadata = MediaMetadata.Builder()
-                    .setTitle(book.displayName)
-                    .build()
-                if (book.currentUri != null) {
-                    controller.seekTo(
-                        book.files.indexOfFirst { it.uri == book.currentUri },
-                        book.currentPositionMs
-                    )
+        viewModelScope.launch {
+            playedAudiobook = audiobooks.first().getOrNull(bookIndex)
+            val book = playedAudiobook
+            if (book != null) {
+                mediaController?.stop()
+                mediaController?.let { controller ->
+                    controller.setMediaItems(book.toMediaItems())
+                    controller.playlistMetadata = MediaMetadata.Builder()
+                        .setTitle(book.displayName)
+                        .build()
+                    if (book.currentUri != null) {
+                        controller.seekTo(
+                            book.files.indexOfFirst { it.uri == book.currentUri },
+                            book.currentPositionMs
+                        )
+                    }
+                    controller.playWhenReady = true
+                    controller.prepare()
                 }
-                controller.playWhenReady = true
-                controller.prepare()
             }
         }
     }
 
     fun onPageChanged(bookIndex: Int) {
-        val book = audiobooks.value.getOrNull(bookIndex)
-        speaker.stop()
-        if (book != null && uiSettings.value.readBookTitles) {
-            viewModelScope.launch {
-                speaker.speakAndWait(book.displayName)
+        viewModelScope.launch {
+            val book = audiobooks.first().getOrNull(bookIndex)
+            speaker.stop()
+            if (book != null) {
+                if (uiSettings.value.readBookTitles) {
+                    viewModelScope.launch {
+                        speaker.speakAndWait(book.displayName)
+                    }
+                }
+                playbackUiStateRepository.updateLastSelectedBookId(book.id)
             }
         }
     }
@@ -240,6 +255,16 @@ class PlayerViewModel(
 
     private fun List<Audiobook>.toBrowsable() =
         map { with(it) { AudiobookState(id, displayName, progress) } }
+
+    private fun audiobooksBrowseStateFlow(): Flow<ViewState.Browse> =
+        combine(
+            audiobooks,
+            playbackUiStateRepository.lastSelectedBookId()
+        ) { books, lastSelectedId ->
+            val initialSelectedIndex =
+                books.indexOfFirst { it.id == lastSelectedId }.coerceAtLeast(0)
+            ViewState.Browse(books.toBrowsable(), initialSelectedIndex)
+        }
 
     private val eventProgressUpdate = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
 
