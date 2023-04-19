@@ -40,7 +40,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
-private val IndicatorWidth = 12.dp
+object ProgressIndicatorDefaults {
+    val width = 12.dp
+}
 
 @Composable
 fun VerticalBookProgressIndicator(
@@ -53,7 +55,7 @@ fun VerticalBookProgressIndicator(
         modifier
             .progressSemantics(progress)
             .fillMaxHeight()
-            .width(IndicatorWidth)
+            .width(ProgressIndicatorDefaults.width)
     ) {
         val xOffset = size.width / 2
         val progressHeight = size.height * progress
@@ -80,7 +82,7 @@ fun HorizontalBookProgressIndicator(
         modifier
             .progressSemantics(progress)
             .fillMaxWidth()
-            .height(IndicatorWidth)
+            .height(ProgressIndicatorDefaults.width)
     ) {
         val yOffset = size.height / 2
         val progressWidth = size.width * progress

@@ -38,6 +38,18 @@
                 android:value="" />
         </activity>
 
+        <activity-alias
+            android:name=".app.HomeActivity"
+            android:targetActivity=".app.MainActivity"
+            android:exported="true"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.HOME" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity-alias>
+
         <service
             android:name=".player.service.PlaybackService"
             android:foregroundServiceType="mediaPlayback"

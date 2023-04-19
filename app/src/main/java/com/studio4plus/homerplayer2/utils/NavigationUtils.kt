@@ -22,38 +22,33 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.core
+package com.studio4plus.homerplayer2.utils
 
-import android.app.admin.DevicePolicyManager
-import android.content.ContentResolver
-import android.content.Context
-import android.media.AudioManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.MainScope
-import org.koin.core.annotation.ComponentScan
-import org.koin.core.annotation.Factory
-import org.koin.core.annotation.Module
-import org.koin.core.annotation.Single
-import java.util.*
+import androidx.compose.runtime.Composable
+import androidx.navigation.NamedNavArgument
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavDeepLink
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.ComposeNavigator
+import androidx.navigation.get
 
-@Module
-@ComponentScan("com.studio4plus.homerplayer2.core")
-class CoreModule {
-
-    @Factory
-    fun contentResolver(appContext: Context): ContentResolver = appContext.contentResolver
-
-    @Factory
-    fun devicePolicyManager(appContext: Context): DevicePolicyManager =
-        appContext.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
-
-    @Factory
-    fun audioManager(appContext: Context): AudioManager =
-        appContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-
-    @Factory
-    fun defaultLocale(): Locale = Locale.getDefault()
-
-    @Single
-    fun mainScope(): CoroutineScope = MainScope()
+fun NavGraphBuilder.composable(
+    route: String,
+    label: String,
+    arguments: List<NamedNavArgument> = emptyList(),
+    deepLinks: List<NavDeepLink> = emptyList(),
+    content: @Composable (NavBackStackEntry) -> Unit
+) {
+    addDestination(
+        ComposeNavigator.Destination(provider[ComposeNavigator::class], content).apply {
+            this.route = route
+            this.label = label
+            arguments.forEach { (argumentName, argument) ->
+                addArgument(argumentName, argument)
+            }
+            deepLinks.forEach { deepLink ->
+                addDeepLink(deepLink)
+            }
+        }
+    )
 }

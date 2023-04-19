@@ -38,6 +38,7 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun PlayerScreen(
+    onOpenSettings: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: PlayerViewModel = koinViewModel()
 ) {
@@ -51,19 +52,21 @@ fun PlayerScreen(
         }
     }
 
+    val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
     when (val currentViewState = viewState.value) {
         is PlayerViewModel.ViewState.Browse ->
-            BooksPager(
+            BrowseBooks(
+                landscape = isLandscape,
                 modifier = modifier.fillMaxSize(),
-                itemPadding = DefaultSpacing.ScreenContentPadding,
                 books = currentViewState.books,
                 initialSelectedIndex = currentViewState.initialSelectedIndex,
                 onPlay = viewModel::play,
-                onPageChanged = viewModel::onPageChanged
+                onPageChanged = viewModel::onPageChanged,
+                onOpenSettings = onOpenSettings
             )
         is PlayerViewModel.ViewState.Playing ->
             Playback(
-                landscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE,
+                landscape = isLandscape,
                 modifier = modifier.fillMaxSize().padding(DefaultSpacing.ScreenContentPadding),
                 progress = currentViewState.progress,
                 playerActions = PlayerActions(

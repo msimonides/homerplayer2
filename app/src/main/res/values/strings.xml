@@ -3,6 +3,8 @@
 
     <string name="audiobook_folder_add_button">Add folder…</string>
 
+    <string name="browse_settings_button_accessibility_label">Settings</string>
+
     <string name="onboarding_audiobook_folders_title">Audiobooks</string>
     <string name="onboarding_audiobook_folders_description">Please select at least one folder with your audiobooks.</string>
     <string name="onboarding_speech_description">Homer Player uses text-to-speech engine to read book titles.\nPlease test that </string>
@@ -24,6 +26,8 @@
     <string name="playback_stop_button_description">Stop</string>
     <string name="playback_volume_up_button_description">Volume Up</string>
     <string name="playback_volume_down_button_description">Volume Down</string>
+
+    <string name="settings_ui_full_kiosk_mode_label">Full kiosk mode</string>
 
     <string name="speech_init_say_failed">Playing test phrase failed. Check your text-to-speech settings.</string>
     <string name="speech_init_tts_error">Unable to initialize text-to-speech. Try a different TTS engine.</string>

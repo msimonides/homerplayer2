@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Marcin Simonides
+ * Copyright (c) 2023 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,36 +25,45 @@
 package com.studio4plus.homerplayer2.app
 
 import android.app.admin.DevicePolicyManager
+import android.content.ComponentName
 import android.content.Context
+import android.content.pm.PackageManager
 import androidx.datastore.core.DataStore
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.studio4plus.homerplayer2.app.data.StoredAppState
 import com.studio4plus.homerplayer2.app.data.UiSettings
 import com.studio4plus.homerplayer2.settings.DATASTORE_UI_SETTINGS
-import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
-import org.koin.android.annotation.KoinViewModel
+import kotlinx.coroutines.flow.onEach
 import org.koin.core.annotation.Named
+import org.koin.core.annotation.Single
 
-@KoinViewModel
-class MainActivityViewModel(
+private const val HOME_ACTIVITY_ALIAS = "com.studio4plus.homerplayer2.app.HomeActivity"
+
+@Single(createdAtStart = true)
+class SetHomeActivity(
+    mainScope: CoroutineScope,
     appContext: Context,
-    dpm: DevicePolicyManager,
-    @Named(DATASTORE_APP_STATE) appState: DataStore<StoredAppState>,
     @Named(DATASTORE_UI_SETTINGS) uiSettings: DataStore<UiSettings>
-) : ViewModel() {
-    val viewState = appState.data.map {
-        MainActivityViewState.Ready(!it.onboardingCompleted)
-    }.stateIn(viewModelScope, SharingStarted.Eagerly, MainActivityViewState.Loading)
+) {
 
-    val lockTask = uiSettings.data.map {
-        it.fullKioskMode && dpm.isLockTaskPermitted(appContext.packageName)
-    }.stateIn(viewModelScope, SharingStarted.Eagerly, false)
-}
+    private val fullKioskEnabled = uiSettings.data.map {
+        it.fullKioskMode
+    }
 
-sealed interface MainActivityViewState {
-    object Loading : MainActivityViewState
-    data class Ready(val needsOnboarding: Boolean) : MainActivityViewState
+    init {
+        fullKioskEnabled
+            .onEach { isEnabled ->
+                val homeComponentName = ComponentName(appContext, HOME_ACTIVITY_ALIAS)
+                val enabledState =
+                    if (isEnabled) PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+                    else PackageManager.COMPONENT_ENABLED_STATE_DISABLED
+                appContext.packageManager.setComponentEnabledSetting(
+                    homeComponentName,
+                    enabledState,
+                    PackageManager.DONT_KILL_APP
+                )
+            }
+            .launchIn(mainScope)
+    }
 }

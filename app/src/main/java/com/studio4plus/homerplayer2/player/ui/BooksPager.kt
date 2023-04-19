@@ -47,7 +47,8 @@ fun BooksPager(
     books: List<PlayerViewModel.AudiobookState>,
     initialSelectedIndex: Int,
     onPlay: (bookIndex: Int) -> Unit,
-    onPageChanged: (bookIndex: Int) -> Unit
+    onPageChanged: (bookIndex: Int) -> Unit,
+    landscape: Boolean
 ) {
     val zeroPage = Int.MAX_VALUE / 2
     val pagerState = rememberPagerState(zeroPage + initialSelectedIndex)
@@ -68,7 +69,7 @@ fun BooksPager(
             displayName = book.displayName,
             progress = book.progress,
             onPlay = { onPlay(bookIndex) },
-            landscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE,
+            landscape = landscape,
             modifier = modifier.padding(itemPadding)
         )
     }
@@ -90,6 +91,7 @@ fun DefaultPreview() {
         ),
         initialSelectedIndex = 1,
         itemPadding = DefaultSpacing.ScreenContentPadding,
+        landscape = false,
         onPlay = {},
         onPageChanged = {}
     )

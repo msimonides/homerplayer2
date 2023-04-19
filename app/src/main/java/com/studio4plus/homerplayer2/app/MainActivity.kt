@@ -28,10 +28,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
@@ -40,6 +39,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.studio4plus.homerplayer2.onboarding.onboardingGraph
 import com.studio4plus.homerplayer2.player.ui.PlayerScreen
+import com.studio4plus.homerplayer2.settings.ui.SettingsScreen
 import com.studio4plus.homerplayer2.ui.theme.HomerPlayer2Theme
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -53,17 +53,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         // TODO: show splash screen until state is Ready.
 
-        var viewState: MainActivityViewState by mutableStateOf(MainActivityViewState.Loading)
-
-        activityViewModel.viewState
-            .flowWithLifecycle(lifecycle)
-            .onEach {
-                viewState = it
-            }
-            .launchIn(lifecycleScope)
+        setupLockTask()
 
         setContent {
             HomerPlayer2Theme {
+                val viewState = activityViewModel.viewState.collectAsStateWithLifecycle().value
+
                 Surface {
                     when (val state = viewState) {
                         is MainActivityViewState.Loading -> Unit
@@ -73,6 +68,19 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    private fun setupLockTask() {
+        activityViewModel.lockTask
+            .flowWithLifecycle(lifecycle, Lifecycle.State.RESUMED)
+            .onEach { isEnabled ->
+                if (isEnabled) {
+                    startLockTask()
+                } else {
+                    stopLockTask()
+                }
+            }
+            .launchIn(lifecycleScope)
     }
 }
 
@@ -87,7 +95,10 @@ fun MainNavHost(
     NavHost(modifier = modifier, navController = navController, startDestination = startDestination) {
         onboardingGraph(navController, "player")
         composable("player") {
-            PlayerScreen()
+            PlayerScreen(onOpenSettings = { navController.navigate("settings") })
+        }
+        composable("settings") {
+            SettingsScreen(onNavigateBack = { navController.popBackStack() })
         }
     }
 }
