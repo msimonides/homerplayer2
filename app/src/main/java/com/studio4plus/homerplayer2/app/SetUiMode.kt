@@ -24,12 +24,13 @@
 
 package com.studio4plus.homerplayer2.app
 
-import android.app.admin.DevicePolicyManager
-import android.content.ComponentName
+import android.app.UiModeManager
 import android.content.Context
-import android.content.pm.PackageManager
+import android.os.Build
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.datastore.core.DataStore
 import com.studio4plus.homerplayer2.app.data.UiSettings
+import com.studio4plus.homerplayer2.app.data.UiSettings.UiMode
 import com.studio4plus.homerplayer2.settings.DATASTORE_UI_SETTINGS
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn
@@ -37,32 +38,42 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import org.koin.core.annotation.Named
 import org.koin.core.annotation.Single
-
-private const val HOME_ACTIVITY_ALIAS = "com.studio4plus.homerplayer2.app.HomeActivity"
+import java.lang.IllegalArgumentException
 
 @Single(createdAtStart = true)
-class SetHomeActivity(
+class SetUiMode(
     mainScope: CoroutineScope,
     appContext: Context,
     @Named(DATASTORE_UI_SETTINGS) uiSettings: DataStore<UiSettings>
 ) {
-
-    private val fullKioskEnabled = uiSettings.data.map {
-        it.fullKioskMode
+    private val uiModeFlow = uiSettings.data.map {
+        it.uiMode
     }
 
     init {
-        fullKioskEnabled
-            .onEach { isEnabled ->
-                val homeComponentName = ComponentName(appContext, HOME_ACTIVITY_ALIAS)
-                val enabledState =
-                    if (isEnabled) PackageManager.COMPONENT_ENABLED_STATE_ENABLED
-                    else PackageManager.COMPONENT_ENABLED_STATE_DISABLED
-                appContext.packageManager.setComponentEnabledSetting(
-                    homeComponentName,
-                    enabledState,
-                    PackageManager.DONT_KILL_APP
-                )
+        uiModeFlow
+            .onEach { uiMode ->
+                if (Build.VERSION.SDK_INT >= 31) {
+                    val uiModeManager =
+                        appContext.getSystemService(Context.UI_MODE_SERVICE) as UiModeManager
+                    uiModeManager.setApplicationNightMode(uiMode.toApplicationNightMode())
+                } else {
+                    AppCompatDelegate.setDefaultNightMode(uiMode.toNightMode())
+                }
             }.launchIn(mainScope)
+    }
+
+    private fun UiMode.toNightMode() = when (this) {
+        UiMode.SYSTEM -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+        UiMode.LIGHT -> AppCompatDelegate.MODE_NIGHT_NO
+        UiMode.DARK -> AppCompatDelegate.MODE_NIGHT_YES
+        UiMode.UNRECOGNIZED -> throw IllegalArgumentException("Invalid UI mode")
+    }
+
+    private fun UiMode.toApplicationNightMode() = when (this) {
+        UiMode.SYSTEM -> UiModeManager.MODE_NIGHT_AUTO
+        UiMode.LIGHT -> UiModeManager.MODE_NIGHT_NO
+        UiMode.DARK -> UiModeManager.MODE_NIGHT_YES
+        UiMode.UNRECOGNIZED -> throw IllegalArgumentException("Invalid UI mode")
     }
 }

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Marcin Simonides
+ * Copyright (c) 2023 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,34 +22,38 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.onboarding
+package com.studio4plus.homerplayer2.settings.ui
 
-import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import com.studio4plus.homerplayer2.ui.theme.DefaultSpacing
 
 @Composable
-fun OnboardingNavigationButtons(
-    modifier: Modifier = Modifier,
-    nextEnabled: Boolean,
-    @StringRes nextLabel: Int,
-    onNext: () -> Unit,
-    @StringRes secondaryLabel: Int,
-    onSecondary: () -> Unit,
+fun RadioWithLabel(
+    label: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    Row(modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-        TextButton(onClick = onSecondary) {
-            Text(text = stringResource(id = secondaryLabel))
-        }
+    Row(
+        Modifier.selectable(
+            selected = selected,
+            role = Role.RadioButton,
+            onClick = onClick
+        ).then(modifier),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(label, modifier = Modifier.weight(1f))
         Spacer(modifier = Modifier.width(DefaultSpacing.LabelSpacing))
-        Button(onClick = onNext, enabled = nextEnabled) {
-            Text(text = stringResource(id = nextLabel))
-        }
+        RadioButton(selected = selected, onClick = null, modifier = Modifier.clearAndSetSemantics {})
     }
 }

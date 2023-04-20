@@ -28,6 +28,7 @@ import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.studio4plus.homerplayer2.app.data.UiSettings
+import com.studio4plus.homerplayer2.app.data.UiSettings.UiMode
 import com.studio4plus.homerplayer2.app.data.copy
 import com.studio4plus.homerplayer2.settings.DATASTORE_UI_SETTINGS
 import kotlinx.coroutines.CoroutineScope
@@ -45,18 +46,26 @@ class MainViewModel(
 ) : ViewModel() {
 
     class ViewState(
-        val fullKioskMode: Boolean = false
+        val fullKioskMode: Boolean = false,
+        val uiMode: UiSettings.UiMode = UiSettings.UiMode.SYSTEM
     )
 
     val viewState = uiSettingsStore.data.map {
         ViewState(
-            fullKioskMode = it.fullKioskMode
+            fullKioskMode = it.fullKioskMode,
+            uiMode = it.uiMode
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
     fun setFullKioskMode(isEnabled: Boolean) {
         mainScope.launch {
             uiSettingsStore.updateData { it.copy { fullKioskMode = isEnabled } }
+        }
+    }
+
+    fun setUiMode(newUiMode: UiMode) {
+        mainScope.launch {
+            uiSettingsStore.updateData { it.copy { uiMode = newUiMode } }
         }
     }
 }

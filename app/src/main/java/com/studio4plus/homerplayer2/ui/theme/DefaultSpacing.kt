@@ -24,10 +24,9 @@
 
 package com.studio4plus.homerplayer2.ui.theme
 
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 
-// TODO: find out if there's a more standard way of specifying defaults.
 object DefaultSpacing {
-    val ScreenContentPadding = Dp(16f)
-    val ButtonSpacing = Dp(16f)
+    val ScreenContentPadding = 16.dp
+    val LabelSpacing = 16.dp
 }
