@@ -150,7 +150,14 @@ class PlaybackState(
     }
 
     override fun seekNext() {
-        mediaController?.seekToNext()
+        mediaController?.let {
+            if (it.hasNextMediaItem()) {
+                it.seekToNext()
+            } else {
+                // End of last file.
+                it.seekTo(it.duration)
+            }
+        }
     }
 
     override fun seekPrevious() {
@@ -177,7 +184,7 @@ class PlaybackState(
         files.map { MediaItem.Builder().setMediaId(it.uri.toString()).build() }
 
     private fun mediaStateFor(playbackState: Int, playWhenReady: Boolean) =
-        if (playWhenReady && playbackState in arrayOf(Player.STATE_BUFFERING, Player.STATE_READY))
+        if (playWhenReady && playbackState in arrayOf(Player.STATE_BUFFERING, Player.STATE_READY, Player.STATE_ENDED))
             MediaState.Playing
         else
             MediaState.Ready
