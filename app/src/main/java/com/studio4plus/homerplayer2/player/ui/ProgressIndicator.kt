@@ -36,6 +36,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -62,12 +63,30 @@ fun VerticalBookProgressIndicator(
         val progressY = size.height - progressHeight
 
         drawLine(color, Offset(xOffset, 0f), Offset(xOffset, progressY))
-        drawLine(
-            color,
-            Offset(xOffset, progressY),
-            Offset(xOffset, size.height),
-            strokeWidth = size.width
-        )
+        if (progress > 0f) {
+            drawLine(
+                color,
+                Offset(xOffset, progressY),
+                Offset(xOffset, size.height),
+                strokeWidth = size.width
+            )
+            drawArc(
+                color,
+                0f, 180f,
+                useCenter = false,
+                topLeft = Offset(xOffset - size.width / 2, size.height - size.width / 2),
+                size = Size(size.width, size.width)
+            )
+        }
+        if (progress >= 1f) {
+            drawArc(
+                color,
+                0f, -180f,
+                useCenter = false,
+                topLeft = Offset(xOffset - size.width / 2, progressY - size.width / 2),
+                size = Size(size.width, size.width)
+            )
+        }
     }
 }
 
@@ -87,13 +106,31 @@ fun HorizontalBookProgressIndicator(
         val yOffset = size.height / 2
         val progressWidth = size.width * progress
 
-        drawLine(
-            color,
-            Offset(0f, yOffset),
-            Offset(progressWidth, yOffset),
-            strokeWidth = size.height
-        )
         drawLine(color, Offset(progressWidth, yOffset), Offset(size.width, yOffset))
+        if (progress > 0f) {
+            drawLine(
+                color,
+                Offset(0f, yOffset),
+                Offset(progressWidth, yOffset),
+                strokeWidth = size.height
+            )
+            drawArc(
+                color,
+                90f, 180f,
+                useCenter = false,
+                topLeft = Offset(-size.height / 2, yOffset - size.height / 2),
+                size = Size(size.height, size.height)
+            )
+        }
+        if (progress >= 1f) {
+            drawArc(
+                color,
+                90f, -180f,
+                useCenter = false,
+                topLeft = Offset(progressWidth - size.height / 2, yOffset - size.height / 2),
+                size = Size(size.height, size.height)
+            )
+        }
     }
 }
 
@@ -106,5 +143,5 @@ fun VerticalBookProgressIndicatorPreview() {
 @Preview
 @Composable
 fun HorizontalBookProgressIndicatorPreview() {
-    HorizontalBookProgressIndicator(0.3f, modifier = Modifier.padding(16.dp))
+    HorizontalBookProgressIndicator(0.00001f, modifier = Modifier.padding(16.dp))
 }
