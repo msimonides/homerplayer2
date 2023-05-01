@@ -1,6 +1,6 @@
 [versions]
 
-android-gradle-plugin = "7.4.1"
+android-gradle-plugin = "8.1.0-beta01"
 androidx-lifecycle = '2.6.1'
 compose = '1.4.2'
 koin-android = '3.4.0'
@@ -57,4 +57,4 @@ android-application = { id = "com.android.application", version.ref = "android-g
 android-library = { id = "com.android.library", version.ref = "android-gradle-plugin" }
 kotlin-jvm = { id = 'org.jetbrains.kotlin.android', version.ref = 'kotlin' }
 ksp = 'com.google.devtools.ksp:1.8.10-1.0.9'
-protobuf = 'com.google.protobuf:0.9.1'
+protobuf = 'com.google.protobuf:0.9.3'
