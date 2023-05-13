@@ -1,6 +1,6 @@
 [versions]
 
-android-gradle-plugin = "8.1.0-beta01"
+android-gradle-plugin = "8.1.0-beta02"
 androidx-lifecycle = '2.6.1'
 compose = '1.4.2'
 koin-android = '3.4.0'
