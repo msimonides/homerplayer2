@@ -40,6 +40,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
+import org.koin.core.parameter.parametersOf
 
 class PlaybackService : MediaSessionService() {
 
@@ -48,12 +49,15 @@ class PlaybackService : MediaSessionService() {
     private val audiobooksDao: AudiobooksDao by inject()
     private val exoPlayer: ExoPlayer by inject()
     private val deviceMotionDetector: DeviceMotionDetector by inject()
+    // Note: can scopes be used instead of parameters?
+    private val sleepTimer: SleepTimer by inject { parametersOf(exoPlayer) }
 
     override fun onCreate() {
         super.onCreate()
 
         exoPlayer.addListener(PlayPositionUpdater(mainScope, exoPlayer, audiobooksDao))
         exoPlayer.addListener(PlayStopOnFaceDown(mainScope, exoPlayer, deviceMotionDetector))
+        exoPlayer.addListener(sleepTimer)
         mediaSession = MediaSession.Builder(this, exoPlayer)
             .setCallback(MediaSessionCallback())
             .build()

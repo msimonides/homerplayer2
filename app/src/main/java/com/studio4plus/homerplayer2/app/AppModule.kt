@@ -25,17 +25,24 @@
 package com.studio4plus.homerplayer2.app
 
 import android.content.Context
+import android.os.PowerManager
+import android.os.PowerManager.WakeLock
+import androidx.core.content.getSystemService
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.dataStoreFile
 import androidx.room.Room
+import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.app.data.StoredAppState
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksDatabase
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksModule
 import com.studio4plus.homerplayer2.onboarding.OnboardingModule
 import com.studio4plus.homerplayer2.player.PlayerModule
 import com.studio4plus.homerplayer2.settings.SettingsModule
+import com.studio4plus.homerplayer2.utils.Clock
+import com.studio4plus.homerplayer2.utils.DefaultClock
 import org.koin.core.annotation.ComponentScan
+import org.koin.core.annotation.Factory
 import org.koin.core.annotation.Module
 import org.koin.core.annotation.Named
 import org.koin.core.annotation.Single
@@ -60,9 +67,18 @@ class AppModule {
             appContext.dataStoreFile("$DATASTORE_APP_STATE.pb")
         }
 
-
     @Single(binds = [AppDatabase::class, AudiobooksDatabase::class])
     fun database(appContext: Context): AppDatabase =
         Room.databaseBuilder(appContext, AppDatabase::class.java, "app_database")
             .build()
+
+    @Factory
+    fun partialWakeLock(appContext: Context): WakeLock {
+        val powerManager: PowerManager = appContext.getSystemService()!!
+        val appTag = appContext.getString(R.string.app_tag)
+        return powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"$appTag:sleep timer")
+    }
+
+    @Factory(binds = [Clock::class])
+    fun defaultClock(): Clock = DefaultClock()
 }

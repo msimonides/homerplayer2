@@ -29,6 +29,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.dataStoreFile
 import com.studio4plus.homerplayer2.exoplayer.ExoplayerModule
+import com.studio4plus.homerplayer2.player.data.PlaybackSettings
 import com.studio4plus.homerplayer2.player.data.PlaybackUiState
 import com.studio4plus.homerplayer2.settings.SettingsModule
 import org.koin.core.annotation.ComponentScan
@@ -37,6 +38,7 @@ import org.koin.core.annotation.Named
 import org.koin.core.annotation.Single
 
 const val DATASTORE_PLAYBACK_UI_STATE = "playbackUiState"
+const val DATASTORE_PLAYBACK_SETTINGS = "playbackSettings"
 
 @Module(includes = [ExoplayerModule::class, SettingsModule::class])
 @ComponentScan("com.studio4plus.homerplayer2.player")
@@ -47,5 +49,12 @@ class PlayerModule {
     fun playbackUiStateDatastore(appContext: Context): DataStore<PlaybackUiState> =
         DataStoreFactory.create(PlaybackUiStateSerializer()) {
             appContext.dataStoreFile("$DATASTORE_PLAYBACK_UI_STATE.pb")
+        }
+
+    @Single
+    @Named(DATASTORE_PLAYBACK_SETTINGS)
+    fun playbackSettingsDatastore(appContext: Context): DataStore<PlaybackSettings> =
+        DataStoreFactory.create(PlaybackSettingsSerializer()) {
+            appContext.dataStoreFile("$DATASTORE_PLAYBACK_SETTINGS.pb")
         }
 }
