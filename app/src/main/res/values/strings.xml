@@ -4,6 +4,15 @@
 
     <string name="audiobook_folder_add_button">Add folder…</string>
 
+    <plurals name="battery_level_content_description">
+        <item quantity="one">battery %1$d percent</item>
+        <item quantity="other">battery %1$d percent</item>
+    </plurals>
+    <plurals name="battery_level_charging_content_description">
+        <item quantity="one">battery charging, %1$d percent</item>
+        <item quantity="other">battery charging, %1$d percent</item>
+    </plurals>
+
     <string name="browse_settings_button_accessibility_label">Settings</string>
 
     <string name="onboarding_audiobook_folders_title">Audiobooks</string>

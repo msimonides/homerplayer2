@@ -23,6 +23,8 @@ data class ExtendedColors(
     val controlVolume: Color,
     val controlFast: Color,
     val controlSeek: Color,
+    val batteryRegular: Color,
+    val batteryLow: Color
 )
 
 val LocalExtendedColors = staticCompositionLocalOf {
@@ -31,7 +33,9 @@ val LocalExtendedColors = staticCompositionLocalOf {
         controlStop = Color.Unspecified,
         controlVolume = Color.Unspecified,
         controlFast = Color.Unspecified,
-        controlSeek = Color.Unspecified
+        controlSeek = Color.Unspecified,
+        batteryRegular = Color.Unspecified,
+        batteryLow = Color.Unspecified
     )
 }
 
@@ -47,7 +51,10 @@ private val ExtendedDarkColors = ExtendedColors(
     controlStop = Color(0xffc31e1e),
     controlVolume = Color(0xffeeff00),
     controlFast = Color(0xff1e62f7),
-    controlSeek = Color(0xffffffff)
+    controlSeek = Color(0xffffffff),
+    // TODO: set proper colors
+    batteryRegular = Color(0xff00ff00),
+    batteryLow = Color(0xffff0000),
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -72,7 +79,10 @@ private val ExtendedLightColors = ExtendedColors(
     controlStop = Color(0xffc31e1e),
     controlVolume = Color(0xffe1d41e),
     controlFast = Color(0xff2a55b3),
-    controlSeek = Color(0xff000000)
+    controlSeek = Color(0xff000000),
+    // TODO: set proper colors
+    batteryRegular = Color(0xff00ff00),
+    batteryLow = Color(0xffff0000),
 )
 
 @Composable
