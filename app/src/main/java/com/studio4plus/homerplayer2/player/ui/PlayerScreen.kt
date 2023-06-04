@@ -25,16 +25,33 @@
 package com.studio4plus.homerplayer2.player.ui
 
 import android.content.res.Configuration
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.ui.theme.DefaultSpacing
 import org.koin.androidx.compose.koinViewModel
+
+private val SettingsButtonSize = 48.dp
+private val SettingsIconSize = 32.dp
 
 @Composable
 fun PlayerScreen(
@@ -52,33 +69,110 @@ fun PlayerScreen(
         }
     }
 
-    val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
-    when (val currentViewState = viewState.value) {
-        is PlayerViewModel.ViewState.Browse ->
-            BrowseBooks(
-                landscape = isLandscape,
-                modifier = modifier.fillMaxSize(),
-                books = currentViewState.books,
-                initialSelectedIndex = currentViewState.initialSelectedIndex,
-                onPlay = viewModel::play,
-                onPageChanged = viewModel::onPageChanged,
-                onOpenSettings = onOpenSettings
+    Box(modifier.fillMaxSize()) {
+        val isLandscape =
+            LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+        when (val currentViewState = viewState.value) {
+            is PlayerViewModel.ViewState.Browse -> {
+                BrowseBooks(
+                    landscape = isLandscape,
+                    modifier = Modifier.fillMaxSize(),
+                    books = currentViewState.books,
+                    initialSelectedIndex = currentViewState.initialSelectedIndex,
+                    onPlay = viewModel::play,
+                    onPageChanged = viewModel::onPageChanged,
+                )
+                val settingsButtonModifier =
+                    Modifier.fillMaxWidth().padding(DefaultSpacing.ScreenContentPadding, 4.dp)
+                SingleSettingsButton(
+                    onOpenSettings = onOpenSettings,
+                    modifier = if (isLandscape) {
+                        settingsButtonModifier
+                    } else {
+                        settingsButtonModifier.padding(end = ProgressIndicatorDefaults.width - (SettingsButtonSize - SettingsIconSize) / 2)
+                    }
+                )
+            }
+            is PlayerViewModel.ViewState.Playing ->
+                Playback(
+                    landscape = isLandscape,
+                    modifier = Modifier.fillMaxSize().padding(DefaultSpacing.ScreenContentPadding),
+                    progress = currentViewState.progress,
+                    playerActions = PlayerActions(
+                        onSeekForward = viewModel::seekForward,
+                        onSeekBack = viewModel::seekBack,
+                        onFastForward = viewModel::seekNext,
+                        onFastRewind = viewModel::seekPrevious,
+                        onStop = viewModel::stop,
+                        onVolumeUp = viewModel::volumeUp,
+                        onVolumeDown = viewModel::volumeDown
+                    ),
+                )
+
+            is PlayerViewModel.ViewState.Initializing -> Unit
+        }
+    }
+}
+
+// TODO: move the settings buttons to some separate composable
+@Composable
+private fun SingleSettingsButton(
+    onOpenSettings: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(modifier) {
+        IconButton(
+            onClick = onOpenSettings,
+            modifier = Modifier
+                .size(SettingsButtonSize)
+                .align(Alignment.TopEnd)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Settings,
+                contentDescription = stringResource(R.string.browse_settings_button_accessibility_label),
+                modifier = Modifier.size(SettingsIconSize)
             )
-        is PlayerViewModel.ViewState.Playing ->
-            Playback(
-                landscape = isLandscape,
-                modifier = modifier.fillMaxSize().padding(DefaultSpacing.ScreenContentPadding),
-                progress = currentViewState.progress,
-                playerActions = PlayerActions(
-                    onSeekForward = viewModel::seekForward,
-                    onSeekBack = viewModel::seekBack,
-                    onFastForward = viewModel::seekNext,
-                    onFastRewind = viewModel::seekPrevious,
-                    onStop = viewModel::stop,
-                    onVolumeUp = viewModel::volumeUp,
-                    onVolumeDown = viewModel::volumeDown
-                ),
-            )
-        is PlayerViewModel.ViewState.Initializing -> Unit
+        }
+    }
+}
+
+@Composable
+private fun DoubleSettingsButton(
+    isVisible: Boolean,
+    onOpenSettings: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val mainSettingsButtonInteractionSource = remember { MutableInteractionSource() }
+    val isMainSettingsButtonPressed = mainSettingsButtonInteractionSource.collectIsPressedAsState()
+    Box(modifier) {
+        IconButton(
+            onClick = {},
+            modifier = Modifier
+                .size(SettingsButtonSize)
+                .align(Alignment.TopEnd),
+            interactionSource = mainSettingsButtonInteractionSource
+        ) {
+            if (isVisible) {
+                Icon(
+                    imageVector = Icons.Default.Settings,
+                    contentDescription = stringResource(R.string.browse_settings_button_accessibility_label),
+                    modifier = Modifier.size(SettingsIconSize)
+                )
+            }
+        }
+        if (isMainSettingsButtonPressed.value) {
+            IconButton(
+                onClick = onOpenSettings,
+                modifier = Modifier
+                    .size(SettingsButtonSize)
+                    .align(Alignment.TopStart)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Settings,
+                    contentDescription = stringResource(R.string.browse_settings_button_accessibility_label),
+                    modifier = Modifier.size(SettingsIconSize)
+                )
+            }
+        }
     }
 }
