@@ -38,6 +38,7 @@
     <string name="playback_volume_down_button_description">Volume Down</string>
 
     <string name="settings_ui_full_kiosk_mode_label">Full kiosk mode</string>
+    <string name="settings_ui_hide_settings_button_label">Hide settings button</string>
     <string name="settings_ui_mode_label">Color scheme</string>
     <string name="settings_ui_dark">Dark</string>
     <string name="settings_ui_light">Light</string>

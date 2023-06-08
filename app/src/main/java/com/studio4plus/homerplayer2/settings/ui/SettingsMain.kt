@@ -69,6 +69,12 @@ fun SettingsMain(
                 onChange = { isEnabled -> viewModel.setFullKioskMode(isEnabled) },
                 modifier = settingItemModifier
             )
+            SettingSwitch(
+                label = stringResource(R.string.settings_ui_hide_settings_button_label),
+                value = viewState.hideSettingsButton,
+                onChange = { isEnabled -> viewModel.setHideSettingsButton(isEnabled) },
+                modifier = settingItemModifier
+            )
             SettingItem(
                 label = stringResource(R.string.settings_ui_mode_label),
                 summary = stringResource(viewState.uiMode.labelRes()),

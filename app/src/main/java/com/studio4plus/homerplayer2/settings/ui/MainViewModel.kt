@@ -29,6 +29,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.studio4plus.homerplayer2.app.data.UiSettings
 import com.studio4plus.homerplayer2.app.data.UiSettings.UiMode
+import com.studio4plus.homerplayer2.app.data.UiSettingsKt
 import com.studio4plus.homerplayer2.app.data.copy
 import com.studio4plus.homerplayer2.settings.DATASTORE_UI_SETTINGS
 import kotlinx.coroutines.CoroutineScope
@@ -47,25 +48,33 @@ class MainViewModel(
 
     class ViewState(
         val fullKioskMode: Boolean = false,
-        val uiMode: UiSettings.UiMode = UiSettings.UiMode.SYSTEM
+        val hideSettingsButton: Boolean = false,
+        val uiMode: UiMode = UiMode.SYSTEM
     )
 
     val viewState = uiSettingsStore.data.map {
         ViewState(
             fullKioskMode = it.fullKioskMode,
+            hideSettingsButton = it.hideSettingsButton,
             uiMode = it.uiMode
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
     fun setFullKioskMode(isEnabled: Boolean) {
-        mainScope.launch {
-            uiSettingsStore.updateData { it.copy { fullKioskMode = isEnabled } }
-        }
+        updateSetting { fullKioskMode = isEnabled }
+    }
+
+    fun setHideSettingsButton(isHidden: Boolean) {
+        updateSetting { hideSettingsButton = isHidden }
     }
 
     fun setUiMode(newUiMode: UiMode) {
+        updateSetting { uiMode = newUiMode }
+    }
+
+    private fun updateSetting(update: UiSettingsKt.Dsl.() -> Unit) {
         mainScope.launch {
-            uiSettingsStore.updateData { it.copy { uiMode = newUiMode } }
+            uiSettingsStore.updateData { it.copy(update) }
         }
     }
 }

@@ -24,34 +24,21 @@
 
 package com.studio4plus.homerplayer2.player.ui
 
-import android.content.ComponentName
-import android.content.Context
 import android.media.AudioManager
-import android.net.Uri
 import androidx.datastore.core.DataStore
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.media3.common.MediaItem
-import androidx.media3.common.MediaMetadata
-import androidx.media3.common.PlaybackException
-import androidx.media3.common.Player
-import androidx.media3.session.MediaController
-import androidx.media3.session.SessionToken
 import com.studio4plus.homerplayer2.app.data.UiSettings
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksDao
 import com.studio4plus.homerplayer2.battery.BatteryState
 import com.studio4plus.homerplayer2.battery.BatteryStateProvider
-import com.studio4plus.homerplayer2.core.DispatcherProvider
 import com.studio4plus.homerplayer2.player.PlaybackUiStateRepository
-import com.studio4plus.homerplayer2.player.service.PlaybackService
 import com.studio4plus.homerplayer2.settings.DATASTORE_UI_SETTINGS
 import com.studio4plus.homerplayer2.speech.Speaker
-import com.studio4plus.homerplayer2.utils.tickerFlow
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -60,14 +47,11 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.koin.android.annotation.KoinViewModel
 import org.koin.core.annotation.Named
-import timber.log.Timber
 
 @KoinViewModel
 class PlayerViewModel(
@@ -77,7 +61,7 @@ class PlayerViewModel(
     private val playbackUiStateRepository: PlaybackUiStateRepository,
     private val audioManager: AudioManager,
     private val speaker: Speaker,
-    private val batteryStateProvider: BatteryStateProvider,
+    batteryStateProvider: BatteryStateProvider,
 ) : ViewModel(), PlaybackController by playbackState, DefaultLifecycleObserver {
 
     data class AudiobookState(
@@ -111,12 +95,16 @@ class PlayerViewModel(
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), ViewState.Initializing)
 
-    // TODO: rething whether this should be nullable
+    // TODO: rethink whether this should be nullable
     val batteryState: StateFlow<BatteryState?> = batteryStateProvider.batteryState
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
     private val uiSettings = uiSettingsStore.data
         .stateIn(viewModelScope, SharingStarted.Eagerly, UiSettings.getDefaultInstance())
+
+    val hideSettingsButton: StateFlow<Boolean> = uiSettings.map {
+        it.hideSettingsButton
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
 
     override fun onStart(owner: LifecycleOwner) {
         viewModelScope.launch {
