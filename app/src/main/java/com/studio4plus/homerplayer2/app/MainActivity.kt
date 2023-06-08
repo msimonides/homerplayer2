@@ -29,6 +29,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
@@ -60,10 +62,10 @@ class MainActivity : AppCompatActivity() {
                 val viewState = activityViewModel.viewState.collectAsStateWithLifecycle().value
 
                 Surface {
-                    when (val state = viewState) {
+                    when (viewState) {
                         is MainActivityViewState.Loading -> Unit
                         is MainActivityViewState.Ready ->
-                            MainNavHost(needsOnboarding = state.needsOnboarding)
+                            MainNavHost(needsOnboarding = viewState.needsOnboarding)
                     }
                 }
             }
@@ -71,12 +73,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupLockTask() {
+        val windowInsetsControllerCompat = WindowInsetsControllerCompat(window, window.decorView)
         activityViewModel.lockTask
             .flowWithLifecycle(lifecycle, Lifecycle.State.RESUMED)
             .onEach { isEnabled ->
                 if (isEnabled) {
+                    windowInsetsControllerCompat.hide(WindowInsetsCompat.Type.statusBars())
                     startLockTask()
                 } else {
+                    windowInsetsControllerCompat.show(WindowInsetsCompat.Type.statusBars())
                     stopLockTask()
                 }
             }
