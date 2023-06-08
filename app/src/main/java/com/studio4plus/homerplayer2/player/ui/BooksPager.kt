@@ -24,7 +24,6 @@
 
 package com.studio4plus.homerplayer2.player.ui
 
-import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
@@ -33,7 +32,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -51,7 +49,10 @@ fun BooksPager(
     landscape: Boolean
 ) {
     val zeroPage = Int.MAX_VALUE / 2
-    val pagerState = rememberPagerState(zeroPage + initialSelectedIndex)
+    val pagerState = rememberPagerState(
+        initialPage = zeroPage + initialSelectedIndex,
+        pageCount = { if (books.isEmpty()) 0 else Int.MAX_VALUE }
+    )
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.currentPage }.collect { pageIndex ->
             val bookIndex = (pageIndex - zeroPage).floorMod(books.size)
@@ -59,7 +60,6 @@ fun BooksPager(
         }
     }
     HorizontalPager(
-        pageCount = if (books.isEmpty()) 0 else Int.MAX_VALUE,
         state = pagerState
     // TODO: set key
     ) { pageIndex ->
