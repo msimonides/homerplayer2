@@ -41,6 +41,8 @@ import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.studio4plus.homerplayer2.app.data.UiSettings
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksDao
+import com.studio4plus.homerplayer2.battery.BatteryState
+import com.studio4plus.homerplayer2.battery.BatteryStateProvider
 import com.studio4plus.homerplayer2.core.DispatcherProvider
 import com.studio4plus.homerplayer2.player.PlaybackUiStateRepository
 import com.studio4plus.homerplayer2.player.service.PlaybackService
@@ -75,6 +77,7 @@ class PlayerViewModel(
     private val playbackUiStateRepository: PlaybackUiStateRepository,
     private val audioManager: AudioManager,
     private val speaker: Speaker,
+    private val batteryStateProvider: BatteryStateProvider,
 ) : ViewModel(), PlaybackController by playbackState, DefaultLifecycleObserver {
 
     data class AudiobookState(
@@ -96,7 +99,6 @@ class PlayerViewModel(
         .map { books -> books.map { it.toAudiobook() } }
         .shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
 
-
     // TODO: there should be a better way to expose the currently played book
     private var playedAudiobook: Audiobook? = null
 
@@ -108,6 +110,10 @@ class PlayerViewModel(
             PlaybackState.MediaState.Playing -> playedBookProgressFlow().map { ViewState.Playing(it) }
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), ViewState.Initializing)
+
+    // TODO: rething whether this should be nullable
+    val batteryState: StateFlow<BatteryState?> = batteryStateProvider.batteryState
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
     private val uiSettings = uiSettingsStore.data
         .stateIn(viewModelScope, SharingStarted.Eagerly, UiSettings.getDefaultInstance())

@@ -27,7 +27,9 @@ package com.studio4plus.homerplayer2.player.ui
 import android.content.res.Configuration
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -47,6 +49,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studio4plus.homerplayer2.R
+import com.studio4plus.homerplayer2.battery.BatteryIcon
+import com.studio4plus.homerplayer2.battery.BatteryState
 import com.studio4plus.homerplayer2.ui.theme.DefaultSpacing
 import org.koin.androidx.compose.koinViewModel
 
@@ -59,7 +63,8 @@ fun PlayerScreen(
     modifier: Modifier = Modifier,
     viewModel: PlayerViewModel = koinViewModel()
 ) {
-    val viewState = viewModel.viewState.collectAsStateWithLifecycle()
+    val viewState = viewModel.viewState.collectAsStateWithLifecycle().value
+    val batteryState = viewModel.batteryState.collectAsStateWithLifecycle().value
 
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner.lifecycle) {
@@ -72,32 +77,24 @@ fun PlayerScreen(
     Box(modifier.fillMaxSize()) {
         val isLandscape =
             LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
-        when (val currentViewState = viewState.value) {
+        when (viewState) {
             is PlayerViewModel.ViewState.Browse -> {
                 BrowseBooks(
                     landscape = isLandscape,
                     modifier = Modifier.fillMaxSize(),
-                    books = currentViewState.books,
-                    initialSelectedIndex = currentViewState.initialSelectedIndex,
+                    books = viewState.books,
+                    initialSelectedIndex = viewState.initialSelectedIndex,
                     onPlay = viewModel::play,
                     onPageChanged = viewModel::onPageChanged,
                 )
-                val settingsButtonModifier =
-                    Modifier.fillMaxWidth().padding(DefaultSpacing.ScreenContentPadding, 4.dp)
-                SingleSettingsButton(
-                    onOpenSettings = onOpenSettings,
-                    modifier = if (isLandscape) {
-                        settingsButtonModifier
-                    } else {
-                        settingsButtonModifier.padding(end = ProgressIndicatorDefaults.width - (SettingsButtonSize - SettingsIconSize) / 2)
-                    }
-                )
             }
-            is PlayerViewModel.ViewState.Playing ->
+            is PlayerViewModel.ViewState.Playing -> {
                 Playback(
                     landscape = isLandscape,
-                    modifier = Modifier.fillMaxSize().padding(DefaultSpacing.ScreenContentPadding),
-                    progress = currentViewState.progress,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(DefaultSpacing.ScreenContentPadding),
+                    progress = viewState.progress,
                     playerActions = PlayerActions(
                         onSeekForward = viewModel::seekForward,
                         onSeekBack = viewModel::seekBack,
@@ -108,8 +105,50 @@ fun PlayerScreen(
                         onVolumeDown = viewModel::volumeDown
                     ),
                 )
+            }
 
             is PlayerViewModel.ViewState.Initializing -> Unit
+        }
+
+        val showSettingsButton = viewState is PlayerViewModel.ViewState.Browse
+        val portraitEndPadding =
+            if (isLandscape) 0.dp
+            else ProgressIndicatorDefaults.width + DefaultSpacing.ScreenContentPadding
+        TopControlsRow(
+            batteryState,
+            showSettingsButton,
+            onOpenSettings,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(end = portraitEndPadding)
+        )
+    }
+}
+
+@Composable
+private fun TopControlsRow(
+    batteryState: BatteryState?,
+    showSettingsButton: Boolean,
+    onOpenSettings: () -> Unit,
+    modifier: Modifier
+) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.End
+    ) {
+        if (showSettingsButton) {
+            SingleSettingsButton(
+                onOpenSettings = onOpenSettings,
+                modifier = Modifier.weight(1f)
+            )
+        }
+        if (batteryState != null) {
+            BatteryIcon(
+                batteryState,
+                modifier = Modifier
+                    .padding((SettingsButtonSize - SettingsIconSize) / 2)
+                    .size(SettingsIconSize)
+            )
         }
     }
 }

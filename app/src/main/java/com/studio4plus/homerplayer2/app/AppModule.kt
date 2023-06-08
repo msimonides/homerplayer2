@@ -36,6 +36,7 @@ import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.app.data.StoredAppState
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksDatabase
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksModule
+import com.studio4plus.homerplayer2.battery.BatteryModule
 import com.studio4plus.homerplayer2.onboarding.OnboardingModule
 import com.studio4plus.homerplayer2.player.PlayerModule
 import com.studio4plus.homerplayer2.settings.SettingsModule
@@ -52,6 +53,7 @@ const val DATASTORE_APP_STATE = "appState"
 @Module(
     includes = [
         AudiobooksModule::class,
+        BatteryModule::class,
         OnboardingModule::class,
         PlayerModule::class,
         SettingsModule::class

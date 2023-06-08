@@ -30,7 +30,7 @@ import android.content.IntentFilter
 import android.os.BatteryManager
 import androidx.core.content.ContextCompat
 import com.studio4plus.homerplayer2.utils.broadcastReceiver
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import org.koin.core.annotation.Factory
 
@@ -45,7 +45,6 @@ sealed interface BatteryState {
 class BatteryStateProvider(
     appContext: Context
 ) {
-    @OptIn(ExperimentalCoroutinesApi::class)
     val batteryState = callbackFlow {
         val intentFilter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
         val receiver = broadcastReceiver { channel.trySend(getBatteryState(it)) }
@@ -59,7 +58,7 @@ class BatteryStateProvider(
         if (initialState != null) {
             channel.send(getBatteryState(initialState))
         }
-        invokeOnClose { appContext.unregisterReceiver(receiver) }
+        awaitClose { appContext.unregisterReceiver(receiver) }
     }
 
     private fun getBatteryState(intent: Intent): BatteryState {

@@ -96,6 +96,7 @@ private fun VerticalBookPage(
                 modifier = Modifier
                     .weight(2f)
                     .align(Alignment.CenterHorizontally)
+                    .padding(top = 48.dp) // TODO: pass the padding from calling composables.
             )
             Box(Modifier.weight(1f).fillMaxSize(), content = button)
         }
