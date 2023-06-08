@@ -31,7 +31,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -41,7 +40,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.audiobooks.OpenAudiobooksTree
-import com.studio4plus.homerplayer2.ui.theme.DefaultSpacing
+import com.studio4plus.homerplayer2.ui.theme.HomerTheme
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -70,14 +69,14 @@ fun OnboardingAudiobookFoldersScreen(
                 },
                 secondaryLabel = R.string.onboarding_step_back,
                 onSecondary = navigateBack,
-                modifier = Modifier.padding(DefaultSpacing.ScreenContentPadding)
+                modifier = Modifier.padding(HomerTheme.dimensions.screenContentPadding)
             )
         }
     ) { paddingValues ->
         ScreenContent(
             modifier = Modifier
                 .padding(paddingValues)
-                .padding(DefaultSpacing.ScreenContentPadding),
+                .padding(HomerTheme.dimensions.screenContentPadding),
             currentViewState.folders,
             { openAudiobooksTree.launch(null) }
         )

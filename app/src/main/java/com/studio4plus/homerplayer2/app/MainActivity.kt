@@ -27,6 +27,7 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.Surface
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowInsetsCompat
@@ -91,8 +92,8 @@ class MainActivity : AppCompatActivity() {
 
 @Composable
 fun MainNavHost(
-    modifier: Modifier = Modifier,
     needsOnboarding: Boolean,
+    modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController()
 ) {
     // TODO: use constants instead of raw strings

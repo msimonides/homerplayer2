@@ -35,7 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.studio4plus.homerplayer2.ui.theme.DefaultSpacing
+import com.studio4plus.homerplayer2.ui.theme.HomerTheme
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -90,7 +90,7 @@ fun DefaultPreview() {
             PlayerViewModel.AudiobookState("3", "Romeo and Juliet", 0.9f),
         ),
         initialSelectedIndex = 1,
-        itemPadding = DefaultSpacing.ScreenContentPadding,
+        itemPadding = HomerTheme.dimensions.screenContentPadding,
         landscape = false,
         onPlay = {},
         onPageChanged = {}

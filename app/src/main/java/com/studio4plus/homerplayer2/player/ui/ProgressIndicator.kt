@@ -40,10 +40,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-
-object ProgressIndicatorDefaults {
-    val width = 12.dp
-}
+import com.studio4plus.homerplayer2.ui.theme.HomerTheme
 
 @Composable
 fun VerticalBookProgressIndicator(
@@ -56,7 +53,7 @@ fun VerticalBookProgressIndicator(
         modifier
             .progressSemantics(progress)
             .fillMaxHeight()
-            .width(ProgressIndicatorDefaults.width)
+            .width(HomerTheme.dimensions.progressIndicatorWidth)
     ) {
         val xOffset = size.width / 2
         val progressHeight = size.height * progress
@@ -101,7 +98,7 @@ fun HorizontalBookProgressIndicator(
         modifier
             .progressSemantics(progress)
             .fillMaxWidth()
-            .height(ProgressIndicatorDefaults.width)
+            .height(HomerTheme.dimensions.progressIndicatorWidth)
     ) {
         val yOffset = size.height / 2
         val progressWidth = size.width * progress

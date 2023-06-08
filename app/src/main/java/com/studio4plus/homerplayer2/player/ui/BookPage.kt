@@ -38,6 +38,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.studio4plus.homerplayer2.R
+import com.studio4plus.homerplayer2.ui.theme.HomerTheme
 
 @Composable
 fun BookPage(
@@ -96,7 +97,7 @@ private fun VerticalBookPage(
                 modifier = Modifier
                     .weight(2f)
                     .align(Alignment.CenterHorizontally)
-                    .padding(top = 48.dp) // TODO: pass the padding from calling composables.
+                    .padding(top = HomerTheme.dimensions.mainScreenIconSize) // TODO: pass the padding from calling composables.
             )
             Box(Modifier.weight(1f).fillMaxSize(), content = button)
         }

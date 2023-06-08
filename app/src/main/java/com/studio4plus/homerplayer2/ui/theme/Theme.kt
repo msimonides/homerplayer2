@@ -6,6 +6,10 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
@@ -13,8 +17,11 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
-import androidx.core.view.ViewCompat
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowInsetsControllerCompat
 
 @Immutable
 data class ExtendedColors(
@@ -27,7 +34,17 @@ data class ExtendedColors(
     val batteryLow: Color
 )
 
-val LocalExtendedColors = staticCompositionLocalOf {
+@Immutable
+data class Dimensions(
+    val labelSpacing: Dp,
+    val mainScreenButtonSize: Dp,
+    val mainScreenIconSize: Dp,
+    val progressIndicatorWidth: Dp,
+    val screenContentPadding: Dp,
+    val settingsRowMinHeight: Dp
+)
+
+private val LocalExtendedColors = staticCompositionLocalOf {
     ExtendedColors(
         controlPlay = Color.Unspecified,
         controlStop = Color.Unspecified,
@@ -85,23 +102,58 @@ private val ExtendedLightColors = ExtendedColors(
     batteryLow = Color(0xffff0000),
 )
 
+private val LocalDimensions = staticCompositionLocalOf {
+    Dimensions(
+        labelSpacing = Dp.Unspecified,
+        mainScreenButtonSize = Dp.Unspecified,
+        mainScreenIconSize = Dp.Unspecified,
+        progressIndicatorWidth = Dp.Unspecified,
+        screenContentPadding = Dp.Unspecified,
+        settingsRowMinHeight = Dp.Unspecified
+    )
+}
+
+private val RegularDimensions = Dimensions(
+    labelSpacing = 16.dp,
+    mainScreenButtonSize = 48.dp,
+    mainScreenIconSize = 32.dp,
+    progressIndicatorWidth = 8.dp,
+    screenContentPadding = 16.dp,
+    settingsRowMinHeight = 48.dp,
+)
+
+private val LargeScreenDimensions = Dimensions(
+    labelSpacing = 16.dp,
+    mainScreenButtonSize = 80.dp,
+    mainScreenIconSize = 64.dp,
+    progressIndicatorWidth = 16.dp,
+    screenContentPadding = 24.dp,
+    settingsRowMinHeight = 48.dp,
+)
+
 @Composable
 fun HomerPlayer2Theme(
     darkTheme: Boolean = isNightMode(),
+    largeScreen: Boolean = isLargeScreen(),
     content: @Composable () -> Unit
 ) {
     val materialColorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
     val homerColorScheme = if (darkTheme) ExtendedDarkColors else ExtendedLightColors
+    val dimensions = if (largeScreen) LargeScreenDimensions else RegularDimensions
 
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
-            (view.context as Activity).window.statusBarColor = materialColorScheme.primary.toArgb()
-            ViewCompat.getWindowInsetsController(view)?.isAppearanceLightStatusBars = darkTheme
+            val window = (view.context as Activity).window
+            window.statusBarColor = materialColorScheme.primary.toArgb()
+            WindowInsetsControllerCompat(window, view).isAppearanceLightStatusBars = darkTheme
         }
     }
 
-    CompositionLocalProvider(LocalExtendedColors provides homerColorScheme) {
+    CompositionLocalProvider(
+        LocalExtendedColors provides homerColorScheme,
+        LocalDimensions provides dimensions
+    ) {
         MaterialTheme(
             colorScheme = materialColorScheme,
             typography = Typography,
@@ -117,8 +169,19 @@ private fun isNightMode() = when (AppCompatDelegate.getDefaultNightMode()) {
     else -> isSystemInDarkTheme()
 }
 
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
+@Composable
+private fun isLargeScreen() =
+    calculateWindowSizeClass(LocalContext.current as Activity).let { windowSizeClass ->
+        windowSizeClass.heightSizeClass == WindowHeightSizeClass.Expanded ||
+                windowSizeClass.widthSizeClass == WindowWidthSizeClass.Expanded
+    }
+
 object HomerTheme {
     val colors: ExtendedColors
         @Composable
         get() = LocalExtendedColors.current
+    val dimensions: Dimensions
+        @Composable
+        get() = LocalDimensions.current
 }

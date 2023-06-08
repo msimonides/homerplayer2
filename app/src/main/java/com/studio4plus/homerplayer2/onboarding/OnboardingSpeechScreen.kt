@@ -40,11 +40,11 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.speech.TtsCheckContract
-import com.studio4plus.homerplayer2.ui.theme.DefaultSpacing
+import com.studio4plus.homerplayer2.ui.theme.HomerTheme
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -103,7 +103,7 @@ fun OnboardingSpeechScreen(
                 onNext = navigateNext,
                 secondaryLabel = R.string.onboarding_step_skip,
                 onSecondary = navigateNext,
-                modifier = Modifier.padding(DefaultSpacing.ScreenContentPadding)
+                modifier = Modifier.padding(HomerTheme.dimensions.screenContentPadding)
             )
         },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
@@ -111,7 +111,7 @@ fun OnboardingSpeechScreen(
         ScreenContent(
             modifier = Modifier
                 .padding(paddingValues)
-                .padding(DefaultSpacing.ScreenContentPadding),
+                .padding(HomerTheme.dimensions.screenContentPadding),
             showTtsSettings = currentViewState.showTtsSettings,
             readBookTitlesEnabled = currentViewState.readBookTitlesEnabled,
             speechInProgress = currentViewState.isSpeaking,
@@ -145,7 +145,7 @@ private fun ScreenContent(
                 .align(CenterHorizontally)
                 .width(IntrinsicSize.Max),
         ) {
-            Spacer(Modifier.height(Dp(24f)))
+            Spacer(Modifier.height(24.dp))
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.toggleable(
@@ -155,7 +155,7 @@ private fun ScreenContent(
                 )
             ) {
                 Switch(readBookTitlesEnabled, onCheckedChange = null)
-                Column(modifier = Modifier.padding(Dp(8f))) {
+                Column(modifier = Modifier.padding(8.dp)) {
                     Text(text = stringResource(id = R.string.onboarding_speech_tts_checkbox_label))
                     Text(
                         style = MaterialTheme.typography.labelSmall,
@@ -163,7 +163,7 @@ private fun ScreenContent(
                     )
                 }
             }
-            Spacer(Modifier.height(Dp(16f)))
+            Spacer(Modifier.height(16.dp))
 
             ButtonWithLoadingState(
                 onClick = onSayTestPhrase,
@@ -202,7 +202,7 @@ private fun ButtonWithLoadingState(
             CircularProgressIndicator(
                 modifier = Modifier.size(ButtonDefaults.IconSize),
                 color = LocalContentColor.current,
-                strokeWidth = Dp(2f)
+                strokeWidth = 2.dp
             )
         } else {
             Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing + ButtonDefaults.IconSize))

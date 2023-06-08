@@ -35,7 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
-import com.studio4plus.homerplayer2.ui.theme.DefaultSpacing
+import com.studio4plus.homerplayer2.ui.theme.HomerTheme
 
 @Composable
 fun RadioWithLabel(
@@ -53,7 +53,7 @@ fun RadioWithLabel(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(label, modifier = Modifier.weight(1f))
-        Spacer(modifier = Modifier.width(DefaultSpacing.LabelSpacing))
+        Spacer(modifier = Modifier.width(HomerTheme.dimensions.labelSpacing))
         RadioButton(selected = selected, onClick = null, modifier = Modifier.clearAndSetSemantics {})
     }
 }

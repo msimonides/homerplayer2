@@ -32,7 +32,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import com.studio4plus.homerplayer2.ui.theme.DefaultSpacing
+import com.studio4plus.homerplayer2.ui.theme.HomerTheme
 
 @Composable
 fun OnboardingNavigationButtons(
@@ -47,7 +47,7 @@ fun OnboardingNavigationButtons(
         TextButton(onClick = onSecondary) {
             Text(text = stringResource(id = secondaryLabel))
         }
-        Spacer(modifier = Modifier.width(DefaultSpacing.LabelSpacing))
+        Spacer(modifier = Modifier.width(HomerTheme.dimensions.labelSpacing))
         Button(onClick = onNext, enabled = nextEnabled) {
             Text(text = stringResource(id = nextLabel))
         }

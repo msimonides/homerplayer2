@@ -29,7 +29,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.studio4plus.homerplayer2.ui.theme.DefaultSpacing
+import com.studio4plus.homerplayer2.ui.theme.HomerTheme
 
 @Composable
 fun BrowseBooks(
@@ -44,7 +44,7 @@ fun BrowseBooks(
         BooksPager(
             landscape = landscape,
             modifier = Modifier.fillMaxSize(),
-            itemPadding = DefaultSpacing.ScreenContentPadding,
+            itemPadding = HomerTheme.dimensions.screenContentPadding,
             books = books,
             initialSelectedIndex = initialSelectedIndex,
             onPlay = onPlay,

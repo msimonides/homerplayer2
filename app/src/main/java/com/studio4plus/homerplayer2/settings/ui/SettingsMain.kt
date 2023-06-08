@@ -46,7 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.app.data.UiSettings.UiMode
-import com.studio4plus.homerplayer2.ui.theme.DefaultSpacing
+import com.studio4plus.homerplayer2.ui.theme.HomerTheme
 import org.koin.androidx.compose.koinViewModel
 import java.lang.IllegalArgumentException
 
@@ -61,8 +61,8 @@ fun SettingsMain(
         Column {
             val settingItemModifier = Modifier
                 .fillMaxWidth()
-                .heightIn(min = 48.dp)
-                .padding(DefaultSpacing.ScreenContentPadding, 0.dp)
+                .heightIn(min = HomerTheme.dimensions.settingsRowMinHeight)
+                .padding(horizontal = HomerTheme.dimensions.screenContentPadding)
             SettingSwitch(
                 label = stringResource(R.string.settings_ui_full_kiosk_mode_label),
                 value = viewState.fullKioskMode,

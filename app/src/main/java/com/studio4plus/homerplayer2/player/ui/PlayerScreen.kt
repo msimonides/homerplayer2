@@ -47,15 +47,13 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.times
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.battery.BatteryIcon
 import com.studio4plus.homerplayer2.battery.BatteryState
-import com.studio4plus.homerplayer2.ui.theme.DefaultSpacing
+import com.studio4plus.homerplayer2.ui.theme.HomerTheme
 import org.koin.androidx.compose.koinViewModel
-
-private val SettingsButtonSize = 48.dp
-private val SettingsIconSize = 32.dp
 
 @Composable
 fun PlayerScreen(
@@ -93,7 +91,7 @@ fun PlayerScreen(
                     landscape = isLandscape,
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(DefaultSpacing.ScreenContentPadding),
+                        .padding(HomerTheme.dimensions.screenContentPadding),
                     progress = viewState.progress,
                     playerActions = PlayerActions(
                         onSeekForward = viewModel::seekForward,
@@ -111,16 +109,19 @@ fun PlayerScreen(
         }
 
         val showSettingsButton = viewState is PlayerViewModel.ViewState.Browse
+        val controlsRegularPadding = with(HomerTheme.dimensions) {
+            (screenContentPadding - (mainScreenButtonSize - mainScreenIconSize)).coerceAtLeast(0.dp)
+        }
         val portraitEndPadding =
-            if (isLandscape) 0.dp
-            else ProgressIndicatorDefaults.width + DefaultSpacing.ScreenContentPadding
+            if (isLandscape) controlsRegularPadding
+            else with(HomerTheme.dimensions) { 0.5 * progressIndicatorWidth + 2 * screenContentPadding }
         TopControlsRow(
             batteryState,
             showSettingsButton,
             onOpenSettings,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(end = portraitEndPadding)
+                .padding(top = controlsRegularPadding, end = portraitEndPadding)
         )
     }
 }
@@ -143,12 +144,14 @@ private fun TopControlsRow(
             )
         }
         if (batteryState != null) {
-            BatteryIcon(
-                batteryState,
-                modifier = Modifier
-                    .padding((SettingsButtonSize - SettingsIconSize) / 2)
-                    .size(SettingsIconSize)
-            )
+            with(HomerTheme.dimensions) {
+                BatteryIcon(
+                    batteryState,
+                    modifier = Modifier
+                        .padding((mainScreenButtonSize - mainScreenIconSize) / 2)
+                        .size(mainScreenIconSize)
+                )
+            }
         }
     }
 }
@@ -163,13 +166,13 @@ private fun SingleSettingsButton(
         IconButton(
             onClick = onOpenSettings,
             modifier = Modifier
-                .size(SettingsButtonSize)
+                .size(HomerTheme.dimensions.mainScreenButtonSize)
                 .align(Alignment.TopEnd)
         ) {
             Icon(
                 imageVector = Icons.Default.Settings,
                 contentDescription = stringResource(R.string.browse_settings_button_accessibility_label),
-                modifier = Modifier.size(SettingsIconSize)
+                modifier = Modifier.size(HomerTheme.dimensions.mainScreenIconSize)
             )
         }
     }
@@ -187,7 +190,7 @@ private fun DoubleSettingsButton(
         IconButton(
             onClick = {},
             modifier = Modifier
-                .size(SettingsButtonSize)
+                .size(HomerTheme.dimensions.mainScreenButtonSize)
                 .align(Alignment.TopEnd),
             interactionSource = mainSettingsButtonInteractionSource
         ) {
@@ -195,7 +198,7 @@ private fun DoubleSettingsButton(
                 Icon(
                     imageVector = Icons.Default.Settings,
                     contentDescription = stringResource(R.string.browse_settings_button_accessibility_label),
-                    modifier = Modifier.size(SettingsIconSize)
+                    modifier = Modifier.size(HomerTheme.dimensions.mainScreenIconSize)
                 )
             }
         }
@@ -203,13 +206,13 @@ private fun DoubleSettingsButton(
             IconButton(
                 onClick = onOpenSettings,
                 modifier = Modifier
-                    .size(SettingsButtonSize)
+                    .size(HomerTheme.dimensions.mainScreenButtonSize)
                     .align(Alignment.TopStart)
             ) {
                 Icon(
                     imageVector = Icons.Default.Settings,
                     contentDescription = stringResource(R.string.browse_settings_button_accessibility_label),
-                    modifier = Modifier.size(SettingsIconSize)
+                    modifier = Modifier.size(HomerTheme.dimensions.mainScreenIconSize)
                 )
             }
         }
