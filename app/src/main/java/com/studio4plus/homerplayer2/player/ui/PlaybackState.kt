@@ -27,6 +27,7 @@ package com.studio4plus.homerplayer2.player.ui
 import android.content.ComponentName
 import android.content.Context
 import android.net.Uri
+import androidx.datastore.core.DataStore
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.PlaybackException
@@ -34,17 +35,21 @@ import androidx.media3.common.Player
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.studio4plus.homerplayer2.core.DispatcherProvider
+import com.studio4plus.homerplayer2.player.DATASTORE_PLAYBACK_SETTINGS
+import com.studio4plus.homerplayer2.player.PlaybackSettings
 import com.studio4plus.homerplayer2.player.service.PlaybackService
 import com.studio4plus.homerplayer2.utils.tickerFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.core.annotation.Factory
+import org.koin.core.annotation.Named
 import timber.log.Timber
 
 interface PlaybackController {
@@ -62,7 +67,8 @@ interface PlaybackController {
 class PlaybackState(
     mainScope: CoroutineScope,
     dispatcherProvider: DispatcherProvider,
-    appContext: Context
+    appContext: Context,
+    @Named(DATASTORE_PLAYBACK_SETTINGS) private val settings: DataStore<PlaybackSettings>,
 ) : PlaybackController {
 
     enum class MediaState {
@@ -123,7 +129,7 @@ class PlaybackState(
         }
     }
 
-    fun play(book: Audiobook) {
+    suspend fun play(book: Audiobook) {
         mediaController?.stop()
         mediaController?.let { controller ->
             controller.setMediaItems(book.toMediaItems())
@@ -131,9 +137,11 @@ class PlaybackState(
                 .setTitle(book.displayName)
                 .build()
             if (book.currentUri != null) {
+                val rewindOnResumeMs = settings.data.first().rewindOnResumeSeconds * 1_000
+                val resumePositionMs = (book.currentPositionMs - rewindOnResumeMs).coerceAtLeast(0)
                 controller.seekTo(
                     book.files.indexOfFirst { it.uri == book.currentUri },
-                    book.currentPositionMs
+                    resumePositionMs
                 )
             }
             controller.playWhenReady = true

@@ -27,12 +27,14 @@ package com.studio4plus.homerplayer2.settings.ui
 import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.studio4plus.homerplayer2.player.DATASTORE_PLAYBACK_SETTINGS
+import com.studio4plus.homerplayer2.player.PlaybackSettings
 import com.studio4plus.homerplayer2.settings.DATASTORE_UI_SETTINGS
 import com.studio4plus.homerplayer2.settings.UiSettings
 import com.studio4plus.homerplayer2.settings.UiThemeMode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
@@ -41,38 +43,48 @@ import org.koin.core.annotation.Named
 @KoinViewModel
 class MainViewModel(
     @Named(DATASTORE_UI_SETTINGS) private val uiSettingsStore: DataStore<UiSettings>,
+    @Named(DATASTORE_PLAYBACK_SETTINGS) private val playbackSettingsStore: DataStore<PlaybackSettings>,
     private val mainScope: CoroutineScope
 ) : ViewModel() {
 
     class ViewState(
         val fullKioskMode: Boolean = false,
         val hideSettingsButton: Boolean = false,
-        val uiMode: UiThemeMode = UiThemeMode.SYSTEM
+        val uiMode: UiThemeMode = UiThemeMode.SYSTEM,
+        val rewindOnResumeSeconds: Int = 0
     )
 
-    val viewState = uiSettingsStore.data.map {
+    val viewState = combine(
+        uiSettingsStore.data,
+        playbackSettingsStore.data
+    ) { uiSettings, playbackSettings ->
         ViewState(
-            fullKioskMode = it.fullKioskMode,
-            hideSettingsButton = it.hideSettingsButton,
-            uiMode = it.uiThemeMode
+            fullKioskMode = uiSettings.fullKioskMode,
+            hideSettingsButton = uiSettings.hideSettingsButton,
+            uiMode = uiSettings.uiThemeMode,
+            rewindOnResumeSeconds = playbackSettings.rewindOnResumeSeconds
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
     fun setFullKioskMode(isEnabled: Boolean) {
-        updateSetting { it.copy(fullKioskMode = isEnabled) }
+        update(uiSettingsStore) { it.copy(fullKioskMode = isEnabled) }
     }
 
     fun setHideSettingsButton(isHidden: Boolean) {
-        updateSetting { it.copy(hideSettingsButton = isHidden) }
+        update(uiSettingsStore) { it.copy(hideSettingsButton = isHidden) }
     }
 
     fun setUiMode(newUiMode: UiThemeMode) {
-        updateSetting { it.copy(uiThemeMode = newUiMode) }
+        update(uiSettingsStore) { it.copy(uiThemeMode = newUiMode) }
     }
 
-    private fun updateSetting(update: (UiSettings) -> UiSettings) {
+    fun setRewindOnResumeSeconds(seconds: Int) {
+        update(playbackSettingsStore) { it.copy(rewindOnResumeSeconds = seconds)}
+    }
+
+    private fun <T> update(store: DataStore<T>, update: (T) -> T) {
         mainScope.launch {
-            uiSettingsStore.updateData(update)
+            store.updateData(update)
         }
     }
 }

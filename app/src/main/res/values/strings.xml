@@ -43,6 +43,12 @@
     <string name="settings_ui_dark">Dark</string>
     <string name="settings_ui_light">Light</string>
     <string name="settings_ui_system">System</string>
+    <string name="settings_playback_rewind_on_resume_label">Rewind when resuming playback</string>
+    <string name="settings_playback_rewind_on_resume_setting_disabled">Disabled</string>
+    <plurals name="settings_playback_rewind_on_resume_setting">
+        <item quantity="one">%1$d second</item>
+        <item quantity="other">%1$d seconds</item>
+    </plurals>
 
     <string name="speech_init_say_failed">Playing test phrase failed. Check your text-to-speech settings.</string>
     <string name="speech_init_tts_error">Unable to initialize text-to-speech. Try a different TTS engine.</string>
