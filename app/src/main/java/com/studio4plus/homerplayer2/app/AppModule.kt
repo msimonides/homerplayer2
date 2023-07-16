@@ -29,19 +29,22 @@ import android.os.PowerManager
 import android.os.PowerManager.WakeLock
 import androidx.core.content.getSystemService
 import androidx.datastore.core.DataStore
-import androidx.datastore.core.DataStoreFactory
-import androidx.datastore.dataStoreFile
 import androidx.room.Room
 import com.studio4plus.homerplayer2.R
-import com.studio4plus.homerplayer2.app.data.StoredAppState
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksDatabase
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksModule
 import com.studio4plus.homerplayer2.battery.BatteryModule
+import com.studio4plus.homerplayer2.core.CoreModule
+import com.studio4plus.homerplayer2.core.DispatcherProvider
+import com.studio4plus.homerplayer2.loccalstorage.LOCAL_STORAGE_JSON
+import com.studio4plus.homerplayer2.loccalstorage.LocalStorageModule
+import com.studio4plus.homerplayer2.loccalstorage.createDataStore
 import com.studio4plus.homerplayer2.onboarding.OnboardingModule
 import com.studio4plus.homerplayer2.player.PlayerModule
 import com.studio4plus.homerplayer2.settings.SettingsModule
 import com.studio4plus.homerplayer2.utils.Clock
 import com.studio4plus.homerplayer2.utils.DefaultClock
+import kotlinx.serialization.json.Json
 import org.koin.core.annotation.ComponentScan
 import org.koin.core.annotation.Factory
 import org.koin.core.annotation.Module
@@ -54,6 +57,8 @@ const val DATASTORE_APP_STATE = "appState"
     includes = [
         AudiobooksModule::class,
         BatteryModule::class,
+        CoreModule::class,
+        LocalStorageModule::class,
         OnboardingModule::class,
         PlayerModule::class,
         SettingsModule::class
@@ -64,10 +69,19 @@ class AppModule {
 
     @Single
     @Named(DATASTORE_APP_STATE)
-    fun appStateDatastore(appContext: Context): DataStore<StoredAppState> =
-        DataStoreFactory.create(StoredAppStateSerializer()) {
-            appContext.dataStoreFile("$DATASTORE_APP_STATE.pb")
-        }
+    fun appStateDatastore(
+        appContext: Context,
+        dispatcherProvider: DispatcherProvider,
+        @Named(LOCAL_STORAGE_JSON) json: Json
+    ): DataStore<StoredAppState> =
+        createDataStore(
+            appContext,
+            dispatcherProvider,
+            json,
+            DATASTORE_APP_STATE,
+            StoredAppState(),
+            StoredAppState.serializer()
+        )
 
     @Single(binds = [AppDatabase::class, AudiobooksDatabase::class])
     fun database(appContext: Context): AppDatabase =

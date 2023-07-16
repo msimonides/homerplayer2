@@ -29,9 +29,8 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.studio4plus.homerplayer2.app.data.StoredAppState
-import com.studio4plus.homerplayer2.app.data.UiSettings
 import com.studio4plus.homerplayer2.settings.DATASTORE_UI_SETTINGS
+import com.studio4plus.homerplayer2.settings.UiSettings
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Marcin Simonides
+ * Copyright (c) 2023 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,33 +22,11 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.app
+package com.studio4plus.homerplayer2.player
 
-import androidx.datastore.core.DataStore
-import com.studio4plus.homerplayer2.onboarding.OnboardingDelegate
-import com.studio4plus.homerplayer2.settings.DATASTORE_UI_SETTINGS
-import com.studio4plus.homerplayer2.settings.UiSettings
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import org.koin.core.annotation.Factory
-import org.koin.core.annotation.Named
+import kotlinx.serialization.Serializable
 
-@Factory
-class AppOnboardingDelegate(
-    private val mainScope: CoroutineScope,
-    @Named(DATASTORE_APP_STATE) private val appStateStore: DataStore<StoredAppState>,
-    @Named(DATASTORE_UI_SETTINGS) private val uiSettingsStore: DataStore<UiSettings>
-) : OnboardingDelegate {
-
-    override fun onOnboardingFinished() {
-        mainScope.launch {
-            appStateStore.updateData { it.copy(onboardingCompleted = true) }
-        }
-    }
-
-    override fun onReadBookTitlesSet(isEnabled: Boolean) {
-        mainScope.launch {
-            uiSettingsStore.updateData { it.copy(readBookTitles = isEnabled) }
-        }
-    }
-}
+@Serializable
+data class PlaybackSettings(
+    val sleepTimerSeconds: Int = 0
+)

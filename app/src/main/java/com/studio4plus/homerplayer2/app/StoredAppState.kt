@@ -22,26 +22,11 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.player
+package com.studio4plus.homerplayer2.app
 
-import androidx.datastore.core.CorruptionException
-import androidx.datastore.core.Serializer
-import com.studio4plus.homerplayer2.player.data.PlaybackSettings
-import java.io.InputStream
-import java.io.OutputStream
-import java.util.InvalidPropertiesFormatException
+import kotlinx.serialization.Serializable
 
-class PlaybackSettingsSerializer : Serializer<PlaybackSettings> {
-    override val defaultValue: PlaybackSettings = PlaybackSettings.getDefaultInstance()
-
-    override suspend fun readFrom(input: InputStream): PlaybackSettings =
-        try {
-            PlaybackSettings.parseFrom(input)
-        } catch (exception: InvalidPropertiesFormatException) {
-            throw CorruptionException("Cannot read proto.", exception)
-        }
-
-    override suspend fun writeTo(t: PlaybackSettings, output: OutputStream) {
-        t.writeTo(output)
-    }
-}
+@Serializable
+data class StoredAppState(
+    val onboardingCompleted: Boolean = false
+)

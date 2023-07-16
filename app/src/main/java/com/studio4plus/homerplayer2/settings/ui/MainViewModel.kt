@@ -27,11 +27,9 @@ package com.studio4plus.homerplayer2.settings.ui
 import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.studio4plus.homerplayer2.app.data.UiSettings
-import com.studio4plus.homerplayer2.app.data.UiSettings.UiMode
-import com.studio4plus.homerplayer2.app.data.UiSettingsKt
-import com.studio4plus.homerplayer2.app.data.copy
 import com.studio4plus.homerplayer2.settings.DATASTORE_UI_SETTINGS
+import com.studio4plus.homerplayer2.settings.UiSettings
+import com.studio4plus.homerplayer2.settings.UiThemeMode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
@@ -49,32 +47,32 @@ class MainViewModel(
     class ViewState(
         val fullKioskMode: Boolean = false,
         val hideSettingsButton: Boolean = false,
-        val uiMode: UiMode = UiMode.SYSTEM
+        val uiMode: UiThemeMode = UiThemeMode.SYSTEM
     )
 
     val viewState = uiSettingsStore.data.map {
         ViewState(
             fullKioskMode = it.fullKioskMode,
             hideSettingsButton = it.hideSettingsButton,
-            uiMode = it.uiMode
+            uiMode = it.uiThemeMode
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
     fun setFullKioskMode(isEnabled: Boolean) {
-        updateSetting { fullKioskMode = isEnabled }
+        updateSetting { it.copy(fullKioskMode = isEnabled) }
     }
 
     fun setHideSettingsButton(isHidden: Boolean) {
-        updateSetting { hideSettingsButton = isHidden }
+        updateSetting { it.copy(hideSettingsButton = isHidden) }
     }
 
-    fun setUiMode(newUiMode: UiMode) {
-        updateSetting { uiMode = newUiMode }
+    fun setUiMode(newUiMode: UiThemeMode) {
+        updateSetting { it.copy(uiThemeMode = newUiMode) }
     }
 
-    private fun updateSetting(update: UiSettingsKt.Dsl.() -> Unit) {
+    private fun updateSetting(update: (UiSettings) -> UiSettings) {
         mainScope.launch {
-            uiSettingsStore.updateData { it.copy(update) }
+            uiSettingsStore.updateData(update)
         }
     }
 }

@@ -22,27 +22,19 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.player
+package com.studio4plus.homerplayer2.settings
 
-import androidx.datastore.core.CorruptionException
-import androidx.datastore.core.Serializer
-import com.google.protobuf.InvalidProtocolBufferException
-import com.studio4plus.homerplayer2.player.data.PlaybackUiState
-import java.io.InputStream
-import java.io.OutputStream
+import kotlinx.serialization.Serializable
 
-class PlaybackUiStateSerializer : Serializer<PlaybackUiState> {
-    override val defaultValue: PlaybackUiState = PlaybackUiState.getDefaultInstance()
-
-    override suspend fun readFrom(input: InputStream): PlaybackUiState =
-        try {
-            PlaybackUiState.parseFrom(input)
-        } catch (exception: InvalidProtocolBufferException) {
-            throw CorruptionException("Cannot read proto.", exception)
-        }
-
-    override suspend fun writeTo(t: PlaybackUiState, output: OutputStream) {
-        t.writeTo(output)
-    }
-
+@Serializable
+enum class UiThemeMode {
+    SYSTEM, LIGHT, DARK
 }
+
+@Serializable
+data class UiSettings(
+    val fullKioskMode: Boolean = false,
+    val hideSettingsButton: Boolean = false,
+    val readBookTitles: Boolean = false,
+    val uiThemeMode: UiThemeMode = UiThemeMode.SYSTEM,
+)

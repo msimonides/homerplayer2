@@ -26,9 +26,11 @@ package com.studio4plus.homerplayer2.settings
 
 import android.content.Context
 import androidx.datastore.core.DataStore
-import androidx.datastore.core.DataStoreFactory
-import androidx.datastore.dataStoreFile
-import com.studio4plus.homerplayer2.app.data.UiSettings
+import com.studio4plus.homerplayer2.core.DispatcherProvider
+import com.studio4plus.homerplayer2.loccalstorage.LOCAL_STORAGE_JSON
+import com.studio4plus.homerplayer2.loccalstorage.LocalStorageModule
+import com.studio4plus.homerplayer2.loccalstorage.createDataStore
+import kotlinx.serialization.json.Json
 import org.koin.core.annotation.ComponentScan
 import org.koin.core.annotation.Module
 import org.koin.core.annotation.Named
@@ -36,14 +38,23 @@ import org.koin.core.annotation.Single
 
 const val DATASTORE_UI_SETTINGS = "uiSettings"
 
-@Module
+@Module(includes = [LocalStorageModule::class])
 @ComponentScan("com.studio4plus.homerplayer2.settings")
 class SettingsModule {
 
     @Single
     @Named(DATASTORE_UI_SETTINGS)
-    fun uiSettingsDatastore(appContext: Context): DataStore<UiSettings> =
-        DataStoreFactory.create(UiSettingsSerializer()) {
-            appContext.dataStoreFile("$DATASTORE_UI_SETTINGS.pb")
-        }
+    fun uiSettingsDatastore(
+        appContext: Context,
+        dispatcherProvider: DispatcherProvider,
+        @Named(LOCAL_STORAGE_JSON) json: Json
+    ): DataStore<UiSettings> =
+        createDataStore(
+            appContext,
+            dispatcherProvider,
+            json,
+            DATASTORE_UI_SETTINGS,
+            UiSettings(),
+            UiSettings.serializer()
+        )
 }

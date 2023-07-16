@@ -29,8 +29,8 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.pm.PackageManager
 import androidx.datastore.core.DataStore
-import com.studio4plus.homerplayer2.app.data.UiSettings
 import com.studio4plus.homerplayer2.settings.DATASTORE_UI_SETTINGS
+import com.studio4plus.homerplayer2.settings.UiSettings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map

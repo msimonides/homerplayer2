@@ -25,8 +25,6 @@
 package com.studio4plus.homerplayer2.player
 
 import androidx.datastore.core.DataStore
-import com.studio4plus.homerplayer2.player.data.PlaybackUiState
-import com.studio4plus.homerplayer2.player.data.copy
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -45,7 +43,7 @@ class PlaybackUiStateRepository(
 
     fun updateLastSelectedBookId(bookId: String) {
         mainScope.launch {
-            playbackUiState.updateData { it.copy { lastSelectedBookId = bookId } }
+            playbackUiState.updateData { it.copy(lastSelectedBookId = bookId) }
         }
     }
 }

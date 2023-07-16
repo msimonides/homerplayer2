@@ -30,12 +30,12 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.studio4plus.homerplayer2.app.data.UiSettings
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksDao
 import com.studio4plus.homerplayer2.battery.BatteryState
 import com.studio4plus.homerplayer2.battery.BatteryStateProvider
 import com.studio4plus.homerplayer2.player.PlaybackUiStateRepository
 import com.studio4plus.homerplayer2.settings.DATASTORE_UI_SETTINGS
+import com.studio4plus.homerplayer2.settings.UiSettings
 import com.studio4plus.homerplayer2.speech.Speaker
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -100,7 +100,7 @@ class PlayerViewModel(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
     private val uiSettings = uiSettingsStore.data
-        .stateIn(viewModelScope, SharingStarted.Eagerly, UiSettings.getDefaultInstance())
+        .stateIn(viewModelScope, SharingStarted.Eagerly, UiSettings())
 
     val hideSettingsButton: StateFlow<Boolean> = uiSettings.map {
         it.hideSettingsButton

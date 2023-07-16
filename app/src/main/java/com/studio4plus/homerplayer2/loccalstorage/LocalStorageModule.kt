@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Marcin Simonides
+ * Copyright (c) 2023 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,33 +22,45 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.app
+package com.studio4plus.homerplayer2.loccalstorage
 
+import android.content.Context
 import androidx.datastore.core.DataStore
-import com.studio4plus.homerplayer2.onboarding.OnboardingDelegate
-import com.studio4plus.homerplayer2.settings.DATASTORE_UI_SETTINGS
-import com.studio4plus.homerplayer2.settings.UiSettings
+import androidx.datastore.core.DataStoreFactory
+import androidx.datastore.dataStoreFile
+import com.studio4plus.homerplayer2.core.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.json.Json
+import org.koin.core.annotation.ComponentScan
 import org.koin.core.annotation.Factory
+import org.koin.core.annotation.Module
 import org.koin.core.annotation.Named
+import org.koin.core.annotation.Single
 
-@Factory
-class AppOnboardingDelegate(
-    private val mainScope: CoroutineScope,
-    @Named(DATASTORE_APP_STATE) private val appStateStore: DataStore<StoredAppState>,
-    @Named(DATASTORE_UI_SETTINGS) private val uiSettingsStore: DataStore<UiSettings>
-) : OnboardingDelegate {
+internal const val LOCAL_STORAGE_JSON = "localstorage_json"
 
-    override fun onOnboardingFinished() {
-        mainScope.launch {
-            appStateStore.updateData { it.copy(onboardingCompleted = true) }
-        }
-    }
+@Module
+@ComponentScan("com.studio4plus.homerplayer2.localstorage")
+class LocalStorageModule {
 
-    override fun onReadBookTitlesSet(isEnabled: Boolean) {
-        mainScope.launch {
-            uiSettingsStore.updateData { it.copy(readBookTitles = isEnabled) }
-        }
+    @Single
+    @Named(LOCAL_STORAGE_JSON)
+    fun json() = Json {
+        ignoreUnknownKeys = true
     }
 }
+
+fun <T> createDataStore(
+    appContext: Context,
+    dispatcherProvider: DispatcherProvider,
+    json: Json,
+    name: String,
+    defaultValue: T,
+    serializer: KSerializer<T>
+): DataStore<T> = DataStoreFactory.create(
+    DataStoreJsonSerializer(defaultValue, serializer, json),
+    scope = CoroutineScope(dispatcherProvider.Io + SupervisorJob()),
+    produceFile = { appContext.dataStoreFile(name) }
+)

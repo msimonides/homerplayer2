@@ -29,7 +29,7 @@ import androidx.datastore.core.DataStore
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import com.studio4plus.homerplayer2.player.DATASTORE_PLAYBACK_SETTINGS
-import com.studio4plus.homerplayer2.player.data.PlaybackSettings
+import com.studio4plus.homerplayer2.player.PlaybackSettings
 import com.studio4plus.homerplayer2.utils.Clock
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job

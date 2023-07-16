@@ -45,10 +45,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studio4plus.homerplayer2.R
-import com.studio4plus.homerplayer2.app.data.UiSettings.UiMode
+import com.studio4plus.homerplayer2.settings.UiThemeMode
 import com.studio4plus.homerplayer2.ui.theme.HomerTheme
 import org.koin.androidx.compose.koinViewModel
-import java.lang.IllegalArgumentException
 
 
 @Composable
@@ -98,8 +97,8 @@ fun SettingsMain(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ChooseUiModeDialog(
-    value: UiMode,
-    onValueChange: (UiMode) -> Unit,
+    value: UiThemeMode,
+    onValueChange: (UiThemeMode) -> Unit,
     onDismissRequest: () -> Unit
 ) {
     AlertDialog(
@@ -120,7 +119,7 @@ private fun ChooseUiModeDialog(
                     style = MaterialTheme.typography.headlineSmall,
                     modifier = Modifier.padding(bottom = 16.dp, start = 24.dp, end = 24.dp)
                 )
-                arrayOf(UiMode.SYSTEM, UiMode.LIGHT, UiMode.DARK).forEach { uiMode ->
+                arrayOf(UiThemeMode.SYSTEM, UiThemeMode.LIGHT, UiThemeMode.DARK).forEach { uiMode ->
                     RadioWithLabel(
                         label = stringResource(uiMode.labelRes()),
                         selected = value == uiMode,
@@ -133,9 +132,8 @@ private fun ChooseUiModeDialog(
     }
 }
 
-private fun UiMode.labelRes() = when(this) {
-    UiMode.SYSTEM -> R.string.settings_ui_system
-    UiMode.LIGHT -> R.string.settings_ui_light
-    UiMode.DARK -> R.string.settings_ui_dark
-    UiMode.UNRECOGNIZED -> throw IllegalArgumentException("Invalid UI mode")
+private fun UiThemeMode.labelRes() = when(this) {
+    UiThemeMode.SYSTEM -> R.string.settings_ui_system
+    UiThemeMode.LIGHT -> R.string.settings_ui_light
+    UiThemeMode.DARK -> R.string.settings_ui_dark
 }

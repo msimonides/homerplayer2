@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Marcin Simonides
+ * Copyright (c) 2023 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,27 +22,34 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.app
+package com.studio4plus.homerplayer2.loccalstorage
 
 import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.Serializer
-import com.google.protobuf.InvalidProtocolBufferException
-import com.studio4plus.homerplayer2.app.data.StoredAppState
-import org.koin.core.annotation.Factory
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromStream
+import kotlinx.serialization.json.encodeToStream
+import org.koin.core.annotation.Named
 import java.io.InputStream
 import java.io.OutputStream
 
-class StoredAppStateSerializer : Serializer<StoredAppState> {
-    override val defaultValue: StoredAppState = StoredAppState.getDefaultInstance()
+@OptIn(ExperimentalSerializationApi::class)
+class DataStoreJsonSerializer<T>(
+    override val defaultValue: T,
+    private val serializer: KSerializer<T>,
+    @Named(LOCAL_STORAGE_JSON) private val json: Json
+) : Serializer<T> {
 
-    override suspend fun readFrom(input: InputStream): StoredAppState =
+    override suspend fun readFrom(input: InputStream): T =
         try {
-            StoredAppState.parseFrom(input)
-        } catch (exception: InvalidProtocolBufferException) {
-            throw CorruptionException("Cannot read proto.", exception)
+            json.decodeFromStream(serializer, input)
+        } catch (e: Throwable) {
+            throw CorruptionException("Unable to read datastore", e)
         }
 
-    override suspend fun writeTo(t: StoredAppState, output: OutputStream) {
-        t.writeTo(output)
+    override suspend fun writeTo(t: T, output: OutputStream) {
+        json.encodeToStream(serializer, t, output)
     }
 }

@@ -29,16 +29,15 @@ import android.content.Context
 import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.datastore.core.DataStore
-import com.studio4plus.homerplayer2.app.data.UiSettings
-import com.studio4plus.homerplayer2.app.data.UiSettings.UiMode
 import com.studio4plus.homerplayer2.settings.DATASTORE_UI_SETTINGS
+import com.studio4plus.homerplayer2.settings.UiSettings
+import com.studio4plus.homerplayer2.settings.UiThemeMode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import org.koin.core.annotation.Named
 import org.koin.core.annotation.Single
-import java.lang.IllegalArgumentException
 
 @Single(createdAtStart = true)
 class SetUiMode(
@@ -47,7 +46,7 @@ class SetUiMode(
     @Named(DATASTORE_UI_SETTINGS) uiSettings: DataStore<UiSettings>
 ) {
     private val uiModeFlow = uiSettings.data.map {
-        it.uiMode
+        it.uiThemeMode
     }
 
     init {
@@ -63,17 +62,15 @@ class SetUiMode(
             }.launchIn(mainScope)
     }
 
-    private fun UiMode.toNightMode() = when (this) {
-        UiMode.SYSTEM -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
-        UiMode.LIGHT -> AppCompatDelegate.MODE_NIGHT_NO
-        UiMode.DARK -> AppCompatDelegate.MODE_NIGHT_YES
-        UiMode.UNRECOGNIZED -> throw IllegalArgumentException("Invalid UI mode")
+    private fun UiThemeMode.toNightMode() = when (this) {
+        UiThemeMode.SYSTEM -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+        UiThemeMode.LIGHT -> AppCompatDelegate.MODE_NIGHT_NO
+        UiThemeMode.DARK -> AppCompatDelegate.MODE_NIGHT_YES
     }
 
-    private fun UiMode.toApplicationNightMode() = when (this) {
-        UiMode.SYSTEM -> UiModeManager.MODE_NIGHT_AUTO
-        UiMode.LIGHT -> UiModeManager.MODE_NIGHT_NO
-        UiMode.DARK -> UiModeManager.MODE_NIGHT_YES
-        UiMode.UNRECOGNIZED -> throw IllegalArgumentException("Invalid UI mode")
+    private fun UiThemeMode.toApplicationNightMode() = when (this) {
+        UiThemeMode.SYSTEM -> UiModeManager.MODE_NIGHT_AUTO
+        UiThemeMode.LIGHT -> UiModeManager.MODE_NIGHT_NO
+        UiThemeMode.DARK -> UiModeManager.MODE_NIGHT_YES
     }
 }

@@ -1,7 +1,0 @@
-syntax = "proto3";
-option java_package = "com.studio4plus.homerplayer2.player.data";
-option java_multiple_files = true;
-
-message PlaybackSettings {
-  int32 sleep_timer_seconds = 1;
-}

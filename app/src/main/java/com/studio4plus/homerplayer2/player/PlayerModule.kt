@@ -26,12 +26,13 @@ package com.studio4plus.homerplayer2.player
 
 import android.content.Context
 import androidx.datastore.core.DataStore
-import androidx.datastore.core.DataStoreFactory
-import androidx.datastore.dataStoreFile
+import com.studio4plus.homerplayer2.core.DispatcherProvider
 import com.studio4plus.homerplayer2.exoplayer.ExoplayerModule
-import com.studio4plus.homerplayer2.player.data.PlaybackSettings
-import com.studio4plus.homerplayer2.player.data.PlaybackUiState
+import com.studio4plus.homerplayer2.loccalstorage.LOCAL_STORAGE_JSON
+import com.studio4plus.homerplayer2.loccalstorage.LocalStorageModule
+import com.studio4plus.homerplayer2.loccalstorage.createDataStore
 import com.studio4plus.homerplayer2.settings.SettingsModule
+import kotlinx.serialization.json.Json
 import org.koin.core.annotation.ComponentScan
 import org.koin.core.annotation.Module
 import org.koin.core.annotation.Named
@@ -40,21 +41,39 @@ import org.koin.core.annotation.Single
 const val DATASTORE_PLAYBACK_UI_STATE = "playbackUiState"
 const val DATASTORE_PLAYBACK_SETTINGS = "playbackSettings"
 
-@Module(includes = [ExoplayerModule::class, SettingsModule::class])
+@Module(includes = [ExoplayerModule::class, LocalStorageModule::class, SettingsModule::class])
 @ComponentScan("com.studio4plus.homerplayer2.player")
 class PlayerModule {
 
     @Single
     @Named(DATASTORE_PLAYBACK_UI_STATE)
-    fun playbackUiStateDatastore(appContext: Context): DataStore<PlaybackUiState> =
-        DataStoreFactory.create(PlaybackUiStateSerializer()) {
-            appContext.dataStoreFile("$DATASTORE_PLAYBACK_UI_STATE.pb")
-        }
+    fun playbackUiStateDatastore(
+        appContext: Context,
+        dispatcherProvider: DispatcherProvider,
+        @Named(LOCAL_STORAGE_JSON) json: Json
+    ): DataStore<PlaybackUiState> =
+        createDataStore(
+            appContext,
+            dispatcherProvider,
+            json,
+            DATASTORE_PLAYBACK_UI_STATE,
+            PlaybackUiState(),
+            PlaybackUiState.serializer()
+        )
 
     @Single
     @Named(DATASTORE_PLAYBACK_SETTINGS)
-    fun playbackSettingsDatastore(appContext: Context): DataStore<PlaybackSettings> =
-        DataStoreFactory.create(PlaybackSettingsSerializer()) {
-            appContext.dataStoreFile("$DATASTORE_PLAYBACK_SETTINGS.pb")
-        }
+    fun playbackSettingsDatastore(
+        appContext: Context,
+        dispatcherProvider: DispatcherProvider,
+        @Named(LOCAL_STORAGE_JSON) json: Json
+    ): DataStore<PlaybackSettings> =
+        createDataStore(
+            appContext,
+            dispatcherProvider,
+            json,
+            DATASTORE_PLAYBACK_SETTINGS,
+            PlaybackSettings(),
+            PlaybackSettings.serializer()
+        )
 }
