@@ -7,12 +7,12 @@ plugins {
 
 android {
     namespace 'com.studio4plus.homerplayer2'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.studio4plus.homerplayer2"
         minSdk 21
-        targetSdk 32
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
