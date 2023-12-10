@@ -18,6 +18,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -172,9 +173,13 @@ private fun isNightMode() = when (AppCompatDelegate.getDefaultNightMode()) {
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 private fun isLargeScreen() =
-    calculateWindowSizeClass(LocalContext.current as Activity).let { windowSizeClass ->
-        windowSizeClass.heightSizeClass == WindowHeightSizeClass.Expanded ||
-                windowSizeClass.widthSizeClass == WindowWidthSizeClass.Expanded
+    if (LocalInspectionMode.current) {
+        true
+    } else {
+        calculateWindowSizeClass(LocalContext.current as Activity).let { windowSizeClass ->
+            windowSizeClass.heightSizeClass == WindowHeightSizeClass.Expanded ||
+                    windowSizeClass.widthSizeClass == WindowWidthSizeClass.Expanded
+        }
     }
 
 object HomerTheme {
