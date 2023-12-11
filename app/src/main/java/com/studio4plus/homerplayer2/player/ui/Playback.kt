@@ -47,9 +47,6 @@ import com.studio4plus.homerplayer2.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.ui.theme.HomerTheme
 import kotlin.math.roundToInt
 
-private const val VERTICAL = 0
-private const val HORIZONTAL = 1
-
 @Composable
 fun Playback(
     landscape: Boolean,
@@ -81,7 +78,7 @@ private fun VerticalPlayback(
     buttonStop: @Composable BoxScope.() -> Unit
 ) {
     Row(modifier = modifier.fillMaxSize()) {
-        PlaybackLayout(Modifier.weight(1f)) {
+        BookPageLayout(Modifier.weight(1f)) {
             Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
                 ControlButtonsLayout(
                     {
@@ -110,7 +107,7 @@ private fun HorizontalPlayback(
     buttonStop: @Composable BoxScope.() -> Unit
 ) {
     Column(modifier = modifier.fillMaxSize()) {
-        PlaybackLayout(modifier = Modifier.weight(1f)) {
+        BookPageLayout(modifier = Modifier.weight(1f)) {
             Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
                 ControlButtonsLayout(
                     {
@@ -128,119 +125,6 @@ private fun HorizontalPlayback(
             Box(content = buttonStop)
         }
         HorizontalBookProgressIndicator(progress, Modifier.padding(top = 8.dp))
-    }
-}
-
-@Composable
-private fun PlaybackLayout(
-    modifier: Modifier = Modifier,
-    largeButtonRatio: Float = 0.5f,
-    content: @Composable () -> Unit
-) {
-    Layout(
-        modifier = modifier,
-        content = content
-    ) { measurables, constraints ->
-        require(measurables.size == 2) { "Requires exactly two children" }
-        val isVertical = constraints.maxHeight > constraints.maxWidth
-        val largeButtonSize =
-            if (isVertical) minOf(constraints.maxWidth, (constraints.maxHeight * largeButtonRatio).roundToInt())
-            else minOf(constraints.maxHeight, (constraints.maxWidth * largeButtonRatio).roundToInt())
-
-        val placeableLargeButton = measurables[1].measure(
-            Constraints(largeButtonSize, largeButtonSize, largeButtonSize, largeButtonSize)
-        )
-        val placeableRest = measurables[0].measure(
-            if (isVertical) constraints.copy(maxHeight = constraints.maxHeight - largeButtonSize)
-            else constraints.copy(maxWidth = constraints.maxWidth - largeButtonSize)
-        )
-        layout(constraints.maxWidth, constraints.maxHeight) {
-            placeableRest.placeRelative(IntOffset(0, 0))
-            if (isVertical) {
-                val offset = IntOffset(
-                    (constraints.maxWidth - largeButtonSize) / 2,
-                    constraints.maxHeight - largeButtonSize
-                )
-                placeableLargeButton.placeRelative(offset)
-            } else {
-                val offset = IntOffset(
-                    constraints.maxWidth - largeButtonSize,
-                    (constraints.maxHeight - largeButtonSize) / 2
-                )
-                placeableLargeButton.placeRelative(offset)
-            }
-        }
-    }
-}
-
-@Composable
-private fun ControlButtonsLayout(
-    verticals: @Composable () -> Unit,
-    horizontals: @Composable () -> Unit,
-    modifier: Modifier = Modifier,
-    buttonSpacing: Dp = 4.dp,
-) {
-    Layout(
-        contents = listOf(verticals, horizontals),
-        modifier = modifier
-    ) { inputMeasurables, constraints ->
-        check(intArrayOf(0, 2).contains(inputMeasurables[VERTICAL].size))
-        check(intArrayOf(0, 2, 4).contains(inputMeasurables[HORIZONTAL].size))
-
-        val isVertical = constraints.maxHeight > constraints.maxWidth
-
-        val placeVerticalsHorizontally =
-            inputMeasurables[VERTICAL].size == 2 && inputMeasurables[HORIZONTAL].size == 2 ||
-                    isVertical && inputMeasurables[HORIZONTAL].isNotEmpty() ||
-                    !isVertical && inputMeasurables[HORIZONTAL].isEmpty()
-        val measurables = if (placeVerticalsHorizontally) {
-            listOf(
-                emptyList(),
-                inputMeasurables[VERTICAL].asReversed() + inputMeasurables[HORIZONTAL]
-            )
-        } else {
-            inputMeasurables
-        }
-
-        val horizontalsColumns = if (measurables[HORIZONTAL].isNotEmpty()) 2 else 0
-        val verticalColumns = if (measurables[VERTICAL].isNotEmpty()) 1 else 0
-        val columnCount = verticalColumns + horizontalsColumns
-        val rowCount = maxOf(measurables[HORIZONTAL].size / 2, measurables[VERTICAL].size)
-
-        val buttonSizePx: Int = minOf(
-            (constraints.maxWidth - (columnCount - 1) * buttonSpacing.toPx()) / columnCount,
-            (constraints.maxHeight - (rowCount - 1) * buttonSpacing.toPx()) / rowCount
-        ).roundToInt()
-
-        val buttonConstraints = constraints.copy(
-            minWidth = buttonSizePx,
-            maxWidth = buttonSizePx,
-            minHeight = buttonSizePx,
-            maxHeight = buttonSizePx
-        )
-        val placeables = measurables.map {
-            it.map { measurable -> measurable.measure(buttonConstraints) }
-        }
-
-        val totalWidth =
-            (columnCount * buttonSizePx + (columnCount - 1) * buttonSpacing.toPx()).roundToInt()
-        val totalHeight =
-            (rowCount * buttonSizePx + (rowCount - 1) * buttonSpacing.toPx()).roundToInt()
-
-        val buttonStep = buttonSizePx + buttonSpacing.toPx().roundToInt()
-        layout(totalWidth, totalHeight) {
-            var y = 0
-            placeables[HORIZONTAL].chunked(2) { (left, right) ->
-                right.place(IntOffset(totalWidth - buttonSizePx, y))
-                left.place(IntOffset(totalWidth - buttonStep - buttonSizePx, y))
-                y += buttonStep
-            }
-
-            placeables[VERTICAL].chunked(2) { (top, bottom) ->
-                top.place(IntOffset(0, 0))
-                bottom.place(IntOffset(0, totalHeight - buttonSizePx))
-            }
-        }
     }
 }
 
