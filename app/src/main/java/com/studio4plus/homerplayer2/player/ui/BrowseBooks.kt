@@ -33,9 +33,11 @@ import com.studio4plus.homerplayer2.ui.theme.HomerTheme
 
 @Composable
 fun BrowseBooks(
-    books: List<PlayerViewModel.AudiobookState>,
+    books: List<PlayerViewModel.UiAudiobook>,
     initialSelectedIndex: Int,
+    isPlaying: Boolean,
     onPlay: (bookIndex: Int) -> Unit,
+    playerActions: PlayerActions,
     onPageChanged: (bookIndex: Int) -> Unit,
     landscape: Boolean,
     modifier: Modifier = Modifier
@@ -47,7 +49,9 @@ fun BrowseBooks(
             itemPadding = HomerTheme.dimensions.screenContentPadding,
             books = books,
             initialSelectedIndex = initialSelectedIndex,
+            isPlaying = isPlaying,
             onPlay = onPlay,
+            playerActions = playerActions,
             onPageChanged = onPageChanged
         )
     }
@@ -57,13 +61,15 @@ fun BrowseBooks(
 @Composable
 private fun PreviewBrowseBooks() {
     val books = listOf(
-        PlayerViewModel.AudiobookState("1", "Hamlet", 0.3f),
+        PlayerViewModel.UiAudiobook("1", "Hamlet", 0.3f),
     )
     BrowseBooks(
         books = books,
         landscape = false,
         initialSelectedIndex = 0,
+        isPlaying = false,
         onPlay = {},
+        playerActions = PlayerActions.EMPTY,
         onPageChanged = {}
     )
 }

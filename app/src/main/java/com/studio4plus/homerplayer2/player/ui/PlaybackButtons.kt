@@ -55,7 +55,12 @@ data class PlayerActions(
     val onStop: () -> Unit,
     val onVolumeUp: () -> Unit,
     val onVolumeDown: () -> Unit
-)
+) {
+    companion object {
+        // For previews
+        val EMPTY = PlayerActions({}, {}, {}, {}, {}, {}, {})
+    }
+}
 
 @Composable
 fun RoundIconButton(

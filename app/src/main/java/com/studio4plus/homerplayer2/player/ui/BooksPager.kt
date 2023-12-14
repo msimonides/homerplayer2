@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.studio4plus.homerplayer2.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.ui.theme.HomerTheme
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -44,9 +45,12 @@ import kotlinx.coroutines.flow.onEach
 fun BooksPager(
     modifier: Modifier = Modifier,
     itemPadding: Dp = 0.dp,
-    books: List<PlayerViewModel.AudiobookState>,
+    // TODO: pass whole state instead of 3 values?
+    books: List<PlayerViewModel.UiAudiobook>, // TODO: stability?
     initialSelectedIndex: Int,
+    isPlaying: Boolean,
     onPlay: (bookIndex: Int) -> Unit,
+    playerActions: PlayerActions,
     onPageChanged: (bookIndex: Int) -> Unit,
     landscape: Boolean
 ) {
@@ -85,7 +89,9 @@ fun BooksPager(
         BookPage(
             displayName = book.displayName,
             progress = book.progress,
+            isPlaying = isPlaying,
             onPlay = { onPlay(bookIndex) },
+            playerActions = playerActions,
             landscape = landscape,
             modifier = modifier.padding(itemPadding)
         )
@@ -100,16 +106,20 @@ private fun Int.floorMod(other: Int): Int = when (other) {
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    BooksPager(
-        books = listOf(
-            PlayerViewModel.AudiobookState("1", "Hamlet", 0.3f),
-            PlayerViewModel.AudiobookState("2", "Macbeth", 0f),
-            PlayerViewModel.AudiobookState("3", "Romeo and Juliet", 0.9f),
-        ),
-        initialSelectedIndex = 1,
-        itemPadding = HomerTheme.dimensions.screenContentPadding,
-        landscape = false,
-        onPlay = {},
-        onPageChanged = {}
-    )
+    HomerPlayer2Theme {
+        BooksPager(
+            books = listOf(
+                PlayerViewModel.UiAudiobook("1", "Hamlet", 0.3f),
+                PlayerViewModel.UiAudiobook("2", "Macbeth", 0f),
+                PlayerViewModel.UiAudiobook("3", "Romeo and Juliet", 0.9f),
+            ),
+            initialSelectedIndex = 1,
+            isPlaying = false,
+            itemPadding = HomerTheme.dimensions.screenContentPadding,
+            landscape = false,
+            onPlay = {},
+            playerActions = PlayerActions.EMPTY,
+            onPageChanged = {}
+        )
+    }
 }

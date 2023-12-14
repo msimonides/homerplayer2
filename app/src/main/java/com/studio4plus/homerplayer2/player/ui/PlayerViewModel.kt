@@ -37,15 +37,11 @@ import com.studio4plus.homerplayer2.player.PlaybackUiStateRepository
 import com.studio4plus.homerplayer2.settings.DATASTORE_UI_SETTINGS
 import com.studio4plus.homerplayer2.settings.UiSettings
 import com.studio4plus.homerplayer2.speech.Speaker
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
@@ -64,34 +60,63 @@ class PlayerViewModel(
     batteryStateProvider: BatteryStateProvider,
 ) : ViewModel(), PlaybackController by playbackState, DefaultLifecycleObserver {
 
-    data class AudiobookState(
+    data class UiAudiobook(
         val id: String,
         val displayName: String,
         val progress: Float
     )
 
-    sealed class ViewState {
-        object Initializing : ViewState()
-        data class Browse(
-            val books: List<AudiobookState>,
-            val initialSelectedIndex: Int
-        ) : ViewState()
-        data class Playing(val progress: Float) : ViewState()
+    data class AllUiAudiobooks(
+        val bookStates: List<UiAudiobook>,
+        val books: List<Audiobook>,
+        val initialSelectedIndex: Int
+    )
+
+    sealed interface ViewState {
+        object Initializing : ViewState
+        data class Books(
+            val books: List<UiAudiobook>, // TODO: check stability
+            val initialSelectedIndex: Int,
+            val isPlaying: Boolean
+        ) : ViewState
     }
 
-    private val audiobooks: Flow<List<Audiobook>> = audiobooksDao.getAll()
-        .map { books -> books.map { it.toAudiobook() } }
-        .shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
+    private val allUiBooks: Flow<AllUiAudiobooks> = combine(
+        audiobooksDao.getAll().map { books -> books.map { it.toAudiobook() } },
+        playbackUiStateRepository.lastSelectedBookId()
+    ) { books, lastSelectedId ->
+        val initialSelectedIndex =
+            books.indexOfFirst { it.id == lastSelectedId }.coerceAtLeast(0)
+        AllUiAudiobooks(books.toUiBook(), books, initialSelectedIndex)
+    }.shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
 
-    // TODO: there should be a better way to expose the currently played book
-    private var playedAudiobook: Audiobook? = null
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    val viewState: StateFlow<ViewState> = playbackState.state.flatMapLatest { mediaState ->
+    val viewState: StateFlow<ViewState> = combine(
+        allUiBooks,
+        playbackState.state
+    ) { booksState, mediaState ->
         when (mediaState) {
-            PlaybackState.MediaState.Initializing -> flowOf(ViewState.Initializing)
-            PlaybackState.MediaState.Ready -> audiobooksBrowseStateFlow()
-            PlaybackState.MediaState.Playing -> playedBookProgressFlow().map { ViewState.Playing(it) }
+            is PlaybackState.MediaState.Initializing -> ViewState.Initializing
+            is PlaybackState.MediaState.Ready ->
+                ViewState.Books(booksState.bookStates, booksState.initialSelectedIndex, isPlaying = false)
+            is PlaybackState.MediaState.Playing -> {
+                // TODO: refactor
+                // Store the matching file to get its Uri instead of parsing it from string.
+                var matchingFile: AudiobookFile? = null
+                val playingBook = booksState.books.find {
+                    matchingFile = it.files.find { f -> f.uri.toString() == mediaState.mediaUri }
+                    matchingFile != null
+                }
+                val b = if (playingBook != null) {
+                    val playingBookState = playingBook.copy(currentUri = matchingFile!!.uri, currentPositionMs = mediaState.positionMs).toUiBook()
+                    booksState.bookStates.map {
+                        if (it.id == playingBookState.id) playingBookState
+                        else it
+                    }
+                } else {
+                    booksState.bookStates
+                }
+                ViewState.Books(b, booksState.initialSelectedIndex, isPlaying = true)
+            }
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), ViewState.Initializing)
 
@@ -123,8 +148,7 @@ class PlayerViewModel(
 
     fun play(bookIndex: Int) {
         viewModelScope.launch {
-            playedAudiobook = audiobooks.first().getOrNull(bookIndex)
-            val book = playedAudiobook
+            val book = allUiBooks.first().books.getOrNull(bookIndex)
             if (book != null) {
                 speaker.stop()
                 playbackState.play(book)
@@ -134,7 +158,7 @@ class PlayerViewModel(
 
     fun onPageChanged(bookIndex: Int) {
         viewModelScope.launch {
-            val book = audiobooks.first().getOrNull(bookIndex)
+            val book = allUiBooks.first().books.getOrNull(bookIndex)
             speaker.stop()
             if (book != null) {
                 if (uiSettings.value.readBookTitles) {
@@ -160,25 +184,7 @@ class PlayerViewModel(
         )
     }
 
-    private fun List<Audiobook>.toBrowsable() =
-        map { with(it) { AudiobookState(id, displayName, progress) } }
+    private fun List<Audiobook>.toUiBook() = map { it.toUiBook() }
 
-    private fun audiobooksBrowseStateFlow(): Flow<ViewState.Browse> =
-        combine(
-            audiobooks,
-            playbackUiStateRepository.lastSelectedBookId()
-        ) { books, lastSelectedId ->
-            val initialSelectedIndex =
-                books.indexOfFirst { it.id == lastSelectedId }.coerceAtLeast(0)
-            ViewState.Browse(books.toBrowsable(), initialSelectedIndex)
-        }
-
-    private fun playedBookProgressFlow(): Flow<Float> =
-        playbackState.progressFlow.map {
-            it?.let { (mediaUri, position) ->
-                val audiobookWithCurrentProgress =
-                    playedAudiobook?.copy(currentUri = mediaUri, currentPositionMs = position)
-                audiobookWithCurrentProgress?.progress ?: 0f
-            } ?: 0f
-        }
+    private fun Audiobook.toUiBook() = UiAudiobook(id, displayName, progress)
 }

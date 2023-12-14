@@ -40,12 +40,16 @@ import com.studio4plus.homerplayer2.player.PlaybackSettings
 import com.studio4plus.homerplayer2.player.service.PlaybackService
 import com.studio4plus.homerplayer2.utils.tickerFlow
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.core.annotation.Factory
@@ -71,20 +75,25 @@ class PlaybackState(
     @Named(DATASTORE_PLAYBACK_SETTINGS) private val settings: DataStore<PlaybackSettings>,
 ) : PlaybackController {
 
-    enum class MediaState {
-        Initializing,
-        Ready,
-        Playing
+    sealed interface MediaState {
+        data object Initializing : MediaState
+        data object Ready : MediaState
+        data class Playing(val mediaUri: String, val positionMs: Long) : MediaState
     }
 
-    private val mediaState = MutableStateFlow(MediaState.Initializing)
+    private val mediaState = MutableStateFlow<MediaState>(MediaState.Initializing)
     private var mediaController: MediaController? = null
     private val eventProgressUpdate = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
 
-    val state: Flow<MediaState>
-        get() = mediaState
-    val progressFlow = playedBookProgressFlow()
-
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val state: Flow<MediaState> = mediaState.flatMapLatest {
+        when (it) {
+            is MediaState.Playing -> tickerFlow(1000)
+                .map { mediaController!!.getMediaState() }
+                .onStart { emit(it) }
+            else -> flowOf(it)
+        }
+    }
     init {
         val sessionToken =
             SessionToken(appContext, ComponentName(appContext, PlaybackService::class.java))
@@ -109,17 +118,17 @@ class PlaybackState(
                     override fun onPlaybackStateChanged(playbackState: Int) {
                         super.onPlaybackStateChanged(playbackState)
                         Timber.d("Playback state changed %d", playbackState)
-                        mediaState.value = mediaStateFor(playbackState, mediaController!!.playWhenReady)
+                        mediaState.value = mediaController!!.getMediaState()
                         eventProgressUpdate.tryEmit(Unit)
                     }
 
                     override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
                         super.onPlayWhenReadyChanged(playWhenReady, reason)
-                        mediaState.value = mediaStateFor(mediaController!!.playbackState, playWhenReady)
+                        mediaState.value = mediaController!!.getMediaState()
                     }
                 }
             )
-            mediaState.value = mediaStateFor(mediaController!!.playbackState, mediaController!!.playWhenReady)
+            mediaState.value = mediaController!!.getMediaState()
         }
     }
 
@@ -191,9 +200,12 @@ class PlaybackState(
     private fun Audiobook.toMediaItems() =
         files.map { MediaItem.Builder().setMediaId(it.uri.toString()).build() }
 
-    private fun mediaStateFor(playbackState: Int, playWhenReady: Boolean) =
-        if (playWhenReady && playbackState in arrayOf(Player.STATE_BUFFERING, Player.STATE_READY, Player.STATE_ENDED))
-            MediaState.Playing
+    private fun MediaController.getMediaState(): MediaState {
+        val playingStates = arrayOf(Player.STATE_BUFFERING, Player.STATE_READY, Player.STATE_ENDED)
+        val mediaItem = currentMediaItem
+        return if (playWhenReady && playbackState in playingStates && mediaItem != null)
+            MediaState.Playing(mediaItem.mediaId, currentPosition)
         else
             MediaState.Ready
+    }
 }

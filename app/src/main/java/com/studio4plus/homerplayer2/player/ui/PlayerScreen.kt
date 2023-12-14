@@ -68,39 +68,31 @@ fun PlayerScreen(
         val isLandscape =
             LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
         when (viewState) {
-            is PlayerViewModel.ViewState.Browse -> {
+            is PlayerViewModel.ViewState.Books -> {
+                val playerActions = PlayerActions(
+                    onSeekForward = viewModel::seekForward,
+                    onSeekBack = viewModel::seekBack,
+                    onFastForward = viewModel::seekNext,
+                    onFastRewind = viewModel::seekPrevious,
+                    onStop = viewModel::stop,
+                    onVolumeUp = viewModel::volumeUp,
+                    onVolumeDown = viewModel::volumeDown
+                )
                 BrowseBooks(
                     landscape = isLandscape,
                     modifier = Modifier.fillMaxSize(),
                     books = viewState.books,
                     initialSelectedIndex = viewState.initialSelectedIndex,
+                    isPlaying = viewState.isPlaying,
                     onPlay = viewModel::play,
+                    playerActions = playerActions,
                     onPageChanged = viewModel::onPageChanged,
                 )
             }
-            is PlayerViewModel.ViewState.Playing -> {
-                Playback(
-                    landscape = isLandscape,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(HomerTheme.dimensions.screenContentPadding),
-                    progress = viewState.progress,
-                    playerActions = PlayerActions(
-                        onSeekForward = viewModel::seekForward,
-                        onSeekBack = viewModel::seekBack,
-                        onFastForward = viewModel::seekNext,
-                        onFastRewind = viewModel::seekPrevious,
-                        onStop = viewModel::stop,
-                        onVolumeUp = viewModel::volumeUp,
-                        onVolumeDown = viewModel::volumeDown
-                    ),
-                )
-            }
-
             is PlayerViewModel.ViewState.Initializing -> Unit
         }
 
-        val includeSettingsButton = viewState is PlayerViewModel.ViewState.Browse
+        val includeSettingsButton = viewState is PlayerViewModel.ViewState.Books
         val controlsRegularPadding = with(HomerTheme.dimensions) {
             (screenContentPadding - (mainScreenButtonSize - mainScreenIconSize)).coerceAtLeast(0.dp)
         }

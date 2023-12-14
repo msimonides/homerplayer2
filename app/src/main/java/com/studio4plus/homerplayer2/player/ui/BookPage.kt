@@ -27,6 +27,7 @@ package com.studio4plus.homerplayer2.player.ui
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.PlayArrow
+import androidx.compose.material.icons.rounded.Stop
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
@@ -38,6 +39,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.studio4plus.homerplayer2.R
+import com.studio4plus.homerplayer2.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.ui.theme.HomerTheme
 
 @Composable
@@ -45,61 +47,90 @@ fun BookPage(
     landscape: Boolean,
     displayName: String,
     progress: Float,
+    isPlaying: Boolean,
     onPlay: () -> Unit,
+    playerActions: PlayerActions, // TODO: put onPlay in PlayerActions
     modifier: Modifier = Modifier
 ) {
-    val button: @Composable BoxScope.() -> Unit ={
-        Button(
-            onClick = onPlay,
-            modifier = Modifier
-                .aspectRatio(1f)
-                .align(Alignment.Center)
-        ) {
-            Icon(
-                Icons.Rounded.PlayArrow,
-                contentDescription = stringResource(R.string.playback_play_button_description),
-                modifier = Modifier.fillMaxSize()
+    val button: @Composable BoxScope.() -> Unit = if (isPlaying) {
+        {
+            RoundIconButton(
+                modifier = Modifier.align(Alignment.Center),
+                iconImage = Icons.Rounded.Stop,
+                iconContentDescription = stringResource(R.string.playback_stop_button_description),
+                containerColor = HomerTheme.colors.controlStop,
+                onClick = playerActions.onStop
+            )
+        }
+    } else {
+        {
+            RoundIconButton(
+                modifier = Modifier.align(Alignment.Center),
+                iconImage = Icons.Rounded.PlayArrow,
+                iconContentDescription = stringResource(R.string.playback_play_button_description),
+                containerColor = HomerTheme.colors.controlPlay,
+                onClick = onPlay
+            )
+        }
+    }
+    val mainContent: @Composable BoxScope.() -> Unit = if (isPlaying) {
+         {
+            ControlButtonsLayout(
+                {
+                    ButtonVolumeUp(modifier = Modifier, playerActions = playerActions)
+                    ButtonVolumeDown(modifier = Modifier, playerActions = playerActions)
+                },
+                {
+                    ButtonFastRewind(modifier = Modifier, playerActions = playerActions)
+                    ButtonFastForward(modifier = Modifier, playerActions = playerActions)
+                    ButtonSeekBack(modifier = Modifier, playerActions = playerActions)
+                    ButtonSeekForward(modifier = Modifier, playerActions = playerActions)
+                }
+            )
+        }
+    } else {
+        {
+            AutosizeText(
+                text = displayName,
+                style = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
             )
         }
     }
     if (landscape) {
         HorizontalBookPage(
-            displayName = displayName,
+            mainContent = mainContent,
+            button = button,
             progress = progress,
             modifier = modifier,
-            button = button
         )
     } else {
         VerticalBookPage(
-            displayName = displayName,
+            mainContent = mainContent,
+            button = button,
             progress = progress,
             modifier = modifier,
-            button = button
         )
     }
 }
 
 @Composable
 private fun VerticalBookPage(
-    displayName: String,
+    mainContent: @Composable BoxScope.() -> Unit,
+    button: @Composable BoxScope.() -> Unit,
     progress: Float,
     modifier: Modifier = Modifier,
-    button: @Composable BoxScope.() -> Unit
 ) {
     Row(
         modifier = modifier
             .fillMaxSize()
     ) {
-        Column(Modifier.weight(1f)) {
-            AutosizeText(
-                text = displayName,
-                style = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
-                modifier = Modifier
-                    .weight(2f)
-                    .align(Alignment.CenterHorizontally)
-                    .padding(top = HomerTheme.dimensions.mainScreenIconSize) // TODO: pass the padding from calling composables.
+        BookPageLayout(modifier = Modifier.weight(1f)) {
+            Box(
+                contentAlignment = Alignment.Center,
+//                modifier = Modifier.padding(top = HomerTheme.dimensions.mainScreenIconSize) // TODO: pass the padding from calling composables.
+                content = mainContent
             )
-            Box(Modifier.weight(1f).fillMaxSize(), content = button)
+            Box(content = button)
         }
         VerticalBookProgressIndicator(progress, Modifier.padding(start = 8.dp))
     }
@@ -107,24 +138,18 @@ private fun VerticalBookPage(
 
 @Composable
 private fun HorizontalBookPage(
-    displayName: String,
+    mainContent: @Composable BoxScope.() -> Unit,
+    button: @Composable BoxScope.() -> Unit,
     progress: Float,
     modifier: Modifier = Modifier,
-    button: @Composable BoxScope.() -> Unit
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
     ) {
-        Row(Modifier.weight(1f)) {
-            AutosizeText(
-                text = displayName,
-                style = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
-                modifier = Modifier
-                    .weight(2f)
-                    .align(Alignment.CenterVertically)
-            )
-            Box(Modifier.weight(1f).fillMaxSize(), content = button)
+        BookPageLayout(Modifier.weight(1f)) {
+            Box(contentAlignment = Alignment.Center, content = mainContent)
+            Box(content = button)
         }
         HorizontalBookProgressIndicator(progress, Modifier.padding(top = 8.dp))
     }
@@ -133,21 +158,29 @@ private fun HorizontalBookPage(
 @Preview
 @Composable
 private fun VerticalBookPagePreview() =
-    BookPage(
-        landscape = false,
-        displayName = "Macbeth",
-        progress = 0.3f,
-        onPlay = { },
-        modifier = Modifier.padding(16.dp)
-    )
+    HomerPlayer2Theme {
+        BookPage(
+            landscape = false,
+            displayName = "Macbeth",
+            progress = 0.3f,
+            isPlaying = false,
+            onPlay = { },
+            playerActions = PlayerActions.EMPTY,
+            modifier = Modifier.padding(16.dp)
+        )
+    }
 
 @Preview(widthDp = 800, heightDp = 400)
 @Composable
 private fun HorizontalBookPagePreview() =
-    BookPage(
-        landscape = true,
-        displayName = "Macbeth",
-        progress = 0.3f,
-        onPlay = { },
-        modifier = Modifier.padding(16.dp)
-    )
+    HomerPlayer2Theme {
+        BookPage(
+            landscape = true,
+            displayName = "Macbeth",
+            progress = 0.3f,
+            isPlaying = false,
+            onPlay = { },
+            playerActions = PlayerActions.EMPTY,
+            modifier = Modifier.padding(16.dp)
+        )
+    }
