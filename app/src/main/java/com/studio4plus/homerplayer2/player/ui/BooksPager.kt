@@ -80,7 +80,8 @@ fun BooksPager(
         }.launchIn(this)
     }
     HorizontalPager(
-        state = pagerState
+        state = pagerState,
+        userScrollEnabled = !isPlaying
     // TODO: set key
     ) { pageIndex ->
         val bookIndex = (pageIndex - zeroPage).floorMod(books.size)
