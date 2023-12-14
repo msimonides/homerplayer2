@@ -48,17 +48,18 @@ import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.ui.theme.HomerTheme
 
 data class PlayerActions(
+    val onPlay: (bookIndex: Int) -> Unit,
+    val onStop: () -> Unit,
     val onSeekForward: () -> Unit,
     val onSeekBack: () -> Unit,
     val onFastForward: () -> Unit,
     val onFastRewind: () -> Unit,
-    val onStop: () -> Unit,
     val onVolumeUp: () -> Unit,
     val onVolumeDown: () -> Unit
 ) {
     companion object {
         // For previews
-        val EMPTY = PlayerActions({}, {}, {}, {}, {}, {}, {})
+        val EMPTY = PlayerActions({}, {}, {}, {}, {}, {}, {}, {})
     }
 }
 

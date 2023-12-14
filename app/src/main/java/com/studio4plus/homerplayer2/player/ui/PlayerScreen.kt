@@ -70,23 +70,24 @@ fun PlayerScreen(
         when (viewState) {
             is PlayerViewModel.ViewState.Books -> {
                 val playerActions = PlayerActions(
+                    onPlay = viewModel::play,
+                    onStop = viewModel::stop,
                     onSeekForward = viewModel::seekForward,
                     onSeekBack = viewModel::seekBack,
                     onFastForward = viewModel::seekNext,
                     onFastRewind = viewModel::seekPrevious,
-                    onStop = viewModel::stop,
                     onVolumeUp = viewModel::volumeUp,
                     onVolumeDown = viewModel::volumeDown
                 )
-                BrowseBooks(
+                BooksPager(
                     landscape = isLandscape,
                     modifier = Modifier.fillMaxSize(),
+                    itemPadding = HomerTheme.dimensions.screenContentPadding,
                     books = viewState.books,
                     initialSelectedIndex = viewState.initialSelectedIndex,
                     isPlaying = viewState.isPlaying,
-                    onPlay = viewModel::play,
                     playerActions = playerActions,
-                    onPageChanged = viewModel::onPageChanged,
+                    onPageChanged = viewModel::onPageChanged
                 )
             }
             is PlayerViewModel.ViewState.Initializing -> Unit

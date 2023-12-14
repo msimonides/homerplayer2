@@ -49,7 +49,6 @@ fun BooksPager(
     books: List<PlayerViewModel.UiAudiobook>, // TODO: stability?
     initialSelectedIndex: Int,
     isPlaying: Boolean,
-    onPlay: (bookIndex: Int) -> Unit,
     playerActions: PlayerActions,
     onPageChanged: (bookIndex: Int) -> Unit,
     landscape: Boolean
@@ -87,10 +86,10 @@ fun BooksPager(
         val bookIndex = (pageIndex - zeroPage).floorMod(books.size)
         val book = books[bookIndex]
         BookPage(
+            index = bookIndex,
             displayName = book.displayName,
             progress = book.progress,
             isPlaying = isPlaying,
-            onPlay = { onPlay(bookIndex) },
             playerActions = playerActions,
             landscape = landscape,
             modifier = modifier.padding(itemPadding)
@@ -117,7 +116,6 @@ fun DefaultPreview() {
             isPlaying = false,
             itemPadding = HomerTheme.dimensions.screenContentPadding,
             landscape = false,
-            onPlay = {},
             playerActions = PlayerActions.EMPTY,
             onPageChanged = {}
         )

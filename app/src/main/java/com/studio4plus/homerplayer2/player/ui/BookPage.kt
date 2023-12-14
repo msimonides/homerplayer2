@@ -48,8 +48,8 @@ fun BookPage(
     displayName: String,
     progress: Float,
     isPlaying: Boolean,
-    onPlay: () -> Unit,
-    playerActions: PlayerActions, // TODO: put onPlay in PlayerActions
+    index: Int,
+    playerActions: PlayerActions,
     modifier: Modifier = Modifier
 ) {
     val button: @Composable BoxScope.() -> Unit = if (isPlaying) {
@@ -69,7 +69,7 @@ fun BookPage(
                 iconImage = Icons.Rounded.PlayArrow,
                 iconContentDescription = stringResource(R.string.playback_play_button_description),
                 containerColor = HomerTheme.colors.controlPlay,
-                onClick = onPlay
+                onClick = { playerActions.onPlay(index) }
             )
         }
     }
@@ -161,10 +161,10 @@ private fun VerticalBookPagePreview() =
     HomerPlayer2Theme {
         BookPage(
             landscape = false,
+            index = 0,
             displayName = "Macbeth",
             progress = 0.3f,
             isPlaying = false,
-            onPlay = { },
             playerActions = PlayerActions.EMPTY,
             modifier = Modifier.padding(16.dp)
         )
@@ -176,10 +176,10 @@ private fun HorizontalBookPagePreview() =
     HomerPlayer2Theme {
         BookPage(
             landscape = true,
+            index = 0,
             displayName = "Macbeth",
             progress = 0.3f,
             isPlaying = false,
-            onPlay = { },
             playerActions = PlayerActions.EMPTY,
             modifier = Modifier.padding(16.dp)
         )
