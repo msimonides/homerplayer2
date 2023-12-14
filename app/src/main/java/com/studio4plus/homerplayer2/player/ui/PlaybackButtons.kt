@@ -28,6 +28,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.FastForward
 import androidx.compose.material.icons.rounded.FastRewind
@@ -38,9 +39,9 @@ import androidx.compose.material.icons.rounded.VolumeUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -87,7 +88,6 @@ fun RoundIconButton(
     }
 }
 
-// TODO: fix ripple size and shape
 @Composable
 fun FlatIconButton(
     modifier: Modifier,
@@ -98,8 +98,8 @@ fun FlatIconButton(
 ) {
     Box(
         modifier = modifier
-            .minimumInteractiveComponentSize()
             .aspectRatio(1f)
+            .clip(CircleShape)
             .clickable(onClick = onClick)
     ) {
         Icon(
