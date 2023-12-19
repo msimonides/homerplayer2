@@ -24,12 +24,15 @@
 
 package com.studio4plus.homerplayer2.player.ui
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.Stop
-import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -108,7 +111,8 @@ fun BookPage(
             mainContent = mainContent,
             button = button,
             progress = progress,
-            modifier = modifier,
+            modifier = modifier
+                .padding(top = HomerTheme.dimensions.mainScreenIconSize),
         )
     }
 }
@@ -127,10 +131,12 @@ private fun VerticalBookPage(
         BookPageLayout(modifier = Modifier.weight(1f)) {
             Box(
                 contentAlignment = Alignment.Center,
-//                modifier = Modifier.padding(top = HomerTheme.dimensions.mainScreenIconSize) // TODO: pass the padding from calling composables.
                 content = mainContent
             )
-            Box(content = button)
+            Box(
+                content = button,
+                modifier = Modifier.padding(vertical = 16.dp)
+            )
         }
         VerticalBookProgressIndicator(progress, Modifier.padding(start = 8.dp))
     }
@@ -149,7 +155,10 @@ private fun HorizontalBookPage(
     ) {
         BookPageLayout(Modifier.weight(1f)) {
             Box(contentAlignment = Alignment.Center, content = mainContent)
-            Box(content = button)
+            Box(
+                content = button,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
         }
         HorizontalBookProgressIndicator(progress, Modifier.padding(top = 8.dp))
     }
