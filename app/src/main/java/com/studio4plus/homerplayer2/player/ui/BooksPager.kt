@@ -45,14 +45,12 @@ import kotlinx.coroutines.flow.onEach
 fun BooksPager(
     modifier: Modifier = Modifier,
     itemPadding: Dp = 0.dp,
-    // TODO: pass whole state instead of 3 values?
-    books: List<PlayerViewModel.UiAudiobook>, // TODO: stability?
-    initialSelectedIndex: Int,
-    isPlaying: Boolean,
+    state: PlayerViewModel.ViewState.Books,
     playerActions: PlayerActions,
     onPageChanged: (bookIndex: Int) -> Unit,
     landscape: Boolean
 ) {
+    val books = state.books
     val wrapPagesMargin = 1
     val zeroPage = wrapPagesMargin
     fun wrapPageIndex(pageIndex: Int) = when {
@@ -62,7 +60,7 @@ fun BooksPager(
     }
 
     val pagerState = rememberPagerState(
-        initialPage = zeroPage + initialSelectedIndex,
+        initialPage = zeroPage + state.initialSelectedIndex,
         pageCount = { if (books.isEmpty()) 0 else books.size + 2 * wrapPagesMargin }
     )
     LaunchedEffect(pagerState) {
@@ -81,7 +79,7 @@ fun BooksPager(
     }
     HorizontalPager(
         state = pagerState,
-        userScrollEnabled = !isPlaying
+        userScrollEnabled = !state.isPlaying
     // TODO: set key
     ) { pageIndex ->
         val bookIndex = (pageIndex - zeroPage).floorMod(books.size)
@@ -90,7 +88,7 @@ fun BooksPager(
             index = bookIndex,
             displayName = book.displayName,
             progress = book.progress,
-            isPlaying = isPlaying,
+            isPlaying = state.isPlaying,
             playerActions = playerActions,
             landscape = landscape,
             modifier = modifier.padding(itemPadding)
@@ -108,13 +106,15 @@ private fun Int.floorMod(other: Int): Int = when (other) {
 fun DefaultPreview() {
     HomerPlayer2Theme {
         BooksPager(
-            books = listOf(
-                PlayerViewModel.UiAudiobook("1", "Hamlet", 0.3f),
-                PlayerViewModel.UiAudiobook("2", "Macbeth", 0f),
-                PlayerViewModel.UiAudiobook("3", "Romeo and Juliet", 0.9f),
+            state = PlayerViewModel.ViewState.Books(
+                listOf(
+                    PlayerViewModel.UiAudiobook("1", "Hamlet", 0.3f),
+                    PlayerViewModel.UiAudiobook("2", "Macbeth", 0f),
+                    PlayerViewModel.UiAudiobook("3", "Romeo and Juliet", 0.9f),
+                ),
+                initialSelectedIndex = 1,
+                isPlaying = false,
             ),
-            initialSelectedIndex = 1,
-            isPlaying = false,
             itemPadding = HomerTheme.dimensions.screenContentPadding,
             landscape = false,
             playerActions = PlayerActions.EMPTY,

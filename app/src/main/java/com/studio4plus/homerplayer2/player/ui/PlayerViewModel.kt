@@ -75,7 +75,7 @@ class PlayerViewModel(
     sealed interface ViewState {
         object Initializing : ViewState
         data class Books(
-            val books: List<UiAudiobook>, // TODO: check stability
+            val books: List<UiAudiobook>,
             val initialSelectedIndex: Int,
             val isPlaying: Boolean
         ) : ViewState

@@ -28,12 +28,14 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.BatteryManager
+import androidx.compose.runtime.Immutable
 import androidx.core.content.ContextCompat
 import com.studio4plus.homerplayer2.utils.broadcastReceiver
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import org.koin.core.annotation.Factory
 
+@Immutable
 sealed interface BatteryState {
     val level: Float
 

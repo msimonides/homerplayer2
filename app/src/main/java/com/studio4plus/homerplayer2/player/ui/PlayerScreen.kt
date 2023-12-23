@@ -34,6 +34,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -56,6 +57,19 @@ fun PlayerScreen(
     val batteryState = viewModel.batteryState.collectAsStateWithLifecycle().value
     val hideSettingsButton = viewModel.hideSettingsButton.collectAsStateWithLifecycle().value
 
+    val playerActions = remember(viewModel) {
+        PlayerActions(
+            onPlay = viewModel::play,
+            onStop = viewModel::stop,
+            onSeekForward = viewModel::seekForward,
+            onSeekBack = viewModel::seekBack,
+            onFastForward = viewModel::seekNext,
+            onFastRewind = viewModel::seekPrevious,
+            onVolumeUp = viewModel::volumeUp,
+            onVolumeDown = viewModel::volumeDown
+        )
+    }
+
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner.lifecycle) {
         lifecycleOwner.lifecycle.addObserver(viewModel)
@@ -69,23 +83,11 @@ fun PlayerScreen(
             LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
         when (viewState) {
             is PlayerViewModel.ViewState.Books -> {
-                val playerActions = PlayerActions(
-                    onPlay = viewModel::play,
-                    onStop = viewModel::stop,
-                    onSeekForward = viewModel::seekForward,
-                    onSeekBack = viewModel::seekBack,
-                    onFastForward = viewModel::seekNext,
-                    onFastRewind = viewModel::seekPrevious,
-                    onVolumeUp = viewModel::volumeUp,
-                    onVolumeDown = viewModel::volumeDown
-                )
                 BooksPager(
                     landscape = isLandscape,
                     modifier = Modifier.fillMaxSize(),
                     itemPadding = HomerTheme.dimensions.screenContentPadding,
-                    books = viewState.books,
-                    initialSelectedIndex = viewState.initialSelectedIndex,
-                    isPlaying = viewState.isPlaying,
+                    state = viewState,
                     playerActions = playerActions,
                     onPageChanged = viewModel::onPageChanged
                 )

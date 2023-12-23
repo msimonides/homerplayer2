@@ -5,6 +5,8 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
 }
 
+def enableComposeMetrics = project.hasProperty("enableComposeMetrics") ? project["enableComposeMetrics"] : false
+
 android {
     namespace 'com.studio4plus.homerplayer2'
     compileSdk 34
@@ -98,4 +100,16 @@ dependencies {
 
     debugImplementation libs.compose.ui.tooling
     debugImplementation libs.compose.ui.test.manifest
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    if (enableComposeMetrics) {
+        def outputDir = project.layout.buildDirectory.dir("compose").get()
+        compilerOptions.freeCompilerArgs.addAll(
+                "-P",
+                "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=${outputDir}",
+                "-P",
+                "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=${outputDir}",
+        )
+    }
 }
