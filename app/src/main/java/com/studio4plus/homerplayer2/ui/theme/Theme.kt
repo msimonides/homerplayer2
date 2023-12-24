@@ -57,22 +57,26 @@ private val LocalExtendedColors = staticCompositionLocalOf {
     )
 }
 
+private val GreenPlay = Color(0xff2ac670)
+private val RedStop = Color(0xffc31e1e)
+
 private val DarkColorScheme = darkColorScheme(
-    primary = Color(0xff22b9a6),
+    primary = GreenPlay,
     onPrimary = Color.White,
     secondary = PurpleGrey80,
-    tertiary = Pink80
+    tertiary = Pink80,
+    background = Color.Black
 )
 
 private val ExtendedDarkColors = ExtendedColors(
-    controlPlay = Color(0xff22b9a6),
-    controlStop = Color(0xffc31e1e),
+    controlPlay = GreenPlay,
+    controlStop = RedStop,
     controlVolume = Color(0xffeeff00),
     controlFast = Color(0xff1e62f7),
     controlSeek = Color(0xffffffff),
     // TODO: set proper colors
-    batteryRegular = Color(0xff00ff00),
-    batteryLow = Color(0xffff0000),
+    batteryRegular = GreenPlay,
+    batteryLow = RedStop,
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -93,14 +97,14 @@ private val LightColorScheme = lightColorScheme(
 )
 
 private val ExtendedLightColors = ExtendedColors(
-    controlPlay = Color(0xff22b9a6),
-    controlStop = Color(0xffc31e1e),
+    controlPlay = GreenPlay,
+    controlStop = RedStop,
     controlVolume = Color(0xffe1d41e),
     controlFast = Color(0xff2a55b3),
     controlSeek = Color(0xff000000),
     // TODO: set proper colors
-    batteryRegular = Color(0xff00ff00),
-    batteryLow = Color(0xffff0000),
+    batteryRegular = GreenPlay,
+    batteryLow = RedStop,
 )
 
 private val LocalDimensions = staticCompositionLocalOf {
@@ -146,8 +150,8 @@ fun HomerPlayer2Theme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = materialColorScheme.primary.toArgb()
-            WindowInsetsControllerCompat(window, view).isAppearanceLightStatusBars = darkTheme
+            window.statusBarColor = materialColorScheme.background.toArgb()
+            WindowInsetsControllerCompat(window, view).isAppearanceLightStatusBars = !darkTheme
         }
     }
 

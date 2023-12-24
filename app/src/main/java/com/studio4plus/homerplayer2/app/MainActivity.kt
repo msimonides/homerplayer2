@@ -26,8 +26,8 @@ package com.studio4plus.homerplayer2.app
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowInsetsCompat
@@ -62,7 +62,9 @@ class MainActivity : AppCompatActivity() {
             HomerPlayer2Theme {
                 val viewState = activityViewModel.viewState.collectAsStateWithLifecycle().value
 
-                Surface {
+                Surface(
+                    color = MaterialTheme.colorScheme.background
+                ) {
                     when (viewState) {
                         is MainActivityViewState.Loading -> Unit
                         is MainActivityViewState.Ready ->
