@@ -24,11 +24,18 @@
 
 package com.studio4plus.homerplayer2.player.ui
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
 import kotlin.math.roundToInt
 
 @Composable
@@ -48,11 +55,16 @@ fun BookPageLayout(
             else minOf(constraints.maxHeight, (constraints.maxWidth * largeButtonRatio).roundToInt())
 
         val placeableLargeButton = measurables[1].measure(
-            Constraints(largeButtonSize, largeButtonSize, largeButtonSize, largeButtonSize)
+            Constraints(0, largeButtonSize, 0, largeButtonSize)
         )
         val placeableRest = measurables[0].measure(
-            if (isVertical) constraints.copy(maxHeight = constraints.maxHeight - largeButtonSize)
-            else constraints.copy(maxWidth = constraints.maxWidth - largeButtonSize)
+            if (isVertical) {
+                val maxHeight = constraints.maxHeight - largeButtonSize
+                constraints.copy(minHeight = 0, maxHeight = maxHeight)
+            } else {
+                val maxWidth = constraints.maxWidth - largeButtonSize
+                constraints.copy(minWidth = 0, maxWidth = maxWidth)
+            }
         )
         layout(constraints.maxWidth, constraints.maxHeight) {
             placeableRest.placeRelative(IntOffset(0, 0))
@@ -70,5 +82,22 @@ fun BookPageLayout(
                 placeableLargeButton.placeRelative(offset)
             }
         }
+    }
+}
+
+@Preview(widthDp = 600, heightDp = 250)
+@Composable
+fun HorizontalBookPageLayoutPreview() {
+    BookPageLayout(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize().background(Color.Red),
+            content = {}
+        )
+        Box(
+            modifier = Modifier.fillMaxSize().background(Color.Blue),
+            content = {}
+        )
     }
 }

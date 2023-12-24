@@ -131,11 +131,15 @@ private fun VerticalBookPage(
         BookPageLayout(modifier = Modifier.weight(1f)) {
             Box(
                 contentAlignment = Alignment.Center,
-                content = mainContent
+                content = mainContent,
+                modifier = Modifier.fillMaxSize()
             )
             Box(
+                contentAlignment = Alignment.Center,
                 content = button,
-                modifier = Modifier.padding(vertical = 16.dp)
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(vertical = 16.dp)
             )
         }
         VerticalBookProgressIndicator(progress, Modifier.padding(start = 8.dp))
@@ -154,10 +158,17 @@ private fun HorizontalBookPage(
             .fillMaxSize()
     ) {
         BookPageLayout(Modifier.weight(1f)) {
-            Box(contentAlignment = Alignment.Center, content = mainContent)
             Box(
+                contentAlignment = Alignment.Center,
+                content = mainContent,
+                modifier = Modifier.fillMaxSize()
+            )
+            Box(
+                contentAlignment = Alignment.Center,
                 content = button,
-                modifier = Modifier.padding(horizontal = 16.dp)
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp)
             )
         }
         HorizontalBookProgressIndicator(progress, Modifier.padding(top = 8.dp))
@@ -179,7 +190,7 @@ private fun VerticalBookPagePreview() =
         )
     }
 
-@Preview(widthDp = 800, heightDp = 400)
+@Preview(widthDp = 800, heightDp = 300)
 @Composable
 private fun HorizontalBookPagePreview() =
     HomerPlayer2Theme {
@@ -189,6 +200,36 @@ private fun HorizontalBookPagePreview() =
             displayName = "Macbeth",
             progress = 0.3f,
             isPlaying = false,
+            playerActions = PlayerActions.EMPTY,
+            modifier = Modifier.padding(16.dp)
+        )
+    }
+
+@Preview
+@Composable
+private fun VerticalPlayingBookPagePreview() =
+    HomerPlayer2Theme {
+        BookPage(
+            landscape = false,
+            index = 0,
+            displayName = "Macbeth",
+            progress = 0.3f,
+            isPlaying = true,
+            playerActions = PlayerActions.EMPTY,
+            modifier = Modifier.padding(16.dp)
+        )
+    }
+
+@Preview(widthDp = 800, heightDp = 300)
+@Composable
+private fun HorizontalPlayingBookPagePreview() =
+    HomerPlayer2Theme {
+        BookPage(
+            landscape = true,
+            index = 0,
+            displayName = "Macbeth",
+            progress = 0.3f,
+            isPlaying = true,
             playerActions = PlayerActions.EMPTY,
             modifier = Modifier.padding(16.dp)
         )
