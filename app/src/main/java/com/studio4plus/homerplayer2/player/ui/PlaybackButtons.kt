@@ -25,6 +25,8 @@
 package com.studio4plus.homerplayer2.player.ui
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.InteractionSource
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -40,6 +42,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -70,7 +73,8 @@ fun RoundIconButton(
     iconImage: ImageVector,
     iconContentDescription: String?,
     containerColor: Color,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
 ) {
     Button(
         modifier = modifier.aspectRatio(1f),
@@ -78,7 +82,8 @@ fun RoundIconButton(
         colors = ButtonDefaults.buttonColors(
             containerColor = containerColor,
             contentColor = Color.White // TODO: should this be configurable?
-        )
+        ),
+        interactionSource = interactionSource
     ) {
         Icon(
             iconImage,
