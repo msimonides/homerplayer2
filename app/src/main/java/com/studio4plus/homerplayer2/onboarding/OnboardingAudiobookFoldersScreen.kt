@@ -24,22 +24,40 @@
 
 package com.studio4plus.homerplayer2.onboarding
 
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.audiobooks.OpenAudiobooksTree
+import com.studio4plus.homerplayer2.core.ui.SmallCircularProgressIndicator
+import com.studio4plus.homerplayer2.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.ui.theme.HomerTheme
 import org.koin.androidx.compose.koinViewModel
 
@@ -78,7 +96,8 @@ fun OnboardingAudiobookFoldersScreen(
                 .padding(paddingValues)
                 .padding(HomerTheme.dimensions.screenContentPadding),
             currentViewState.folders,
-            { openAudiobooksTree.launch(null) }
+            { openAudiobooksTree.launch(null) },
+            viewModel::removeFolder
         )
     }
 }
@@ -87,7 +106,8 @@ fun OnboardingAudiobookFoldersScreen(
 private fun ScreenContent(
     modifier: Modifier = Modifier,
     folders: List<OnboardingAudiobookFoldersViewModel.FolderItem>,
-    onAddFolder: () -> Unit
+    onAddFolder: () -> Unit,
+    onRemoveFolder: (OnboardingAudiobookFoldersViewModel.FolderItem) -> Unit
 ) {
     Column(modifier = modifier) {
         Text(
@@ -104,12 +124,101 @@ private fun ScreenContent(
                 folders,
                 key = OnboardingAudiobookFoldersViewModel.FolderItem::uri,
                 itemContent = { item ->
-                    Row {
-                        Text(item.displayName)
-                        Text(item.bookCount?.toString()?.let { " ($it)" } ?: "")
-                    }
+                    AudiobookFolderRow(item = item, onRemoveClicked = { onRemoveFolder(item) })
                 }
             )
         }
+    }
+}
+
+@Composable
+private fun AudiobookFolderRow(
+    item: OnboardingAudiobookFoldersViewModel.FolderItem,
+    onRemoveClicked: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+            .heightIn(min = 56.dp)
+            .padding(vertical = 8.dp)
+    ) {
+        Surface(
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier
+                .padding(end = 16.dp)
+                .sizeIn(minHeight = 40.dp, minWidth = 40.dp),
+            shape = CircleShape
+        ) {
+            Box {
+                if (item.bookTitles == null) {
+                    SmallCircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                } else {
+                    Text(
+                        item.bookTitles.size.toString(),
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+            }
+        }
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
+            val bookTitlesSummary = when {
+                item.bookTitles == null -> ""
+                item.bookTitles.isEmpty() -> stringResource(R.string.audiobook_folder_no_books_found)
+                else -> item.bookTitles.take(4).joinToString(", ")
+            }
+            Text(item.displayName, style = MaterialTheme.typography.bodyLarge)
+            Text(
+                bookTitlesSummary,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+        IconButton(
+            onClick = onRemoveClicked,
+        ) {
+            Icon(
+                imageVector = Icons.Rounded.Delete,
+                contentDescription = stringResource(id = R.string.audiobook_folder_delete_button)
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewFolderRow() {
+    HomerPlayer2Theme {
+        AudiobookFolderRow(
+            OnboardingAudiobookFoldersViewModel.FolderItem("My audiobooks", Uri.EMPTY, listOf("Alice in Wonderland", "Hamlet")),
+            {}
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewFolderRowEmpty() {
+    HomerPlayer2Theme {
+        AudiobookFolderRow(
+            OnboardingAudiobookFoldersViewModel.FolderItem("My audiobooks", Uri.EMPTY, listOf()),
+            {}
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewFolderRowScanning() {
+    HomerPlayer2Theme {
+        AudiobookFolderRow(
+            OnboardingAudiobookFoldersViewModel.FolderItem("My audiobooks", Uri.EMPTY, null),
+            {}
+        )
     }
 }

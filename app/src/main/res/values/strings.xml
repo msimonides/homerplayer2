@@ -3,6 +3,8 @@
     <string name="app_tag" translatable="false">homerplayer2</string>
 
     <string name="audiobook_folder_add_button">Add folder…</string>
+    <string name="audiobook_folder_delete_button">Remove</string>
+    <string name="audiobook_folder_no_books_found">(no audiobooks found)</string>
 
     <plurals name="battery_level_content_description">
         <item quantity="one">battery %1$d percent</item>

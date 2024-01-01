@@ -43,6 +43,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studio4plus.homerplayer2.R
+import com.studio4plus.homerplayer2.core.ui.SmallCircularProgressIndicator
 import com.studio4plus.homerplayer2.speech.TtsCheckContract
 import com.studio4plus.homerplayer2.ui.theme.HomerTheme
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -199,11 +200,7 @@ private fun ButtonWithLoadingState(
         content()
         if (isLoading) {
             Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
-            CircularProgressIndicator(
-                modifier = Modifier.size(ButtonDefaults.IconSize),
-                color = LocalContentColor.current,
-                strokeWidth = 2.dp
-            )
+            SmallCircularProgressIndicator()
         } else {
             Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing + ButtonDefaults.IconSize))
         }

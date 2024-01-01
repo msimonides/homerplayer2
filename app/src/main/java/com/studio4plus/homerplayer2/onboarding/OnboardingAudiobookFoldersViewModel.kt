@@ -48,7 +48,7 @@ class OnboardingAudiobookFoldersViewModel(
     private val onboardingDelegate: OnboardingDelegate
 ) : ViewModel() {
 
-    data class FolderItem(val displayName: String, val uri: Uri, val bookCount: Int?)
+    data class FolderItem(val displayName: String, val uri: Uri, val bookTitles: List<String>?)
 
     data class ViewState(
         val folders: List<FolderItem>,
@@ -63,7 +63,7 @@ class OnboardingAudiobookFoldersViewModel(
         }
     }.flowOn(dispatcherProvider.Io)
 
-    val viewState = combine(folders, audiobookFoldersDao.getAllWithBookCounts(), this::combineBookCounts)
+    val viewState = combine(folders, audiobookFoldersDao.getAllWithBookTitles(), this::combineBookCounts)
         .map { ViewState(it, it.isNotEmpty()) }
         .stateIn(
             viewModelScope,
@@ -81,9 +81,9 @@ class OnboardingAudiobookFoldersViewModel(
 
     private fun combineBookCounts(
         folderItems: List<FolderItem>,
-        counts: Map<String, Int>
+        foldersWithTitles: Map<Uri, List<String>>
     ): List<FolderItem> =
         folderItems.map { folder ->
-            folder.copy(bookCount = counts.getOrElse(folder.uri.toString()) { 0 })
+            folder.copy(bookTitles = foldersWithTitles[folder.uri])
         }
 }

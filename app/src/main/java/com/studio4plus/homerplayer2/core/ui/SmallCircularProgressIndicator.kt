@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Marcin Simonides
+ * Copyright (c) 2024 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,28 +22,23 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.audiobooks
+package com.studio4plus.homerplayer2.core.ui
 
-import android.net.Uri
-import androidx.room.*
-import kotlinx.coroutines.flow.Flow
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 
-@Dao
-interface AudiobookFoldersDao {
-
-    @Query("SELECT * FROM audiobooks_folders")
-    fun getAll(): Flow<List<AudiobooksFolder>>
-
-    @Query("""
-        SELECT audiobooks_folders.uri, audiobooks.display_name
-        FROM  audiobooks_folders JOIN audiobooks ON audiobooks_folders.uri = audiobooks.root_folder_uri
-        ORDER BY display_name COLLATE LOCALIZED
-    """)
-    fun getAllWithBookTitles(): Flow<Map<@MapColumn(columnName = "uri") Uri, List<@MapColumn(columnName="display_name") String>>>
-
-    @Insert
-    suspend fun insert(folder: AudiobooksFolder)
-
-    @Delete
-    suspend fun delete(folder: AudiobooksFolder)
+@Composable
+fun SmallCircularProgressIndicator(
+    modifier: Modifier = Modifier
+) {
+    CircularProgressIndicator(
+        modifier = modifier.size(ButtonDefaults.IconSize),
+        color = LocalContentColor.current,
+        strokeWidth = 2.dp
+    )
 }
