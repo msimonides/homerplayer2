@@ -31,7 +31,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -39,7 +38,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -57,8 +55,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.audiobooks.OpenAudiobooksTree
 import com.studio4plus.homerplayer2.core.ui.SmallCircularProgressIndicator
-import com.studio4plus.homerplayer2.ui.theme.HomerPlayer2Theme
-import com.studio4plus.homerplayer2.ui.theme.HomerTheme
+import com.studio4plus.homerplayer2.core.ui.theme.HomerPlayer2Theme
+import com.studio4plus.homerplayer2.core.ui.theme.HomerTheme
 import org.koin.androidx.compose.koinViewModel
 
 @Composable

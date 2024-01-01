@@ -40,8 +40,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.studio4plus.homerplayer2.ui.theme.HomerPlayer2Theme
-import com.studio4plus.homerplayer2.ui.theme.HomerTheme
+import com.studio4plus.homerplayer2.core.ui.theme.HomerPlayer2Theme
+import com.studio4plus.homerplayer2.core.ui.theme.HomerTheme
 import com.studio4plus.homerplayer2.utils.composable
 
 @Composable

@@ -39,7 +39,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.settings.UiThemeMode
-import com.studio4plus.homerplayer2.ui.theme.HomerTheme
+import com.studio4plus.homerplayer2.core.ui.theme.HomerTheme
 import org.koin.androidx.compose.koinViewModel
 
 private enum class DialogType {

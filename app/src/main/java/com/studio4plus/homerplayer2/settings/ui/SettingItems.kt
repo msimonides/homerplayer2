@@ -43,8 +43,8 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.studio4plus.homerplayer2.ui.theme.HomerPlayer2Theme
-import com.studio4plus.homerplayer2.ui.theme.HomerTheme
+import com.studio4plus.homerplayer2.core.ui.theme.HomerPlayer2Theme
+import com.studio4plus.homerplayer2.core.ui.theme.HomerTheme
 
 private object SettingsDefaults {
     val verticalPadding = 8.dp

@@ -43,7 +43,7 @@ import androidx.navigation.compose.rememberNavController
 import com.studio4plus.homerplayer2.onboarding.onboardingGraph
 import com.studio4plus.homerplayer2.player.ui.PlayerScreen
 import com.studio4plus.homerplayer2.settings.ui.SettingsScreen
-import com.studio4plus.homerplayer2.ui.theme.HomerPlayer2Theme
+import com.studio4plus.homerplayer2.core.ui.theme.HomerPlayer2Theme
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.koin.androidx.viewmodel.ext.android.viewModel

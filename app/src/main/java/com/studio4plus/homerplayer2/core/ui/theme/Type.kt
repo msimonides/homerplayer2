@@ -1,4 +1,4 @@
-package com.studio4plus.homerplayer2.ui.theme
+package com.studio4plus.homerplayer2.core.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
