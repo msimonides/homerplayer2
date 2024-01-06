@@ -31,12 +31,12 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.VolumeDown
+import androidx.compose.material.icons.automirrored.rounded.VolumeUp
 import androidx.compose.material.icons.rounded.FastForward
 import androidx.compose.material.icons.rounded.FastRewind
 import androidx.compose.material.icons.rounded.Forward10
 import androidx.compose.material.icons.rounded.Replay30
-import androidx.compose.material.icons.rounded.VolumeDown
-import androidx.compose.material.icons.rounded.VolumeUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -121,7 +121,7 @@ fun ButtonVolumeUp(
     playerActions: PlayerActions
 ) = FlatIconButton(
     modifier = modifier,
-    iconImage = Icons.Rounded.VolumeUp,
+    iconImage = Icons.AutoMirrored.Rounded.VolumeUp,
     iconContentDescription = stringResource(id = R.string.playback_volume_up_button_description),
     color = HomerTheme.colors.controlVolume,
     onClick = playerActions.onVolumeUp
@@ -133,7 +133,7 @@ fun ButtonVolumeDown(
     playerActions: PlayerActions
 ) = FlatIconButton(
     modifier = modifier,
-    iconImage = Icons.Rounded.VolumeDown,
+    iconImage = Icons.AutoMirrored.Rounded.VolumeDown,
     iconContentDescription = stringResource(id = R.string.playback_volume_down_button_description),
     color = HomerTheme.colors.controlVolume,
     onClick = playerActions.onVolumeDown
