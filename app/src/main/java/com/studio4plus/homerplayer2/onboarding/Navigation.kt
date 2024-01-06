@@ -32,7 +32,7 @@ import androidx.navigation.compose.navigation
 fun NavGraphBuilder.onboardingGraph(navController: NavController, destinationRoute: String) {
     navigation("onboarding/tts", "onboarding") {
         composable("onboarding/tts") {
-            OnboardingSpeechScreen(navigateNext = { navController.navigate("onboarding/folders") })
+            OnboardingSpeechRoute(navigateNext = { navController.navigate("onboarding/folders") })
         }
         composable("onboarding/folders") {
             OnboardingAudiobookFoldersRoute(

@@ -31,6 +31,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
@@ -50,20 +51,18 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OnboardingSpeechScreen(
+fun OnboardingSpeechRoute(
+    navigateNext: () -> Unit,
     modifier: Modifier = Modifier,
-    navigateNext: () -> Unit
+    viewModel: OnboardingSpeechViewModel = koinViewModel()
 ) {
-    val viewModel: OnboardingSpeechViewModel = koinViewModel()
-    val viewState = viewModel.viewState.collectAsStateWithLifecycle()
+    val viewState by viewModel.viewState.collectAsStateWithLifecycle()
 
     val testPhrase = stringResource(id = R.string.onboarding_speech_test_phrase)
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    val currentViewState = viewState.value
     val snackbarHostState = remember { SnackbarHostState() }
 
     val ttsCheckLauncher = rememberLauncherForActivityResult(
@@ -95,11 +94,35 @@ fun OnboardingSpeechScreen(
         }
     }
 
+    OnboardingSpeechScreen(
+        viewState = viewState,
+        snackbarHostState = snackbarHostState,
+        navigateNext = navigateNext,
+        onSayTestPhrase = {
+            viewModel.onTtsCheckStarted()
+            ttsCheckLauncher.launch(Unit)
+        },
+        onTtsToggled = viewModel::onTtsToggled,
+        onOpenTtsSettings = { viewModel.openTtsSettings(context) },
+        modifier = modifier
+    )
+}
+
+@Composable
+fun OnboardingSpeechScreen(
+    viewState: OnboardingSpeechViewModel.ViewState,
+    snackbarHostState: SnackbarHostState,
+    navigateNext: () -> Unit,
+    onSayTestPhrase: () -> Unit,
+    onTtsToggled: () -> Unit,
+    onOpenTtsSettings: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Scaffold(
         modifier = modifier,
         bottomBar = {
             OnboardingNavigationButtons(
-                nextEnabled = currentViewState.canProceed,
+                nextEnabled = viewState.canProceed,
                 nextLabel = R.string.onboarding_step_next,
                 onNext = navigateNext,
                 secondaryLabel = R.string.onboarding_step_skip,
@@ -113,16 +136,13 @@ fun OnboardingSpeechScreen(
             modifier = Modifier
                 .padding(paddingValues)
                 .padding(HomerTheme.dimensions.screenContentPadding),
-            showTtsSettings = currentViewState.showTtsSettings,
-            readBookTitlesEnabled = currentViewState.readBookTitlesEnabled,
-            speechInProgress = currentViewState.isSpeaking,
-            playTestPhraseIsCta = !currentViewState.canProceed,
-            onSayTestPhrase = {
-                viewModel.onTtsCheckStarted()
-                ttsCheckLauncher.launch(Unit)
-            },
-            onTtsToggled = viewModel::onTtsToggled,
-            onOpenTtsSettings = { viewModel.openTtsSettings(context) },
+            showTtsSettings = viewState.showTtsSettings,
+            readBookTitlesEnabled = viewState.readBookTitlesEnabled,
+            speechInProgress = viewState.isSpeaking,
+            playTestPhraseIsCta = !viewState.canProceed,
+            onSayTestPhrase = onSayTestPhrase,
+            onTtsToggled = onTtsToggled,
+            onOpenTtsSettings = onOpenTtsSettings,
         )
     }
 }
