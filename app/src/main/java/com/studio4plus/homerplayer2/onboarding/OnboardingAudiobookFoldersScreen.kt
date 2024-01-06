@@ -24,68 +24,72 @@
 
 package com.studio4plus.homerplayer2.onboarding
 
-import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.sizeIn
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Delete
-import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.studio4plus.homerplayer2.PreviewData
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.audiobooks.OpenAudiobooksTree
-import com.studio4plus.homerplayer2.core.ui.SmallCircularProgressIndicator
+import com.studio4plus.homerplayer2.audiobooks.ui.AudiobookFoldersManagementPanel
+import com.studio4plus.homerplayer2.audiobooks.ui.FolderItem
 import com.studio4plus.homerplayer2.core.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.core.ui.theme.HomerTheme
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun OnboardingAudiobookFoldersScreen(
+fun OnboardingAudiobookFoldersRoute(
     modifier: Modifier = Modifier,
     navigateNext: () -> Unit,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
+    viewModel: OnboardingAudiobookFoldersViewModel = koinViewModel()
 ) {
-    val viewModel: OnboardingAudiobookFoldersViewModel = koinViewModel()
-    val viewState = viewModel.viewState.collectAsStateWithLifecycle()
+    val viewState by viewModel.viewState.collectAsStateWithLifecycle()
     val openAudiobooksTree = rememberLauncherForActivityResult(
         contract = OpenAudiobooksTree(),
         onResult = { uri -> uri?.let { viewModel.addFolder(uri) } }
     )
 
-    val currentViewState = viewState.value
+    OnboardingAudiobookFoldersScreen(
+        viewState = viewState,
+        modifier = modifier,
+        navigateNext = {
+            viewModel.onFinished()
+            navigateNext()
+        },
+        navigateBack = navigateBack,
+        addFolder = { openAudiobooksTree.launch(null) },
+        removeFolder = viewModel::removeFolder
+    )
+}
+
+@Composable
+fun OnboardingAudiobookFoldersScreen(
+    viewState: OnboardingAudiobookFoldersViewModel.ViewState,
+    navigateNext: () -> Unit,
+    navigateBack: () -> Unit,
+    addFolder: () -> Unit,
+    removeFolder: (FolderItem) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Scaffold(
         modifier = modifier,
         bottomBar = {
             OnboardingNavigationButtons(
-                nextEnabled = currentViewState.canProceed,
+                nextEnabled = viewState.canProceed,
                 nextLabel = R.string.onboarding_step_done,
-                onNext = {
-                    viewModel.onFinished()
-                    navigateNext()
-                },
+                onNext = navigateNext,
                 secondaryLabel = R.string.onboarding_step_back,
                 onSecondary = navigateBack,
-                modifier = Modifier.padding(HomerTheme.dimensions.screenContentPadding)
+                modifier = Modifier.padding(OnboardingNavigationButtonsDefaults.paddingValues),
             )
         }
     ) { paddingValues ->
@@ -93,9 +97,9 @@ fun OnboardingAudiobookFoldersScreen(
             modifier = Modifier
                 .padding(paddingValues)
                 .padding(HomerTheme.dimensions.screenContentPadding),
-            currentViewState.folders,
-            { openAudiobooksTree.launch(null) },
-            viewModel::removeFolder
+            viewState.folders,
+            addFolder,
+            removeFolder
         )
     }
 }
@@ -103,9 +107,9 @@ fun OnboardingAudiobookFoldersScreen(
 @Composable
 private fun ScreenContent(
     modifier: Modifier = Modifier,
-    folders: List<OnboardingAudiobookFoldersViewModel.FolderItem>,
+    folders: List<FolderItem>,
     onAddFolder: () -> Unit,
-    onRemoveFolder: (OnboardingAudiobookFoldersViewModel.FolderItem) -> Unit
+    onRemoveFolder: (FolderItem) -> Unit
 ) {
     Column(modifier = modifier) {
         Text(
@@ -114,109 +118,34 @@ private fun ScreenContent(
         )
         Text(text = stringResource(id = R.string.onboarding_audiobook_folders_description))
 
-        Button(onClick = onAddFolder) {
-            Text(stringResource(id = R.string.audiobook_folder_add_button))
-        }
-        LazyColumn {
-            items(
-                folders,
-                key = OnboardingAudiobookFoldersViewModel.FolderItem::uri,
-                itemContent = { item ->
-                    AudiobookFolderRow(item = item, onRemoveClicked = { onRemoveFolder(item) })
-                }
-            )
-        }
-    }
-}
-
-@Composable
-private fun AudiobookFolderRow(
-    item: OnboardingAudiobookFoldersViewModel.FolderItem,
-    onRemoveClicked: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-            .heightIn(min = 56.dp)
-            .padding(vertical = 8.dp)
-    ) {
-        Surface(
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier
-                .padding(end = 16.dp)
-                .sizeIn(minHeight = 40.dp, minWidth = 40.dp),
-            shape = CircleShape
-        ) {
-            Box {
-                if (item.bookTitles == null) {
-                    SmallCircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                } else {
-                    Text(
-                        item.bookTitles.size.toString(),
-                        style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
-            }
-        }
-        Column(
-            modifier = Modifier.weight(1f)
-        ) {
-            val bookTitlesSummary = when {
-                item.bookTitles == null -> ""
-                item.bookTitles.isEmpty() -> stringResource(R.string.audiobook_folder_no_books_found)
-                else -> item.bookTitles.take(4).joinToString(", ")
-            }
-            Text(item.displayName, style = MaterialTheme.typography.bodyLarge)
-            Text(
-                bookTitlesSummary,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
-        IconButton(
-            onClick = onRemoveClicked,
-        ) {
-            Icon(
-                imageVector = Icons.Rounded.Delete,
-                contentDescription = stringResource(id = R.string.audiobook_folder_delete_button)
-            )
-        }
-    }
-}
-
-@Preview
-@Composable
-private fun PreviewFolderRow() {
-    HomerPlayer2Theme {
-        AudiobookFolderRow(
-            OnboardingAudiobookFoldersViewModel.FolderItem("My audiobooks", Uri.EMPTY, listOf("Alice in Wonderland", "Hamlet")),
-            {}
+        AudiobookFoldersManagementPanel(
+            folders = folders,
+            onAddFolder = onAddFolder,
+            onRemoveFolder = onRemoveFolder
         )
     }
 }
 
 @Preview
 @Composable
-private fun PreviewFolderRowEmpty() {
+private fun PreviewOnboardingAudiobookFoldersScreen1() {
     HomerPlayer2Theme {
-        AudiobookFolderRow(
-            OnboardingAudiobookFoldersViewModel.FolderItem("My audiobooks", Uri.EMPTY, listOf()),
-            {}
+        val state = OnboardingAudiobookFoldersViewModel.ViewState(
+            PreviewData.folderItems1,
+            canProceed = true
         )
+        OnboardingAudiobookFoldersScreen(state, {}, {}, {}, {})
     }
 }
 
 @Preview
 @Composable
-private fun PreviewFolderRowScanning() {
+private fun PreviewOnboardingAudiobookFoldersScreen50() {
     HomerPlayer2Theme {
-        AudiobookFolderRow(
-            OnboardingAudiobookFoldersViewModel.FolderItem("My audiobooks", Uri.EMPTY, null),
-            {}
+        val state = OnboardingAudiobookFoldersViewModel.ViewState(
+            PreviewData.folderItems50,
+            canProceed = true
         )
+        OnboardingAudiobookFoldersScreen(state, {}, {}, {}, {})
     }
 }

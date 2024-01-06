@@ -104,7 +104,7 @@ fun OnboardingSpeechScreen(
                 onNext = navigateNext,
                 secondaryLabel = R.string.onboarding_step_skip,
                 onSecondary = navigateNext,
-                modifier = Modifier.padding(HomerTheme.dimensions.screenContentPadding)
+                modifier = Modifier.padding(OnboardingNavigationButtonsDefaults.paddingValues),
             )
         },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }

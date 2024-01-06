@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Marcin Simonides
+ * Copyright (c) 2024 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,13 +22,17 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.onboarding
+package com.studio4plus.homerplayer2
 
-import com.studio4plus.homerplayer2.audiobooks.AudiobooksModule
-import com.studio4plus.homerplayer2.speech.SpeechModule
-import org.koin.core.annotation.ComponentScan
-import org.koin.core.annotation.Module
+import android.net.Uri
+import com.studio4plus.homerplayer2.audiobooks.ui.FolderItem
 
-@Module(includes = [AudiobooksModule::class, SpeechModule::class])
-@ComponentScan("com.studio4plus.homerplayer2.onboarding")
-class OnboardingModule
+object PreviewData {
+
+    val folderItems1 = listOf(FolderItem("Audiobooks", Uri.EMPTY, listOf("Alice's Adventures in Wonderland", "Hamlet")))
+
+    val folderItems50 get() = (1 .. 50).map { index ->
+        val titles = (1 .. index).map { "Book $it" }
+        FolderItem("Folder $index", Uri.parse("dummy://$index"), titles)
+    }
+}

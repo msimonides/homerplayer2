@@ -24,46 +24,30 @@
 
 package com.studio4plus.homerplayer2.onboarding
 
-import android.content.Context
 import android.net.Uri
-import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.studio4plus.homerplayer2.audiobooks.AudiobookFolderManager
-import com.studio4plus.homerplayer2.audiobooks.AudiobookFoldersDao
-import com.studio4plus.homerplayer2.core.DispatcherProvider
+import com.studio4plus.homerplayer2.audiobooks.ui.AudiobookFoldersViewStateFlow
+import com.studio4plus.homerplayer2.audiobooks.ui.FolderItem
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import org.koin.android.annotation.KoinViewModel
 
 @KoinViewModel
 class OnboardingAudiobookFoldersViewModel(
-    private val appContext: Context,
-    dispatcherProvider: DispatcherProvider,
-    audiobookFoldersDao: AudiobookFoldersDao,
+    audiobookFoldersViewStateFlow: AudiobookFoldersViewStateFlow,
     private val audiobookFolderManager: AudiobookFolderManager,
     private val onboardingDelegate: OnboardingDelegate
 ) : ViewModel() {
-
-    data class FolderItem(val displayName: String, val uri: Uri, val bookTitles: List<String>?)
 
     data class ViewState(
         val folders: List<FolderItem>,
         val canProceed: Boolean
     )
 
-    private val folders = audiobookFoldersDao.getAll().map { folders ->
-        folders.mapNotNull { folder ->
-            DocumentFile.fromTreeUri(appContext, folder.uri)?.let { documentFile ->
-                FolderItem(documentFile.name ?: folder.toString(), folder.uri, null)
-            }
-        }
-    }.flowOn(dispatcherProvider.Io)
-
-    val viewState = combine(folders, audiobookFoldersDao.getAllWithBookTitles(), this::combineBookCounts)
+    val viewState = audiobookFoldersViewStateFlow
         .map { ViewState(it, it.isNotEmpty()) }
         .stateIn(
             viewModelScope,
@@ -78,12 +62,4 @@ class OnboardingAudiobookFoldersViewModel(
     fun onFinished() {
         onboardingDelegate.onOnboardingFinished()
     }
-
-    private fun combineBookCounts(
-        folderItems: List<FolderItem>,
-        foldersWithTitles: Map<Uri, List<String>>
-    ): List<FolderItem> =
-        folderItems.map { folder ->
-            folder.copy(bookTitles = foldersWithTitles[folder.uri])
-        }
 }
