@@ -22,18 +22,32 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2
+package com.studio4plus.homerplayer2.settings.ui
 
 import android.net.Uri
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.studio4plus.homerplayer2.audiobooks.AudiobookFolderManager
+import com.studio4plus.homerplayer2.audiobooks.ui.AudiobookFoldersViewStateFlow
 import com.studio4plus.homerplayer2.audiobooks.ui.FolderItem
-import com.studio4plus.homerplayer2.audiobooks.ui.joinToEllipsizedString
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import org.koin.android.annotation.KoinViewModel
 
-object PreviewData {
+@KoinViewModel
+class SettingsFoldersViewModel(
+    audiobookFoldersViewStateFlow: AudiobookFoldersViewStateFlow,
+    private val audiobookFoldersManager: AudiobookFolderManager
+): ViewModel() {
 
-    val folderItems1 = listOf(FolderItem("Audiobooks", Uri.EMPTY, 2, "Alice's Adventures in Wonderland, Hamlet"))
+    data class ViewState(val folderItems: List<FolderItem>)
 
-    val folderItems50 get() = (1 .. 50).map { index ->
-        val titles = (1 .. index).map { "Book $it" }
-        FolderItem("Folder $index", Uri.parse("dummy://$index"), titles.size, titles.joinToEllipsizedString())
-    }
+    val viewState = audiobookFoldersViewStateFlow
+        .map { folders -> ViewState(folders) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), ViewState(emptyList()))
+
+    fun addFolder(uri: Uri) = audiobookFoldersManager.addFolder(uri)
+
+    fun removeFolder(item: FolderItem) = audiobookFoldersManager.removeFolder(item.uri)
 }

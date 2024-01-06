@@ -24,6 +24,16 @@
 
 package com.studio4plus.homerplayer2.settings.ui
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.togetherWith
+import androidx.compose.animation.with
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -34,38 +44,60 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.core.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.core.ui.theme.HomerTheme
 import com.studio4plus.homerplayer2.utils.composable
 
 @Composable
-fun SettingsScreen(onNavigateBack: () -> Unit) {
+fun SettingsScreen(navigateBack: () -> Unit) {
     val navController = rememberNavController()
-    val currentBackStackEntry = navController.currentBackStackEntryAsState()
-    val title = currentBackStackEntry.value?.destination?.label ?: ""
+    val currentBackStackEntryState = navController.currentBackStackEntryAsState()
+    val currentBackStackEntry = currentBackStackEntryState.value
+    val title = currentBackStackEntry?.destination?.label?.toString()
     Scaffold(
         topBar = {
             SettingsTopBar(
-                title = title.toString(),
-                onBack = onNavigateBack
+                toolbarTitle = title,
+                onBack = {
+                    val navigated = navController.popBackStack()
+                    if (!navigated) navigateBack()
+                }
             )
         }
     ) { paddingValues ->
-        SettingsNavHost(modifier = Modifier.padding(paddingValues), navController = navController)
+        SettingsNavHost(
+            modifier = Modifier.padding(paddingValues),
+            navController = navController
+        )
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SettingsTopBar(title: String, onBack: () -> Unit) {
+private fun SettingsTopBar(toolbarTitle: String?, onBack: () -> Unit) {
+    val animatedTitle: @Composable (title: String) -> Unit =  { title ->
+        AnimatedContent(
+            targetState = title,
+            modifier = Modifier.fillMaxWidth(),
+            label = "title transition",
+            transitionSpec = { fadeIn() togetherWith fadeOut() }
+        ) { targetState ->
+            Text(targetState)
+        }
+    }
     TopAppBar(
-        title = { Text(title) },
+        title = {
+            if (toolbarTitle != null) { animatedTitle(toolbarTitle) }
+        },
         navigationIcon = {
             IconButton(
                 onClick = onBack,
@@ -81,9 +113,26 @@ private fun SettingsNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
 ) {
-    NavHost(modifier = modifier, navController = navController, startDestination = "main") {
-        composable("main", label = "Settings" /* TODO: resource */) {
-            SettingsMain()
+    val mainTitle = stringResource(id = R.string.settings_ui_settings_title)
+    val foldersTitle = stringResource(id = R.string.settings_ui_audiobooks_folders)
+    NavHost(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(bottom = HomerTheme.dimensions.screenContentPadding),
+        navController = navController,
+        startDestination = "main",
+        enterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start) },
+        exitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Start) },
+        popEnterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.End) },
+        popExitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.End) },
+    ) {
+        composable("main", label = mainTitle) {
+            SettingsMain(
+                navigateFolders = { navController.navigate("folders") }
+            )
+        }
+        composable("folders", label = foldersTitle) {
+            SettingsFoldersRoute()
         }
     }
 }

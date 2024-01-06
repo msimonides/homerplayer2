@@ -106,7 +106,7 @@ fun MainNavHost(
             PlayerScreen(onOpenSettings = { navController.navigate("settings") })
         }
         composable("settings") {
-            SettingsScreen(onNavigateBack = { navController.popBackStack() })
+            SettingsScreen(navigateBack = { navController.popBackStack() })
         }
     }
 }

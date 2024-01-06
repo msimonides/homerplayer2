@@ -27,6 +27,8 @@ package com.studio4plus.homerplayer2.settings.ui
 import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.studio4plus.homerplayer2.audiobooks.ui.AudiobookFolderNamesFlow
+import com.studio4plus.homerplayer2.audiobooks.ui.joinToEllipsizedString
 import com.studio4plus.homerplayer2.player.DATASTORE_PLAYBACK_SETTINGS
 import com.studio4plus.homerplayer2.player.PlaybackSettings
 import com.studio4plus.homerplayer2.settings.DATASTORE_UI_SETTINGS
@@ -44,25 +46,29 @@ import org.koin.core.annotation.Named
 class MainViewModel(
     @Named(DATASTORE_UI_SETTINGS) private val uiSettingsStore: DataStore<UiSettings>,
     @Named(DATASTORE_PLAYBACK_SETTINGS) private val playbackSettingsStore: DataStore<PlaybackSettings>,
-    private val mainScope: CoroutineScope
+    private val mainScope: CoroutineScope,
+    private val audiobookFolderNamesFlow: AudiobookFolderNamesFlow
 ) : ViewModel() {
 
     class ViewState(
         val fullKioskMode: Boolean = false,
         val hideSettingsButton: Boolean = false,
         val uiMode: UiThemeMode = UiThemeMode.SYSTEM,
-        val rewindOnResumeSeconds: Int = 0
+        val rewindOnResumeSeconds: Int = 0,
+        val audiobookFolders: String? = null,
     )
 
     val viewState = combine(
         uiSettingsStore.data,
-        playbackSettingsStore.data
-    ) { uiSettings, playbackSettings ->
+        playbackSettingsStore.data,
+        audiobookFolderNamesFlow
+    ) { uiSettings, playbackSettings, folderNames ->
         ViewState(
             fullKioskMode = uiSettings.fullKioskMode,
             hideSettingsButton = uiSettings.hideSettingsButton,
             uiMode = uiSettings.uiThemeMode,
-            rewindOnResumeSeconds = playbackSettings.rewindOnResumeSeconds
+            rewindOnResumeSeconds = playbackSettings.rewindOnResumeSeconds,
+            folderNames.takeIf { it.isNotEmpty() }?.joinToEllipsizedString()
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 

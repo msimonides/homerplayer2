@@ -25,52 +25,31 @@
 package com.studio4plus.homerplayer2.audiobooks.ui
 
 import android.content.Context
-import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import com.studio4plus.homerplayer2.audiobooks.AudiobookFoldersDao
 import com.studio4plus.homerplayer2.core.DispatcherProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import org.koin.core.annotation.Factory
 
-data class FolderItem(val displayName: String, val uri: Uri, val bookCount: Int?, val bookTitles: String)
-
 @Factory
-class AudiobookFoldersViewStateFlow(
+class AudiobookFolderNamesFlow(
     private val appContext: Context,
     dispatcherProvider: DispatcherProvider,
     audiobookFoldersDao: AudiobookFoldersDao,
-): Flow<List<FolderItem>> {
+): Flow<List<String>> {
 
-    private val folders = audiobookFoldersDao.getAll().map { folders ->
+    private val foldersFlow =  audiobookFoldersDao.getAll().map { folders ->
         folders.mapNotNull { folder ->
             DocumentFile.fromTreeUri(appContext, folder.uri)?.let { documentFile ->
-                FolderItem(documentFile.name ?: folder.toString(), folder.uri, null, "")
+                documentFile.name ?: folder.toString()
             }
         }
     }.flowOn(dispatcherProvider.Io)
 
-    private val flow =
-        combine(folders, audiobookFoldersDao.getAllWithBookTitles(), this::combineBookCounts)
-
-    private fun combineBookCounts(
-        folderItems: List<FolderItem>,
-        foldersWithTitles: Map<Uri, List<String>>
-    ): List<FolderItem> =
-        folderItems.map { folder ->
-            val bookTitles = foldersWithTitles[folder.uri]
-            folder.copy(
-                bookCount = bookTitles?.size,
-                bookTitles = bookTitles?.joinToEllipsizedString() ?: ""
-            )
-        }
-
-    override suspend fun collect(collector: FlowCollector<List<FolderItem>>) {
-        flow.collect(collector)
+    override suspend fun collect(collector: FlowCollector<List<String>>) {
+        foldersFlow.collect(collector)
     }
 }
-
-

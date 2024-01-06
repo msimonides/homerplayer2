@@ -48,6 +48,7 @@ private enum class DialogType {
 
 @Composable
 fun SettingsMain(
+    navigateFolders: () -> Unit,
     viewModel: MainViewModel = koinViewModel()
 ) {
     val viewState = viewModel.viewState.collectAsStateWithLifecycle().value
@@ -58,6 +59,12 @@ fun SettingsMain(
                 .fillMaxWidth()
                 .heightIn(min = HomerTheme.dimensions.settingsRowMinHeight)
                 .padding(horizontal = HomerTheme.dimensions.screenContentPadding)
+            SettingItem(
+                label = stringResource(R.string.settings_ui_audiobooks_folders),
+                summary = viewState.audiobookFolders ?: stringResource(R.string.settings_ui_audiobooks_folders_summary_empty),
+                onClick = navigateFolders,
+                modifier = settingItemModifier
+            )
             SettingSwitch(
                 label = stringResource(R.string.settings_ui_full_kiosk_mode_label),
                 value = viewState.fullKioskMode,

@@ -39,6 +39,9 @@
     <string name="playback_volume_up_button_description">Volume Up</string>
     <string name="playback_volume_down_button_description">Volume Down</string>
 
+    <string name="settings_ui_settings_title">Settings</string>
+    <string name="settings_ui_audiobooks_folders">Audiobooks folders</string>
+    <string name="settings_ui_audiobooks_folders_summary_empty">(no folders selected)</string>
     <string name="settings_ui_full_kiosk_mode_label">Full kiosk mode</string>
     <string name="settings_ui_hide_settings_button_label">Hide settings button</string>
     <string name="settings_ui_mode_label">Color scheme</string>

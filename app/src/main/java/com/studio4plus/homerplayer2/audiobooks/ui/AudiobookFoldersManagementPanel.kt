@@ -101,11 +101,11 @@ private fun AudiobookFolderRow(
             shape = CircleShape
         ) {
             Box {
-                if (item.bookTitles == null) {
+                if (item.bookCount == null) {
                     SmallCircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 } else {
                     Text(
-                        item.bookTitles.size.toString(),
+                        item.bookCount.toString(),
                         style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.align(Alignment.Center)
                     )
@@ -115,10 +115,9 @@ private fun AudiobookFolderRow(
         Column(
             modifier = Modifier.weight(1f)
         ) {
-            val bookTitlesSummary = when {
-                item.bookTitles == null -> ""
-                item.bookTitles.isEmpty() -> stringResource(R.string.audiobook_folder_no_books_found)
-                else -> item.bookTitles.take(4).joinToString(", ")
+            val bookTitlesSummary = when (item.bookCount) {
+                0 -> stringResource(R.string.audiobook_folder_no_books_found)
+                else -> item.bookTitles
             }
             Text(item.displayName, style = MaterialTheme.typography.bodyLarge)
             Text(
@@ -145,7 +144,7 @@ private fun AudiobookFolderRow(
 private fun PreviewFolderRow() {
     HomerPlayer2Theme {
         AudiobookFolderRow(
-            FolderItem("My audiobooks", Uri.EMPTY, listOf("Alice in Wonderland", "Hamlet")),
+            FolderItem("My audiobooks", Uri.EMPTY, 2, "Alice in Wonderland, Hamlet"),
             {}
         )
     }
@@ -156,7 +155,7 @@ private fun PreviewFolderRow() {
 private fun PreviewFolderRowEmpty() {
     HomerPlayer2Theme {
         AudiobookFolderRow(
-            FolderItem("My audiobooks", Uri.EMPTY, listOf()),
+            FolderItem("My audiobooks", Uri.EMPTY,  0,""),
             {}
         )
     }
@@ -167,7 +166,7 @@ private fun PreviewFolderRowEmpty() {
 private fun PreviewFolderRowScanning() {
     HomerPlayer2Theme {
         AudiobookFolderRow(
-            FolderItem("My audiobooks", Uri.EMPTY, null),
+            FolderItem("My audiobooks", Uri.EMPTY, null, ""),
             {}
         )
     }

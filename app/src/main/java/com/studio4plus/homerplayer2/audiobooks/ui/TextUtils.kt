@@ -22,18 +22,10 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2
+package com.studio4plus.homerplayer2.audiobooks.ui
 
-import android.net.Uri
-import com.studio4plus.homerplayer2.audiobooks.ui.FolderItem
-import com.studio4plus.homerplayer2.audiobooks.ui.joinToEllipsizedString
-
-object PreviewData {
-
-    val folderItems1 = listOf(FolderItem("Audiobooks", Uri.EMPTY, 2, "Alice's Adventures in Wonderland, Hamlet"))
-
-    val folderItems50 get() = (1 .. 50).map { index ->
-        val titles = (1 .. index).map { "Book $it" }
-        FolderItem("Folder $index", Uri.parse("dummy://$index"), titles.size, titles.joinToEllipsizedString())
-    }
+fun List<String>.joinToEllipsizedString(maxItems: Int = 4): String {
+    // TODO: this might need localization.
+    val joined = take(maxItems).joinToString(", ")
+    return if (size <= maxItems) joined else joined + "…"
 }
