@@ -71,6 +71,7 @@ fun SettingsScreen(navigateBack: () -> Unit) {
         }
     ) { paddingValues ->
         SettingsNavHost(
+            closeSettings = navigateBack,
             modifier = Modifier.padding(paddingValues),
             navController = navController
         )
@@ -106,6 +107,7 @@ private fun SettingsTopBar(toolbarTitle: String?, onBack: () -> Unit) {
 
 @Composable
 private fun SettingsNavHost(
+    closeSettings: () -> Unit,
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
 ) {
@@ -124,6 +126,7 @@ private fun SettingsNavHost(
     ) {
         composable("main", label = mainTitle) {
             SettingsMain(
+                closeSettings = closeSettings,
                 navigateFolders = { navController.navigate("folders") }
             )
         }

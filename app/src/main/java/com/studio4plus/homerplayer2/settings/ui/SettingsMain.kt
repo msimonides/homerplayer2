@@ -32,6 +32,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
@@ -43,17 +44,18 @@ import com.studio4plus.homerplayer2.core.ui.theme.HomerTheme
 import org.koin.androidx.compose.koinViewModel
 
 private enum class DialogType {
-    UiMode, PlaybackRewindOnResume
+    UiMode, HideSettingsConfirmation, PlaybackRewindOnResume
 }
 
 @Composable
 fun SettingsMain(
+    closeSettings: () -> Unit,
     navigateFolders: () -> Unit,
     viewModel: MainViewModel = koinViewModel()
 ) {
     val viewState = viewModel.viewState.collectAsStateWithLifecycle().value
     if (viewState != null) {
-        var showUiModeDialog by remember { mutableStateOf<DialogType?>(null) }
+        var showUiModeDialog by rememberSaveable { mutableStateOf<DialogType?>(null) }
         Column {
             val settingItemModifier = Modifier
                 .fillMaxWidth()
@@ -74,7 +76,13 @@ fun SettingsMain(
             SettingSwitch(
                 label = stringResource(R.string.settings_ui_hide_settings_button_label),
                 value = viewState.hideSettingsButton,
-                onChange = { isEnabled -> viewModel.setHideSettingsButton(isEnabled) },
+                onChange = { isEnabled ->
+                    if (isEnabled) {
+                        showUiModeDialog = DialogType.HideSettingsConfirmation
+                    } else {
+                        viewModel.setHideSettingsButton(false)
+                    }
+                },
                 modifier = settingItemModifier
             )
             SettingItem(
@@ -100,6 +108,14 @@ fun SettingsMain(
             DialogType.PlaybackRewindOnResume -> ChooseRewindOnResumeDialog(
                 value = viewState.rewindOnResumeSeconds,
                 onValueChange = { viewModel.setRewindOnResumeSeconds(it) },
+                onDismissRequest = dismissAction
+            )
+            DialogType.HideSettingsConfirmation -> HideSettingsButtonConfirmationDialog(
+                onConfirm = {
+                    viewModel.setHideSettingsButton(true)
+                    dismissAction()
+                    closeSettings()
+                },
                 onDismissRequest = dismissAction
             )
             null -> Unit

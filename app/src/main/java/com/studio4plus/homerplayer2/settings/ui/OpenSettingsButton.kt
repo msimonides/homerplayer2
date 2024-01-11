@@ -33,10 +33,13 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.core.ui.theme.HomerTheme
 
@@ -47,7 +50,7 @@ fun OpenSettingsButton(
     modifier: Modifier = Modifier
 ) {
     if (isHidden) {
-        DoubleSettingsButton(isVisible = false, onOpenSettings, modifier)
+        DoubleSettingsButton(onOpenSettings, modifier)
     } else {
         SingleSettingsButton(onOpenSettings, modifier)
     }
@@ -67,26 +70,34 @@ private fun SingleSettingsButton(
 }
 
 @Composable
-private fun DoubleSettingsButton(
-    isVisible: Boolean,
+fun DoubleSettingsButton(
     onOpenSettings: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    showButtons: Boolean = false,
+    iconSize: Dp = HomerTheme.dimensions.mainScreenButtonSize,
 ) {
-    val mainSettingsButtonInteractionSource = remember { MutableInteractionSource() }
-    val isMainSettingsButtonPressed = mainSettingsButtonInteractionSource.collectIsPressedAsState()
+    val startButtonInteractionSource = remember { MutableInteractionSource() }
+    val endButtonInteractionSource = remember { MutableInteractionSource() }
+    val startButtonPressed by startButtonInteractionSource.collectIsPressedAsState()
+    val endButtonPressed by endButtonInteractionSource.collectIsPressedAsState()
+    val anyButtonPressed = startButtonPressed || endButtonPressed
+    if (startButtonPressed && endButtonPressed) {
+        SideEffect(effect = onOpenSettings)
+    }
+    val iconSizeModifier = Modifier.size(iconSize)
     Box(modifier) {
         CogWheelIconButton(
             onClick = {},
-            modifier = Modifier.align(Alignment.TopEnd),
-            isVisible = isVisible,
-            interactionSource = mainSettingsButtonInteractionSource
+            modifier = iconSizeModifier.align(Alignment.TopStart),
+            isVisible = anyButtonPressed || showButtons,
+            interactionSource = startButtonInteractionSource
         )
-        if (isMainSettingsButtonPressed.value) {
-            CogWheelIconButton(
-                onClick = onOpenSettings,
-                modifier = Modifier.align(Alignment.TopStart)
-            )
-        }
+        CogWheelIconButton(
+            onClick = {},
+            isVisible = anyButtonPressed || showButtons,
+            modifier = iconSizeModifier.align(Alignment.TopEnd),
+            interactionSource = endButtonInteractionSource
+        )
     }
 }
 
@@ -99,8 +110,7 @@ private fun CogWheelIconButton(
 ) {
     IconButton(
         onClick = onClick,
-        modifier = modifier
-            .size(HomerTheme.dimensions.mainScreenButtonSize),
+        modifier = modifier,
         interactionSource = interactionSource
     ) {
         if (isVisible) {

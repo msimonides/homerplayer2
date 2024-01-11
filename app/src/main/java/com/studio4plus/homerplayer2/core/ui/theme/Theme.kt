@@ -1,6 +1,8 @@
 package com.studio4plus.homerplayer2.core.ui.theme
 
 import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -23,6 +25,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowInsetsControllerCompat
+import java.lang.IllegalStateException
 
 @Immutable
 data class ExtendedColors(
@@ -139,6 +142,7 @@ private val LargeScreenDimensions = Dimensions(
 fun HomerPlayer2Theme(
     darkTheme: Boolean = isNightMode(),
     largeScreen: Boolean = isLargeScreen(),
+    setWindowColors: Boolean = true,
     content: @Composable () -> Unit
 ) {
     val materialColorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
@@ -146,9 +150,9 @@ fun HomerPlayer2Theme(
     val dimensions = if (largeScreen) LargeScreenDimensions else RegularDimensions
 
     val view = LocalView.current
-    if (!view.isInEditMode) {
+    if (!view.isInEditMode && setWindowColors) {
         SideEffect {
-            val window = (view.context as Activity).window
+            val window = (view.context.getActivity()).window
             window.statusBarColor = materialColorScheme.background.toArgb()
             WindowInsetsControllerCompat(window, view).isAppearanceLightStatusBars = !darkTheme
         }
@@ -179,7 +183,7 @@ private fun isLargeScreen() =
     if (LocalInspectionMode.current) {
         true
     } else {
-        calculateWindowSizeClass(LocalContext.current as Activity).let { windowSizeClass ->
+        calculateWindowSizeClass(LocalContext.current.getActivity()).let { windowSizeClass ->
             windowSizeClass.heightSizeClass == WindowHeightSizeClass.Expanded ||
                     windowSizeClass.widthSizeClass == WindowWidthSizeClass.Expanded
         }
@@ -193,3 +197,10 @@ object HomerTheme {
         @Composable
         get() = LocalDimensions.current
 }
+
+private fun Context.getActivity(): Activity =
+    when (this) {
+        is Activity -> this
+        is ContextWrapper -> baseContext.getActivity()
+        else -> throw IllegalStateException()
+    }

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Marcin Simonides
+ * Copyright (c) 2024 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,54 +22,36 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.settings.ui
+package com.studio4plus.homerplayer2.core.ui
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.studio4plus.homerplayer2.core.ui.DefaultAlertDialog
+import androidx.compose.ui.window.DialogProperties
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun <T> SelectFromListDialog(
-    selectedValue: T,
-    values: List<T>,
-    produceLabel: @Composable (T) -> String,
-    title: String,
-    onValueChange: (T) -> Unit,
+fun DefaultAlertDialog(
     onDismissRequest: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    usePlatformDefaultWidth: Boolean = true,
+    content: @Composable () -> Unit,
 ) {
-    DefaultAlertDialog(
+    BasicAlertDialog(
         onDismissRequest = onDismissRequest,
-        modifier = modifier
+        modifier = modifier.padding(vertical = 24.dp, horizontal = 16.dp),
+        properties = DialogProperties(usePlatformDefaultWidth = usePlatformDefaultWidth)
     ) {
-        Column(
-            modifier = Modifier
-                .padding(vertical = 24.dp)
-                .verticalScroll(rememberScrollState())
-        ) {
-            Text(
-                title,
-                style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier.padding(bottom = 16.dp, start = 24.dp, end = 24.dp)
-            )
-            values.map { value ->
-                RadioWithLabel(
-                    label = produceLabel(value),
-                    selected = value == selectedValue,
-                    onClick = {
-                        onValueChange(value)
-                        onDismissRequest()
-                    },
-                    modifier = Modifier.padding(vertical = 8.dp, horizontal = 24.dp)
-                )
-            }
-        }
+        Surface(
+            Modifier.wrapContentSize(),
+            shape = MaterialTheme.shapes.large,
+            content = content
+        )
     }
 }
