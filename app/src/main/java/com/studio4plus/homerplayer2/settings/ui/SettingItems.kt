@@ -78,9 +78,9 @@ fun SettingSwitch(
 @Composable
 fun SettingItem(
     label: String,
-    summary: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    summary: String? = null,
 ) {
     Column(
         modifier = Modifier
@@ -93,11 +93,13 @@ fun SettingItem(
         verticalArrangement = Arrangement.Center
     ) {
         Text(label, modifier = Modifier.padding(bottom = 4.dp))
-        Text(
-            summary,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
+        if (summary != null) {
+            Text(
+                summary,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
     }
 }
 
@@ -105,6 +107,6 @@ fun SettingItem(
 @Composable
 fun SettingItemPreview() {
     HomerPlayer2Theme {
-        SettingItem("Some setting", "Enabled", {})
+        SettingItem("Some setting", summary = "Enabled", onClick = {})
     }
 }

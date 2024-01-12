@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Marcin Simonides
+ * Copyright (c) 2024 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,45 +27,47 @@ package com.studio4plus.homerplayer2.settings.ui
 import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.studio4plus.homerplayer2.audiobooks.ui.AudiobookFolderNamesFlow
-import com.studio4plus.homerplayer2.audiobooks.ui.joinToEllipsizedString
-import com.studio4plus.homerplayer2.player.DATASTORE_PLAYBACK_SETTINGS
-import com.studio4plus.homerplayer2.player.PlaybackSettings
 import com.studio4plus.homerplayer2.settings.DATASTORE_UI_SETTINGS
 import com.studio4plus.homerplayer2.settings.UiSettings
 import com.studio4plus.homerplayer2.settings.UiThemeMode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
 import org.koin.core.annotation.Named
 
 @KoinViewModel
-class MainViewModel(
-    @Named(DATASTORE_PLAYBACK_SETTINGS) private val playbackSettingsStore: DataStore<PlaybackSettings>,
+class SettingsUiViewModel(
+    @Named(DATASTORE_UI_SETTINGS) private val uiSettingsStore: DataStore<UiSettings>,
     private val mainScope: CoroutineScope,
-    audiobookFolderNamesFlow: AudiobookFolderNamesFlow
 ) : ViewModel() {
 
     class ViewState(
-        val rewindOnResumeSeconds: Int = 0,
-        val audiobookFolders: String? = null,
+        val fullKioskMode: Boolean = false,
+        val hideSettingsButton: Boolean = false,
+        val uiMode: UiThemeMode = UiThemeMode.SYSTEM,
     )
 
-    val viewState = combine(
-        playbackSettingsStore.data,
-        audiobookFolderNamesFlow
-    ) { playbackSettings, folderNames ->
+    val viewState = uiSettingsStore.data.map { uiSettings ->
         ViewState(
-            rewindOnResumeSeconds = playbackSettings.rewindOnResumeSeconds,
-            folderNames.takeIf { it.isNotEmpty() }?.joinToEllipsizedString()
+            fullKioskMode = uiSettings.fullKioskMode,
+            hideSettingsButton = uiSettings.hideSettingsButton,
+            uiMode = uiSettings.uiThemeMode,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
-    fun setRewindOnResumeSeconds(seconds: Int) {
-        update(playbackSettingsStore) { it.copy(rewindOnResumeSeconds = seconds)}
+    fun setFullKioskMode(isEnabled: Boolean) {
+        update(uiSettingsStore) { it.copy(fullKioskMode = isEnabled) }
+    }
+
+    fun setHideSettingsButton(isHidden: Boolean) {
+        update(uiSettingsStore) { it.copy(hideSettingsButton = isHidden) }
+    }
+
+    fun setUiMode(newUiMode: UiThemeMode) {
+        update(uiSettingsStore) { it.copy(uiThemeMode = newUiMode) }
     }
 
     private fun <T> update(store: DataStore<T>, update: (T) -> T) {

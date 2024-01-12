@@ -31,6 +31,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -52,6 +53,12 @@ import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.core.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.core.ui.theme.HomerTheme
 import com.studio4plus.homerplayer2.utils.composable
+
+@Composable
+fun Modifier.defaultSettingsItem() = this
+    .fillMaxWidth()
+    .heightIn(min = HomerTheme.dimensions.settingsRowMinHeight)
+    .padding(horizontal = HomerTheme.dimensions.screenContentPadding)
 
 @Composable
 fun SettingsScreen(navigateBack: () -> Unit) {
@@ -113,6 +120,7 @@ private fun SettingsNavHost(
 ) {
     val mainTitle = stringResource(id = R.string.settings_ui_settings_title)
     val foldersTitle = stringResource(id = R.string.settings_ui_audiobooks_folders)
+    val uiTitle = stringResource(id = R.string.settings_ui_ui_settings_title)
     NavHost(
         modifier = modifier
             .fillMaxSize()
@@ -126,12 +134,17 @@ private fun SettingsNavHost(
     ) {
         composable("main", label = mainTitle) {
             SettingsMain(
-                closeSettings = closeSettings,
-                navigateFolders = { navController.navigate("folders") }
+                navigateFolders = { navController.navigate("folders") },
+                navigateUiSettings = { navController.navigate("ui_settings") }
             )
         }
         composable("folders", label = foldersTitle) {
             SettingsFoldersRoute()
+        }
+        composable("ui_settings", label = uiTitle) {
+            SettingsUiRoute(
+                closeSettings = closeSettings
+            )
         }
     }
 }

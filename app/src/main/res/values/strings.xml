@@ -51,6 +51,8 @@
     <string name="settings_ui_dark">Dark</string>
     <string name="settings_ui_light">Light</string>
     <string name="settings_ui_system">System</string>
+    <string name="settings_ui_ui_settings_item">UI settings…</string>
+    <string name="settings_ui_ui_settings_title">UI settings</string>
     <string name="settings_playback_rewind_on_resume_label">Rewind when resuming playback</string>
     <string name="settings_playback_rewind_on_resume_setting_disabled">Disabled</string>
     <plurals name="settings_playback_rewind_on_resume_setting">

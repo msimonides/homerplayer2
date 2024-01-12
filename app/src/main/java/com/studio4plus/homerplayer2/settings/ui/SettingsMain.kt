@@ -43,100 +43,49 @@ import com.studio4plus.homerplayer2.settings.UiThemeMode
 import com.studio4plus.homerplayer2.core.ui.theme.HomerTheme
 import org.koin.androidx.compose.koinViewModel
 
-private enum class DialogType {
-    UiMode, HideSettingsConfirmation, PlaybackRewindOnResume
+private enum class SettingsMainDialogType {
+    PlaybackRewindOnResume
 }
 
 @Composable
 fun SettingsMain(
-    closeSettings: () -> Unit,
     navigateFolders: () -> Unit,
+    navigateUiSettings: () -> Unit,
     viewModel: MainViewModel = koinViewModel()
 ) {
     val viewState = viewModel.viewState.collectAsStateWithLifecycle().value
     if (viewState != null) {
-        var showUiModeDialog by rememberSaveable { mutableStateOf<DialogType?>(null) }
+        var showUiModeDialog by rememberSaveable { mutableStateOf<SettingsMainDialogType?>(null) }
         Column {
-            val settingItemModifier = Modifier
-                .fillMaxWidth()
-                .heightIn(min = HomerTheme.dimensions.settingsRowMinHeight)
-                .padding(horizontal = HomerTheme.dimensions.screenContentPadding)
+            val settingItemModifier = Modifier.defaultSettingsItem()
+            SettingItem(
+                label = stringResource(R.string.settings_ui_ui_settings_item),
+                onClick = navigateUiSettings,
+                modifier = settingItemModifier,
+            )
             SettingItem(
                 label = stringResource(R.string.settings_ui_audiobooks_folders),
                 summary = viewState.audiobookFolders ?: stringResource(R.string.settings_ui_audiobooks_folders_summary_empty),
                 onClick = navigateFolders,
                 modifier = settingItemModifier
             )
-            SettingSwitch(
-                label = stringResource(R.string.settings_ui_full_kiosk_mode_label),
-                value = viewState.fullKioskMode,
-                onChange = { isEnabled -> viewModel.setFullKioskMode(isEnabled) },
-                modifier = settingItemModifier
-            )
-            SettingSwitch(
-                label = stringResource(R.string.settings_ui_hide_settings_button_label),
-                value = viewState.hideSettingsButton,
-                onChange = { isEnabled ->
-                    if (isEnabled) {
-                        showUiModeDialog = DialogType.HideSettingsConfirmation
-                    } else {
-                        viewModel.setHideSettingsButton(false)
-                    }
-                },
-                modifier = settingItemModifier
-            )
-            SettingItem(
-                label = stringResource(R.string.settings_ui_mode_label),
-                summary = stringResource(viewState.uiMode.labelRes()),
-                onClick = { showUiModeDialog = DialogType.UiMode },
-                modifier = settingItemModifier
-            )
             SettingItem(
                 label = stringResource(id = R.string.settings_playback_rewind_on_resume_label),
                 summary = rewindOnResumeSettingString(seconds = viewState.rewindOnResumeSeconds),
-                onClick = { showUiModeDialog = DialogType.PlaybackRewindOnResume },
+                onClick = { showUiModeDialog = SettingsMainDialogType.PlaybackRewindOnResume },
                 modifier = settingItemModifier
             )
         }
         val dismissAction = { showUiModeDialog = null }
         when (showUiModeDialog) {
-            DialogType.UiMode -> ChooseUiModeDialog(
-                value = viewState.uiMode,
-                onValueChange = { viewModel.setUiMode(it) },
-                onDismissRequest = dismissAction
-            )
-            DialogType.PlaybackRewindOnResume -> ChooseRewindOnResumeDialog(
+            SettingsMainDialogType.PlaybackRewindOnResume -> ChooseRewindOnResumeDialog(
                 value = viewState.rewindOnResumeSeconds,
                 onValueChange = { viewModel.setRewindOnResumeSeconds(it) },
-                onDismissRequest = dismissAction
-            )
-            DialogType.HideSettingsConfirmation -> HideSettingsButtonConfirmationDialog(
-                onConfirm = {
-                    viewModel.setHideSettingsButton(true)
-                    dismissAction()
-                    closeSettings()
-                },
                 onDismissRequest = dismissAction
             )
             null -> Unit
         }
     }
-}
-
-@Composable
-private fun ChooseUiModeDialog(
-    value: UiThemeMode,
-    onValueChange: (UiThemeMode) -> Unit,
-    onDismissRequest: () -> Unit
-) {
-    SelectFromListDialog(
-        selectedValue = value,
-        values = listOf(UiThemeMode.SYSTEM, UiThemeMode.LIGHT, UiThemeMode.DARK),
-        produceLabel = { stringResource(id = it.labelRes()) },
-        title = stringResource(id = R.string.settings_ui_mode_label),
-        onValueChange = onValueChange,
-        onDismissRequest = onDismissRequest
-    )
 }
 
 @Composable
@@ -161,9 +110,3 @@ private fun rewindOnResumeSettingString(seconds: Int): String =
         0 -> stringResource(id = R.string.settings_playback_rewind_on_resume_setting_disabled)
         else -> pluralStringResource(id = R.plurals.settings_playback_rewind_on_resume_setting, seconds, seconds)
     }
-
-private fun UiThemeMode.labelRes() = when(this) {
-    UiThemeMode.SYSTEM -> R.string.settings_ui_system
-    UiThemeMode.LIGHT -> R.string.settings_ui_light
-    UiThemeMode.DARK -> R.string.settings_ui_dark
-}
