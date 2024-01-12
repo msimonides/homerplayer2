@@ -47,6 +47,7 @@ class SettingsUiViewModel(
     class ViewState(
         val fullKioskMode: Boolean = false,
         val hideSettingsButton: Boolean = false,
+        val showBattery: Boolean = false,
         val uiMode: UiThemeMode = UiThemeMode.SYSTEM,
     )
 
@@ -54,6 +55,7 @@ class SettingsUiViewModel(
         ViewState(
             fullKioskMode = uiSettings.fullKioskMode,
             hideSettingsButton = uiSettings.hideSettingsButton,
+            showBattery = uiSettings.showBatteryIndicator,
             uiMode = uiSettings.uiThemeMode,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
@@ -64,6 +66,10 @@ class SettingsUiViewModel(
 
     fun setHideSettingsButton(isHidden: Boolean) {
         update(uiSettingsStore) { it.copy(hideSettingsButton = isHidden) }
+    }
+
+    fun setShowBatteryIndicator(isShown: Boolean) {
+        update(uiSettingsStore) { it.copy(showBatteryIndicator = isShown) }
     }
 
     fun setUiMode(newUiMode: UiThemeMode) {

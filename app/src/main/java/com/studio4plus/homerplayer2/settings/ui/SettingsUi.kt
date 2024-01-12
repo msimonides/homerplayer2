@@ -49,7 +49,8 @@ fun SettingsUiRoute(
     SettingsUi(
         viewModel.viewState.collectAsStateWithLifecycle().value,
         onSetFullKioskMode = viewModel::setFullKioskMode,
-        onHideSettingsButton = viewModel::setHideSettingsButton,
+        onSetHideSettingsButton = viewModel::setHideSettingsButton,
+        onSetShowSettingsButton = viewModel::setShowBatteryIndicator,
         onSetUiMode = viewModel::setUiMode,
         closeSettings = closeSettings,
     )
@@ -59,7 +60,8 @@ fun SettingsUiRoute(
 fun SettingsUi(
     viewState: SettingsUiViewModel.ViewState?,
     onSetFullKioskMode: (isEnabled: Boolean) -> Unit,
-    onHideSettingsButton: (hide: Boolean) -> Unit,
+    onSetHideSettingsButton: (hide: Boolean) -> Unit,
+    onSetShowSettingsButton: (show: Boolean) -> Unit,
     onSetUiMode: (UiThemeMode) -> Unit,
     closeSettings: () -> Unit,
 ) {
@@ -80,10 +82,16 @@ fun SettingsUi(
                     if (isEnabled) {
                         showUiModeDialog = SettingsUiDialogType.HideSettingsConfirmation
                     } else {
-                        onHideSettingsButton(false)
+                        onSetHideSettingsButton(false)
                     }
                 },
                 modifier = settingItemModifier
+            )
+            SettingSwitch(
+                label = stringResource(R.string.settings_ui_show_battery),
+                value = viewState.showBattery,
+                onChange = onSetShowSettingsButton,
+                modifier = settingItemModifier,
             )
             SettingItem(
                 label = stringResource(R.string.settings_ui_mode_label),
@@ -102,7 +110,7 @@ fun SettingsUi(
             )
             SettingsUiDialogType.HideSettingsConfirmation -> HideSettingsButtonConfirmationDialog(
                 onConfirm = {
-                    onHideSettingsButton(true)
+                    onSetHideSettingsButton(true)
                     dismissAction()
                     closeSettings()
                 },
@@ -130,7 +138,7 @@ private fun ChooseUiModeDialog(
 }
 
 private fun UiThemeMode.labelRes() = when(this) {
-    UiThemeMode.SYSTEM -> R.string.settings_ui_system
-    UiThemeMode.LIGHT -> R.string.settings_ui_light
-    UiThemeMode.DARK -> R.string.settings_ui_dark
+    UiThemeMode.SYSTEM -> R.string.settings_ui_mode_system
+    UiThemeMode.LIGHT -> R.string.settings_ui_mode_light
+    UiThemeMode.DARK -> R.string.settings_ui_mode_dark
 }

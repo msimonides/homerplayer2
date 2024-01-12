@@ -37,11 +37,14 @@ import com.studio4plus.homerplayer2.player.PlaybackUiStateRepository
 import com.studio4plus.homerplayer2.settings.DATASTORE_UI_SETTINGS
 import com.studio4plus.homerplayer2.settings.UiSettings
 import com.studio4plus.homerplayer2.speech.Speaker
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
@@ -120,12 +123,17 @@ class PlayerViewModel(
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), ViewState.Initializing)
 
-    // TODO: rethink whether this should be nullable
-    val batteryState: StateFlow<BatteryState?> = batteryStateProvider.batteryState
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
-
     private val uiSettings = uiSettingsStore.data
         .stateIn(viewModelScope, SharingStarted.Eagerly, UiSettings())
+
+    // TODO: rethink whether this should be nullable
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val batteryState: StateFlow<BatteryState?> = uiSettings
+        .map { it.showBatteryIndicator }
+        .flatMapLatest { showBatteryIndicator ->
+            if (showBatteryIndicator) batteryStateProvider.batteryState
+            else flowOf(null)
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
     val hideSettingsButton: StateFlow<Boolean> = uiSettings.map {
         it.hideSettingsButton

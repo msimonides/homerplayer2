@@ -48,9 +48,10 @@
     <string name="settings_ui_hide_settings_dialog_description">Hide settings button to prevent the user from accidentally opening the settings screen.\nTo open settings press the two invisible icons in top corners of the screen.</string>
     <string name="settings_ui_hide_settings_dialog_confirm_button">Hide settings button</string>
     <string name="settings_ui_mode_label">Color scheme</string>
-    <string name="settings_ui_dark">Dark</string>
-    <string name="settings_ui_light">Light</string>
-    <string name="settings_ui_system">System</string>
+    <string name="settings_ui_mode_dark">Dark</string>
+    <string name="settings_ui_mode_light">Light</string>
+    <string name="settings_ui_mode_system">System</string>
+    <string name="settings_ui_show_battery">Show battery indicator</string>
     <string name="settings_ui_ui_settings_item">UI settings…</string>
     <string name="settings_ui_ui_settings_title">UI settings</string>
     <string name="settings_playback_rewind_on_resume_label">Rewind when resuming playback</string>

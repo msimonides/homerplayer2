@@ -35,6 +35,7 @@ enum class UiThemeMode {
 data class UiSettings(
     val fullKioskMode: Boolean = false,
     val hideSettingsButton: Boolean = false,
+    val showBatteryIndicator: Boolean = false,
     val readBookTitles: Boolean = false,
     val uiThemeMode: UiThemeMode = UiThemeMode.SYSTEM,
 )
