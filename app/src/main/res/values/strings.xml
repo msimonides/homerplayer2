@@ -51,16 +51,25 @@
     <string name="settings_ui_mode_dark">Dark</string>
     <string name="settings_ui_mode_light">Light</string>
     <string name="settings_ui_mode_system">System</string>
+    <string name="settings_ui_playback_rewind_on_resume_label">Rewind when resuming playback</string>
+    <string name="settings_ui_playback_rewind_on_resume_setting_disabled">Disabled</string>
+    <string name="settings_ui_playback_settings_item">Playback settings…</string>
+    <string name="settings_ui_playback_settings_title">Playback settings</string>
+    <string name="settings_ui_playback_sleep_timer_label">Sleep timer</string>
+    <string name="settings_ui_playback_sleep_timer_disabled">Disabled</string>
     <string name="settings_ui_share_diagnostic_log_title">Share diagnostic log</string>
     <string name="settings_ui_share_diagnostic_log_summary">Send diagnostic log to developer to report an issue</string>
     <string name="settings_ui_show_battery">Show battery indicator</string>
     <string name="settings_ui_ui_settings_item">UI settings…</string>
     <string name="settings_ui_ui_settings_title">UI settings</string>
-    <string name="settings_playback_rewind_on_resume_label">Rewind when resuming playback</string>
-    <string name="settings_playback_rewind_on_resume_setting_disabled">Disabled</string>
-    <plurals name="settings_playback_rewind_on_resume_setting">
+
+    <plurals name="settings_time_seconds">
         <item quantity="one">%1$d second</item>
         <item quantity="other">%1$d seconds</item>
+    </plurals>
+    <plurals name="settings_time_minutes">
+        <item quantity="one">%1$d minute</item>
+        <item quantity="other">%1$d minutes</item>
     </plurals>
 
     <string name="speech_init_say_failed">Playing test phrase failed. Check your text-to-speech settings.</string>

@@ -27,9 +27,8 @@ package com.studio4plus.homerplayer2.settings.ui
 import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.studio4plus.homerplayer2.settings.DATASTORE_UI_SETTINGS
-import com.studio4plus.homerplayer2.settings.UiSettings
-import com.studio4plus.homerplayer2.settings.UiThemeMode
+import com.studio4plus.homerplayer2.player.DATASTORE_PLAYBACK_SETTINGS
+import com.studio4plus.homerplayer2.player.PlaybackSettings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
@@ -38,40 +37,28 @@ import org.koin.android.annotation.KoinViewModel
 import org.koin.core.annotation.Named
 
 @KoinViewModel
-class SettingsUiViewModel(
-    @Named(DATASTORE_UI_SETTINGS) private val uiSettingsStore: DataStore<UiSettings>,
+class SettingsPlaybackViewModel(
     private val mainScope: CoroutineScope,
+    @Named(DATASTORE_PLAYBACK_SETTINGS) private val playbackSettingsStore: DataStore<PlaybackSettings>,
 ) : ViewModel() {
 
-    class ViewState(
-        val fullKioskMode: Boolean = false,
-        val hideSettingsButton: Boolean = false,
-        val showBattery: Boolean = false,
-        val uiMode: UiThemeMode = UiThemeMode.SYSTEM,
+    data class ViewState(
+        val rewindOnResumeSeconds: Int,
+        val sleepTimerSeconds: Int,
     )
 
-    val viewState = uiSettingsStore.data.map { uiSettings ->
+    val viewState = playbackSettingsStore.data.map { playbackSettings ->
         ViewState(
-            fullKioskMode = uiSettings.fullKioskMode,
-            hideSettingsButton = uiSettings.hideSettingsButton,
-            showBattery = uiSettings.showBatteryIndicator,
-            uiMode = uiSettings.uiThemeMode,
+            rewindOnResumeSeconds = playbackSettings.rewindOnResumeSeconds,
+            sleepTimerSeconds = playbackSettings.sleepTimerSeconds,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
-    fun setFullKioskMode(isEnabled: Boolean) {
-        mainScope.launchUpdate(uiSettingsStore) { it.copy(fullKioskMode = isEnabled) }
+    fun setRewindOnResumeSeconds(seconds: Int) {
+        mainScope.launchUpdate(playbackSettingsStore) { it.copy(rewindOnResumeSeconds = seconds) }
     }
 
-    fun setHideSettingsButton(isHidden: Boolean) {
-        mainScope.launchUpdate(uiSettingsStore) { it.copy(hideSettingsButton = isHidden) }
-    }
-
-    fun setShowBatteryIndicator(isShown: Boolean) {
-        mainScope.launchUpdate(uiSettingsStore) { it.copy(showBatteryIndicator = isShown) }
-    }
-
-    fun setUiMode(newUiMode: UiThemeMode) {
-        mainScope.launchUpdate(uiSettingsStore) { it.copy(uiThemeMode = newUiMode) }
+    fun setSleepTimerSeconds(seconds: Int) {
+        mainScope.launchUpdate(playbackSettingsStore) { it.copy(sleepTimerSeconds = seconds) }
     }
 }

@@ -26,33 +26,24 @@ package com.studio4plus.homerplayer2.settings.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studio4plus.homerplayer2.R
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
-private enum class SettingsMainDialogType {
-    PlaybackRewindOnResume
-}
-
 @Composable
 fun SettingsMain(
     navigateFolders: () -> Unit,
     navigateUiSettings: () -> Unit,
+    navigatePlaybackSettings: () -> Unit,
     viewModel: SettingsMainViewModel = koinViewModel()
 ) {
     val viewState = viewModel.viewState.collectAsStateWithLifecycle().value
     if (viewState != null) {
-        var showUiModeDialog by rememberSaveable { mutableStateOf<SettingsMainDialogType?>(null) }
         val coroutineScope = rememberCoroutineScope()
         val context = LocalContext.current
         Column {
@@ -63,15 +54,14 @@ fun SettingsMain(
                 modifier = settingItemModifier,
             )
             SettingItem(
+                label = stringResource(R.string.settings_ui_playback_settings_item),
+                onClick = navigatePlaybackSettings,
+                modifier = settingItemModifier,
+            )
+            SettingItem(
                 label = stringResource(R.string.settings_ui_audiobooks_folders),
                 summary = viewState.audiobookFolders ?: stringResource(R.string.settings_ui_audiobooks_folders_summary_empty),
                 onClick = navigateFolders,
-                modifier = settingItemModifier
-            )
-            SettingItem(
-                label = stringResource(id = R.string.settings_playback_rewind_on_resume_label),
-                summary = rewindOnResumeSettingString(seconds = viewState.rewindOnResumeSeconds),
-                onClick = { showUiModeDialog = SettingsMainDialogType.PlaybackRewindOnResume },
                 modifier = settingItemModifier
             )
             SettingItem(
@@ -84,40 +74,7 @@ fun SettingsMain(
                     }
                 },
                 modifier = settingItemModifier
-
             )
-        }
-        val dismissAction = { showUiModeDialog = null }
-        when (showUiModeDialog) {
-            SettingsMainDialogType.PlaybackRewindOnResume -> ChooseRewindOnResumeDialog(
-                value = viewState.rewindOnResumeSeconds,
-                onValueChange = { viewModel.setRewindOnResumeSeconds(it) },
-                onDismissRequest = dismissAction
-            )
-            null -> Unit
         }
     }
 }
-
-@Composable
-private fun ChooseRewindOnResumeDialog(
-    value: Int,
-    onValueChange: (Int) -> Unit,
-    onDismissRequest: () -> Unit
-) {
-    SelectFromListDialog(
-        selectedValue = value,
-        values = listOf(0, 5, 15, 30, 60),
-        produceLabel = { rewindOnResumeSettingString(it) },
-        title = stringResource(id = R.string.settings_playback_rewind_on_resume_label),
-        onValueChange = onValueChange,
-        onDismissRequest = onDismissRequest
-    )
-}
-
-@Composable
-private fun rewindOnResumeSettingString(seconds: Int): String =
-    when (seconds) {
-        0 -> stringResource(id = R.string.settings_playback_rewind_on_resume_setting_disabled)
-        else -> pluralStringResource(id = R.plurals.settings_playback_rewind_on_resume_setting, seconds, seconds)
-    }
