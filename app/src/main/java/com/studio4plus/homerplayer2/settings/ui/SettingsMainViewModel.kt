@@ -31,9 +31,6 @@ import com.studio4plus.homerplayer2.audiobooks.ui.AudiobookFolderNamesFlow
 import com.studio4plus.homerplayer2.audiobooks.ui.joinToEllipsizedString
 import com.studio4plus.homerplayer2.player.DATASTORE_PLAYBACK_SETTINGS
 import com.studio4plus.homerplayer2.player.PlaybackSettings
-import com.studio4plus.homerplayer2.settings.DATASTORE_UI_SETTINGS
-import com.studio4plus.homerplayer2.settings.UiSettings
-import com.studio4plus.homerplayer2.settings.UiThemeMode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -43,7 +40,7 @@ import org.koin.android.annotation.KoinViewModel
 import org.koin.core.annotation.Named
 
 @KoinViewModel
-class MainViewModel(
+class SettingsMainViewModel(
     @Named(DATASTORE_PLAYBACK_SETTINGS) private val playbackSettingsStore: DataStore<PlaybackSettings>,
     private val mainScope: CoroutineScope,
     audiobookFolderNamesFlow: AudiobookFolderNamesFlow
