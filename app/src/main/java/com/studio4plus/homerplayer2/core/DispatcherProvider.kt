@@ -32,6 +32,7 @@ interface DispatcherProvider {
     val Main: CoroutineDispatcher
     val Io: CoroutineDispatcher
     val Computation: CoroutineDispatcher
+
 }
 
 @Single

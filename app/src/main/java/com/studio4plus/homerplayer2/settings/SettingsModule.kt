@@ -30,6 +30,7 @@ import com.studio4plus.homerplayer2.core.DispatcherProvider
 import com.studio4plus.homerplayer2.loccalstorage.LOCAL_STORAGE_JSON
 import com.studio4plus.homerplayer2.loccalstorage.LocalStorageModule
 import com.studio4plus.homerplayer2.loccalstorage.createDataStore
+import com.studio4plus.homerplayer2.logging.LoggingModule
 import kotlinx.serialization.json.Json
 import org.koin.core.annotation.ComponentScan
 import org.koin.core.annotation.Module
@@ -38,7 +39,7 @@ import org.koin.core.annotation.Single
 
 const val DATASTORE_UI_SETTINGS = "uiSettings"
 
-@Module(includes = [LocalStorageModule::class])
+@Module(includes = [LocalStorageModule::class, LoggingModule::class])
 @ComponentScan("com.studio4plus.homerplayer2.settings")
 class SettingsModule {
 

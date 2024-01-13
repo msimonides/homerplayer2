@@ -51,6 +51,8 @@
     <string name="settings_ui_mode_dark">Dark</string>
     <string name="settings_ui_mode_light">Light</string>
     <string name="settings_ui_mode_system">System</string>
+    <string name="settings_ui_share_diagnostic_log_title">Share diagnostic log</string>
+    <string name="settings_ui_share_diagnostic_log_summary">Send diagnostic log to developer to report an issue</string>
     <string name="settings_ui_show_battery">Show battery indicator</string>
     <string name="settings_ui_ui_settings_item">UI settings…</string>
     <string name="settings_ui_ui_settings_title">UI settings</string>

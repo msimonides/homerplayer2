@@ -59,6 +59,16 @@
                 <action android:name="androidx.media3.session.MediaSessionService"/>
             </intent-filter>
         </service>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.studio4plus.homerplayer2.shared"
+            android:grantUriPermissions="true"
+            android:exported="false">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths_shared" />
+        </provider>
     </application>
 
 </manifest>

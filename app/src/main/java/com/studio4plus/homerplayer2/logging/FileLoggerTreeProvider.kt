@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Marcin Simonides
+ * Copyright (c) 2024 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,31 +22,35 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.app
+package com.studio4plus.homerplayer2.logging
 
-import android.app.Application
-import com.studio4plus.homerplayer2.BuildConfig
-import com.studio4plus.homerplayer2.logging.FileLoggerTreeProvider
-import org.koin.android.ext.android.inject
-import org.koin.android.ext.koin.androidContext
-import org.koin.core.context.startKoin
-import org.koin.ksp.generated.*
+import android.util.Log
+import com.studio4plus.homerplayer2.core.DispatcherProvider
+import fr.bipi.treessence.file.FileLoggerTree
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.plus
+import org.koin.core.annotation.Factory
 import timber.log.Timber
 
-class HomerPlayerApp : Application() {
-
-    override fun onCreate() {
-        super.onCreate()
-
-        startKoin {
-            androidContext(this@HomerPlayerApp)
-            modules(AppModule().module)
-        }
-
-        if (BuildConfig.DEBUG) {
-            Timber.plant(Timber.DebugTree())
-        }
-        val fileLoggerProvider: FileLoggerTreeProvider by inject()
-        Timber.plant(fileLoggerProvider())
+@Factory
+class FileLoggerTreeProvider(
+    mainScope: CoroutineScope,
+    dispatcherProvider: DispatcherProvider,
+    private val logsPathProvider: LogsPathProvider,
+) {
+    operator fun invoke(): Timber.Tree {
+        return FileLoggerTree.Builder()
+            .withFileName("file%g.log")
+            .withDirName(logsPathProvider.logsFolder().absolutePath)
+            .withSizeLimit(100_000)
+            .withFileLimit(3)
+            .withMinPriority(Log.DEBUG)
+            .appendToFile(true)
+            .withCoroutineScope(loggingScope)
+            .build()
     }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val loggingScope = mainScope + dispatcherProvider.Io.limitedParallelism(1)
 }

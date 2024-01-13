@@ -47,6 +47,7 @@ kotlinx-coroutines-guava = { module = 'org.jetbrains.kotlinx:kotlinx-coroutines-
 kotlinx-serialization-json = { module = 'org.jetbrains.kotlinx:kotlinx-serialization-json', version = '1.5.1' }
 
 timber = 'com.jakewharton.timber:timber:5.0.1'
+treessence = 'com.github.bastienpaulfr:Treessence:1.1.2'
 
 junit = 'junit:junit:4.13.2'
 

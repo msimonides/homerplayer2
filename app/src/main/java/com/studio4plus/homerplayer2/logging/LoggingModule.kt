@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Marcin Simonides
+ * Copyright (c) 2024 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,31 +22,11 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.app
+package com.studio4plus.homerplayer2.logging
 
-import android.app.Application
-import com.studio4plus.homerplayer2.BuildConfig
-import com.studio4plus.homerplayer2.logging.FileLoggerTreeProvider
-import org.koin.android.ext.android.inject
-import org.koin.android.ext.koin.androidContext
-import org.koin.core.context.startKoin
-import org.koin.ksp.generated.*
-import timber.log.Timber
+import org.koin.core.annotation.ComponentScan
+import org.koin.core.annotation.Module
 
-class HomerPlayerApp : Application() {
-
-    override fun onCreate() {
-        super.onCreate()
-
-        startKoin {
-            androidContext(this@HomerPlayerApp)
-            modules(AppModule().module)
-        }
-
-        if (BuildConfig.DEBUG) {
-            Timber.plant(Timber.DebugTree())
-        }
-        val fileLoggerProvider: FileLoggerTreeProvider by inject()
-        Timber.plant(fileLoggerProvider())
-    }
-}
+@Module
+@ComponentScan("com.studio4plus.homerplayer2.logging")
+class LoggingModule

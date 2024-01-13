@@ -39,6 +39,7 @@ import com.studio4plus.homerplayer2.core.DispatcherProvider
 import com.studio4plus.homerplayer2.loccalstorage.LOCAL_STORAGE_JSON
 import com.studio4plus.homerplayer2.loccalstorage.LocalStorageModule
 import com.studio4plus.homerplayer2.loccalstorage.createDataStore
+import com.studio4plus.homerplayer2.logging.LoggingModule
 import com.studio4plus.homerplayer2.onboarding.OnboardingModule
 import com.studio4plus.homerplayer2.player.PlayerModule
 import com.studio4plus.homerplayer2.settings.SettingsModule
@@ -59,6 +60,7 @@ const val DATASTORE_APP_STATE = "appState"
         BatteryModule::class,
         CoreModule::class,
         LocalStorageModule::class,
+        LoggingModule::class,
         OnboardingModule::class,
         PlayerModule::class,
         SettingsModule::class

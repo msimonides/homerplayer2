@@ -28,13 +28,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studio4plus.homerplayer2.R
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 private enum class SettingsMainDialogType {
@@ -50,6 +53,8 @@ fun SettingsMain(
     val viewState = viewModel.viewState.collectAsStateWithLifecycle().value
     if (viewState != null) {
         var showUiModeDialog by rememberSaveable { mutableStateOf<SettingsMainDialogType?>(null) }
+        val coroutineScope = rememberCoroutineScope()
+        val context = LocalContext.current
         Column {
             val settingItemModifier = Modifier.defaultSettingsItem()
             SettingItem(
@@ -68,6 +73,18 @@ fun SettingsMain(
                 summary = rewindOnResumeSettingString(seconds = viewState.rewindOnResumeSeconds),
                 onClick = { showUiModeDialog = SettingsMainDialogType.PlaybackRewindOnResume },
                 modifier = settingItemModifier
+            )
+            SettingItem(
+                label = stringResource(id = R.string.settings_ui_share_diagnostic_log_title),
+                summary = stringResource(id = R.string.settings_ui_share_diagnostic_log_summary),
+                onClick = {
+                    coroutineScope.launch {
+                        val shareIntent = viewModel.shareDiagnosticLogs()
+                        context.startActivity(shareIntent)
+                    }
+                },
+                modifier = settingItemModifier
+
             )
         }
         val dismissAction = { showUiModeDialog = null }
