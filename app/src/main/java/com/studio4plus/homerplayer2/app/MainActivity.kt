@@ -40,6 +40,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.studio4plus.homerplayer2.app.ui.HomerPLayerUi
 import com.studio4plus.homerplayer2.onboarding.onboardingGraph
 import com.studio4plus.homerplayer2.player.ui.PlayerScreen
 import com.studio4plus.homerplayer2.settings.ui.SettingsScreen
@@ -59,19 +60,7 @@ class MainActivity : AppCompatActivity() {
         setupLockTask()
 
         setContent {
-            HomerPlayer2Theme {
-                val viewState = activityViewModel.viewState.collectAsStateWithLifecycle().value
-
-                Surface(
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    when (viewState) {
-                        is MainActivityViewState.Loading -> Unit
-                        is MainActivityViewState.Ready ->
-                            MainNavHost(needsOnboarding = viewState.needsOnboarding)
-                    }
-                }
-            }
+            HomerPLayerUi()
         }
     }
 
@@ -92,21 +81,4 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-@Composable
-fun MainNavHost(
-    needsOnboarding: Boolean,
-    modifier: Modifier = Modifier,
-    navController: NavHostController = rememberNavController()
-) {
-    // TODO: use constants instead of raw strings
-    val startDestination = if (needsOnboarding) "onboarding" else "player"
-    NavHost(modifier = modifier, navController = navController, startDestination = startDestination) {
-        onboardingGraph(navController, "player")
-        composable("player") {
-            PlayerScreen(onOpenSettings = { navController.navigate("settings") })
-        }
-        composable("settings") {
-            SettingsScreen(navigateBack = { navController.popBackStack("player", inclusive = false) })
-        }
-    }
-}
+

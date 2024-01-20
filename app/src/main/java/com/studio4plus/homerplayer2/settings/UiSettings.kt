@@ -33,9 +33,10 @@ enum class UiThemeMode {
 
 @Serializable
 data class UiSettings(
+    val enableHapticFeedback: Boolean = false,
     val fullKioskMode: Boolean = false,
     val hideSettingsButton: Boolean = false,
-    val showBatteryIndicator: Boolean = false,
     val readBookTitles: Boolean = false,
+    val showBatteryIndicator: Boolean = false,
     val uiThemeMode: UiThemeMode = UiThemeMode.SYSTEM,
 )

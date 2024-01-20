@@ -24,6 +24,7 @@
 
 package com.studio4plus.homerplayer2.settings.ui
 
+import android.os.Build
 import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -44,14 +45,17 @@ class SettingsUiViewModel(
 ) : ViewModel() {
 
     class ViewState(
-        val fullKioskMode: Boolean = false,
-        val hideSettingsButton: Boolean = false,
-        val showBattery: Boolean = false,
-        val uiMode: UiThemeMode = UiThemeMode.SYSTEM,
+        val enableHapticFeedback: Boolean?,
+        val fullKioskMode: Boolean,
+        val hideSettingsButton: Boolean,
+        val showBattery: Boolean,
+        val uiMode: UiThemeMode,
     )
 
     val viewState = uiSettingsStore.data.map { uiSettings ->
         ViewState(
+            enableHapticFeedback =
+                uiSettings.enableHapticFeedback.takeIf { hapticFeedbackAvailable() },
             fullKioskMode = uiSettings.fullKioskMode,
             hideSettingsButton = uiSettings.hideSettingsButton,
             showBattery = uiSettings.showBatteryIndicator,
@@ -61,6 +65,10 @@ class SettingsUiViewModel(
 
     fun setFullKioskMode(isEnabled: Boolean) {
         mainScope.launchUpdate(uiSettingsStore) { it.copy(fullKioskMode = isEnabled) }
+    }
+
+    fun setHapticFeedback(isEnabled: Boolean) {
+        mainScope.launchUpdate(uiSettingsStore) { it.copy(enableHapticFeedback = isEnabled) }
     }
 
     fun setHideSettingsButton(isHidden: Boolean) {
@@ -74,4 +82,6 @@ class SettingsUiViewModel(
     fun setUiMode(newUiMode: UiThemeMode) {
         mainScope.launchUpdate(uiSettingsStore) { it.copy(uiThemeMode = newUiMode) }
     }
+
+    private fun hapticFeedbackAvailable() = Build.VERSION.SDK_INT >= 26
 }

@@ -49,6 +49,7 @@ fun SettingsUiRoute(
     SettingsUi(
         viewModel.viewState.collectAsStateWithLifecycle().value,
         onSetFullKioskMode = viewModel::setFullKioskMode,
+        onSetHapticFeedback = viewModel::setHapticFeedback,
         onSetHideSettingsButton = viewModel::setHideSettingsButton,
         onSetShowSettingsButton = viewModel::setShowBatteryIndicator,
         onSetUiMode = viewModel::setUiMode,
@@ -59,6 +60,7 @@ fun SettingsUiRoute(
 @Composable
 fun SettingsUi(
     viewState: SettingsUiViewModel.ViewState?,
+    onSetHapticFeedback: (isEnabled: Boolean) -> Unit,
     onSetFullKioskMode: (isEnabled: Boolean) -> Unit,
     onSetHideSettingsButton: (hide: Boolean) -> Unit,
     onSetShowSettingsButton: (show: Boolean) -> Unit,
@@ -99,6 +101,14 @@ fun SettingsUi(
                 onClick = { showUiModeDialog = SettingsUiDialogType.UiMode },
                 modifier = settingItemModifier
             )
+            if (viewState.enableHapticFeedback != null) {
+                SettingSwitch(
+                    label = stringResource(R.string.settings_ui_haptic_feedback_label),
+                    value = viewState.enableHapticFeedback,
+                    onChange = onSetHapticFeedback,
+                    modifier = settingItemModifier,
+                )
+            }
         }
 
         val dismissAction = { showUiModeDialog = null }

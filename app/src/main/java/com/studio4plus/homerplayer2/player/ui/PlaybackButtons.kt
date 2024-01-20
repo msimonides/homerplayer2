@@ -46,8 +46,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import com.studio4plus.homerplayer2.R
+import com.studio4plus.homerplayer2.core.ui.HomerHapticFeedbackType
 import com.studio4plus.homerplayer2.core.ui.theme.HomerTheme
 
 data class PlayerActions(
@@ -72,12 +75,15 @@ fun RoundIconButton(
     iconImage: ImageVector,
     iconContentDescription: String?,
     containerColor: Color,
+    hapticFeedbackType: HapticFeedbackType = HomerHapticFeedbackType.Click,
     onClick: () -> Unit,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
 ) {
+    val hapticFeedback = LocalHapticFeedback.current
+    val clickAction = { hapticFeedback.performHapticFeedback(hapticFeedbackType); onClick() }
     Button(
         modifier = modifier.aspectRatio(1f),
-        onClick = onClick,
+        onClick = clickAction,
         colors = ButtonDefaults.buttonColors(
             containerColor = containerColor,
             contentColor = Color.White // TODO: should this be configurable?
@@ -98,13 +104,16 @@ fun FlatIconButton(
     iconImage: ImageVector,
     iconContentDescription: String?,
     color: Color,
+    hapticFeedbackType: HapticFeedbackType = HomerHapticFeedbackType.Click,
     onClick: () -> Unit
 ) {
+    val hapticFeedback = LocalHapticFeedback.current
+    val clickAction = { hapticFeedback.performHapticFeedback(hapticFeedbackType); onClick() }
     Box(
         modifier = modifier
             .aspectRatio(1f)
             .clip(CircleShape)
-            .clickable(onClick = onClick)
+            .clickable(onClick = clickAction)
     ) {
         Icon(
             iconImage,
@@ -148,7 +157,8 @@ fun ButtonFastRewind(
     iconImage = Icons.Rounded.FastRewind,
     iconContentDescription = stringResource(id = R.string.playback_fast_rewind_button_description),
     color = HomerTheme.colors.controlFast,
-    onClick = playerActions.onFastRewind
+    hapticFeedbackType = HomerHapticFeedbackType.Back,
+    onClick = playerActions.onFastRewind,
 )
 
 @Composable
@@ -160,7 +170,8 @@ fun ButtonFastForward(
     iconImage = Icons.Rounded.FastForward,
     iconContentDescription = stringResource(id = R.string.playback_fast_forward_button_description),
     color = HomerTheme.colors.controlFast,
-    onClick = playerActions.onFastForward
+    hapticFeedbackType = HomerHapticFeedbackType.Forward,
+    onClick = playerActions.onFastForward,
 )
 
 @Composable

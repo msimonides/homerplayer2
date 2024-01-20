@@ -43,6 +43,7 @@
     <string name="settings_ui_audiobooks_folders">Audiobooks folders</string>
     <string name="settings_ui_audiobooks_folders_summary_empty">(no folders selected)</string>
     <string name="settings_ui_full_kiosk_mode_label">Full kiosk mode</string>
+    <string name="settings_ui_haptic_feedback_label">Haptic feedback</string>
     <string name="settings_ui_hide_settings_button_label">Hide settings button</string>
     <string name="settings_ui_hide_settings_dialog_title">Test the button</string>
     <string name="settings_ui_hide_settings_dialog_description">Hide settings button to prevent the user from accidentally opening the settings screen.\nTo open settings press the two invisible icons in top corners of the screen.</string>

@@ -43,8 +43,8 @@ import androidx.compose.ui.unit.times
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studio4plus.homerplayer2.battery.BatteryIcon
 import com.studio4plus.homerplayer2.battery.BatteryState
-import com.studio4plus.homerplayer2.settings.ui.OpenSettingsButton
 import com.studio4plus.homerplayer2.core.ui.theme.HomerTheme
+import com.studio4plus.homerplayer2.settings.ui.OpenSettingsButton
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -145,4 +145,3 @@ private fun TopControlsRow(
         }
     }
 }
-
