@@ -24,7 +24,9 @@
 
 package com.studio4plus.homerplayer2.settings.ui
 
+import android.content.Context
 import android.os.Build
+import android.os.Vibrator
 import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -42,6 +44,7 @@ import org.koin.core.annotation.Named
 class SettingsUiViewModel(
     @Named(DATASTORE_UI_SETTINGS) private val uiSettingsStore: DataStore<UiSettings>,
     private val mainScope: CoroutineScope,
+    private val vibrator: Vibrator?,
 ) : ViewModel() {
 
     class ViewState(
@@ -83,5 +86,5 @@ class SettingsUiViewModel(
         mainScope.launchUpdate(uiSettingsStore) { it.copy(uiThemeMode = newUiMode) }
     }
 
-    private fun hapticFeedbackAvailable() = Build.VERSION.SDK_INT >= 26
+    private fun hapticFeedbackAvailable() = vibrator?.hasVibrator() == true
 }

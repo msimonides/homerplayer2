@@ -33,15 +33,20 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 @RequiresApi(26)
 class HomerHapticFeedback(private val vibrator: Vibrator) : HapticFeedback {
 
-    private val click = VibrationEffect.createOneShot(20, 100)
+    private val hasAmplitudeControl = vibrator.hasAmplitudeControl()
+
+    // The effect is greatly affected by vibration hardware.
+    // TODO: use the newer APIs for somewhat consistent effects and "harsh" values for older
+    //  APIs that should work on also on low-end devices.
+    private val click = VibrationEffect.createOneShot(60, amplitude(100))
     private val forward = VibrationEffect.createWaveform(
-        longArrayOf(10, 150, 40),
-        intArrayOf(100, 0, 150),
+        longArrayOf(30, 150, 60),
+        amplitudes(100, 0, 150),
         -1
     )
     private val back = VibrationEffect.createWaveform(
-        longArrayOf(40, 150, 10),
-        intArrayOf(150, 0, 100),
+        longArrayOf(60, 150, 30),
+        amplitudes(150, 0, 100),
         -1
     )
 
@@ -52,6 +57,21 @@ class HomerHapticFeedback(private val vibrator: Vibrator) : HapticFeedback {
             HomerHapticFeedbackType.Forward -> vibrator.vibrate(forward)
         }
     }
+
+    private fun amplitudes(vararg amplitudes: Int): IntArray =
+        IntArray(amplitudes.size).apply {
+            amplitudes.forEachIndexed { index, a ->
+                this[index] = amplitude(a)
+            }
+        }
+
+    private fun amplitude(amplitude: Int): Int = when {
+        hasAmplitudeControl -> amplitude
+        amplitude == 0 -> 0
+        else -> VibrationEffect.DEFAULT_AMPLITUDE
+    }
+
+
 }
 
 class NoHapticFeedback : HapticFeedback {

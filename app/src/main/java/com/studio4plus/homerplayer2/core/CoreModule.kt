@@ -28,6 +28,8 @@ import android.app.admin.DevicePolicyManager
 import android.content.ContentResolver
 import android.content.Context
 import android.media.AudioManager
+import android.os.Build
+import android.os.Vibrator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import org.koin.core.annotation.ComponentScan
@@ -56,4 +58,12 @@ class CoreModule {
 
     @Single
     fun mainScope(): CoroutineScope = MainScope()
+
+    @Factory
+    fun vibrator(appContext: Context): Vibrator? =
+        if (Build.VERSION.SDK_INT >= 26) {
+            appContext.getSystemService(Vibrator::class.java)
+        } else {
+            null
+        }
 }
