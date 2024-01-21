@@ -60,33 +60,28 @@ private val LocalExtendedColors = staticCompositionLocalOf {
     )
 }
 
-private val GreenPlayLight = Color(0xff23a45d)
-private val GreenPlayDark = Color(0xff2cce75)
+private val HomerGreen = Color(0xff23a45d)
 private val RedStop = Color(0xffc31e1e)
 
 private val DarkColorScheme = darkColorScheme(
-    primary = GreenPlayDark,
+    primary = HomerGreen,
     onPrimary = Color.White,
-    secondary = PurpleGrey80,
-    tertiary = Pink80,
     background = Color.Black
 )
 
 private val ExtendedDarkColors = ExtendedColors(
-    controlPlay = GreenPlayDark,
+    controlPlay = HomerGreen,
     controlStop = RedStop,
     controlVolume = Color(0xffeeff00),
     controlFast = Color(0xff447df8),
     controlSeek = Color(0xffffffff),
-    batteryRegular = GreenPlayDark,
+    batteryRegular = HomerGreen,
     batteryLow = RedStop,
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = GreenPlayLight,
+    primary = HomerGreen,
     onPrimary = Color.White,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
@@ -100,12 +95,12 @@ private val LightColorScheme = lightColorScheme(
 )
 
 private val ExtendedLightColors = ExtendedColors(
-    controlPlay = GreenPlayLight,
+    controlPlay = HomerGreen,
     controlStop = RedStop,
     controlVolume = Color(0xffc1b61a),
     controlFast = Color(0xff3566d0),
     controlSeek = Color(0xff000000),
-    batteryRegular = GreenPlayLight,
+    batteryRegular = HomerGreen,
     batteryLow = RedStop,
 )
 
