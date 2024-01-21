@@ -24,10 +24,9 @@
 
 package com.studio4plus.homerplayer2.logging
 
-import android.content.Intent
 import android.os.Build
 import com.studio4plus.homerplayer2.BuildConfig
-import com.studio4plus.homerplayer2.core.DispatcherProvider
+import com.studio4plus.homerplayer2.base.DispatcherProvider
 import kotlinx.coroutines.runInterruptible
 import org.koin.core.annotation.Factory
 import java.io.File

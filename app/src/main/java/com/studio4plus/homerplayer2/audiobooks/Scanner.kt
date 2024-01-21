@@ -30,7 +30,7 @@ import android.net.Uri
 import android.provider.DocumentsContract
 import android.util.Base64
 import androidx.annotation.WorkerThread
-import com.studio4plus.homerplayer2.core.DispatcherProvider
+import com.studio4plus.homerplayer2.base.DispatcherProvider
 import kotlinx.coroutines.withContext
 import org.koin.core.annotation.Single
 import timber.log.Timber

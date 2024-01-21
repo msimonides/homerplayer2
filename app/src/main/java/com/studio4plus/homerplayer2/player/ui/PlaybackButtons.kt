@@ -50,8 +50,8 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import com.studio4plus.homerplayer2.R
-import com.studio4plus.homerplayer2.core.ui.HomerHapticFeedbackType
-import com.studio4plus.homerplayer2.core.ui.theme.HomerTheme
+import com.studio4plus.homerplayer2.base.ui.HomerHapticFeedbackType
+import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 
 data class PlayerActions(
     val onPlay: (bookIndex: Int) -> Unit,

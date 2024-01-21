@@ -33,9 +33,9 @@ import androidx.room.Room
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksDatabase
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksModule
+import com.studio4plus.homerplayer2.base.BaseModule
+import com.studio4plus.homerplayer2.base.DispatcherProvider
 import com.studio4plus.homerplayer2.battery.BatteryModule
-import com.studio4plus.homerplayer2.core.CoreModule
-import com.studio4plus.homerplayer2.core.DispatcherProvider
 import com.studio4plus.homerplayer2.loccalstorage.LOCAL_STORAGE_JSON
 import com.studio4plus.homerplayer2.loccalstorage.LocalStorageModule
 import com.studio4plus.homerplayer2.loccalstorage.createDataStore
@@ -57,8 +57,8 @@ const val DATASTORE_APP_STATE = "appState"
 @Module(
     includes = [
         AudiobooksModule::class,
+        BaseModule::class,
         BatteryModule::class,
-        CoreModule::class,
         LocalStorageModule::class,
         LoggingModule::class,
         OnboardingModule::class,

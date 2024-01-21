@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Marcin Simonides
+ * Copyright (c) 2024 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,15 +22,23 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.core
+package com.studio4plus.homerplayer2.base.ui
 
-import android.net.Uri
-import androidx.room.TypeConverter
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 
-class DbTypeConverters {
-    @TypeConverter
-    fun toUri(uriString: String): Uri = Uri.parse(uriString)
-
-    @TypeConverter
-    fun fromUri(uri: Uri): String = uri.toString()
+@Composable
+fun SmallCircularProgressIndicator(
+    modifier: Modifier = Modifier
+) {
+    CircularProgressIndicator(
+        modifier = modifier.size(ButtonDefaults.IconSize),
+        color = LocalContentColor.current,
+        strokeWidth = 2.dp
+    )
 }

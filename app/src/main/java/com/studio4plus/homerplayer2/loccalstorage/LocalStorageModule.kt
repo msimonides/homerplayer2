@@ -28,13 +28,12 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.dataStoreFile
-import com.studio4plus.homerplayer2.core.DispatcherProvider
+import com.studio4plus.homerplayer2.base.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
 import org.koin.core.annotation.ComponentScan
-import org.koin.core.annotation.Factory
 import org.koin.core.annotation.Module
 import org.koin.core.annotation.Named
 import org.koin.core.annotation.Single

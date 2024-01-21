@@ -52,8 +52,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.studio4plus.homerplayer2.R
-import com.studio4plus.homerplayer2.core.ui.theme.HomerPlayer2Theme
-import com.studio4plus.homerplayer2.core.ui.theme.HomerTheme
+import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
+import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 import kotlinx.coroutines.delay
 import kotlin.math.roundToInt
 

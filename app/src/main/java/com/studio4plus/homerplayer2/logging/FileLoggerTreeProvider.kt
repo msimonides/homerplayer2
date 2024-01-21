@@ -25,7 +25,7 @@
 package com.studio4plus.homerplayer2.logging
 
 import android.util.Log
-import com.studio4plus.homerplayer2.core.DispatcherProvider
+import com.studio4plus.homerplayer2.base.DispatcherProvider
 import fr.bipi.treessence.file.FileLoggerTree
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi

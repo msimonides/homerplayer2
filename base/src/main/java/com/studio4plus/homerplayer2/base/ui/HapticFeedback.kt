@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.core.ui
+package com.studio4plus.homerplayer2.base.ui
 
 import android.os.VibrationEffect
 import android.os.Vibrator

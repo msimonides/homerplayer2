@@ -34,7 +34,7 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
-import com.studio4plus.homerplayer2.core.DispatcherProvider
+import com.studio4plus.homerplayer2.base.DispatcherProvider
 import com.studio4plus.homerplayer2.player.DATASTORE_PLAYBACK_SETTINGS
 import com.studio4plus.homerplayer2.player.PlaybackSettings
 import com.studio4plus.homerplayer2.player.service.PlaybackService

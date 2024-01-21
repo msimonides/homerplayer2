@@ -1,4 +1,4 @@
-package com.studio4plus.homerplayer2.core.ui.theme
+package com.studio4plus.homerplayer2.base.ui.theme
 
 import android.app.Activity
 import android.content.Context

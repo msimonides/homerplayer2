@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Marcin Simonides
+ * Copyright (c) 2024 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.core
+package com.studio4plus.homerplayer2.base
 
 import android.app.admin.DevicePolicyManager
 import android.content.ContentResolver
@@ -39,8 +39,8 @@ import org.koin.core.annotation.Single
 import java.util.*
 
 @Module
-@ComponentScan("com.studio4plus.homerplayer2.core")
-class CoreModule {
+@ComponentScan("com.studio4plus.homerplayer2.base")
+class BaseModule {
 
     @Factory
     fun contentResolver(appContext: Context): ContentResolver = appContext.contentResolver

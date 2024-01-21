@@ -35,7 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
-import com.studio4plus.homerplayer2.core.ui.theme.HomerTheme
+import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 
 @Composable
 fun RadioWithLabel(

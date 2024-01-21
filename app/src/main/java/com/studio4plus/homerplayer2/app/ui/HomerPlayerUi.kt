@@ -41,9 +41,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.studio4plus.homerplayer2.core.ui.HomerHapticFeedback
-import com.studio4plus.homerplayer2.core.ui.NoHapticFeedback
-import com.studio4plus.homerplayer2.core.ui.theme.HomerPlayer2Theme
+import com.studio4plus.homerplayer2.base.ui.HomerHapticFeedback
+import com.studio4plus.homerplayer2.base.ui.NoHapticFeedback
+import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.onboarding.onboardingGraph
 import com.studio4plus.homerplayer2.player.ui.PlayerScreen
 import com.studio4plus.homerplayer2.settings.ui.SettingsScreen

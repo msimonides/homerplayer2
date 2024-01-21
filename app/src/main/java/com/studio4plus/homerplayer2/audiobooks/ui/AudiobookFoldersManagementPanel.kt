@@ -48,13 +48,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
-import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.studio4plus.homerplayer2.PreviewData
 import com.studio4plus.homerplayer2.R
-import com.studio4plus.homerplayer2.core.ui.SmallCircularProgressIndicator
-import com.studio4plus.homerplayer2.core.ui.theme.HomerPlayer2Theme
+import com.studio4plus.homerplayer2.base.ui.SmallCircularProgressIndicator
+import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 
 @Composable
 fun AudiobookFoldersManagementPanel(
@@ -155,7 +153,7 @@ private fun PreviewFolderRow() {
 private fun PreviewFolderRowEmpty() {
     HomerPlayer2Theme {
         AudiobookFolderRow(
-            FolderItem("My audiobooks", Uri.EMPTY,  0,""),
+            FolderItem("My audiobooks", Uri.EMPTY, 0, ""),
             {}
         )
     }

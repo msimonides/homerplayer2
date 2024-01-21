@@ -26,7 +26,7 @@ package com.studio4plus.homerplayer2.settings
 
 import android.content.Context
 import androidx.datastore.core.DataStore
-import com.studio4plus.homerplayer2.core.DispatcherProvider
+import com.studio4plus.homerplayer2.base.DispatcherProvider
 import com.studio4plus.homerplayer2.loccalstorage.LOCAL_STORAGE_JSON
 import com.studio4plus.homerplayer2.loccalstorage.LocalStorageModule
 import com.studio4plus.homerplayer2.loccalstorage.createDataStore

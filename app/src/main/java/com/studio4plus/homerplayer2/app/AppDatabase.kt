@@ -31,12 +31,10 @@ import com.studio4plus.homerplayer2.audiobooks.Audiobook
 import com.studio4plus.homerplayer2.audiobooks.AudiobookFile
 import com.studio4plus.homerplayer2.audiobooks.AudiobookFileDuration
 import com.studio4plus.homerplayer2.audiobooks.AudiobookFileWithDuration
-import com.studio4plus.homerplayer2.audiobooks.AudiobookFoldersDao
 import com.studio4plus.homerplayer2.audiobooks.AudiobookPlaybackState
-import com.studio4plus.homerplayer2.audiobooks.AudiobooksDao
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksDatabase
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksFolder
-import com.studio4plus.homerplayer2.core.DbTypeConverters
+import com.studio4plus.homerplayer2.utils.DbTypeConverters
 
 @Database(
     entities = [

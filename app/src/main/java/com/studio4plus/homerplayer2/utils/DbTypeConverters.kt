@@ -22,36 +22,15 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.core.ui
+package com.studio4plus.homerplayer2.utils
 
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material3.BasicAlertDialog
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.DialogProperties
+import android.net.Uri
+import androidx.room.TypeConverter
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun DefaultAlertDialog(
-    onDismissRequest: () -> Unit,
-    modifier: Modifier = Modifier,
-    usePlatformDefaultWidth: Boolean = true,
-    content: @Composable () -> Unit,
-) {
-    BasicAlertDialog(
-        onDismissRequest = onDismissRequest,
-        modifier = modifier.padding(vertical = 24.dp, horizontal = 16.dp),
-        properties = DialogProperties(usePlatformDefaultWidth = usePlatformDefaultWidth)
-    ) {
-        Surface(
-            Modifier.wrapContentSize(),
-            shape = MaterialTheme.shapes.large,
-            content = content
-        )
-    }
+class DbTypeConverters {
+    @TypeConverter
+    fun toUri(uriString: String): Uri = Uri.parse(uriString)
+
+    @TypeConverter
+    fun fromUri(uri: Uri): String = uri.toString()
 }

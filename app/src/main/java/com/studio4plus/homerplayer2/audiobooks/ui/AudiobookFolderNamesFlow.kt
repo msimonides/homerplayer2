@@ -27,7 +27,7 @@ package com.studio4plus.homerplayer2.audiobooks.ui
 import android.content.Context
 import androidx.documentfile.provider.DocumentFile
 import com.studio4plus.homerplayer2.audiobooks.AudiobookFoldersDao
-import com.studio4plus.homerplayer2.core.DispatcherProvider
+import com.studio4plus.homerplayer2.base.DispatcherProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.flowOn

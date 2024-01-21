@@ -9,11 +9,11 @@ def enableComposeMetrics = project.hasProperty("enableComposeMetrics") ? project
 
 android {
     namespace 'com.studio4plus.homerplayer2'
-    compileSdk 34
+    compileSdk libs.versions.android.compileSdk.get().toInteger()
 
     defaultConfig {
         applicationId "com.studio4plus.homerplayer2"
-        minSdk 21
+        minSdk libs.versions.android.minSdk.get().toInteger()
         targetSdk 34
         versionCode 1
         versionName "1.0"
@@ -51,7 +51,7 @@ android {
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion '1.5.7'
+        kotlinCompilerExtensionVersion libs.versions.compose.kotlincompiler.get()
     }
     packagingOptions {
         resources {
@@ -67,6 +67,7 @@ android {
 }
 
 dependencies {
+    implementation project(':base')
 
     ksp libs.androidx.room.compiler
     ksp libs.koin.compiler

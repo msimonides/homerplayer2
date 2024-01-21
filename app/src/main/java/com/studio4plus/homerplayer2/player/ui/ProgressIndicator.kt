@@ -40,7 +40,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.studio4plus.homerplayer2.core.ui.theme.HomerTheme
+import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 
 @Composable
 fun VerticalBookProgressIndicator(

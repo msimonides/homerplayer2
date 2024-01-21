@@ -49,9 +49,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.studio4plus.homerplayer2.R
-import com.studio4plus.homerplayer2.core.ui.DefaultAlertDialog
-import com.studio4plus.homerplayer2.core.ui.theme.HomerPlayer2Theme
-import com.studio4plus.homerplayer2.core.ui.theme.HomerTheme
+import com.studio4plus.homerplayer2.base.ui.DefaultAlertDialog
+import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
+import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 import kotlinx.coroutines.delay
 
 @Composable

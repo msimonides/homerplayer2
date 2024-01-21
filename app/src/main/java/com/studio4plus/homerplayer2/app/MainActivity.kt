@@ -23,28 +23,17 @@
  */
 package com.studio4plus.homerplayer2.app
 
+import android.app.ActivityManager
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
+import androidx.core.content.getSystemService
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import com.studio4plus.homerplayer2.app.ui.HomerPLayerUi
-import com.studio4plus.homerplayer2.onboarding.onboardingGraph
-import com.studio4plus.homerplayer2.player.ui.PlayerScreen
-import com.studio4plus.homerplayer2.settings.ui.SettingsScreen
-import com.studio4plus.homerplayer2.core.ui.theme.HomerPlayer2Theme
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.koin.androidx.viewmodel.ext.android.viewModel

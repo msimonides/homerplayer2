@@ -41,8 +41,8 @@ import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.audiobooks.OpenAudiobooksTree
 import com.studio4plus.homerplayer2.audiobooks.ui.AudiobookFoldersManagementPanel
 import com.studio4plus.homerplayer2.audiobooks.ui.FolderItem
-import com.studio4plus.homerplayer2.core.ui.theme.HomerPlayer2Theme
-import com.studio4plus.homerplayer2.core.ui.theme.HomerTheme
+import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
+import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
