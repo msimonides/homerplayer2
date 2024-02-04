@@ -24,6 +24,7 @@
 
 package com.studio4plus.homerplayer2.audiobooks
 
+import android.net.Uri
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
@@ -31,9 +32,9 @@ import androidx.media3.exoplayer.ExoPlayer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.suspendCancellableCoroutine
 import org.koin.core.annotation.Single
 import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 @Single(createdAtStart = true)
 class MediaDurationExtractor(
@@ -44,13 +45,7 @@ class MediaDurationExtractor(
     init {
         exoPlayer.playWhenReady = false
         audiobooksDao.getFilesWithoutDuration(10).onEach { files ->
-            val durations = files.map {
-                with(exoPlayer) {
-                    setMediaItem(MediaItem.fromUri(it.uri))
-                    prepareAndWait()
-                    AudiobookFileDuration(it.uri, exoPlayer.duration)
-                }
-            }
+            val durations = files.map { exoPlayer.extractDuration(it.uri) }
             if (durations.isNotEmpty()) {
                 exoPlayer.clearMediaItems()
                 audiobooksDao.insertAudiobookFileDurations(durations)
@@ -58,28 +53,35 @@ class MediaDurationExtractor(
         }.launchIn(mainScope)
     }
 
-    private suspend fun ExoPlayer.prepareAndWait() = suspendCancellableCoroutine { continuation ->
-        val listener = object : Player.Listener {
-            override fun onPlayerError(error: PlaybackException) {
-                super.onPlayerError(error)
-                continuation.cancel()
-            }
+    private suspend fun ExoPlayer.extractDuration(uri: Uri): AudiobookFileDuration =
+        suspendCoroutine { continuation ->
+            fun result(durationMs: Long) = AudiobookFileDuration(uri, durationMs)
 
-            override fun onPlaybackStateChanged(playbackState: Int) {
-                super.onPlaybackStateChanged(playbackState)
-                when(playbackState) {
-                    Player.STATE_READY -> {
-                        removeListener(this)
-                        continuation.resume(Unit)
+            val listener = object : Player.Listener {
+                override fun onPlayerError(error: PlaybackException) {
+                    super.onPlayerError(error)
+                    println("### uri: $uri; error $error")
+                    removeListener(this)
+                    continuation.resume(result(AudiobookFileDuration.INVALID))
+                }
+
+                override fun onPlaybackStateChanged(playbackState: Int) {
+                    super.onPlaybackStateChanged(playbackState)
+                    println("### uri: $uri; state: $playbackState")
+                    when (playbackState) {
+                        Player.STATE_READY -> {
+                            removeListener(this)
+                            continuation.resume(result(this@extractDuration.duration))
+                        }
+
+                        Player.STATE_ENDED -> continuation.resume(result(AudiobookFileDuration.INVALID))
+                        Player.STATE_BUFFERING -> Unit
+                        Player.STATE_IDLE -> Unit
                     }
-                    Player.STATE_ENDED -> continuation.cancel()
-                    Player.STATE_BUFFERING ->  Unit
-                    Player.STATE_IDLE -> Unit
                 }
             }
+            addListener(listener)
+            setMediaItem(MediaItem.fromUri(uri))
+            prepare()
         }
-        continuation.invokeOnCancellation { removeListener(listener) }
-        addListener(listener)
-        prepare()
-    }
 }

@@ -28,6 +28,7 @@ import android.net.Uri
 import androidx.room.Dao
 import androidx.room.Embedded
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Relation
 import androidx.room.Transaction
@@ -56,7 +57,7 @@ abstract class AudiobooksDao {
               LIMIT :maxCount""")
     abstract fun getFilesWithoutDuration(maxCount: Int): Flow<List<AudiobookFile>>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun insertAudiobookFileDurations(durations: List<AudiobookFileDuration>)
 
     @Transaction

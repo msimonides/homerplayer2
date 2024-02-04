@@ -59,6 +59,7 @@ data class AudiobookFile(
     val bookId: String,
 )
 
+// TODO: put duration on the AudiobookFile and drop this table.
 @Entity(
     tableName = "audiobook_file_durations",
     foreignKeys = [
@@ -76,7 +77,11 @@ data class AudiobookFileDuration(
     val uri: Uri,
     @ColumnInfo(name = "duration_ms")
     val durationMs: Long
-)
+) {
+    companion object {
+        const val INVALID: Long = -1
+    }
+}
 
 @Entity(
     tableName = "audiobook_playback_states",
