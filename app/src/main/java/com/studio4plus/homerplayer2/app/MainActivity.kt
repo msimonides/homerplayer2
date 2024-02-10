@@ -53,6 +53,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        activityViewModel.onResume()
+    }
+
     private fun setupLockTask() {
         val windowInsetsControllerCompat = WindowInsetsControllerCompat(window, window.decorView)
         activityViewModel.lockTask

@@ -29,6 +29,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.studio4plus.homerplayer2.audiobooks.AudiobooksUpdater
 import com.studio4plus.homerplayer2.settings.DATASTORE_UI_SETTINGS
 import com.studio4plus.homerplayer2.settings.UiSettings
 import kotlinx.coroutines.flow.SharingStarted
@@ -42,7 +43,8 @@ class MainActivityViewModel(
     appContext: Context,
     dpm: DevicePolicyManager,
     @Named(DATASTORE_APP_STATE) appState: DataStore<StoredAppState>,
-    @Named(DATASTORE_UI_SETTINGS) uiSettings: DataStore<UiSettings>
+    @Named(DATASTORE_UI_SETTINGS) uiSettings: DataStore<UiSettings>,
+    private val audiobooksUpdater: AudiobooksUpdater,
 ) : ViewModel() {
     val viewState = appState.data.map {
         MainActivityViewState.Ready(!it.onboardingCompleted)
@@ -51,6 +53,10 @@ class MainActivityViewModel(
     val lockTask = uiSettings.data.map {
         it.fullKioskMode && dpm.isLockTaskPermitted(appContext.packageName)
     }.stateIn(viewModelScope, SharingStarted.Eagerly, false)
+
+    fun onResume() {
+        audiobooksUpdater.trigger()
+    }
 }
 
 sealed interface MainActivityViewState {

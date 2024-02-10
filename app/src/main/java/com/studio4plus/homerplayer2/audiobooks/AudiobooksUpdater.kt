@@ -25,24 +25,39 @@
 package com.studio4plus.homerplayer2.audiobooks
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import org.koin.core.annotation.Single
 
-@Single(createdAtStart = true)
+@Single
 class AudiobooksUpdater(
     mainScope: CoroutineScope,
     audiobookFoldersDao: AudiobookFoldersDao,
-    audiobooksDao: AudiobooksDao,
-    scanner: Scanner
+    private val audiobooksDao: AudiobooksDao,
+    private val scanner: Scanner
 ) {
+    private val triggerFlow: MutableSharedFlow<Unit> =
+        MutableSharedFlow(extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+
     init {
-        // TODO: trigger scan on many other events
-        audiobookFoldersDao.getAll().map { audiobooksFolders ->
-            val scannedItems = scanner.scan(audiobooksFolders.map { it.uri }).map { item ->
-                Pair(item.audiobook, item.uris.map { AudiobookFile(it, item.audiobook.id) })
-            }
-            audiobooksDao.replaceAll(scannedItems.map { it.first }, scannedItems.flatMap { it.second })
+        combine(
+            triggerFlow,
+            audiobookFoldersDao.getAll()
+        ) { _, audiobooksFolders ->
+            scan(audiobooksFolders)
         }.launchIn(mainScope)
+    }
+
+    fun trigger() {
+        triggerFlow.tryEmit(Unit)
+    }
+
+    private suspend fun scan(folders: List<AudiobooksFolder>) {
+        val scannedItems = scanner.scan(folders.map { it.uri }).map { item ->
+            Pair(item.audiobook, item.uris.map { AudiobookFile(it, item.audiobook.id) })
+        }
+        audiobooksDao.replaceAll(scannedItems.map { it.first }, scannedItems.flatMap { it.second })
     }
 }

@@ -60,14 +60,12 @@ class MediaDurationExtractor(
             val listener = object : Player.Listener {
                 override fun onPlayerError(error: PlaybackException) {
                     super.onPlayerError(error)
-                    println("### uri: $uri; error $error")
                     removeListener(this)
                     continuation.resume(result(AudiobookFileDuration.INVALID))
                 }
 
                 override fun onPlaybackStateChanged(playbackState: Int) {
                     super.onPlaybackStateChanged(playbackState)
-                    println("### uri: $uri; state: $playbackState")
                     when (playbackState) {
                         Player.STATE_READY -> {
                             removeListener(this)
