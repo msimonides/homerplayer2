@@ -44,6 +44,7 @@ private enum class SettingsUiDialogType {
 @Composable
 fun SettingsUiRoute(
     viewModel: SettingsUiViewModel = koinViewModel(),
+    navigateKioskModeSettings: () -> Unit,
     closeSettings: () -> Unit,
 ) {
     SettingsUi(
@@ -53,6 +54,7 @@ fun SettingsUiRoute(
         onSetHideSettingsButton = viewModel::setHideSettingsButton,
         onSetShowSettingsButton = viewModel::setShowBatteryIndicator,
         onSetUiMode = viewModel::setUiMode,
+        onOpenKioskModeDetails = navigateKioskModeSettings,
         closeSettings = closeSettings,
     )
 }
@@ -60,6 +62,7 @@ fun SettingsUiRoute(
 @Composable
 fun SettingsUi(
     viewState: SettingsUiViewModel.ViewState?,
+    onOpenKioskModeDetails: () -> Unit,
     onSetHapticFeedback: (isEnabled: Boolean) -> Unit,
     onSetFullKioskMode: (isEnabled: Boolean) -> Unit,
     onSetHideSettingsButton: (hide: Boolean) -> Unit,
@@ -71,12 +74,20 @@ fun SettingsUi(
         var showUiModeDialog by rememberSaveable { mutableStateOf<SettingsUiDialogType?>(null) }
         Column {
             val settingItemModifier = Modifier.defaultSettingsItem()
-            SettingSwitch(
-                label = stringResource(R.string.settings_ui_full_kiosk_mode_label),
-                value = viewState.fullKioskMode,
-                onChange = onSetFullKioskMode,
-                modifier = settingItemModifier
-            )
+            if (viewState.fullKioskModeAvailable) {
+                SettingSwitch(
+                    label = stringResource(R.string.settings_ui_full_kiosk_mode_label),
+                    value = viewState.fullKioskMode,
+                    onChange = onSetFullKioskMode,
+                    modifier = settingItemModifier
+                )
+            } else {
+                SettingItem(
+                    label = stringResource(R.string.settings_ui_full_kiosk_mode_more_label),
+                    onClick = onOpenKioskModeDetails,
+                    modifier = settingItemModifier
+                )
+            }
             SettingSwitch(
                 label = stringResource(R.string.settings_ui_hide_settings_button_label),
                 value = viewState.hideSettingsButton,

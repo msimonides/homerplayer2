@@ -24,6 +24,7 @@
 
 package com.studio4plus.homerplayer2.settings.ui
 
+import android.app.admin.DevicePolicyManager
 import android.content.Context
 import android.os.Build
 import android.os.Vibrator
@@ -45,21 +46,26 @@ class SettingsUiViewModel(
     @Named(DATASTORE_UI_SETTINGS) private val uiSettingsStore: DataStore<UiSettings>,
     private val mainScope: CoroutineScope,
     private val vibrator: Vibrator?,
+    private val appContext: Context,
+    private val dpm: DevicePolicyManager,
 ) : ViewModel() {
 
     class ViewState(
         val enableHapticFeedback: Boolean?,
         val fullKioskMode: Boolean,
+        val fullKioskModeAvailable: Boolean,
         val hideSettingsButton: Boolean,
         val showBattery: Boolean,
         val uiMode: UiThemeMode,
     )
 
     val viewState = uiSettingsStore.data.map { uiSettings ->
+        val fullKioskModeAvailable = dpm.isLockTaskPermitted(appContext.packageName)
         ViewState(
             enableHapticFeedback =
                 uiSettings.enableHapticFeedback.takeIf { hapticFeedbackAvailable() },
-            fullKioskMode = uiSettings.fullKioskMode,
+            fullKioskMode = fullKioskModeAvailable && uiSettings.fullKioskMode,
+            fullKioskModeAvailable = fullKioskModeAvailable,
             hideSettingsButton = uiSettings.hideSettingsButton,
             showBattery = uiSettings.showBatteryIndicator,
             uiMode = uiSettings.uiThemeMode,

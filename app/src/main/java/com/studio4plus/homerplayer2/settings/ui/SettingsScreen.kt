@@ -120,6 +120,7 @@ private fun SettingsNavHost(
 ) {
     val mainTitle = stringResource(id = R.string.settings_ui_settings_title)
     val foldersTitle = stringResource(id = R.string.settings_ui_audiobooks_folders)
+    val kioskModeTitle = stringResource(id = R.string.settings_ui_full_kiosk_mode_label)
     val playbackTitle = stringResource(id = R.string.settings_ui_playback_settings_title)
     val uiTitle = stringResource(id = R.string.settings_ui_ui_settings_title)
     NavHost(
@@ -143,12 +144,16 @@ private fun SettingsNavHost(
         composable("folders", label = foldersTitle) {
             SettingsFoldersRoute()
         }
+        composable("kiosk_mode_settings", label = kioskModeTitle) {
+            SettingsKioskModeRoute()
+        }
         composable("playback_settings", label = playbackTitle) {
             SettingsPlaybackRoute()
         }
         composable("ui_settings", label = uiTitle) {
             SettingsUiRoute(
-                closeSettings = closeSettings
+                closeSettings = closeSettings,
+                navigateKioskModeSettings = { navController.navigate("kiosk_mode_settings") }
             )
         }
     }
