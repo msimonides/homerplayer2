@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Marcin Simonides
+ * Copyright (c) 2024 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,32 +22,49 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.kiosk
+package com.studio4plus.homerplayer2.kiosk.ui
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
-import com.studio4plus.homerplayer2.kiosk.deviceadmin.DeviceAdminStatus
-import com.studio4plus.homerplayer2.kiosk.ui.KioskSetupUi
-import org.koin.android.ext.android.inject
+import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
+import org.koin.androidx.compose.koinViewModel
 
-class MainActivity : ComponentActivity() {
+@Composable
+fun MainScreenRoute(
+    viewModel: MainScreenViewModel = koinViewModel()
+) {
+    val isDeviceOwner by viewModel.isDeviceOwner.collectAsStateWithLifecycle()
+    MainScreen(
+        isDeviceOwner = isDeviceOwner,
+        dropDeviceOwnerPrivilege = viewModel::dropDeviceOwnerPrivilege,
+    )
+}
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            KioskSetupUi()
+@Composable
+fun MainScreen(
+    isDeviceOwner: Boolean,
+    dropDeviceOwnerPrivilege: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier.padding(HomerTheme.dimensions.screenContentPadding)
+    ) {
+        val isDeviceOwnerString = if (isDeviceOwner) "yes" else "no"
+        Text("Is device owner: $isDeviceOwnerString")
+        // TODO: inform the user it's better to do a factory reset.
+        // TODO: ask user for confirmation when dropping device owner.
+        Button(
+            onClick = dropDeviceOwnerPrivilege,
+            enabled = isDeviceOwner
+        ) {
+
+            Text("Drop device owner privilege")
         }
     }
 }

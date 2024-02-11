@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Marcin Simonides
+ * Copyright (c) 2024 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,32 +22,21 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.kiosk
+package com.studio4plus.homerplayer2.kiosk.ui
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.runtime.Composable
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
-import com.studio4plus.homerplayer2.kiosk.deviceadmin.DeviceAdminStatus
-import com.studio4plus.homerplayer2.kiosk.ui.KioskSetupUi
-import org.koin.android.ext.android.inject
 
-class MainActivity : ComponentActivity() {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            KioskSetupUi()
+@Composable
+fun KioskSetupUi() {
+    HomerPlayer2Theme {
+        // A surface container using the 'background' color from the theme
+        Surface(
+            color = MaterialTheme.colorScheme.background
+        ) {
+            MainScreenRoute()
         }
     }
 }
