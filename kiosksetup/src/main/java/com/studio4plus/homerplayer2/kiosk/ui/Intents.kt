@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Marcin Simonides
+ * Copyright (c) 2024 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,23 +22,28 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.kiosk
+package com.studio4plus.homerplayer2.kiosk.ui
 
-import android.app.admin.DevicePolicyManager
-import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
-import org.koin.core.annotation.ComponentScan
+import android.net.Uri
+import com.studio4plus.homerplayer2.kiosk.Constants
 import org.koin.core.annotation.Factory
-import org.koin.core.annotation.Module
 
-@Module
-@ComponentScan("com.studio4plus.homerplayer2.kiosk")
-class AppModule {
+@Factory
+class Intents(
+    private val packageManager: PackageManager,
+) {
+    fun openPlayer(): Intent? =
+        packageManager.getLaunchIntentForPackage(Constants.TargetAppPackage)
 
-    @Factory
-    fun dpm(appContext: Context): DevicePolicyManager =
-        appContext.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
+    fun installPlayer(): Intent = Intent(
+        Intent.ACTION_VIEW,
+        Uri.parse("https://play.google.com/store/apps/details?id=${Constants.TargetAppPackage}")
+    )
 
-    @Factory
-    fun packageManager(appContext: Context): PackageManager = appContext.packageManager
+    fun openInstructions(): Intent = Intent(
+        Intent.ACTION_VIEW,
+        Uri.parse(Constants.UrlSetupInstructions)
+    )
 }

@@ -30,12 +30,10 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import com.studio4plus.homerplayer2.kiosk.Constants
 import org.koin.core.annotation.Factory
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-
-private const val TARGET_APP_PACKAGE = "com.studio4plus.homerplayer2"
-private const val TARGET_HOME_ACTIVITY_CLASS = "com.studio4plus.homerplayer2.app.HomeActivity"
 
 @Factory
 class DeviceAdmin(
@@ -48,12 +46,12 @@ class DeviceAdmin(
         if (isOwner) {
             dpm.setLockTaskPackages(
                 DeviceAdminReceiver.component(appContext),
-                arrayOf(TARGET_APP_PACKAGE)
+                arrayOf(Constants.TargetAppPackage)
             )
             setPreferredHomeActivity(
                 appContext,
                 dpm,
-                ComponentName(TARGET_APP_PACKAGE, TARGET_HOME_ACTIVITY_CLASS)
+                ComponentName(Constants.TargetAppPackage, Constants.TargetHomeActivityClass)
             )
             deviceAdminStatus.setIsDeviceOwner(true)
         }
@@ -65,7 +63,7 @@ class DeviceAdmin(
         if (dpm.isDeviceOwnerApp(appContext.packageName)) {
             dpm.clearPackagePersistentPreferredActivities(
                 DeviceAdminReceiver.component(appContext),
-                TARGET_APP_PACKAGE
+                Constants.TargetAppPackage
             )
         }
     }

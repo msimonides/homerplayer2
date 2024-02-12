@@ -24,47 +24,123 @@
 
 package com.studio4plus.homerplayer2.kiosk.ui
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.paint
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
+import com.studio4plus.homerplayer2.kiosk.R
 import org.koin.androidx.compose.koinViewModel
+import com.studio4plus.homerplayer2.base.R as BaseR
 
 @Composable
 fun MainScreenRoute(
     viewModel: MainScreenViewModel = koinViewModel()
 ) {
-    val isDeviceOwner by viewModel.isDeviceOwner.collectAsStateWithLifecycle()
-    MainScreen(
-        isDeviceOwner = isDeviceOwner,
-        dropDeviceOwnerPrivilege = viewModel::dropDeviceOwnerPrivilege,
-    )
+    val viewState = viewModel.viewState.collectAsStateWithLifecycle(null).value
+    if (viewState != null) {
+        MainScreen(
+            viewState = viewState,
+            dropDeviceOwnerPrivilege = viewModel::dropDeviceOwnerPrivilege,
+        )
+    }
 }
 
 @Composable
 fun MainScreen(
-    isDeviceOwner: Boolean,
+    viewState: MainScreenViewState,
     dropDeviceOwnerPrivilege: () -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier.padding(HomerTheme.dimensions.screenContentPadding)
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(bottom = HomerTheme.dimensions.screenContentPadding)
     ) {
-        val isDeviceOwnerString = if (isDeviceOwner) "yes" else "no"
-        Text("Is device owner: $isDeviceOwnerString")
-        // TODO: inform the user it's better to do a factory reset.
-        // TODO: ask user for confirmation when dropping device owner.
-        Button(
-            onClick = dropDeviceOwnerPrivilege,
-            enabled = isDeviceOwner
-        ) {
+        Image(
+            painterResource(BaseR.drawable.app_icon_player_foreground),
+            contentDescription = null,
+            contentScale = ContentScale.FillHeight,
+            modifier = Modifier
+                .clip(RectangleShape)
+                .paint(
+                    painterResource(BaseR.drawable.app_icon_background),
+                    contentScale = ContentScale.Crop,
+                )
+                .height(256.dp)
+                .fillMaxWidth()
+        )
+        val rowModifier = Modifier
+            .padding(horizontal = HomerTheme.dimensions.screenContentPadding)
+        val textRowModifier = rowModifier.fillMaxWidth()
 
-            Text("Drop device owner privilege")
+        Text(
+            stringResource(R.string.app_name),
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+            modifier = rowModifier.padding(top = 24.dp, bottom = 16.dp)
+        )
+        Text(
+            stringResource(viewState.statusTitle),
+            style = MaterialTheme.typography.titleMedium,
+            modifier = textRowModifier.padding(bottom = 4.dp)
+        )
+        Text(
+            stringResource(viewState.statusDescription),
+            modifier = textRowModifier
+        )
+
+        val context = LocalContext.current
+        Button(
+            onClick = { context.startActivity(viewState.mainActionIntent) },
+            modifier = rowModifier.padding(top = 24.dp)
+        ) {
+            Text(
+                stringResource(id = viewState.mainActionLabel)
+            )
+        }
+        if (viewState.mainActionWebsiteUrl != null) {
+            Text(
+                stringResource(R.string.instructions_website_alternative, viewState.mainActionWebsiteUrl),
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center,
+                modifier = textRowModifier.padding(top = 8.dp)
+            )
+        }
+        Spacer(modifier = Modifier.weight(1f).heightIn(min = 32.dp))
+        if (viewState.dropPrivilegeEnabled) {
+            OutlinedButton(
+                onClick = dropDeviceOwnerPrivilege,
+                modifier = rowModifier
+            ) {
+                Text("Drop device owner privilege")
+            }
         }
     }
 }

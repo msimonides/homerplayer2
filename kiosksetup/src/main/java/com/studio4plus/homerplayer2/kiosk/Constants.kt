@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Marcin Simonides
+ * Copyright (c) 2024 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,21 +24,8 @@
 
 package com.studio4plus.homerplayer2.kiosk
 
-import android.app.admin.DevicePolicyManager
-import android.content.Context
-import android.content.pm.PackageManager
-import org.koin.core.annotation.ComponentScan
-import org.koin.core.annotation.Factory
-import org.koin.core.annotation.Module
-
-@Module
-@ComponentScan("com.studio4plus.homerplayer2.kiosk")
-class AppModule {
-
-    @Factory
-    fun dpm(appContext: Context): DevicePolicyManager =
-        appContext.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
-
-    @Factory
-    fun packageManager(appContext: Context): PackageManager = appContext.packageManager
+object Constants {
+    const val TargetAppPackage = "com.studio4plus.homerplayer2"
+    const val TargetHomeActivityClass = "com.studio4plus.homerplayer2.app.HomeActivity"
+    const val UrlSetupInstructions = "https://msimonides.github.io/homerplayer"
 }

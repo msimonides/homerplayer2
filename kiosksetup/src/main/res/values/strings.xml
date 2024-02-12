@@ -1,3 +1,22 @@
 <resources>
-    <string name="app_name">Homer Player Kiosk Setup</string>
+    <string name="app_name">Homer Kiosk Setup</string>
+
+    <string name="kiosk_mode_available_title">Full kiosk mode is available</string>
+    <string name="kiosk_mode_available_description">You can enable and disable full kiosk mode in Homer Player UI settings.</string>
+    <string name="kiosk_mode_unavailable_title">Full kiosk mode is not available</string>
+    <string name="kiosk_mode_unavailable_description">To enable kiosk mode you need to install Homer Kiosk Mode as a device owner application.</string>
+
+    <string name="button_open_homerplayer">Open Homer Player</string>
+    <string name="button_install_homerplayer">Install Homer Player</string>
+    <string name="button_setup_instructions_website">Open instructions</string>
+
+    <!-- Displayed below button_setup_instructions_website
+         Tells the user they can open the given website address in a browser, e.g. on their laptop.
+         Parameters:
+         %1$s - address of the instructions web page
+
+         Example:
+         or go to:\nhttps://homerplayer.app/setup
+      -->
+    <string name="instructions_website_alternative">or go to:\n%1$s</string>
 </resources>

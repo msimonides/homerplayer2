@@ -51,7 +51,6 @@ fun SettingsKioskMode() {
         )
         Text(
             text = stringResource(R.string.settings_ui_kiosk_mode_unavailable_description),
-            style = MaterialTheme.typography.bodyMedium,
         )
     }
 
