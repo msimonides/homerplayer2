@@ -25,7 +25,9 @@
 package com.studio4plus.homerplayer2.kiosk.ui
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -36,9 +38,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,8 +56,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.studio4plus.homerplayer2.base.ui.DefaultAlertDialog
+import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 import com.studio4plus.homerplayer2.kiosk.R
 import org.koin.androidx.compose.koinViewModel
@@ -133,14 +142,66 @@ fun MainScreen(
                 modifier = textRowModifier.padding(top = 8.dp)
             )
         }
-        Spacer(modifier = Modifier.weight(1f).heightIn(min = 32.dp))
+        Spacer(modifier = Modifier
+            .weight(1f)
+            .heightIn(min = 32.dp))
         if (viewState.dropPrivilegeEnabled) {
-            OutlinedButton(
-                onClick = dropDeviceOwnerPrivilege,
+            var confirmationDialog by rememberSaveable() { mutableStateOf(false) }
+            TextButton(
+                onClick = { confirmationDialog = true },
                 modifier = rowModifier
             ) {
                 Text("Drop device owner privilege")
             }
+            if (confirmationDialog) {
+                ConfirmDropPrivilegeDialog(
+                    onConfirm = dropDeviceOwnerPrivilege,
+                    onDismissRequest = { confirmationDialog = false }
+                )
+            }
         }
     }
 }
+
+@Composable
+private fun ConfirmDropPrivilegeDialog(
+    onConfirm: () -> Unit,
+    onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    DefaultAlertDialog(
+        onDismissRequest = onDismissRequest,
+            ) {
+        Column(
+            modifier = modifier
+                .padding(24.dp),
+        ) {
+            Text(
+                text = stringResource(R.string.drop_privilege_confirm_message),
+                modifier = Modifier.padding(top = 8.dp)
+            )
+            Row(
+                modifier = Modifier
+                    .padding(top = 24.dp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                TextButton(onClick = onDismissRequest) {
+                    Text(stringResource(R.string.drop_privilege_confirm_cancel_button))
+                }
+                TextButton(onClick = onConfirm) {
+                    Text(stringResource(R.string.drop_privilege_confirm_confirm_button))
+                }
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewConfirmDropPrivilegeDialog() {
+    HomerPlayer2Theme {
+        ConfirmDropPrivilegeDialog(onConfirm = {}, onDismissRequest = {})
+    }
+ }
+
