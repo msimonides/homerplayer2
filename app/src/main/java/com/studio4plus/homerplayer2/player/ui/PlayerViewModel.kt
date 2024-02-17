@@ -39,6 +39,7 @@ import com.studio4plus.homerplayer2.settings.UiSettings
 import com.studio4plus.homerplayer2.speech.Speaker
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -139,6 +140,8 @@ class PlayerViewModel(
         it.hideSettingsButton
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
 
+    val volumeState = MutableStateFlow<Float?>(null)
+
     override fun onStart(owner: LifecycleOwner) {
         viewModelScope.launch {
             speaker.initIfNeeded()
@@ -180,16 +183,20 @@ class PlayerViewModel(
     }
 
     fun volumeUp() {
-        // TODO: implement UI for showing volume changes instead of FLAG_SHOW_UI
-        audioManager.adjustStreamVolume(
-            AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, AudioManager.FLAG_SHOW_UI
-        )
+        audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, 0)
+        emitVolumeUpdate()
     }
 
     fun volumeDown() {
-        audioManager.adjustStreamVolume(
-            AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER, AudioManager.FLAG_SHOW_UI
-        )
+        audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER, 0)
+        emitVolumeUpdate()
+    }
+
+    private fun emitVolumeUpdate() {
+        val volume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
+        val max = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+        val volumeFloat = volume.toFloat() / max
+        volumeState.value = 0.1f + 0.9f * volumeFloat
     }
 
     private fun List<Audiobook>.toUiBook() = map { it.toUiBook() }

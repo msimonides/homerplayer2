@@ -28,6 +28,7 @@ import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -35,6 +36,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -56,6 +58,7 @@ fun PlayerScreen(
     val viewState = viewModel.viewState.collectAsStateWithLifecycle().value
     val batteryState = viewModel.batteryState.collectAsStateWithLifecycle().value
     val hideSettingsButton = viewModel.hideSettingsButton.collectAsStateWithLifecycle().value
+    val volume = viewModel.volumeState.collectAsStateWithLifecycle().value
 
     val playerActions = remember(viewModel) {
         PlayerActions(
@@ -111,6 +114,25 @@ fun PlayerScreen(
                 .fillMaxWidth()
                 .padding(top = controlsRegularPadding, end = portraitEndPadding)
         )
+        val volumeChangePositioning = if (isLandscape) {
+            Modifier
+                .fillMaxHeight()
+                .fillMaxWidth(0.5f)
+                .align(Alignment.CenterEnd)
+                .padding(end = 24.dp, top = 24.dp, bottom = 24.dp)
+        } else {
+            Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.5f)
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 24.dp, start = 24.dp, end = 24.dp)
+        }
+        if (volume != null) {
+            VolumeChangeIndicator(
+                volume = volume,
+                modifier = volumeChangePositioning
+            )
+        }
     }
 }
 
