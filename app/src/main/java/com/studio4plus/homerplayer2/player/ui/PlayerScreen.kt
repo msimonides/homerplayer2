@@ -47,6 +47,7 @@ import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 import com.studio4plus.homerplayer2.battery.BatteryIcon
 import com.studio4plus.homerplayer2.battery.BatteryState
 import com.studio4plus.homerplayer2.settings.ui.OpenSettingsButton
+import kotlinx.coroutines.flow.SharedFlow
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -58,7 +59,6 @@ fun PlayerRoute(
     val bookState = viewModel.booksState.collectAsStateWithLifecycle().value
     val batteryState = viewModel.batteryState.collectAsStateWithLifecycle().value
     val hideSettingsButton = viewModel.hideSettingsButton.collectAsStateWithLifecycle().value
-    val volume = viewModel.volumeState.collectAsStateWithLifecycle().value
 
     val playerActions = remember(viewModel) {
         PlayerActions(
@@ -85,7 +85,7 @@ fun PlayerRoute(
         bookState,
         batteryState,
         hideSettingsButton,
-        volume,
+        viewModel.volumeChangeEvent,
         playerActions,
         viewModel::onPageChanged,
         onOpenSettings,
@@ -98,7 +98,7 @@ private fun PlayerScreen(
     booksState: PlayerViewModel.BooksState,
     batteryState: BatteryState?,
     hideSettingsButton: Boolean,
-    volume: Float?,
+    volumeChangeEvent: SharedFlow<Float>,
     playerActions: PlayerActions,
     onPageChanged: (Int) -> Unit,
     onOpenSettings: () -> Unit,
@@ -150,12 +150,10 @@ private fun PlayerScreen(
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 24.dp, start = 24.dp, end = 24.dp)
         }
-        if (volume != null) {
-            VolumeChangeIndicator(
-                volume = volume,
-                modifier = volumeChangePositioning
-            )
-        }
+        VolumeChangeIndicator(
+            volumeChangeEvent = volumeChangeEvent,
+            modifier = volumeChangePositioning
+        )
     }
 }
 

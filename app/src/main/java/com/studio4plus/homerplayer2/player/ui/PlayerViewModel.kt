@@ -39,7 +39,7 @@ import com.studio4plus.homerplayer2.settings.UiSettings
 import com.studio4plus.homerplayer2.speech.Speaker
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -140,7 +140,8 @@ class PlayerViewModel(
         it.hideSettingsButton
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
 
-    val volumeState = MutableStateFlow<Float?>(null)
+    val volumeChangeEvent = MutableSharedFlow<Float>(replay = 1, extraBufferCapacity = 1)
+        .apply { tryEmit(computeVolume()) }
 
     override fun onStart(owner: LifecycleOwner) {
         viewModelScope.launch {
@@ -184,19 +185,18 @@ class PlayerViewModel(
 
     fun volumeUp() {
         audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, 0)
-        emitVolumeUpdate()
+        volumeChangeEvent.tryEmit(computeVolume())
     }
 
     fun volumeDown() {
         audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER, 0)
-        emitVolumeUpdate()
+        volumeChangeEvent.tryEmit(computeVolume())
     }
 
-    private fun emitVolumeUpdate() {
+    private fun computeVolume(): Float {
         val volume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
         val max = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
-        val volumeFloat = volume.toFloat() / max
-        volumeState.value = 0.1f + 0.9f * volumeFloat
+        return volume.toFloat() / max
     }
 
     private fun List<Audiobook>.toUiBook() = map { it.toUiBook() }

@@ -31,17 +31,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.Color
@@ -49,23 +47,29 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.onEach
 
 @Composable
 fun VolumeChangeIndicator(
-    @FloatRange(0.0, 1.0) volume: Float,
+    volumeChangeEvent: SharedFlow<Float>,
     modifier: Modifier = Modifier,
 ) {
     var isVisible by remember { mutableStateOf(false) }
-    LaunchedEffect(volume) {
-        isVisible = true
-        delay(2_000)
-        isVisible = false
+    var volume by remember { mutableFloatStateOf(0f) }
+    LaunchedEffect(volumeChangeEvent) {
+        volumeChangeEvent
+            .onEach { volume = it }
+            .drop(1)
+            .collectLatest {
+                isVisible = true
+                delay(2_000)
+                isVisible = false
+            }
     }
     val hideOnClick = if (isVisible) {
         Modifier.clickable(
@@ -94,11 +98,13 @@ private fun Modifier.drawVolumeIndicator(
     color: Color
 ): Modifier =
     drawWithCache {
+        // Show a minimal value even if volume is 0.
+        val indicatedVolume = 0.1f + 0.9f * volume
         val lowEndY = size.height
-        val highEndY = size.height * (1f - volume)
+        val highEndY = size.height * (1f - indicatedVolume)
         // TODO(RTL): check if it should be reversed
         val lowEndX = 0
-        val highEndX = size.width * volume
+        val highEndX = size.width * indicatedVolume
         val path = Path().apply {
             moveTo(lowEndX.toFloat(), lowEndY)
             lineTo(highEndX, lowEndY)
@@ -114,11 +120,3 @@ private fun Modifier.drawVolumeIndicator(
             )
         }
     }
-
-@Preview
-@Composable
-fun PreviewVolumeIndicator() {
-    HomerPlayer2Theme {
-        VolumeChangeIndicator(0.7f, Modifier.fillMaxSize())
-    }
-}
