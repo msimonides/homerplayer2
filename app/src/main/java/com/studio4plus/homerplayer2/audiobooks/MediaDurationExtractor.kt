@@ -29,9 +29,11 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
+import com.studio4plus.homerplayer2.exoplayer.ExoplayerModule
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import org.koin.core.annotation.Named
 import org.koin.core.annotation.Single
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -39,7 +41,7 @@ import kotlin.coroutines.suspendCoroutine
 @Single(createdAtStart = true)
 class MediaDurationExtractor(
     mainScope: CoroutineScope,
-    exoPlayer: ExoPlayer,
+    @Named(ExoplayerModule.UTILITY) exoPlayer: ExoPlayer,
     audiobooksDao: AudiobooksDao
 ) {
     init {

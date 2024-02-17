@@ -33,6 +33,7 @@ import androidx.media3.session.MediaSessionService
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksDao
+import com.studio4plus.homerplayer2.exoplayer.ExoplayerModule
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.filter
@@ -41,13 +42,14 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.core.parameter.parametersOf
+import org.koin.core.qualifier.named
 
 class PlaybackService : MediaSessionService() {
 
     private var mediaSession: MediaSession? = null
     private val mainScope: CoroutineScope by inject()
     private val audiobooksDao: AudiobooksDao by inject()
-    private val exoPlayer: ExoPlayer by inject()
+    private val exoPlayer: ExoPlayer by inject(named(ExoplayerModule.PLAYBACK))
     private val deviceMotionDetector: DeviceMotionDetector by inject()
     // Note: can scopes be used instead of parameters?
     private val sleepTimer: SleepTimer by inject { parametersOf(exoPlayer) }

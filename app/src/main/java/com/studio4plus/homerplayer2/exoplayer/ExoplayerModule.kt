@@ -26,21 +26,43 @@ package com.studio4plus.homerplayer2.exoplayer
 
 import android.content.Context
 import androidx.annotation.OptIn
+import androidx.media3.common.AudioAttributes
+import androidx.media3.common.C
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import org.koin.core.annotation.Factory
 import org.koin.core.annotation.Module
+import org.koin.core.annotation.Named
 
 @Module
 class ExoplayerModule {
 
     @Factory
+    @Named(PLAYBACK)
     @OptIn(UnstableApi::class)
-    fun exoplayer(appContext: Context): ExoPlayer =
+    fun exoplayerPlayback(appContext: Context): ExoPlayer {
+        val audioAttributes = AudioAttributes.Builder()
+            .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
+            .build()
+        return commonBuilder(appContext)
+            .setSeekForwardIncrementMs(10_000)
+            .setSeekBackIncrementMs(30_000)
+            .setAudioAttributes(audioAttributes, true)
+            .build()
+    }
+
+    @Factory
+    @Named(UTILITY)
+    @OptIn(UnstableApi::class)
+    fun exoplayerUtility(appContext: Context): ExoPlayer = commonBuilder(appContext).build()
+
+    private fun commonBuilder(appContext: Context): ExoPlayer.Builder =
         // TODO: remove non-audio renderers, enable audio offload.
         //  consider: ConstantBitrateSeekingEnabled
         ExoPlayer.Builder(appContext)
-            .setSeekForwardIncrementMs(10_000)
-            .setSeekBackIncrementMs(30_000)
-            .build()
+
+    companion object {
+        const val PLAYBACK = "playback"
+        const val UTILITY = "utility"
+    }
 }
