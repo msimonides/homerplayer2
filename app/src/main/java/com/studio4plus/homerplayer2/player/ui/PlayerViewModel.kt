@@ -76,13 +76,13 @@ class PlayerViewModel(
         val initialSelectedIndex: Int
     )
 
-    sealed interface ViewState {
-        object Initializing : ViewState
+    sealed interface BooksState {
+        object Initializing : BooksState
         data class Books(
             val books: List<UiAudiobook>,
             val initialSelectedIndex: Int,
             val isPlaying: Boolean
-        ) : ViewState
+        ) : BooksState
     }
 
     private val allUiBooks: Flow<AllUiAudiobooks> = combine(
@@ -94,14 +94,14 @@ class PlayerViewModel(
         AllUiAudiobooks(books.toUiBook(), books, initialSelectedIndex)
     }.shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
 
-    val viewState: StateFlow<ViewState> = combine(
+    val booksState: StateFlow<BooksState> = combine(
         allUiBooks,
         playbackState.state
     ) { booksState, mediaState ->
         when (mediaState) {
-            is PlaybackState.MediaState.Initializing -> ViewState.Initializing
+            is PlaybackState.MediaState.Initializing -> BooksState.Initializing
             is PlaybackState.MediaState.Ready ->
-                ViewState.Books(booksState.bookStates, booksState.initialSelectedIndex, isPlaying = false)
+                BooksState.Books(booksState.bookStates, booksState.initialSelectedIndex, isPlaying = false)
             is PlaybackState.MediaState.Playing -> {
                 // TODO: refactor
                 // Store the matching file to get its Uri instead of parsing it from string.
@@ -119,10 +119,10 @@ class PlayerViewModel(
                 } else {
                     booksState.bookStates
                 }
-                ViewState.Books(b, booksState.initialSelectedIndex, isPlaying = true)
+                BooksState.Books(b, booksState.initialSelectedIndex, isPlaying = true)
             }
         }
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), ViewState.Initializing)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), BooksState.Initializing)
 
     private val uiSettings = uiSettingsStore.data
         .stateIn(viewModelScope, SharingStarted.Eagerly, UiSettings())

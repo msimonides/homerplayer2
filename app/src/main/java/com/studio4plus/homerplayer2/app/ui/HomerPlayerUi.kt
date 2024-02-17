@@ -45,7 +45,7 @@ import com.studio4plus.homerplayer2.base.ui.HomerHapticFeedback
 import com.studio4plus.homerplayer2.base.ui.NoHapticFeedback
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.onboarding.onboardingGraph
-import com.studio4plus.homerplayer2.player.ui.PlayerScreen
+import com.studio4plus.homerplayer2.player.ui.PlayerRoute
 import com.studio4plus.homerplayer2.settings.ui.SettingsScreen
 import org.koin.androidx.compose.koinViewModel
 
@@ -79,7 +79,7 @@ private fun MainNavHost(
     NavHost(modifier = modifier, navController = navController, startDestination = startDestination) {
         onboardingGraph(navController, "player")
         composable("player") {
-            PlayerScreen(onOpenSettings = { navController.navigate("settings") })
+            PlayerRoute(onOpenSettings = { navController.navigate("settings") })
         }
         composable("settings") {
             SettingsScreen(navigateBack = { navController.popBackStack("player", inclusive = false) })

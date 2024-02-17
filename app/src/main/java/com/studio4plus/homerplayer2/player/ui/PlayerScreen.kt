@@ -50,12 +50,12 @@ import com.studio4plus.homerplayer2.settings.ui.OpenSettingsButton
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun PlayerScreen(
+fun PlayerRoute(
     onOpenSettings: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: PlayerViewModel = koinViewModel()
 ) {
-    val viewState = viewModel.viewState.collectAsStateWithLifecycle().value
+    val bookState = viewModel.booksState.collectAsStateWithLifecycle().value
     val batteryState = viewModel.batteryState.collectAsStateWithLifecycle().value
     val hideSettingsButton = viewModel.hideSettingsButton.collectAsStateWithLifecycle().value
     val volume = viewModel.volumeState.collectAsStateWithLifecycle().value
@@ -81,24 +81,47 @@ fun PlayerScreen(
         }
     }
 
+    PlayerScreen(
+        bookState,
+        batteryState,
+        hideSettingsButton,
+        volume,
+        playerActions,
+        viewModel::onPageChanged,
+        onOpenSettings,
+        modifier
+    )
+}
+
+@Composable
+private fun PlayerScreen(
+    booksState: PlayerViewModel.BooksState,
+    batteryState: BatteryState?,
+    hideSettingsButton: Boolean,
+    volume: Float?,
+    playerActions: PlayerActions,
+    onPageChanged: (Int) -> Unit,
+    onOpenSettings: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Box(modifier.fillMaxSize()) {
         val isLandscape =
             LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
-        when (viewState) {
-            is PlayerViewModel.ViewState.Books -> {
+        when (booksState) {
+            is PlayerViewModel.BooksState.Books -> {
                 BooksPager(
                     landscape = isLandscape,
                     modifier = Modifier.fillMaxSize(),
                     itemPadding = HomerTheme.dimensions.screenContentPadding,
-                    state = viewState,
+                    state = booksState,
                     playerActions = playerActions,
-                    onPageChanged = viewModel::onPageChanged
+                    onPageChanged = onPageChanged,
                 )
             }
-            is PlayerViewModel.ViewState.Initializing -> Unit
+            is PlayerViewModel.BooksState.Initializing -> Unit
         }
 
-        val includeSettingsButton = viewState is PlayerViewModel.ViewState.Books
+        val includeSettingsButton = booksState is PlayerViewModel.BooksState.Books
         val controlsRegularPadding = with(HomerTheme.dimensions) {
             (screenContentPadding - (mainScreenButtonSize - mainScreenIconSize)).coerceAtLeast(0.dp)
         }

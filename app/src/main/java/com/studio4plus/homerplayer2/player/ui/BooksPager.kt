@@ -45,7 +45,7 @@ import kotlinx.coroutines.flow.onEach
 fun BooksPager(
     modifier: Modifier = Modifier,
     itemPadding: Dp = 0.dp,
-    state: PlayerViewModel.ViewState.Books,
+    state: PlayerViewModel.BooksState.Books,
     playerActions: PlayerActions,
     onPageChanged: (bookIndex: Int) -> Unit,
     landscape: Boolean
@@ -106,7 +106,7 @@ private fun Int.floorMod(other: Int): Int = when (other) {
 fun DefaultPreview() {
     HomerPlayer2Theme {
         BooksPager(
-            state = PlayerViewModel.ViewState.Books(
+            state = PlayerViewModel.BooksState.Books(
                 listOf(
                     PlayerViewModel.UiAudiobook("1", "Hamlet", 0.3f),
                     PlayerViewModel.UiAudiobook("2", "Macbeth", 0f),

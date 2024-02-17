@@ -51,6 +51,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runInterruptible
 import kotlinx.coroutines.withContext
 import org.koin.core.annotation.Factory
 import org.koin.core.annotation.Named
@@ -99,8 +100,7 @@ class PlaybackState(
             SessionToken(appContext, ComponentName(appContext, PlaybackService::class.java))
         mainScope.launch {
             val builder = MediaController.Builder(appContext, sessionToken)
-            mediaController = withContext(dispatcherProvider.Io) {
-                @Suppress("BlockingMethodInNonBlockingContext")
+            mediaController = runInterruptible(dispatcherProvider.Io) {
                 builder.buildAsync().get()
             }
             mediaController?.addListener(
