@@ -28,6 +28,7 @@ import android.content.Context
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import com.studio4plus.homerplayer2.audiobooks.AudiobookFoldersDao
+import com.studio4plus.homerplayer2.audiobooks.AudiobooksUpdater
 import com.studio4plus.homerplayer2.base.DispatcherProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
@@ -36,37 +37,44 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import org.koin.core.annotation.Factory
 
-data class FolderItem(val displayName: String, val uri: Uri, val bookCount: Int?, val bookTitles: String)
+data class FolderItem(
+    val displayName: String,
+    val uri: Uri,
+    val bookCount: Int,
+    val bookTitles: String,
+    val isScanning: Boolean,
+)
 
 @Factory
 class AudiobookFoldersViewStateFlow(
     private val appContext: Context,
     dispatcherProvider: DispatcherProvider,
     audiobookFoldersDao: AudiobookFoldersDao,
+    audiobooksUpdater: AudiobooksUpdater,
 ): Flow<List<FolderItem>> {
 
     private val folders = audiobookFoldersDao.getAll().map { folders ->
         folders.mapNotNull { folder ->
             DocumentFile.fromTreeUri(appContext, folder.uri)?.let { documentFile ->
-                FolderItem(documentFile.name ?: folder.toString(), folder.uri, null, "")
+                FolderItem(documentFile.name ?: folder.toString(), folder.uri, 0, "", isScanning = true)
             }
         }
     }.flowOn(dispatcherProvider.Io)
 
-    private val flow =
-        combine(folders, audiobookFoldersDao.getAllWithBookTitles(), this::combineBookCounts)
-
-    private fun combineBookCounts(
-        folderItems: List<FolderItem>,
-        foldersWithTitles: Map<Uri, List<String>>
-    ): List<FolderItem> =
+    private val flow = combine(
+        folders,
+        audiobookFoldersDao.getAllWithBookTitles(),
+        audiobooksUpdater.isScanning,
+    ) { folderItems, foldersWithTitles, isScanning ->
         folderItems.map { folder ->
             val bookTitles = foldersWithTitles[folder.uri]
             folder.copy(
-                bookCount = bookTitles?.size,
-                bookTitles = bookTitles?.joinToEllipsizedString() ?: ""
+                bookCount = bookTitles?.size ?: 0,
+                bookTitles = bookTitles?.joinToEllipsizedString() ?: "",
+                isScanning = isScanning,
             )
         }
+    }
 
     override suspend fun collect(collector: FlowCollector<List<FolderItem>>) {
         flow.collect(collector)

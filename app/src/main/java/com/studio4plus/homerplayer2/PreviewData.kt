@@ -30,10 +30,10 @@ import com.studio4plus.homerplayer2.audiobooks.ui.joinToEllipsizedString
 
 object PreviewData {
 
-    val folderItems1 = listOf(FolderItem("Audiobooks", Uri.EMPTY, 2, "Alice's Adventures in Wonderland, Hamlet"))
+    val folderItems1 = listOf(FolderItem("Audiobooks", Uri.EMPTY, 2, "Alice's Adventures in Wonderland, Hamlet", false))
 
     val folderItems50 get() = (1 .. 50).map { index ->
         val titles = (1 .. index).map { "Book $it" }
-        FolderItem("Folder $index", Uri.parse("dummy://$index"), titles.size, titles.joinToEllipsizedString())
+        FolderItem("Folder $index", Uri.parse("dummy://$index"), titles.size, titles.joinToEllipsizedString(), false)
     }
 }

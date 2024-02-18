@@ -27,6 +27,8 @@ package com.studio4plus.homerplayer2.audiobooks
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import org.koin.core.annotation.Single
@@ -41,12 +43,17 @@ class AudiobooksUpdater(
     private val triggerFlow: MutableSharedFlow<Unit> =
         MutableSharedFlow(extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
+    private val _isScanning = MutableStateFlow(false)
+    val isScanning: StateFlow<Boolean> get() = _isScanning
+
     init {
         combine(
             triggerFlow,
             audiobookFoldersDao.getAll()
         ) { _, audiobooksFolders ->
-            scan(audiobooksFolders)
+            advertiseBusy(_isScanning) {
+                scan(audiobooksFolders)
+            }
         }.launchIn(mainScope)
     }
 
@@ -59,5 +66,14 @@ class AudiobooksUpdater(
             Pair(item.audiobook, item.uris.map { AudiobookFile(it, item.audiobook.id) })
         }
         audiobooksDao.replaceAll(scannedItems.map { it.first }, scannedItems.flatMap { it.second })
+    }
+}
+
+private inline fun advertiseBusy(busyState: MutableStateFlow<Boolean>, action: () -> Unit) {
+    try {
+        busyState.value = true
+        action()
+    } finally {
+        busyState.value = false
     }
 }

@@ -99,7 +99,7 @@ private fun AudiobookFolderRow(
             shape = CircleShape
         ) {
             Box {
-                if (item.bookCount == null) {
+                if (item.isScanning) {
                     SmallCircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 } else {
                     Text(
@@ -142,7 +142,7 @@ private fun AudiobookFolderRow(
 private fun PreviewFolderRow() {
     HomerPlayer2Theme {
         AudiobookFolderRow(
-            FolderItem("My audiobooks", Uri.EMPTY, 2, "Alice in Wonderland, Hamlet"),
+            FolderItem("My audiobooks", Uri.EMPTY, 2, "Alice in Wonderland, Hamlet", isScanning = false),
             {}
         )
     }
@@ -153,7 +153,7 @@ private fun PreviewFolderRow() {
 private fun PreviewFolderRowEmpty() {
     HomerPlayer2Theme {
         AudiobookFolderRow(
-            FolderItem("My audiobooks", Uri.EMPTY, 0, ""),
+            FolderItem("My audiobooks", Uri.EMPTY, 0, "", isScanning = false),
             {}
         )
     }
@@ -164,7 +164,7 @@ private fun PreviewFolderRowEmpty() {
 private fun PreviewFolderRowScanning() {
     HomerPlayer2Theme {
         AudiobookFolderRow(
-            FolderItem("My audiobooks", Uri.EMPTY, null, ""),
+            FolderItem("My audiobooks", Uri.EMPTY, 0, "", isScanning = true),
             {}
         )
     }
