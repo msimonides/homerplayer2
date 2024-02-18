@@ -1,6 +1,6 @@
 [versions]
 
-android-gradle-plugin = "8.2.1"
+android-gradle-plugin = "8.2.2"
 android-compileSdk = '34'
 android-minSdk = '21'
 androidx-lifecycle = '2.7.0'
