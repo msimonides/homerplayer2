@@ -24,13 +24,13 @@
 
 package com.studio4plus.homerplayer2.base.ui
 
+import android.annotation.TargetApi
 import android.os.VibrationEffect
 import android.os.Vibrator
-import androidx.annotation.RequiresApi
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 
-@RequiresApi(26)
+@TargetApi(26)
 class HomerHapticFeedback(private val vibrator: Vibrator) : HapticFeedback {
 
     private val hasAmplitudeControl = vibrator.hasAmplitudeControl()

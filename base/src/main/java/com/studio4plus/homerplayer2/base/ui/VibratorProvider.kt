@@ -22,40 +22,25 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.base
+package com.studio4plus.homerplayer2.base.ui
 
-import android.app.admin.DevicePolicyManager
-import android.content.ContentResolver
 import android.content.Context
-import android.media.AudioManager
 import android.os.Build
 import android.os.Vibrator
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.MainScope
-import org.koin.core.annotation.ComponentScan
 import org.koin.core.annotation.Factory
-import org.koin.core.annotation.Module
-import org.koin.core.annotation.Single
-import java.util.*
+import java.util.Optional
 
-@Module
-@ComponentScan("com.studio4plus.homerplayer2.base")
-class BaseModule {
+// Koin doesn't support injection of nullable types and the Vibrator service is unavailable in some
+// Android versions
+@Factory
+class VibratorProvider(appContext: Context) {
+    private val vibratorService: Vibrator? = if (Build.VERSION.SDK_INT >= 26) {
+        appContext.getSystemService(Vibrator::class.java)
+    } else {
+        null
+    }
 
-    @Factory
-    fun contentResolver(appContext: Context): ContentResolver = appContext.contentResolver
+    val isAvailable: Boolean get() = vibratorService?.hasVibrator() ?: false
 
-    @Factory
-    fun devicePolicyManager(appContext: Context): DevicePolicyManager =
-        appContext.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
-
-    @Factory
-    fun audioManager(appContext: Context): AudioManager =
-        appContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-
-    @Factory
-    fun defaultLocale(): Locale = Locale.getDefault()
-
-    @Single
-    fun mainScope(): CoroutineScope = MainScope()
+    val get: Vibrator? = if (isAvailable) vibratorService else null
 }

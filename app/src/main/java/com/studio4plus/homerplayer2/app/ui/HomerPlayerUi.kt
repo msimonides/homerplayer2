@@ -43,6 +43,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.studio4plus.homerplayer2.base.ui.HomerHapticFeedback
 import com.studio4plus.homerplayer2.base.ui.NoHapticFeedback
+import com.studio4plus.homerplayer2.base.ui.VibratorProvider
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.onboarding.onboardingGraph
 import com.studio4plus.homerplayer2.player.ui.PlayerRoute
@@ -89,13 +90,10 @@ private fun MainNavHost(
 
 @Composable
 private fun rememberHapticFeedback(isEnabled: Boolean): HapticFeedback {
-    fun create(context: Context): HapticFeedback =
-        if (isEnabled && Build.VERSION.SDK_INT >= 26) {
-            val vibrator = context.getSystemService(Vibrator::class.java)
-            HomerHapticFeedback(vibrator)
-        } else {
-            NoHapticFeedback()
-        }
+    fun create(context: Context): HapticFeedback {
+        val vibrator = if (isEnabled) VibratorProvider(context).get else null
+        return vibrator?.let { HomerHapticFeedback(it) } ?: NoHapticFeedback()
+    }
 
     val context = LocalContext.current
     return remember(isEnabled) { create(context) }
