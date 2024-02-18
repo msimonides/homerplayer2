@@ -24,6 +24,7 @@
 package com.studio4plus.homerplayer2.app
 
 import android.app.ActivityManager
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
@@ -60,6 +61,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupLockTask() {
         val windowInsetsControllerCompat = WindowInsetsControllerCompat(window, window.decorView)
+        val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         activityViewModel.lockTask
             .flowWithLifecycle(lifecycle, Lifecycle.State.RESUMED)
             .onEach { isEnabled ->
@@ -68,7 +70,11 @@ class MainActivity : AppCompatActivity() {
                     startLockTask()
                 } else {
                     windowInsetsControllerCompat.show(WindowInsetsCompat.Type.statusBars())
-                    stopLockTask()
+                    if (activityManager.isInLockTaskMode()) {
+                        // API22 crashes when stopLockTask is being called when not in lock task
+                        // mode. The check above can be removed for newer versions.
+                        stopLockTask()
+                    }
                 }
             }
             .launchIn(lifecycleScope)
