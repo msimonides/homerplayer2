@@ -50,6 +50,9 @@ abstract class AudiobooksDao {
     @Query("SELECT * FROM audiobooks ORDER BY display_name COLLATE LOCALIZED")
     abstract fun getAll(): Flow<List<AudiobookWithState>>
 
+    @Query("SELECT * FROM audiobooks WHERE id = :id")
+    abstract suspend fun getAudiobook(id: String): AudiobookWithState?
+
     @Query("""SELECT audiobook_files.*
               FROM audiobook_files
                 LEFT JOIN audiobook_file_durations ON audiobook_files.uri = audiobook_file_durations.uri

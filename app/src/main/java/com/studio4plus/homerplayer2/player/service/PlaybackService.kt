@@ -24,15 +24,11 @@
 
 package com.studio4plus.homerplayer2.player.service
 
-import android.net.Uri
 import androidx.datastore.core.DataStore
-import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
-import com.google.common.util.concurrent.Futures
-import com.google.common.util.concurrent.ListenableFuture
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksDao
 import com.studio4plus.homerplayer2.exoplayer.ExoplayerModule
 import com.studio4plus.homerplayer2.player.DATASTORE_PLAYBACK_SETTINGS
@@ -53,14 +49,15 @@ import org.koin.core.qualifier.named
 
 class PlaybackService : MediaSessionService() {
 
-    private var mediaSession: MediaSession? = null
-    private val mainScope: CoroutineScope by inject()
-    private val serviceScope: CoroutineScope = CoroutineScope(mainScope.coroutineContext + SupervisorJob())
-
     private val audiobooksDao: AudiobooksDao by inject()
     private val exoPlayer: ExoPlayer by inject(named(ExoplayerModule.PLAYBACK))
     private val deviceMotionDetector: DeviceMotionDetector by inject()
+    private val mainScope: CoroutineScope by inject()
+    private var mediaSession: MediaSession? = null
     private val playbackSettings: DataStore<PlaybackSettings> by inject(named(DATASTORE_PLAYBACK_SETTINGS))
+    private val playerMediaSessionCallback: PlayerMediaSessionCallback by inject()
+    private val serviceScope: CoroutineScope =
+        CoroutineScope(mainScope.coroutineContext + SupervisorJob())
     // Note: can scopes be used instead of parameters?
     private val sleepTimer: SleepTimer by inject { parametersOf(exoPlayer) }
 
@@ -71,7 +68,7 @@ class PlaybackService : MediaSessionService() {
         exoPlayer.addListener(PlayStopOnFaceDown(mainScope, exoPlayer, deviceMotionDetector))
         exoPlayer.addListener(sleepTimer)
         mediaSession = MediaSession.Builder(this, exoPlayer)
-            .setCallback(MediaSessionCallback())
+            .setCallback(playerMediaSessionCallback)
             .build()
 
         playbackSettings.data
@@ -93,21 +90,6 @@ class PlaybackService : MediaSessionService() {
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? =
         mediaSession
-
-    // TODO: inject it with koin?
-    private class MediaSessionCallback : MediaSession.Callback {
-
-        override fun onAddMediaItems(
-            mediaSession: MediaSession,
-            controller: MediaSession.ControllerInfo,
-            mediaItems: MutableList<MediaItem>
-        ): ListenableFuture<MutableList<MediaItem>> {
-            val updateMediaItems = mediaItems.mapTo(mutableListOf()) {
-                it.buildUpon().setUri(Uri.parse(it.mediaId)).build()
-            }
-            return Futures.immediateFuture(updateMediaItems)
-        }
-    }
 
     // TODO: inject it with koin?
     private class PlayPositionUpdater(

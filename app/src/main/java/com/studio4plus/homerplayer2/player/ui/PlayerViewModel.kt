@@ -33,7 +33,10 @@ import androidx.lifecycle.viewModelScope
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksDao
 import com.studio4plus.homerplayer2.battery.BatteryState
 import com.studio4plus.homerplayer2.battery.BatteryStateProvider
+import com.studio4plus.homerplayer2.player.Audiobook
+import com.studio4plus.homerplayer2.player.AudiobookFile
 import com.studio4plus.homerplayer2.player.PlaybackUiStateRepository
+import com.studio4plus.homerplayer2.player.toAudiobook
 import com.studio4plus.homerplayer2.settings.DATASTORE_UI_SETTINGS
 import com.studio4plus.homerplayer2.settings.UiSettings
 import com.studio4plus.homerplayer2.speech.Speaker

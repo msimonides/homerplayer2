@@ -26,35 +26,28 @@ package com.studio4plus.homerplayer2.player.ui
 
 import android.content.ComponentName
 import android.content.Context
-import android.net.Uri
-import androidx.datastore.core.DataStore
-import androidx.media3.common.MediaItem
-import androidx.media3.common.MediaMetadata
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.studio4plus.homerplayer2.base.DispatcherProvider
-import com.studio4plus.homerplayer2.player.DATASTORE_PLAYBACK_SETTINGS
-import com.studio4plus.homerplayer2.player.PlaybackSettings
+import com.studio4plus.homerplayer2.player.Audiobook
 import com.studio4plus.homerplayer2.player.service.PlaybackService
+import com.studio4plus.homerplayer2.player.usecases.GetBookMediaItemsWithStartPosition
 import com.studio4plus.homerplayer2.utils.tickerFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runInterruptible
-import kotlinx.coroutines.withContext
 import org.koin.core.annotation.Factory
-import org.koin.core.annotation.Named
 import timber.log.Timber
 
 interface PlaybackController {
@@ -73,7 +66,7 @@ class PlaybackState(
     mainScope: CoroutineScope,
     dispatcherProvider: DispatcherProvider,
     appContext: Context,
-    @Named(DATASTORE_PLAYBACK_SETTINGS) private val settings: DataStore<PlaybackSettings>,
+    private val getBookMediaItemsWithStartPosition: GetBookMediaItemsWithStartPosition,
 ) : PlaybackController {
 
     sealed interface MediaState {
@@ -138,20 +131,15 @@ class PlaybackState(
         }
     }
 
+    @androidx.annotation.OptIn(UnstableApi::class)
     suspend fun play(book: Audiobook) {
         mediaController?.stop()
         mediaController?.let { controller ->
-            controller.setMediaItems(book.toMediaItems())
-            controller.playlistMetadata = MediaMetadata.Builder()
-                .setTitle(book.displayName)
-                .build()
-            if (book.currentUri != null) {
-                val rewindOnResumeMs = settings.data.first().rewindOnResumeSeconds * 1_000
-                val resumePositionMs = (book.currentPositionMs - rewindOnResumeMs).coerceAtLeast(0)
-                controller.seekTo(
-                    book.files.indexOfFirst { it.uri == book.currentUri },
-                    resumePositionMs
-                )
+            val mediaItemsWithStartPosition =
+                getBookMediaItemsWithStartPosition(book, rewindOnResume = true)
+            with(mediaItemsWithStartPosition) {
+                controller.setMediaItems(mediaItems)
+                controller.seekTo(startIndex, startPositionMs)
             }
             controller.playWhenReady = true
             controller.prepare()
@@ -185,20 +173,6 @@ class PlaybackState(
         mediaController?.playWhenReady = false
         mediaController?.stop()
     }
-
-    private fun playedBookProgressFlow(): Flow<Pair<Uri, Long>?> = merge(
-        eventProgressUpdate,
-        tickerFlow(1000) // TODO: more precise interval, take account of playback speed and total duration (for very short books).
-    ).map {
-        mediaController?.let { controller ->
-            val mediaUri = controller.currentMediaItem?.mediaId.let { Uri.parse(it) }
-            val position = controller.contentPosition
-            Pair(mediaUri, position)
-        }
-    }
-
-    private fun Audiobook.toMediaItems() =
-        files.map { MediaItem.Builder().setMediaId(it.uri.toString()).build() }
 
     private fun MediaController.getMediaState(): MediaState {
         val playingStates = arrayOf(Player.STATE_BUFFERING, Player.STATE_READY, Player.STATE_ENDED)

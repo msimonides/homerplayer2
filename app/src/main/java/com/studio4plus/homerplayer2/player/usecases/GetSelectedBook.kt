@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Marcin Simonides
+ * Copyright (c) 2024 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,39 +22,22 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.player.ui
+package com.studio4plus.homerplayer2.player.usecases
 
-import android.net.Uri
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksDao
+import com.studio4plus.homerplayer2.player.PlaybackUiStateRepository
+import com.studio4plus.homerplayer2.player.Audiobook
+import com.studio4plus.homerplayer2.player.toAudiobook
+import kotlinx.coroutines.flow.first
+import org.koin.core.annotation.Factory
 
-data class AudiobookFile(
-    val uri: Uri,
-    val durationMs: Long?
-)
-
-data class Audiobook(
-    val id: String,
-    val displayName: String,
-    val currentUri: Uri?,
-    val currentPositionMs: Long,
-    val files: List<AudiobookFile>
+@Factory
+class GetSelectedBook(
+    private val audiobooksDao: AudiobooksDao,
+    private val playbackUiState: PlaybackUiStateRepository
 ) {
-    private val totalDurationMs: Long? =
-        if (files.all { it.durationMs != null }) files.sumOf { it.durationMs!! } else null
-    val progress: Float =
-        if (currentUri != null && totalDurationMs != null) {
-            val previousFilesDuration =
-                files.takeWhile { it.uri != currentUri }.sumOf { it.durationMs!! }
-            (previousFilesDuration + currentPositionMs).toFloat() / totalDurationMs.toFloat()
-        } else {
-            0f
-        }
+    suspend operator fun invoke(): Audiobook? {
+        val bookId = playbackUiState.lastSelectedBookId().first()
+        return audiobooksDao.getAudiobook(bookId)?.toAudiobook()
+    }
 }
-
-fun AudiobooksDao.AudiobookWithState.toAudiobook() = Audiobook(
-    audiobook.id,
-    audiobook.displayName,
-    playbackState?.currentUri,
-    playbackState?.currentPositionMs ?: 0,
-    files.map { AudiobookFile(it.uri, it.durationMs) }
-)
