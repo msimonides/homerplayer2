@@ -30,4 +30,5 @@ import kotlinx.serialization.Serializable
 data class PlaybackSettings(
     val rewindOnResumeSeconds: Int = 0,
     val sleepTimerSeconds: Int = 0,
+    val playbackSpeed: Float = 1f,
 )

@@ -25,6 +25,7 @@
 package com.studio4plus.homerplayer2.player.service
 
 import android.net.Uri
+import androidx.datastore.core.DataStore
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
@@ -34,10 +35,16 @@ import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksDao
 import com.studio4plus.homerplayer2.exoplayer.ExoplayerModule
+import com.studio4plus.homerplayer2.player.DATASTORE_PLAYBACK_SETTINGS
+import com.studio4plus.homerplayer2.player.PlaybackSettings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
@@ -48,9 +55,12 @@ class PlaybackService : MediaSessionService() {
 
     private var mediaSession: MediaSession? = null
     private val mainScope: CoroutineScope by inject()
+    private val serviceScope: CoroutineScope = CoroutineScope(mainScope.coroutineContext + SupervisorJob())
+
     private val audiobooksDao: AudiobooksDao by inject()
     private val exoPlayer: ExoPlayer by inject(named(ExoplayerModule.PLAYBACK))
     private val deviceMotionDetector: DeviceMotionDetector by inject()
+    private val playbackSettings: DataStore<PlaybackSettings> by inject(named(DATASTORE_PLAYBACK_SETTINGS))
     // Note: can scopes be used instead of parameters?
     private val sleepTimer: SleepTimer by inject { parametersOf(exoPlayer) }
 
@@ -63,6 +73,12 @@ class PlaybackService : MediaSessionService() {
         mediaSession = MediaSession.Builder(this, exoPlayer)
             .setCallback(MediaSessionCallback())
             .build()
+
+        playbackSettings.data
+            .map { it.playbackSpeed }
+            .distinctUntilChanged()
+            .onEach { exoPlayer.setPlaybackSpeed(it) }
+            .launchIn(serviceScope)
     }
 
     override fun onDestroy() {
@@ -71,6 +87,7 @@ class PlaybackService : MediaSessionService() {
             release()
             mediaSession = null
         }
+        serviceScope.cancel()
         super.onDestroy()
     }
 

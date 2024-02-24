@@ -17,6 +17,9 @@
 
     <string name="browse_settings_button_accessibility_label">Settings</string>
 
+    <string name="generic_dialog_confirm">OK</string>
+    <string name="generic_dialog_cancel">Cancel</string>
+
     <string name="onboarding_audiobook_folders_title">Audiobooks</string>
     <string name="onboarding_audiobook_folders_description">Please select at least one folder with your audiobooks.</string>
     <string name="onboarding_speech_description">Homer Player uses text-to-speech engine to read book titles.\nPlease test that </string>
@@ -55,12 +58,20 @@
     <string name="settings_ui_mode_dark">Dark</string>
     <string name="settings_ui_mode_light">Light</string>
     <string name="settings_ui_mode_system">System</string>
+    <string name="settings_ui_playback_play_speed_title">Playback speed</string>
     <string name="settings_ui_playback_rewind_on_resume_label">Rewind when resuming playback</string>
     <string name="settings_ui_playback_rewind_on_resume_setting_disabled">Disabled</string>
     <string name="settings_ui_playback_settings_item">Playback settings…</string>
     <string name="settings_ui_playback_settings_title">Playback settings</string>
     <string name="settings_ui_playback_sleep_timer_label">Sleep timer</string>
     <string name="settings_ui_playback_sleep_timer_disabled">Disabled</string>
+    <string name="settings_ui_playback_speed_choice_very_fast">Very fast</string>
+    <string name="settings_ui_playback_speed_choice_fast">Fast</string>
+    <string name="settings_ui_playback_speed_choice_regular">Regular</string>
+    <string name="settings_ui_playback_speed_choice_moderate">Moderate</string>
+    <string name="settings_ui_playback_speed_choice_slow">Slow</string>
+    <string name="settings_ui_playback_speed_choice_very_slow">Very slow</string>
+    <string name="settings_ui_playback_speed_title">Playback speed</string>
     <string name="settings_ui_share_diagnostic_log_title">Share diagnostic log</string>
     <string name="settings_ui_share_diagnostic_log_summary">Send diagnostic log to developer to report an issue</string>
     <string name="settings_ui_show_battery">Show battery indicator</string>

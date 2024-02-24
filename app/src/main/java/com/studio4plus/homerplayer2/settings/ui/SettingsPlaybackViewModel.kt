@@ -45,14 +45,20 @@ class SettingsPlaybackViewModel(
     data class ViewState(
         val rewindOnResumeSeconds: Int,
         val sleepTimerSeconds: Int,
+        val playbackSpeed: Float,
     )
 
     val viewState = playbackSettingsStore.data.map { playbackSettings ->
         ViewState(
             rewindOnResumeSeconds = playbackSettings.rewindOnResumeSeconds,
             sleepTimerSeconds = playbackSettings.sleepTimerSeconds,
+            playbackSpeed = playbackSettings.playbackSpeed
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
+
+    fun setPlaybackSpeed(speed: Float) {
+        mainScope.launchUpdate(playbackSettingsStore) { it.copy(playbackSpeed = speed) }
+    }
 
     fun setRewindOnResumeSeconds(seconds: Int) {
         mainScope.launchUpdate(playbackSettingsStore) { it.copy(rewindOnResumeSeconds = seconds) }
