@@ -41,7 +41,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.times
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 import com.studio4plus.homerplayer2.battery.BatteryIcon
@@ -122,12 +121,9 @@ private fun PlayerScreen(
         }
 
         val includeSettingsButton = booksState is PlayerViewModel.BooksState.Books
-        val controlsRegularPadding = with(HomerTheme.dimensions) {
-            (screenContentPadding - (mainScreenButtonSize - mainScreenIconSize)).coerceAtLeast(0.dp)
+        val controlsPadding = with(HomerTheme.dimensions) {
+            (screenContentPadding - (mainScreenButtonSize - mainScreenIconSize) / 2).coerceAtLeast(0.dp)
         }
-        val portraitEndPadding =
-            if (isLandscape) controlsRegularPadding
-            else with(HomerTheme.dimensions) { 0.5 * progressIndicatorWidth + 2 * screenContentPadding }
         TopControlsRow(
             batteryState,
             includeSettingsButton,
@@ -135,7 +131,7 @@ private fun PlayerScreen(
             onOpenSettings,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = controlsRegularPadding, end = portraitEndPadding)
+                .padding(horizontal = controlsPadding)
         )
         val volumeChangePositioning = if (isLandscape) {
             Modifier

@@ -32,7 +32,6 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -162,7 +161,7 @@ private fun VerticalBookPage(
     progress: Float,
     modifier: Modifier = Modifier,
 ) {
-    Row(
+    Column(
         modifier = modifier
             .fillMaxSize()
     ) {
@@ -184,7 +183,7 @@ private fun VerticalBookPage(
                     .padding(vertical = 16.dp)
             )
         }
-        VerticalBookProgressIndicator(progress, Modifier.padding(start = 8.dp))
+        HorizontalBookProgressIndicator(progress, Modifier.padding(top = 4.dp))
     }
 }
 
