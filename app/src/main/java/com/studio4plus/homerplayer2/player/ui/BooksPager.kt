@@ -37,8 +37,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -51,31 +49,17 @@ fun BooksPager(
     landscape: Boolean
 ) {
     val books = state.books
-    val wrapPagesMargin = 1
-    val zeroPage = wrapPagesMargin
-    fun wrapPageIndex(pageIndex: Int) = when {
-        pageIndex < zeroPage -> zeroPage + books.size - 1
-        pageIndex >= zeroPage + books.size -> zeroPage
-        else -> pageIndex
-    }
-
+    val insanePageCount = 10_000
+    val zeroPage = insanePageCount / 2
     val pagerState = rememberPagerState(
         initialPage = zeroPage + state.initialSelectedIndex,
-        pageCount = { if (books.isEmpty()) 0 else books.size + 2 * wrapPagesMargin }
+        pageCount = { if (books.isEmpty()) 0 else insanePageCount }
     )
     LaunchedEffect(pagerState) {
-        snapshotFlow { pagerState.currentPage }.onEach { pageIndex ->
+        snapshotFlow { pagerState.currentPage }.collect { pageIndex ->
             val bookIndex = (pageIndex - zeroPage).floorMod(books.size)
             onPageChanged(bookIndex)
-        }.launchIn(this)
-        // Wrap to the other side of pager when page settles. It's a poor implementation but
-        // until support for (Int.MAX_VALUE) page count is fixed it'll hae to do:
-        // https://issuetracker.google.com/issues/313770354
-        snapshotFlow { pagerState.settledPage }.onEach { pageIndex ->
-            val wrapToPage = wrapPageIndex(pageIndex)
-            if (wrapToPage != pageIndex)
-                pagerState.scrollToPage(wrapToPage, pagerState.currentPageOffsetFraction)
-        }.launchIn(this)
+        }
     }
     HorizontalPager(
         state = pagerState,
