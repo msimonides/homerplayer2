@@ -30,17 +30,23 @@ import androidx.lifecycle.viewModelScope
 import com.studio4plus.homerplayer2.player.DATASTORE_PLAYBACK_SETTINGS
 import com.studio4plus.homerplayer2.player.PlaybackSettings
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
 import org.koin.core.annotation.Named
+import kotlin.time.Duration.Companion.seconds
 
 @KoinViewModel
 class SettingsPlaybackViewModel(
     private val mainScope: CoroutineScope,
     @Named(DATASTORE_PLAYBACK_SETTINGS) private val playbackSettingsStore: DataStore<PlaybackSettings>,
+    private val playAudioSample: PlayAudioSample,
 ) : ViewModel() {
+
+    private var playSampleJob: Job? = null
 
     data class ViewState(
         val rewindOnResumeSeconds: Int,
@@ -56,8 +62,20 @@ class SettingsPlaybackViewModel(
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
+    override fun onCleared() {
+        super.onCleared()
+        playAudioSample.shutdown()
+    }
+
     fun setPlaybackSpeed(speed: Float) {
         mainScope.launchUpdate(playbackSettingsStore) { it.copy(playbackSpeed = speed) }
+    }
+
+    fun playSample(speed: Float) {
+        playSampleJob?.cancel()
+        playSampleJob = viewModelScope.launch {
+            playAudioSample(speed, 3.seconds)
+        }
     }
 
     fun setRewindOnResumeSeconds(seconds: Int) {

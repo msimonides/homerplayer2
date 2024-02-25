@@ -52,6 +52,7 @@ fun SettingsPlaybackRoute(
     if (viewState != null) {
         SettingsPlayback(
             viewState = viewState,
+            onPlaySpeedSample = viewModel::playSample,
             onSetPlaybackSpeed = viewModel::setPlaybackSpeed,
             onSetRewindOnResumeSeconds = viewModel::setRewindOnResumeSeconds,
             onSetSleepTimerSeconds = viewModel::setSleepTimerSeconds,
@@ -66,6 +67,7 @@ private enum class SettingsDialogType {
 @Composable
 fun SettingsPlayback(
     viewState: SettingsPlaybackViewModel.ViewState,
+    onPlaySpeedSample: (Float) -> Unit,
     onSetPlaybackSpeed: (Float) -> Unit,
     onSetRewindOnResumeSeconds: (Int) -> Unit,
     onSetSleepTimerSeconds: (Int) -> Unit,
@@ -103,7 +105,7 @@ fun SettingsPlayback(
         )
         SettingsDialogType.PlaybackSpeed -> SelectPlaybackSpeedDialog(
             value = viewState.playbackSpeed,
-            onPlaySample = {},
+            onPlaySample = onPlaySpeedSample,
             onConfirm = onSetPlaybackSpeed,
             onDismissRequest = dismissAction
         )
@@ -180,12 +182,16 @@ private fun SelectPlaybackSpeedDialog(
     onDismissRequest: () -> Unit,
 ) {
     var selection by remember { mutableFloatStateOf(value) }
+    val onSelection = { speed: Float ->
+        onPlaySample(speed)
+        selection = speed
+    }
     SelectFromListDialog(
         title = stringResource(R.string.settings_ui_playback_speed_title),
         selectedValue = selection,
         values = listOf(2.0f, 1.5f, 1.0f, 0.8f, 0.65f, 0.5f),
         produceLabel = { speedSettingString(it) },
-        onValueChange = { selection = it },
+        onValueChange = onSelection,
         onDismissRequest = onDismissRequest
     ) {
         TextButton(onClick = onDismissRequest) {
@@ -223,6 +229,6 @@ private fun PreviewSettingsPlayback() {
         val state = SettingsPlaybackViewModel.ViewState(
             rewindOnResumeSeconds = 5, sleepTimerSeconds = 0, playbackSpeed = 1.5f
         )
-        SettingsPlayback(viewState = state, {}, {}, {})
+        SettingsPlayback(viewState = state, {}, {}, {}, {})
     }
 }

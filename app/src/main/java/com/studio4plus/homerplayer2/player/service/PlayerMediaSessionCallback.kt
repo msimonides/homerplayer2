@@ -65,7 +65,7 @@ class PlayerMediaSessionCallback(
         mainScope.launch {
             val selectedBook = getSelectedBook()
             val result = if (selectedBook != null) {
-                getBookMediaItemsWithStartPosition(selectedBook, rewindOnResume = true)
+                getBookMediaItemsWithStartPosition(selectedBook)
             } else {
                 MediaSession.MediaItemsWithStartPosition(emptyList(), 0, 0)
             }

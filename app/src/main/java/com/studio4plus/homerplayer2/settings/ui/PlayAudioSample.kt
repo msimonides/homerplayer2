@@ -22,43 +22,48 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.player.usecases
+package com.studio4plus.homerplayer2.settings.ui
 
 import androidx.annotation.OptIn
-import androidx.datastore.core.DataStore
-import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.session.MediaSession.MediaItemsWithStartPosition
-import com.studio4plus.homerplayer2.player.DATASTORE_PLAYBACK_SETTINGS
-import com.studio4plus.homerplayer2.player.PlaybackSettings
-import com.studio4plus.homerplayer2.player.Audiobook
-import kotlinx.coroutines.flow.first
+import androidx.media3.exoplayer.ExoPlayer
+import com.studio4plus.homerplayer2.exoplayer.ExoplayerModule
+import com.studio4plus.homerplayer2.player.usecases.GetBookMediaItemsWithStartPosition
+import com.studio4plus.homerplayer2.player.usecases.GetSelectedBook
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import org.koin.core.annotation.Factory
 import org.koin.core.annotation.Named
+import kotlin.time.Duration
 
 @Factory
-class GetBookMediaItemsWithStartPosition(
-    @Named(DATASTORE_PLAYBACK_SETTINGS) private val settings: DataStore<PlaybackSettings>,
+class PlayAudioSample(
+    @Named(ExoplayerModule.PLAYBACK) private val exoPlayer: ExoPlayer,
+    private val getSelectedBook: GetSelectedBook,
+    private val getBookMediaItemsWithStartPosition: GetBookMediaItemsWithStartPosition,
 ) {
+
     @OptIn(UnstableApi::class)
-    suspend operator fun invoke(
-        book: Audiobook,
-    ): MediaItemsWithStartPosition {
-        var startIndex: Int = 0
-        var startPositionMs: Long = 0
-        if (book.currentUri != null) {
-            val rewindOnResumeMs = settings.data.first().rewindOnResumeSeconds * 1_000
-            startPositionMs = (book.currentPositionMs - rewindOnResumeMs).coerceAtLeast(0)
-            startIndex = book.files.indexOfFirst { it.uri == book.currentUri }
+    suspend operator fun invoke(speed: Float, duration: Duration) {
+        val bookId = getSelectedBook()
+        if (bookId != null) {
+            val mediaItemsWithStartPosition = getBookMediaItemsWithStartPosition(bookId)
+            exoPlayer.setPlaybackSpeed(speed)
+            with(mediaItemsWithStartPosition) {
+                exoPlayer.setMediaItems(mediaItems)
+                exoPlayer.seekTo(startIndex, startPositionMs)
+            }
+            exoPlayer.prepare()
+            try {
+                exoPlayer.playWhenReady = true
+                delay(duration)
+            } finally {
+                exoPlayer.playWhenReady = false
+            }
         }
-        return MediaItemsWithStartPosition(book.toMediaItems(), startIndex, startPositionMs)
     }
 
-    private fun Audiobook.toMediaItems() =
-        files.map {
-            MediaItem.Builder()
-                .setMediaId(it.uri.toString())
-                .setUri(it.uri)
-                .build()
-        }
+    fun shutdown() {
+        exoPlayer.release()
+    }
 }

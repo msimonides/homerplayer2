@@ -135,8 +135,7 @@ class PlaybackState(
     suspend fun play(book: Audiobook) {
         mediaController?.stop()
         mediaController?.let { controller ->
-            val mediaItemsWithStartPosition =
-                getBookMediaItemsWithStartPosition(book, rewindOnResume = true)
+            val mediaItemsWithStartPosition = getBookMediaItemsWithStartPosition(book)
             with(mediaItemsWithStartPosition) {
                 controller.setMediaItems(mediaItems)
                 controller.seekTo(startIndex, startPositionMs)
