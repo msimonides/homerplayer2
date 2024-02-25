@@ -46,10 +46,13 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -97,9 +100,12 @@ class PlayerViewModel(
         AllUiAudiobooks(books.toUiBook(), books, lastSelectedIndex)
     }.shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
 
+    private val playbackStateFlow = playbackState.state
+        .stateIn(viewModelScope, SharingStarted.Eagerly, PlaybackState.MediaState.Initializing)
+
     val booksState: StateFlow<BooksState> = combine(
         allUiBooks,
-        playbackState.state
+        playbackStateFlow
     ) { booksState, mediaState ->
         when (mediaState) {
             is PlaybackState.MediaState.Initializing -> BooksState.Initializing
@@ -146,6 +152,13 @@ class PlayerViewModel(
     val volumeChangeEvent = MutableSharedFlow<Float>(replay = 1, extraBufferCapacity = 1)
         .apply { tryEmit(computeVolume()) }
 
+    init {
+        playbackStateFlow
+            .filter { it is PlaybackState.MediaState.Playing }
+            .onEach { speaker.stop() }
+            .launchIn(viewModelScope)
+    }
+
     override fun onStart(owner: LifecycleOwner) {
         viewModelScope.launch {
             speaker.initIfNeeded()
@@ -165,7 +178,6 @@ class PlayerViewModel(
         viewModelScope.launch {
             val book = allUiBooks.first().books.getOrNull(bookIndex)
             if (book != null) {
-                speaker.stop()
                 playbackState.play(book)
             }
         }
@@ -176,7 +188,7 @@ class PlayerViewModel(
             val book = allUiBooks.first().books.getOrNull(bookIndex)
             speaker.stop()
             if (book != null) {
-                if (uiSettings.value.readBookTitles) {
+                if (uiSettings.value.readBookTitles && !isPlaying()) {
                     viewModelScope.launch {
                         speaker.speakAndWait(book.displayName)
                     }
@@ -201,6 +213,8 @@ class PlayerViewModel(
         val max = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
         return volume.toFloat() / max
     }
+
+    private fun isPlaying() = playbackStateFlow.value is PlaybackState.MediaState.Playing
 
     private fun List<Audiobook>.toUiBook() = map { it.toUiBook() }
 
