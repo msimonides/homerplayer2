@@ -27,9 +27,11 @@ package com.studio4plus.homerplayer2.player.ui
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -52,7 +54,7 @@ fun BooksPager(
     val insanePageCount = 10_000
     val zeroPage = insanePageCount / 2
     val pagerState = rememberPagerState(
-        initialPage = zeroPage + state.initialSelectedIndex,
+        initialPage = zeroPage + state.selectedIndex,
         pageCount = { if (books.isEmpty()) 0 else insanePageCount }
     )
     LaunchedEffect(pagerState) {
@@ -60,6 +62,9 @@ fun BooksPager(
             val bookIndex = (pageIndex - zeroPage).floorMod(books.size)
             onPageChanged(bookIndex)
         }
+    }
+    LaunchedEffect(pagerState, state.selectedIndex) {
+        pagerState.scrollToPage(zeroPage + state.selectedIndex)
     }
     HorizontalPager(
         state = pagerState,
@@ -96,7 +101,7 @@ fun DefaultPreview() {
                     PlayerViewModel.UiAudiobook("2", "Macbeth", 0f),
                     PlayerViewModel.UiAudiobook("3", "Romeo and Juliet", 0.9f),
                 ),
-                initialSelectedIndex = 1,
+                selectedIndex = 1,
                 isPlaying = false,
             ),
             itemPadding = HomerTheme.dimensions.screenContentPadding,

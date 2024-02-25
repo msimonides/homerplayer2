@@ -82,11 +82,11 @@ abstract class AudiobooksDao {
         }
     }
 
+    @Query("SELECT * FROM audiobook_files WHERE uri = :uri")
+    abstract suspend fun getAudiobookFile(uri: Uri): AudiobookFile?
+
     @Upsert
     protected abstract suspend fun updatePlaybackState(state: AudiobookPlaybackState)
-
-    @Query("SELECT * FROM audiobook_files WHERE uri = :uri")
-    protected abstract suspend fun getAudiobookFile(uri: Uri): AudiobookFile?
 
     @Insert
     protected abstract suspend fun insertAudiobooks(audiobooks: List<Audiobook>)

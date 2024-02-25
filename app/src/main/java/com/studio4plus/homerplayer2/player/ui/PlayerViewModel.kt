@@ -76,14 +76,14 @@ class PlayerViewModel(
     data class AllUiAudiobooks(
         val bookStates: List<UiAudiobook>,
         val books: List<Audiobook>,
-        val initialSelectedIndex: Int
+        val selectedIndex: Int
     )
 
     sealed interface BooksState {
         object Initializing : BooksState
         data class Books(
             val books: List<UiAudiobook>,
-            val initialSelectedIndex: Int,
+            val selectedIndex: Int,
             val isPlaying: Boolean
         ) : BooksState
     }
@@ -92,9 +92,9 @@ class PlayerViewModel(
         audiobooksDao.getAll().map { books -> books.map { it.toAudiobook() } },
         playbackUiStateRepository.lastSelectedBookId()
     ) { books, lastSelectedId ->
-        val initialSelectedIndex =
+        val lastSelectedIndex =
             books.indexOfFirst { it.id == lastSelectedId }.coerceAtLeast(0)
-        AllUiAudiobooks(books.toUiBook(), books, initialSelectedIndex)
+        AllUiAudiobooks(books.toUiBook(), books, lastSelectedIndex)
     }.shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
 
     val booksState: StateFlow<BooksState> = combine(
@@ -104,7 +104,7 @@ class PlayerViewModel(
         when (mediaState) {
             is PlaybackState.MediaState.Initializing -> BooksState.Initializing
             is PlaybackState.MediaState.Ready ->
-                BooksState.Books(booksState.bookStates, booksState.initialSelectedIndex, isPlaying = false)
+                BooksState.Books(booksState.bookStates, booksState.selectedIndex, isPlaying = false)
             is PlaybackState.MediaState.Playing -> {
                 // TODO: refactor
                 // Store the matching file to get its Uri instead of parsing it from string.
@@ -122,7 +122,7 @@ class PlayerViewModel(
                 } else {
                     booksState.bookStates
                 }
-                BooksState.Books(b, booksState.initialSelectedIndex, isPlaying = true)
+                BooksState.Books(b, booksState.selectedIndex, isPlaying = true)
             }
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), BooksState.Initializing)

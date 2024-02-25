@@ -49,13 +49,13 @@ import org.koin.core.qualifier.named
 
 class PlaybackService : MediaSessionService() {
 
-    private val audiobooksDao: AudiobooksDao by inject()
     private val exoPlayer: ExoPlayer by inject(named(ExoplayerModule.PLAYBACK))
     private val deviceMotionDetector: DeviceMotionDetector by inject()
     private val mainScope: CoroutineScope by inject()
     private var mediaSession: MediaSession? = null
     private val playbackSettings: DataStore<PlaybackSettings> by inject(named(DATASTORE_PLAYBACK_SETTINGS))
     private val playerMediaSessionCallback: PlayerMediaSessionCallback by inject()
+    private val playPositionUpdater: PlayPositionUpdater by inject()
     private val serviceScope: CoroutineScope =
         CoroutineScope(mainScope.coroutineContext + SupervisorJob())
     // Note: can scopes be used instead of parameters?
@@ -64,7 +64,7 @@ class PlaybackService : MediaSessionService() {
     override fun onCreate() {
         super.onCreate()
 
-        exoPlayer.addListener(PlayPositionUpdater(mainScope, exoPlayer, audiobooksDao))
+        exoPlayer.addListener(playPositionUpdater)
         exoPlayer.addListener(PlayStopOnFaceDown(mainScope, exoPlayer, deviceMotionDetector))
         exoPlayer.addListener(sleepTimer)
         mediaSession = MediaSession.Builder(this, exoPlayer)
@@ -90,28 +90,6 @@ class PlaybackService : MediaSessionService() {
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? =
         mediaSession
-
-    // TODO: inject it with koin?
-    private class PlayPositionUpdater(
-        private val mainScope: CoroutineScope,
-        private val player: ExoPlayer,
-        private val audiobooksDao: AudiobooksDao
-    ) : Player.Listener {
-
-        // TODO: handle changes via notification while paused.
-
-        override fun onIsPlayingChanged(isPlaying: Boolean) {
-            super.onIsPlayingChanged(isPlaying)
-            if (!isPlaying) {
-                val uri = player.currentMediaItem?.localConfiguration?.uri
-                if (uri != null) {
-                    mainScope.launch {
-                        audiobooksDao.updatePlayPosition(uri, player.currentPosition)
-                    }
-                }
-            }
-        }
-    }
 
     // TODO: inject it with koin?
     private class PlayStopOnFaceDown(
