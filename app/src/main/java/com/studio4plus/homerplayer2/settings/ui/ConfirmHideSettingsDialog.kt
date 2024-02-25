@@ -67,7 +67,7 @@ fun HideSettingsButtonConfirmationDialog(
     ) {
         HideSettingsButtonConfirmation(
             onConfirm = onConfirm,
-            modifier = Modifier.padding(HomerTheme.dimensions.screenContentPadding)
+            modifier = Modifier.padding(24.dp)
         )
     }
 }
@@ -83,9 +83,12 @@ private fun HideSettingsButtonConfirmation(
         if (successfullyTested) {
             buttonVisible = false
         } else {
-            repeat(6) {
+            while(true) {
+                delay(1_000)
+                buttonVisible = true
                 delay(500)
-                buttonVisible = !buttonVisible
+                buttonVisible = false
+                delay(1_000)
             }
         }
     }
@@ -124,12 +127,11 @@ private fun HideSettingsButtonConfirmation(
         }
         Text(
             stringResource(R.string.settings_ui_hide_settings_dialog_title),
-            style = MaterialTheme.typography.titleMedium
-
+            style = MaterialTheme.typography.headlineSmall,
+            modifier = Modifier.padding(bottom = 16.dp)
         )
         Text(
             stringResource(R.string.settings_ui_hide_settings_dialog_description),
-            style = MaterialTheme.typography.bodyMedium,
         )
         Button(
             onClick = onConfirm,
