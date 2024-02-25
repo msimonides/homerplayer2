@@ -148,7 +148,9 @@ fun HomerPlayer2Theme(
     if (!view.isInEditMode && setWindowColors) {
         SideEffect {
             val window = (view.context.getActivity()).window
-            window.statusBarColor = materialColorScheme.background.toArgb()
+            val backgroundColorArgb = materialColorScheme.background.toArgb()
+            window.statusBarColor = backgroundColorArgb
+            window.navigationBarColor = backgroundColorArgb
             WindowInsetsControllerCompat(window, view).isAppearanceLightStatusBars = !darkTheme
         }
     }
