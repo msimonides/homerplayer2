@@ -166,9 +166,7 @@ private fun VerticalBookPage(
             .fillMaxSize()
     ) {
         BookPageLayout(
-            modifier = Modifier
-                .padding(top = HomerTheme.dimensions.mainScreenIconSize)
-                .weight(1f)
+            modifier = Modifier.weight(1f)
         ) {
             Box(
                 contentAlignment = Alignment.Center,
@@ -198,7 +196,9 @@ private fun HorizontalBookPage(
         modifier = modifier
             .fillMaxSize()
     ) {
-        BookPageLayout(Modifier.weight(1f)) {
+        BookPageLayout(
+            Modifier.weight(1f)
+        ) {
             Box(
                 contentAlignment = Alignment.Center,
                 content = mainContent,
