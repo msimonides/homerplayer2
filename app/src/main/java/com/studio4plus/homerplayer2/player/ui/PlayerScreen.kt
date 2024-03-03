@@ -40,8 +40,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 import com.studio4plus.homerplayer2.battery.BatteryIcon
 import com.studio4plus.homerplayer2.battery.BatteryState
@@ -159,7 +161,7 @@ private fun TopControlsRow(
     includeSettingsButton: Boolean,
     hiddenSettingsMode: Boolean,
     onOpenSettings: () -> Unit,
-    modifier: Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier,
@@ -182,5 +184,21 @@ private fun TopControlsRow(
                 )
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewTopControlsLarge() {
+    HomerPlayer2Theme(
+        largeScreen = true
+    ) {
+        TopControlsRow(
+            batteryState = BatteryState.Discharging(0.9f),
+            includeSettingsButton = true,
+            hiddenSettingsMode = false,
+            onOpenSettings = {  },
+            modifier = Modifier.fillMaxWidth()
+        )
     }
 }
