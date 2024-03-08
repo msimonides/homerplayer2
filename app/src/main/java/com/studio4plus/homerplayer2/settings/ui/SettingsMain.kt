@@ -24,25 +24,47 @@
 
 package com.studio4plus.homerplayer2.settings.ui
 
+import android.content.Intent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studio4plus.homerplayer2.R
+import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun SettingsMain(
+fun SettingsMainRoute(
     navigateFolders: () -> Unit,
     navigateUiSettings: () -> Unit,
     navigatePlaybackSettings: () -> Unit,
+    navigateTtsSettings: () -> Unit,
     viewModel: SettingsMainViewModel = koinViewModel()
 ) {
-    val viewState = viewModel.viewState.collectAsStateWithLifecycle().value
+    SettingsMain(
+        viewModel.viewState.collectAsStateWithLifecycle().value,
+        navigateFolders,
+        navigateUiSettings,
+        navigatePlaybackSettings,
+        navigateTtsSettings,
+        viewModel::shareDiagnosticLogsIntent,
+    )
+}
+
+@Composable
+private fun SettingsMain(
+    viewState: SettingsMainViewModel.ViewState?,
+    navigateFolders: () -> Unit,
+    navigateUiSettings: () -> Unit,
+    navigatePlaybackSettings: () -> Unit,
+    navigateTtsSettings: () -> Unit,
+    shareDiagnosticLogIntent: suspend () -> Intent,
+) {
     if (viewState != null) {
         val coroutineScope = rememberCoroutineScope()
         val context = LocalContext.current
@@ -58,6 +80,16 @@ fun SettingsMain(
                 onClick = navigatePlaybackSettings,
                 modifier = settingItemModifier,
             )
+            val ttsSummaryRes = when {
+                viewState.ttsEnabled ->  R.string.settings_ui_tts_settings_enabled
+                else -> R.string.settings_ui_tts_settings_disabled
+            }
+            SettingItem(
+                label = stringResource(R.string.settings_ui_tts_settings_item),
+                summary = stringResource(ttsSummaryRes),
+                onClick = navigateTtsSettings,
+                modifier = settingItemModifier,
+            )
             SettingItem(
                 label = stringResource(R.string.settings_ui_audiobooks_folders),
                 summary = viewState.audiobookFolders ?: stringResource(R.string.settings_ui_audiobooks_folders_summary_empty),
@@ -69,12 +101,24 @@ fun SettingsMain(
                 summary = stringResource(id = R.string.settings_ui_share_diagnostic_log_summary),
                 onClick = {
                     coroutineScope.launch {
-                        val shareIntent = viewModel.shareDiagnosticLogs()
+                        val shareIntent = shareDiagnosticLogIntent()
                         context.startActivity(shareIntent)
                     }
                 },
                 modifier = settingItemModifier
             )
         }
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewSettingsMain() {
+    HomerPlayer2Theme {
+        val viewState = SettingsMainViewModel.ViewState(
+            audiobookFolders = "AudioBooks, Samples",
+            ttsEnabled = true,
+        )
+        SettingsMain(viewState, {}, {}, {}, {}, { Intent() })
     }
 }

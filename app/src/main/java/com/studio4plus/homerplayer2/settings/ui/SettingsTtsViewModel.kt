@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Marcin Simonides
+ * Copyright (c) 2024 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,44 +24,36 @@
 
 package com.studio4plus.homerplayer2.settings.ui
 
-import android.content.Intent
 import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.studio4plus.homerplayer2.audiobooks.ui.AudiobookFolderNamesFlow
-import com.studio4plus.homerplayer2.audiobooks.ui.joinToEllipsizedString
-import com.studio4plus.homerplayer2.logging.PrepareIntentForLogSharing
+import com.studio4plus.homerplayer2.player.DATASTORE_PLAYBACK_SETTINGS
 import com.studio4plus.homerplayer2.settings.DATASTORE_UI_SETTINGS
 import com.studio4plus.homerplayer2.settings.UiSettings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import org.koin.android.annotation.KoinViewModel
 import org.koin.core.annotation.Named
 
 @KoinViewModel
-class SettingsMainViewModel(
-    audiobookFolderNamesFlow: AudiobookFolderNamesFlow,
-    private val prepareIntentForLogSharing: PrepareIntentForLogSharing,
-    @Named(DATASTORE_UI_SETTINGS) private val uiSettingsStore: DataStore<UiSettings>
+class SettingsTtsViewModel(
+    private val mainScope: CoroutineScope,
+    @Named(DATASTORE_UI_SETTINGS) private val settings: DataStore<UiSettings>
 ) : ViewModel() {
 
-    class ViewState(
-        val audiobookFolders: String?,
-        val ttsEnabled: Boolean,
+    data class ViewState(
+        val readBookTitlesEnabled: Boolean
     )
 
-    val viewState = combine(
-        audiobookFolderNamesFlow,
-        uiSettingsStore.data
-    ) { folderNames, uiSettings ->
+    val viewState = settings.data.map { uiSettings ->
         ViewState(
-            audiobookFolders = folderNames.takeIf { it.isNotEmpty() }?.joinToEllipsizedString(),
-            ttsEnabled = uiSettings.readBookTitles
+            readBookTitlesEnabled = uiSettings.readBookTitles
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
-    suspend fun shareDiagnosticLogsIntent(): Intent = prepareIntentForLogSharing()
+    fun setReadBookTitles(enable: Boolean) {
+        mainScope.launchUpdate(settings) { it.copy(readBookTitles = enable) }
+    }
 }

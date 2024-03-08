@@ -122,6 +122,7 @@ private fun SettingsNavHost(
     val foldersTitle = stringResource(id = R.string.settings_ui_audiobooks_folders)
     val kioskModeTitle = stringResource(id = R.string.settings_ui_full_kiosk_mode_label)
     val playbackTitle = stringResource(id = R.string.settings_ui_playback_settings_title)
+    val ttsTitle = stringResource(id = R.string.settings_ui_tts_settings_title)
     val uiTitle = stringResource(id = R.string.settings_ui_ui_settings_title)
     NavHost(
         modifier = modifier
@@ -135,9 +136,10 @@ private fun SettingsNavHost(
         popExitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.End) },
     ) {
         composable("main", label = mainTitle) {
-            SettingsMain(
+            SettingsMainRoute(
                 navigateFolders = { navController.navigate("folders") },
                 navigatePlaybackSettings = { navController.navigate("playback_settings") },
+                navigateTtsSettings = { navController.navigate("tts_settings") },
                 navigateUiSettings = { navController.navigate("ui_settings") }
             )
         }
@@ -149,6 +151,9 @@ private fun SettingsNavHost(
         }
         composable("playback_settings", label = playbackTitle) {
             SettingsPlaybackRoute()
+        }
+        composable("tts_settings", label = ttsTitle) {
+            SettingsTtsRoute()
         }
         composable("ui_settings", label = uiTitle) {
             SettingsUiRoute(

@@ -23,8 +23,6 @@
     <string name="onboarding_audiobook_folders_title">Audiobooks</string>
     <string name="onboarding_audiobook_folders_description">Please select at least one folder with your audiobooks.</string>
     <string name="onboarding_speech_description">Homer Player uses text-to-speech engine to read book titles.\nPlease test that </string>
-    <string name="onboarding_speech_test_phrase">Alice\'s Adventures in Wonderland</string>
-    <string name="onboarding_speech_play_test_phrase">Play test phrase</string>
     <string name="onboarding_speech_open_settings">Open text-to-speech settings</string>
     <string name="onboarding_speech_tts_checkbox_label">Speak book titles</string>
     <string name="onboarding_speech_tts_checkbox_note">Disable if already using a screen reader</string>
@@ -75,6 +73,12 @@
     <string name="settings_ui_share_diagnostic_log_title">Share diagnostic log</string>
     <string name="settings_ui_share_diagnostic_log_summary">Send diagnostic log to developer to report an issue</string>
     <string name="settings_ui_show_battery">Show battery indicator</string>
+    <string name="settings_ui_tts_settings_item">Text-to-speech…</string>
+    <string name="settings_ui_tts_settings_enabled">Enabled</string>
+    <string name="settings_ui_tts_settings_disabled">Disabled</string>
+    <string name="settings_ui_tts_settings_title">Text-to-speech</string>
+    <string name="settings_ui_tts_read_book_titles">Read book titles</string>
+    <string name="settings_ui_tts_open_settings">Open text-to-speech settings…</string>
     <string name="settings_ui_ui_settings_item">UI settings…</string>
     <string name="settings_ui_ui_settings_title">UI settings</string>
 
@@ -91,4 +95,6 @@
     <string name="speech_init_tts_error">Unable to initialize text-to-speech. Try a different TTS engine.</string>
     <string name="speech_init_lang_data_missing">Language data is missing. Please install your language in text-to-speech settings.</string>
     <string name="speech_init_lang_not_supported">Language not supported. Please install a text-to-speech engine that supports your langauge.</string>
+    <string name="speech_play_test_phrase">Play test phrase</string>
+    <string name="speech_test_phrase">Alice\'s Adventures in Wonderland</string>
 </resources>

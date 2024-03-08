@@ -24,108 +24,35 @@
 
 package com.studio4plus.homerplayer2.onboarding
 
-import android.content.Context
-import android.content.Intent
 import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.studio4plus.homerplayer2.R
-import com.studio4plus.homerplayer2.speech.Speaker
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeoutOrNull
+import kotlinx.coroutines.flow.update
 import org.koin.android.annotation.KoinViewModel
 import kotlin.properties.Delegates
 
 @KoinViewModel
 class OnboardingSpeechViewModel(
-    appContext: Context,
-    private val speaker: Speaker,
     private val onboardingDelegate: OnboardingDelegate
 ) : ViewModel(), DefaultLifecycleObserver {
 
     data class ViewState(
-        val showTtsSettings: Boolean,
         val readBookTitlesEnabled: Boolean,
-        val canProceed: Boolean,
-        val isSpeaking: Boolean
     )
-
-    val errorEvent = Channel<Int?>()
 
     private val currentState: MutableStateFlow<ViewState>
     val viewState: StateFlow<ViewState> get() = currentState
 
-    private val ttsSettingsIntent: Intent?
-    private var readBookTitles: Boolean by Delegates.observable(true) { _, _, isEnabled ->
-        onboardingDelegate.onReadBookTitlesSet(isEnabled)
-    }
-
-    private var ttsTestSuccessful: Boolean = false
-
     init {
-        val intent = Intent("com.android.settings.TTS_SETTINGS")
-        val resolveInfo = appContext.packageManager.resolveActivity(intent, 0)
-        ttsSettingsIntent = intent.takeIf { resolveInfo != null }
-        onboardingDelegate.onReadBookTitlesSet(readBookTitles)
-        currentState = MutableStateFlow(ViewState(ttsSettingsIntent != null, readBookTitles, false, false))
-    }
-
-    fun onTtsCheckStarted() {
-        errorEvent.trySend(null)
-        currentState.value = currentState.value.copy(isSpeaking = true)
-    }
-
-    fun onTtsCheckFailed() {
-        errorEvent.trySend(R.string.speech_init_tts_error)
+        currentState = MutableStateFlow(ViewState(readBookTitlesEnabled = true))
     }
 
     fun onTtsToggled() {
-        readBookTitles = !readBookTitles
-        currentState.value = currentState.value.copy(
-            readBookTitlesEnabled = readBookTitles,
-            canProceed = ttsTestSuccessful || !readBookTitles
-        )
+        currentState.update { it.copy(readBookTitlesEnabled = !it.readBookTitlesEnabled) }
     }
 
-    fun say(text: CharSequence) {
-        currentState.value = currentState.value.copy(isSpeaking = true)
-        viewModelScope.launch {
-            val initResult = withTimeoutOrNull(2000) { speaker.initIfNeeded() }
-            val errorMessage = when(initResult) {
-                Speaker.TtsInitResult.READY -> {
-                    val success = speaker.speakAndWait(text)
-                    if (success) null else R.string.speech_init_say_failed
-                }
-                Speaker.TtsInitResult.INIT_ERROR -> R.string.speech_init_tts_error
-                Speaker.TtsInitResult.LANGUAGE_DATA_MISSING -> R.string.speech_init_lang_data_missing
-                Speaker.TtsInitResult.LANGUAGE_NOT_SUPPORTED -> R.string.speech_init_lang_not_supported
-                Speaker.TtsInitResult.INIT_CANCELLED -> null
-                null -> R.string.speech_init_tts_error
-            }
-            ttsTestSuccessful = errorMessage == null
-            if (errorMessage != null) errorEvent.trySend(errorMessage)
-            currentState.value = currentState.value.copy(
-                isSpeaking = false,
-                canProceed = ttsTestSuccessful || !readBookTitles
-            )
-        }
-    }
-
-    fun openTtsSettings(activityContext: Context) {
-        errorEvent.trySend(null)
-        activityContext.startActivity(ttsSettingsIntent)
-    }
-
-    override fun onStop(owner: LifecycleOwner) {
-        speaker.shutdown()
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        speaker.shutdown()
+    fun confirmTtsChoice() {
+        onboardingDelegate.onReadBookTitlesSet(currentState.value.readBookTitlesEnabled)
     }
 }

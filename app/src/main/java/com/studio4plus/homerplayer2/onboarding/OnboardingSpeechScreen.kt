@@ -47,6 +47,7 @@ import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.base.ui.SmallCircularProgressIndicator
 import com.studio4plus.homerplayer2.speech.TtsCheckContract
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
+import com.studio4plus.homerplayer2.speech.SpeechTestViewModel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -55,11 +56,13 @@ import org.koin.androidx.compose.koinViewModel
 fun OnboardingSpeechRoute(
     navigateNext: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: OnboardingSpeechViewModel = koinViewModel()
+    viewModel: OnboardingSpeechViewModel = koinViewModel(),
+    speechTestViewModel: SpeechTestViewModel = koinViewModel(),
 ) {
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
+    val speechTestViewState by speechTestViewModel.viewState.collectAsStateWithLifecycle()
 
-    val testPhrase = stringResource(id = R.string.onboarding_speech_test_phrase)
+    val testPhrase = stringResource(id = R.string.speech_test_phrase)
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -68,19 +71,19 @@ fun OnboardingSpeechRoute(
     val ttsCheckLauncher = rememberLauncherForActivityResult(
         contract = TtsCheckContract(),
         onResult = { success ->
-            if (success) viewModel.say(testPhrase)
-            else viewModel.onTtsCheckFailed()
+            if (success) speechTestViewModel.say(testPhrase)
+            else speechTestViewModel.onTtsCheckFailed()
         }
     )
     DisposableEffect(lifecycleOwner.lifecycle) {
-        lifecycleOwner.lifecycle.addObserver(viewModel)
+        lifecycleOwner.lifecycle.addObserver(speechTestViewModel)
         onDispose {
-            lifecycleOwner.lifecycle.removeObserver(viewModel)
+            lifecycleOwner.lifecycle.removeObserver(speechTestViewModel)
         }
     }
 
-    LaunchedEffect(viewModel.errorEvent) {
-        viewModel.errorEvent.receiveAsFlow().collect { errorResId ->
+    LaunchedEffect(speechTestViewModel.errorEvent) {
+        speechTestViewModel.errorEvent.receiveAsFlow().collect { errorResId ->
             if (errorResId != null) {
                 launch {
                     snackbarHostState.showSnackbar(
@@ -94,16 +97,22 @@ fun OnboardingSpeechRoute(
         }
     }
 
+    val navigateNextAndConfirm = {
+        viewModel.confirmTtsChoice()
+        navigateNext()
+    }
     OnboardingSpeechScreen(
         viewState = viewState,
+        speechTestViewState = speechTestViewState,
         snackbarHostState = snackbarHostState,
-        navigateNext = navigateNext,
+        navigateNext = navigateNextAndConfirm,
+        navigateSkip = navigateNext,
         onSayTestPhrase = {
-            viewModel.onTtsCheckStarted()
+            speechTestViewModel.onTtsCheckStarted()
             ttsCheckLauncher.launch(Unit)
         },
         onTtsToggled = viewModel::onTtsToggled,
-        onOpenTtsSettings = { viewModel.openTtsSettings(context) },
+        onOpenTtsSettings = { speechTestViewModel.openTtsSettings(context) },
         modifier = modifier
     )
 }
@@ -111,22 +120,25 @@ fun OnboardingSpeechRoute(
 @Composable
 fun OnboardingSpeechScreen(
     viewState: OnboardingSpeechViewModel.ViewState,
+    speechTestViewState: SpeechTestViewModel.ViewState,
     snackbarHostState: SnackbarHostState,
     navigateNext: () -> Unit,
+    navigateSkip: () -> Unit,
     onSayTestPhrase: () -> Unit,
     onTtsToggled: () -> Unit,
     onOpenTtsSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val canProceed = !viewState.readBookTitlesEnabled || speechTestViewState.ttsTestSuccessful
     Scaffold(
         modifier = modifier,
         bottomBar = {
             OnboardingNavigationButtons(
-                nextEnabled = viewState.canProceed,
+                nextEnabled = canProceed,
                 nextLabel = R.string.onboarding_step_next,
                 onNext = navigateNext,
                 secondaryLabel = R.string.onboarding_step_skip,
-                onSecondary = navigateNext,
+                onSecondary = navigateSkip,
                 modifier = Modifier.padding(OnboardingNavigationButtonsDefaults.paddingValues),
             )
         },
@@ -136,10 +148,10 @@ fun OnboardingSpeechScreen(
             modifier = Modifier
                 .padding(paddingValues)
                 .padding(HomerTheme.dimensions.screenContentPadding),
-            showTtsSettings = viewState.showTtsSettings,
+            showTtsSettings = speechTestViewState.showTtsSettings,
             readBookTitlesEnabled = viewState.readBookTitlesEnabled,
-            speechInProgress = viewState.isSpeaking,
-            playTestPhraseIsCta = !viewState.canProceed,
+            speechInProgress = speechTestViewState.isSpeaking,
+            playTestPhraseIsCta = !canProceed,
             onSayTestPhrase = onSayTestPhrase,
             onTtsToggled = onTtsToggled,
             onOpenTtsSettings = onOpenTtsSettings,
@@ -192,7 +204,7 @@ private fun ScreenContent(
                 isLoading = speechInProgress,
                 isFilled = playTestPhraseIsCta,
                 enabled = readBookTitlesEnabled
-            ) { Text(text = stringResource(id = R.string.onboarding_speech_play_test_phrase)) }
+            ) { Text(text = stringResource(id = R.string.speech_play_test_phrase)) }
             if (showTtsSettings) {
                 OutlinedButton(
                     onClick = onOpenTtsSettings,
