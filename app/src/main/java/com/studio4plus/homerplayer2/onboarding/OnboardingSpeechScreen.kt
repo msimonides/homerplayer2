@@ -47,6 +47,7 @@ import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.base.ui.SmallCircularProgressIndicator
 import com.studio4plus.homerplayer2.speech.TtsCheckContract
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
+import com.studio4plus.homerplayer2.speech.LaunchErrorSnackDisplay
 import com.studio4plus.homerplayer2.speech.SpeechTestViewModel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -82,20 +83,7 @@ fun OnboardingSpeechRoute(
         }
     }
 
-    LaunchedEffect(speechTestViewModel.errorEvent) {
-        speechTestViewModel.errorEvent.receiveAsFlow().collect { errorResId ->
-            if (errorResId != null) {
-                launch {
-                    snackbarHostState.showSnackbar(
-                        context.resources.getString(errorResId),
-                        duration = SnackbarDuration.Long
-                    )
-                }
-            } else {
-                snackbarHostState.currentSnackbarData?.dismiss()
-            }
-        }
-    }
+    LaunchErrorSnackDisplay(speechTestViewModel.errorEvent, snackbarHostState)
 
     val navigateNextAndConfirm = {
         viewModel.confirmTtsChoice()

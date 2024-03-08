@@ -39,9 +39,12 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -66,6 +69,7 @@ fun SettingsScreen(navigateBack: () -> Unit) {
     val currentBackStackEntryState = navController.currentBackStackEntryAsState()
     val currentBackStackEntry = currentBackStackEntryState.value
     val title = currentBackStackEntry?.destination?.label?.toString()
+    val snackbarHostState = remember { SnackbarHostState() }
     Scaffold(
         topBar = {
             SettingsTopBar(
@@ -75,12 +79,14 @@ fun SettingsScreen(navigateBack: () -> Unit) {
                     if (!navigated) navigateBack()
                 }
             )
-        }
+        },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { paddingValues ->
         SettingsNavHost(
+            snackbarHostState = snackbarHostState,
             closeSettings = navigateBack,
             modifier = Modifier.padding(paddingValues),
-            navController = navController
+            navController = navController,
         )
     }
 }
@@ -115,6 +121,7 @@ private fun SettingsTopBar(toolbarTitle: String?, onBack: () -> Unit) {
 @Composable
 private fun SettingsNavHost(
     closeSettings: () -> Unit,
+    snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
 ) {
@@ -153,7 +160,7 @@ private fun SettingsNavHost(
             SettingsPlaybackRoute()
         }
         composable("tts_settings", label = ttsTitle) {
-            SettingsTtsRoute()
+            SettingsTtsRoute(snackbarHostState)
         }
         composable("ui_settings", label = uiTitle) {
             SettingsUiRoute(

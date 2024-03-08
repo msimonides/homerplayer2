@@ -26,6 +26,7 @@ package com.studio4plus.homerplayer2.settings.ui
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -35,12 +36,14 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studio4plus.homerplayer2.R
+import com.studio4plus.homerplayer2.speech.LaunchErrorSnackDisplay
 import com.studio4plus.homerplayer2.speech.SpeechTestViewModel
 import com.studio4plus.homerplayer2.speech.TtsCheckContract
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SettingsTtsRoute(
+    snackbarHostState: SnackbarHostState,
     viewModel: SettingsTtsViewModel = koinViewModel(),
     speechTestViewModel: SpeechTestViewModel = koinViewModel(),
 ) {
@@ -63,7 +66,7 @@ fun SettingsTtsRoute(
         }
     }
 
-    // TODO: error snack bar
+    LaunchErrorSnackDisplay(speechTestViewModel.errorEvent, snackbarHostState)
 
     val settingsViewState = viewModel.viewState.collectAsStateWithLifecycle().value
     val speechTestViewState by speechTestViewModel.viewState.collectAsStateWithLifecycle()
