@@ -29,7 +29,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.toggleable
@@ -46,11 +45,6 @@ import androidx.compose.ui.unit.dp
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 
-private object SettingsDefaults {
-    val verticalPadding = 8.dp
-}
-
-// TODO: consider making this a common, reusable SwitchWithLabel.
 @Composable
 fun SettingSwitch(
     label: String,
@@ -65,7 +59,6 @@ fun SettingSwitch(
                 onValueChange = onChange,
                 role = Role.Switch
             )
-            .padding(vertical = SettingsDefaults.verticalPadding)
             .then(modifier),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -78,17 +71,14 @@ fun SettingSwitch(
 @Composable
 fun SettingItem(
     label: String,
-    onClick: () -> Unit,
+    onClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
     summary: String? = null,
 ) {
+    val click = if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier
     Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .clickable(
-                onClick = onClick
-            )
-            .padding(vertical = SettingsDefaults.verticalPadding)
+            .then(click)
             .then(modifier),
         verticalArrangement = Arrangement.Center
     ) {

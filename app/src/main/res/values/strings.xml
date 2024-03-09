@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name" translatable="false">Homer Player 2</string>
     <string name="app_tag" translatable="false">homerplayer2</string>
+    <string name="privacy_policy_url" translatable="false">https://msimonides.github.io/homerplayer/privacy</string>
 
     <string name="audiobook_folder_add_button">Add folder…</string>
     <string name="audiobook_folder_delete_button">Remove</string>
@@ -40,6 +41,8 @@
     <string name="playback_volume_up_button_description">Volume Up</string>
     <string name="playback_volume_down_button_description">Volume Down</string>
 
+    <string name="settings_ui_about_item">About the app…</string>
+    <string name="settings_ui_about_title">About Homer Player 2</string>
     <string name="settings_ui_settings_title">Settings</string>
     <string name="settings_ui_audiobooks_folders">Audiobooks folders</string>
     <string name="settings_ui_audiobooks_folders_summary_empty">(no folders selected)</string>
@@ -72,6 +75,7 @@
     <string name="settings_ui_playback_speed_choice_slow">Slow</string>
     <string name="settings_ui_playback_speed_choice_very_slow">Very slow</string>
     <string name="settings_ui_playback_speed_title">Playback speed</string>
+    <string name="settings_ui_privacy_policy_item">Privacy policy…</string>
     <string name="settings_ui_share_diagnostic_log_title">Share diagnostic log</string>
     <string name="settings_ui_share_diagnostic_log_summary">Send diagnostic log to developer to report an issue</string>
     <string name="settings_ui_show_battery">Show battery indicator</string>
@@ -83,6 +87,7 @@
     <string name="settings_ui_tts_open_settings">Open text-to-speech settings…</string>
     <string name="settings_ui_ui_settings_item">UI settings…</string>
     <string name="settings_ui_ui_settings_title">UI settings</string>
+    <string name="settings_ui_version_item">Version</string>
 
     <plurals name="settings_time_seconds">
         <item quantity="one">%1$d second</item>

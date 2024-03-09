@@ -44,7 +44,7 @@ fun SettingsMainRoute(
     navigateUiSettings: () -> Unit,
     navigatePlaybackSettings: () -> Unit,
     navigateTtsSettings: () -> Unit,
-    navigateLicenses: () -> Unit,
+    navigateAbout: () -> Unit,
     viewModel: SettingsMainViewModel = koinViewModel()
 ) {
     SettingsMain(
@@ -53,7 +53,7 @@ fun SettingsMainRoute(
         navigateUiSettings,
         navigatePlaybackSettings,
         navigateTtsSettings,
-        navigateLicenses,
+        navigateAbout,
         viewModel::shareDiagnosticLogsIntent,
     )
 }
@@ -65,7 +65,7 @@ private fun SettingsMain(
     navigateUiSettings: () -> Unit,
     navigatePlaybackSettings: () -> Unit,
     navigateTtsSettings: () -> Unit,
-    navigateLicenses: () -> Unit,
+    navigateAbout: () -> Unit,
     shareDiagnosticLogIntent: suspend () -> Intent,
 ) {
     if (viewState != null) {
@@ -111,8 +111,8 @@ private fun SettingsMain(
                 modifier = settingItemModifier
             )
             SettingItem(
-                label = stringResource(R.string.settings_ui_licenses_item),
-                onClick = navigateLicenses,
+                label = stringResource(R.string.settings_ui_about_item),
+                onClick = navigateAbout,
                 modifier = settingItemModifier
             )
         }

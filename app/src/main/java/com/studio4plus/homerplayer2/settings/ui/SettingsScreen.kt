@@ -48,6 +48,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -60,8 +61,8 @@ import com.studio4plus.homerplayer2.utils.composable
 @Composable
 fun Modifier.defaultSettingsItem() = this
     .fillMaxWidth()
+    .padding(horizontal = HomerTheme.dimensions.screenContentPadding, vertical = 8.dp)
     .heightIn(min = HomerTheme.dimensions.settingsRowMinHeight)
-    .padding(horizontal = HomerTheme.dimensions.screenContentPadding)
 
 @Composable
 fun SettingsScreen(navigateBack: () -> Unit) {
@@ -126,6 +127,7 @@ private fun SettingsNavHost(
     navController: NavHostController = rememberNavController(),
 ) {
     val mainTitle = stringResource(id = R.string.settings_ui_settings_title)
+    val aboutTitle = stringResource(id = R.string.settings_ui_about_title)
     val foldersTitle = stringResource(id = R.string.settings_ui_audiobooks_folders)
     val kioskModeTitle = stringResource(id = R.string.settings_ui_full_kiosk_mode_label)
     val licensesTitle = stringResource(id = R.string.settings_ui_licenses_title)
@@ -149,7 +151,12 @@ private fun SettingsNavHost(
                 navigatePlaybackSettings = { navController.navigate("playback_settings") },
                 navigateTtsSettings = { navController.navigate("tts_settings") },
                 navigateUiSettings = { navController.navigate("ui_settings") },
-                navigateLicenses = { navController.navigate("licenses") }
+                navigateAbout = { navController.navigate("about") }
+            )
+        }
+        composable("about", label = aboutTitle) {
+            SettingsAboutRoute(
+                navigateLicenses = { navController.navigate("licenses") },
             )
         }
         composable("folders", label = foldersTitle) {
