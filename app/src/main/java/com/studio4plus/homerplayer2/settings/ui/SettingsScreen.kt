@@ -128,6 +128,7 @@ private fun SettingsNavHost(
     val mainTitle = stringResource(id = R.string.settings_ui_settings_title)
     val foldersTitle = stringResource(id = R.string.settings_ui_audiobooks_folders)
     val kioskModeTitle = stringResource(id = R.string.settings_ui_full_kiosk_mode_label)
+    val licensesTitle = stringResource(id = R.string.settings_ui_licenses_title)
     val playbackTitle = stringResource(id = R.string.settings_ui_playback_settings_title)
     val ttsTitle = stringResource(id = R.string.settings_ui_tts_settings_title)
     val uiTitle = stringResource(id = R.string.settings_ui_ui_settings_title)
@@ -147,7 +148,8 @@ private fun SettingsNavHost(
                 navigateFolders = { navController.navigate("folders") },
                 navigatePlaybackSettings = { navController.navigate("playback_settings") },
                 navigateTtsSettings = { navController.navigate("tts_settings") },
-                navigateUiSettings = { navController.navigate("ui_settings") }
+                navigateUiSettings = { navController.navigate("ui_settings") },
+                navigateLicenses = { navController.navigate("licenses") }
             )
         }
         composable("folders", label = foldersTitle) {
@@ -155,6 +157,9 @@ private fun SettingsNavHost(
         }
         composable("kiosk_mode_settings", label = kioskModeTitle) {
             SettingsKioskModeRoute()
+        }
+        composable("licenses", label = licensesTitle) {
+            SettingsLicenses()
         }
         composable("playback_settings", label = playbackTitle) {
             SettingsPlaybackRoute()

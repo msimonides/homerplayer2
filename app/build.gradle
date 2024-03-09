@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.aboutlibraries)
 }
 
 def enableComposeMetrics = project.hasProperty("enableComposeMetrics") ? project["enableComposeMetrics"] : false
@@ -72,6 +73,7 @@ dependencies {
     ksp libs.androidx.room.compiler
     ksp libs.koin.compiler
 
+    implementation libs.aboutlibraries.compose
     implementation libs.androidx.activity.compose
     implementation libs.androidx.core.ktx
     implementation libs.androidx.datastore.core

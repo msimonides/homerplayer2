@@ -52,6 +52,8 @@
     <string name="settings_ui_hide_settings_dialog_confirm_button">Hide settings button</string>
     <string name="settings_ui_kiosk_mode_unavailable_title">Full kiosk mode not available</string>
     <string name="settings_ui_kiosk_mode_unavailable_description">Use Homer Kiosk Setup app to enable kiosk mode.</string>
+    <string name="settings_ui_licenses_item">Licenses…</string>
+    <string name="settings_ui_licenses_title">Licenses</string>
     <string name="settings_ui_mode_label">Color scheme</string>
     <string name="settings_ui_mode_dark">Dark</string>
     <string name="settings_ui_mode_light">Light</string>
