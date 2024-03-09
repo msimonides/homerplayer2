@@ -1,3 +1,8 @@
+import com.android.build.gradle.api.ApplicationVariant
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
+import java.security.MessageDigest
+import java.util.Base64
+
 /*
  * MIT License
  *
@@ -75,6 +80,8 @@ android {
         kotlin.sourceSets {
             getByName(name) { kotlin.srcDir("build/generated/ksp/${name}/kotlin") }
         }
+
+        registerProvisioningInfoTask()
     }
 }
 
@@ -97,4 +104,42 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
 
     testImplementation(libs.junit)
+}
+
+fun ApplicationVariant.registerProvisioningInfoTask() {
+    val variantName = name
+    val capitalizedName = name.capitalizeAsciiOnly()
+    if (outputs.size != 1) {
+        throw IllegalArgumentException("Only single APK output is supported")
+    }
+    val output = outputs.first()
+    tasks.register<Copy>("generateProvisioningData${capitalizedName}") {
+        description = "create data for provisioning QR code"
+        group = "Build"
+        dependsOn += packageApplicationProvider
+
+        from(layout.projectDirectory.file("src/main/provisioning-qrcode.txt"))
+        into(layout.buildDirectory.file("outputs/qrcode/$variantName/"))
+
+        doFirst {
+            val expandValues = mapOf(
+                "version" to android.defaultConfig.versionName,
+                "apkChecksum" to computeApkChecksum(output.outputFile)
+            )
+            expand(expandValues)
+        }
+    }
+
+    tasks.named("assemble${capitalizedName}").get()
+        .dependsOn += "generateProvisioningData${capitalizedName}"
+}
+
+fun computeApkChecksum(file: File): String {
+    val apkDigest = MessageDigest.getInstance("SHA-256")
+    file.forEachBlock { buffer, bytes ->
+        apkDigest.update(buffer, 0, bytes)
+    }
+    val digestBytes = apkDigest.digest()
+    return Base64.getUrlEncoder().withoutPadding()
+        .encodeToString(digestBytes)
 }
