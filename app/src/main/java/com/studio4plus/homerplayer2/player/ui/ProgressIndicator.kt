@@ -100,7 +100,6 @@ fun HorizontalBookProgressIndicator(
     color: Color = LocalContentColor.current,
     thickness: Dp = HomerTheme.dimensions.progressIndicatorWidth
 ) {
-    println("### $progress")
     Canvas(
         modifier
             .progressSemantics(progress)

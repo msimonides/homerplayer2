@@ -53,6 +53,8 @@ fun BooksPager(
     val books = state.books
     val insanePageCount = 10_000
     val zeroPage = insanePageCount / 2
+    fun bookIndex(pageIndex: Int) = (pageIndex - zeroPage).floorMod(books.size)
+
     val pagerState = rememberPagerState(
         initialPage = zeroPage + state.selectedIndex,
         pageCount = { if (books.isEmpty()) 0 else insanePageCount }
@@ -64,14 +66,18 @@ fun BooksPager(
         }
     }
     LaunchedEffect(pagerState, state.selectedIndex) {
-        pagerState.scrollToPage(zeroPage + state.selectedIndex)
+        // scrollToPage breaks the next tap gesture (user needs to tap twice to trigger buttons)
+        // Avoid unnecessary calls to minimize the issue. TODO: report to Google.
+        if (bookIndex(pagerState.currentPage) != state.selectedIndex) {
+            pagerState.scrollToPage(zeroPage + state.selectedIndex)
+        }
     }
     HorizontalPager(
         state = pagerState,
         userScrollEnabled = !state.isPlaying
     // TODO: set key
     ) { pageIndex ->
-        val bookIndex = (pageIndex - zeroPage).floorMod(books.size)
+        val bookIndex = bookIndex(pageIndex)
         val book = books[bookIndex]
         BookPage(
             index = bookIndex,
