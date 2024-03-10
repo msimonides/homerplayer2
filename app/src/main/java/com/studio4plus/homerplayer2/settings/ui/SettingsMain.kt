@@ -43,6 +43,7 @@ fun SettingsMainRoute(
     navigateFolders: () -> Unit,
     navigateUiSettings: () -> Unit,
     navigatePlaybackSettings: () -> Unit,
+    navigatePlayerUiSettings: () -> Unit,
     navigateTtsSettings: () -> Unit,
     navigateAbout: () -> Unit,
     viewModel: SettingsMainViewModel = koinViewModel()
@@ -52,6 +53,7 @@ fun SettingsMainRoute(
         navigateFolders,
         navigateUiSettings,
         navigatePlaybackSettings,
+        navigatePlayerUiSettings,
         navigateTtsSettings,
         navigateAbout,
         viewModel::shareDiagnosticLogsIntent,
@@ -64,6 +66,7 @@ private fun SettingsMain(
     navigateFolders: () -> Unit,
     navigateUiSettings: () -> Unit,
     navigatePlaybackSettings: () -> Unit,
+    navigatePlayerUiSettings: () -> Unit,
     navigateTtsSettings: () -> Unit,
     navigateAbout: () -> Unit,
     shareDiagnosticLogIntent: suspend () -> Intent,
@@ -76,6 +79,11 @@ private fun SettingsMain(
             SettingItem(
                 label = stringResource(R.string.settings_ui_ui_settings_item),
                 onClick = navigateUiSettings,
+                modifier = settingItemModifier,
+            )
+            SettingItem(
+                label = stringResource(R.string.settings_ui_player_ui_item),
+                onClick = navigatePlayerUiSettings,
                 modifier = settingItemModifier,
             )
             SettingItem(
@@ -127,6 +135,6 @@ private fun PreviewSettingsMain() {
             audiobookFolders = "AudioBooks, Samples",
             ttsEnabled = true,
         )
-        SettingsMain(viewState, {}, {}, {}, {}, {}, { Intent() })
+        SettingsMain(viewState, {}, {}, {}, {}, {}, {}, { Intent() })
     }
 }

@@ -53,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
+import com.studio4plus.homerplayer2.settingsdata.PlayerUiSettings
 
 @Composable
 fun BookPage(
@@ -62,6 +63,7 @@ fun BookPage(
     isPlaying: Boolean,
     index: Int,
     playerActions: PlayerActions,
+    playerUiSettings: PlayerUiSettings,
     modifier: Modifier = Modifier
 ) {
     // TODO: wrap the button state animation into an Indication with IndicationNodeFactory once the
@@ -114,18 +116,25 @@ fun BookPage(
             )
         }
     }
-    val mainContent: @Composable BoxScope.() -> Unit = if (isPlaying) {
+    val showControls = isPlaying && playerUiSettings.showAnyControls
+    val mainContent: @Composable BoxScope.() -> Unit = if (showControls) {
          {
             ControlButtonsLayout(
                 {
-                    ButtonVolumeUp(modifier = Modifier, playerActions = playerActions)
-                    ButtonVolumeDown(modifier = Modifier, playerActions = playerActions)
+                    if (playerUiSettings.showVolumeControls) {
+                        ButtonVolumeUp(modifier = Modifier, playerActions = playerActions)
+                        ButtonVolumeDown(modifier = Modifier, playerActions = playerActions)
+                    }
                 },
                 {
-                    ButtonFastRewind(modifier = Modifier, playerActions = playerActions)
-                    ButtonFastForward(modifier = Modifier, playerActions = playerActions)
-                    ButtonSeekBack(modifier = Modifier, playerActions = playerActions)
-                    ButtonSeekForward(modifier = Modifier, playerActions = playerActions)
+                    if (playerUiSettings.showFfRewindControls) {
+                        ButtonFastRewind(modifier = Modifier, playerActions = playerActions)
+                        ButtonFastForward(modifier = Modifier, playerActions = playerActions)
+                    }
+                    if (playerUiSettings.showSeekControls) {
+                        ButtonSeekBack(modifier = Modifier, playerActions = playerActions)
+                        ButtonSeekForward(modifier = Modifier, playerActions = playerActions)
+                    }
                 }
             )
         }
@@ -227,6 +236,7 @@ private fun VerticalBookPagePreview() =
             progress = 0.3f,
             isPlaying = false,
             playerActions = PlayerActions.EMPTY,
+            playerUiSettings = PlayerUiSettings(true, true, true),
             modifier = Modifier.padding(16.dp)
         )
     }
@@ -242,6 +252,7 @@ private fun HorizontalBookPagePreview() =
             progress = 0.3f,
             isPlaying = false,
             playerActions = PlayerActions.EMPTY,
+            playerUiSettings = PlayerUiSettings(true, true, true),
             modifier = Modifier.padding(16.dp)
         )
     }
@@ -257,6 +268,7 @@ private fun VerticalPlayingBookPagePreview() =
             progress = 0.3f,
             isPlaying = true,
             playerActions = PlayerActions.EMPTY,
+            playerUiSettings = PlayerUiSettings(true, true, true),
             modifier = Modifier.padding(16.dp)
         )
     }
@@ -272,6 +284,7 @@ private fun HorizontalPlayingBookPagePreview() =
             progress = 0.3f,
             isPlaying = true,
             playerActions = PlayerActions.EMPTY,
+            playerUiSettings = PlayerUiSettings(false, false, false),
             modifier = Modifier.padding(16.dp)
         )
     }

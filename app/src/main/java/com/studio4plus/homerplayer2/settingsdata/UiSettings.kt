@@ -32,10 +32,20 @@ enum class UiThemeMode {
 }
 
 @Serializable
+data class PlayerUiSettings(
+    val showVolumeControls: Boolean = true,
+    val showFfRewindControls: Boolean = true,
+    val showSeekControls: Boolean = true,
+) {
+    val showAnyControls = showVolumeControls || showFfRewindControls || showSeekControls
+}
+
+@Serializable
 data class UiSettings(
     val enableHapticFeedback: Boolean = false,
     val fullKioskMode: Boolean = false,
     val hideSettingsButton: Boolean = false,
+    val playerUiSettings: PlayerUiSettings = PlayerUiSettings(),
     val readBookTitles: Boolean = false,
     val showBatteryIndicator: Boolean = false,
     val uiThemeMode: UiThemeMode = UiThemeMode.SYSTEM,

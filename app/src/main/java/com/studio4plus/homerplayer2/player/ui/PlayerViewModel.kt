@@ -134,7 +134,11 @@ class PlayerViewModel(
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), BooksState.Initializing)
 
     private val uiSettings = uiSettingsStore.data
-        .stateIn(viewModelScope, SharingStarted.Eagerly, UiSettings())
+        .shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
+
+    val playerUiSettings = uiSettings.map {
+        it.playerUiSettings
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
     // TODO: rethink whether this should be nullable
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -188,7 +192,7 @@ class PlayerViewModel(
             val book = allUiBooks.first().books.getOrNull(bookIndex)
             speaker.stop()
             if (book != null) {
-                if (uiSettings.value.readBookTitles && !isPlaying()) {
+                if (uiSettings.first().readBookTitles && !isPlaying()) {
                     viewModelScope.launch {
                         speaker.speakAndWait(book.displayName)
                     }

@@ -47,6 +47,7 @@ import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 import com.studio4plus.homerplayer2.battery.BatteryIcon
 import com.studio4plus.homerplayer2.battery.BatteryState
+import com.studio4plus.homerplayer2.settingsdata.PlayerUiSettings
 import kotlinx.coroutines.flow.SharedFlow
 import org.koin.androidx.compose.koinViewModel
 
@@ -57,6 +58,7 @@ fun PlayerRoute(
     viewModel: PlayerViewModel = koinViewModel()
 ) {
     val bookState = viewModel.booksState.collectAsStateWithLifecycle().value
+    val playerUiSettings = viewModel.playerUiSettings.collectAsStateWithLifecycle().value
     val batteryState = viewModel.batteryState.collectAsStateWithLifecycle().value
     val hideSettingsButton = viewModel.hideSettingsButton.collectAsStateWithLifecycle().value
 
@@ -81,16 +83,19 @@ fun PlayerRoute(
         }
     }
 
-    PlayerScreen(
-        bookState,
-        batteryState,
-        hideSettingsButton,
-        viewModel.volumeChangeEvent,
-        playerActions,
-        viewModel::onPageChanged,
-        onOpenSettings,
-        modifier
-    )
+    if (playerUiSettings != null) {
+        PlayerScreen(
+            bookState,
+            batteryState,
+            hideSettingsButton,
+            viewModel.volumeChangeEvent,
+            playerActions,
+            playerUiSettings,
+            viewModel::onPageChanged,
+            onOpenSettings,
+            modifier
+        )
+    }
 }
 
 @Composable
@@ -100,6 +105,7 @@ private fun PlayerScreen(
     hideSettingsButton: Boolean,
     volumeChangeEvent: SharedFlow<Float>,
     playerActions: PlayerActions,
+    playerUiSettings: PlayerUiSettings,
     onPageChanged: (Int) -> Unit,
     onOpenSettings: () -> Unit,
     modifier: Modifier = Modifier,
@@ -115,6 +121,7 @@ private fun PlayerScreen(
                     itemPadding = HomerTheme.dimensions.screenContentPadding,
                     state = booksState,
                     playerActions = playerActions,
+                    playerUiSettings = playerUiSettings,
                     onPageChanged = onPageChanged,
                 )
             }

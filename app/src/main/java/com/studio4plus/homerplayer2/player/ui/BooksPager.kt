@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
+import com.studio4plus.homerplayer2.settingsdata.PlayerUiSettings
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -47,6 +48,7 @@ fun BooksPager(
     itemPadding: Dp = 0.dp,
     state: PlayerViewModel.BooksState.Books,
     playerActions: PlayerActions,
+    playerUiSettings: PlayerUiSettings,
     onPageChanged: (bookIndex: Int) -> Unit,
     landscape: Boolean
 ) {
@@ -85,6 +87,7 @@ fun BooksPager(
             progress = book.progress,
             isPlaying = state.isPlaying,
             playerActions = playerActions,
+            playerUiSettings = playerUiSettings,
             landscape = landscape,
             modifier = modifier.padding(itemPadding)
         )
@@ -113,6 +116,7 @@ fun DefaultPreview() {
             itemPadding = HomerTheme.dimensions.screenContentPadding,
             landscape = false,
             playerActions = PlayerActions.EMPTY,
+            playerUiSettings = PlayerUiSettings(true, true, true),
             onPageChanged = {}
         )
     }

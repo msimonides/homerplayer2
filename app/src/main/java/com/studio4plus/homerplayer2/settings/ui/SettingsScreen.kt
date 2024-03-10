@@ -132,6 +132,7 @@ private fun SettingsNavHost(
     val kioskModeTitle = stringResource(id = R.string.settings_ui_full_kiosk_mode_label)
     val licensesTitle = stringResource(id = R.string.settings_ui_licenses_title)
     val playbackTitle = stringResource(id = R.string.settings_ui_playback_settings_title)
+    val playerUiTitle = stringResource(id = R.string.settings_ui_player_ui_title)
     val ttsTitle = stringResource(id = R.string.settings_ui_tts_settings_title)
     val uiTitle = stringResource(id = R.string.settings_ui_ui_settings_title)
     NavHost(
@@ -149,6 +150,7 @@ private fun SettingsNavHost(
             SettingsMainRoute(
                 navigateFolders = { navController.navigate("folders") },
                 navigatePlaybackSettings = { navController.navigate("playback_settings") },
+                navigatePlayerUiSettings = { navController.navigate("player_ui_settings") },
                 navigateTtsSettings = { navController.navigate("tts_settings") },
                 navigateUiSettings = { navController.navigate("ui_settings") },
                 navigateAbout = { navController.navigate("about") }
@@ -170,6 +172,9 @@ private fun SettingsNavHost(
         }
         composable("playback_settings", label = playbackTitle) {
             SettingsPlaybackRoute()
+        }
+        composable("player_ui_settings", label = playerUiTitle) {
+            SettingsPlayerUiRoute()
         }
         composable("tts_settings", label = ttsTitle) {
             SettingsTtsRoute(snackbarHostState)
