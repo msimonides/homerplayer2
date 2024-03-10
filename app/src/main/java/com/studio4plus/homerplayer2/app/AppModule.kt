@@ -43,6 +43,7 @@ import com.studio4plus.homerplayer2.logging.LoggingModule
 import com.studio4plus.homerplayer2.onboarding.OnboardingModule
 import com.studio4plus.homerplayer2.player.PlayerModule
 import com.studio4plus.homerplayer2.settings.SettingsModule
+import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
 import com.studio4plus.homerplayer2.utils.Clock
 import com.studio4plus.homerplayer2.utils.DefaultClock
 import kotlinx.serialization.json.Json
@@ -63,7 +64,8 @@ const val DATASTORE_APP_STATE = "appState"
         LoggingModule::class,
         OnboardingModule::class,
         PlayerModule::class,
-        SettingsModule::class
+        SettingsDataModule::class,
+        SettingsModule::class,
     ]
 )
 @ComponentScan("com.studio4plus.homerplayer2.app")

@@ -29,10 +29,9 @@ import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
-import com.studio4plus.homerplayer2.audiobooks.AudiobooksDao
 import com.studio4plus.homerplayer2.exoplayer.ExoplayerModule
-import com.studio4plus.homerplayer2.player.DATASTORE_PLAYBACK_SETTINGS
-import com.studio4plus.homerplayer2.player.PlaybackSettings
+import com.studio4plus.homerplayer2.settingsdata.PlaybackSettings
+import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
@@ -42,7 +41,6 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.core.parameter.parametersOf
 import org.koin.core.qualifier.named
@@ -53,7 +51,7 @@ class PlaybackService : MediaSessionService() {
     private val deviceMotionDetector: DeviceMotionDetector by inject()
     private val mainScope: CoroutineScope by inject()
     private var mediaSession: MediaSession? = null
-    private val playbackSettings: DataStore<PlaybackSettings> by inject(named(DATASTORE_PLAYBACK_SETTINGS))
+    private val playbackSettings: DataStore<PlaybackSettings> by inject(named(SettingsDataModule.PLAYBACK))
     private val playerMediaSessionCallback: PlayerMediaSessionCallback by inject()
     private val playPositionUpdater: PlayPositionUpdater by inject()
     private val serviceScope: CoroutineScope =

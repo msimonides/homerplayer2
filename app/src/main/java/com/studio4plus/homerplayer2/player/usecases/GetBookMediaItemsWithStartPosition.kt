@@ -29,16 +29,16 @@ import androidx.datastore.core.DataStore
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaSession.MediaItemsWithStartPosition
-import com.studio4plus.homerplayer2.player.DATASTORE_PLAYBACK_SETTINGS
-import com.studio4plus.homerplayer2.player.PlaybackSettings
+import com.studio4plus.homerplayer2.settingsdata.PlaybackSettings
 import com.studio4plus.homerplayer2.player.Audiobook
+import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
 import kotlinx.coroutines.flow.first
 import org.koin.core.annotation.Factory
 import org.koin.core.annotation.Named
 
 @Factory
 class GetBookMediaItemsWithStartPosition(
-    @Named(DATASTORE_PLAYBACK_SETTINGS) private val settings: DataStore<PlaybackSettings>,
+    @Named(SettingsDataModule.PLAYBACK) private val settings: DataStore<PlaybackSettings>,
 ) {
     @OptIn(UnstableApi::class)
     suspend operator fun invoke(

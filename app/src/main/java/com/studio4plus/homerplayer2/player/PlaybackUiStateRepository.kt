@@ -34,7 +34,7 @@ import org.koin.core.annotation.Single
 @Single
 class PlaybackUiStateRepository(
     private val mainScope: CoroutineScope,
-    @Named(DATASTORE_PLAYBACK_UI_STATE) private val playbackUiState: DataStore<PlaybackUiState>,
+    @Named(PlayerModule.UI_STATE) private val playbackUiState: DataStore<PlaybackUiState>,
 ) {
     // TODO: handle data read exceptions
     fun lastSelectedBookId() = playbackUiState.data.map {

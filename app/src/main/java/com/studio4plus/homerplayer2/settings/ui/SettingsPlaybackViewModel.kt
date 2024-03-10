@@ -27,8 +27,8 @@ package com.studio4plus.homerplayer2.settings.ui
 import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.studio4plus.homerplayer2.player.DATASTORE_PLAYBACK_SETTINGS
-import com.studio4plus.homerplayer2.player.PlaybackSettings
+import com.studio4plus.homerplayer2.settingsdata.PlaybackSettings
+import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.SharingStarted
@@ -42,7 +42,7 @@ import kotlin.time.Duration.Companion.seconds
 @KoinViewModel
 class SettingsPlaybackViewModel(
     private val mainScope: CoroutineScope,
-    @Named(DATASTORE_PLAYBACK_SETTINGS) private val playbackSettingsStore: DataStore<PlaybackSettings>,
+    @Named(SettingsDataModule.PLAYBACK) private val playbackSettingsStore: DataStore<PlaybackSettings>,
     private val playAudioSample: PlayAudioSample,
 ) : ViewModel() {
 

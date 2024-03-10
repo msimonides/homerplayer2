@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Marcin Simonides
+ * Copyright (c) 2024 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,13 +22,21 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.player
+package com.studio4plus.homerplayer2.settingsdata
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class PlaybackSettings(
-    val rewindOnResumeSeconds: Int = 0,
-    val sleepTimerSeconds: Int = 0,
-    val playbackSpeed: Float = 1f,
+enum class UiThemeMode {
+    SYSTEM, LIGHT, DARK
+}
+
+@Serializable
+data class UiSettings(
+    val enableHapticFeedback: Boolean = false,
+    val fullKioskMode: Boolean = false,
+    val hideSettingsButton: Boolean = false,
+    val readBookTitles: Boolean = false,
+    val showBatteryIndicator: Boolean = false,
+    val uiThemeMode: UiThemeMode = UiThemeMode.SYSTEM,
 )

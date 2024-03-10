@@ -24,13 +24,12 @@
 
 package com.studio4plus.homerplayer2.app
 
-import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.pm.PackageManager
 import androidx.datastore.core.DataStore
-import com.studio4plus.homerplayer2.settings.DATASTORE_UI_SETTINGS
-import com.studio4plus.homerplayer2.settings.UiSettings
+import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
+import com.studio4plus.homerplayer2.settingsdata.UiSettings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
@@ -44,7 +43,7 @@ private const val HOME_ACTIVITY_ALIAS = "com.studio4plus.homerplayer2.app.HomeAc
 class SetHomeActivity(
     mainScope: CoroutineScope,
     appContext: Context,
-    @Named(DATASTORE_UI_SETTINGS) uiSettings: DataStore<UiSettings>
+    @Named(SettingsDataModule.UI) uiSettings: DataStore<UiSettings>
 ) {
 
     private val fullKioskEnabled = uiSettings.data.map {

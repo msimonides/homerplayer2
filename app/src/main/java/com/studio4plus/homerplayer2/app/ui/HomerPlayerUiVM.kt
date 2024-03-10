@@ -29,8 +29,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.studio4plus.homerplayer2.app.DATASTORE_APP_STATE
 import com.studio4plus.homerplayer2.app.StoredAppState
-import com.studio4plus.homerplayer2.settings.DATASTORE_UI_SETTINGS
-import com.studio4plus.homerplayer2.settings.UiSettings
+import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
+import com.studio4plus.homerplayer2.settingsdata.UiSettings
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -42,7 +42,7 @@ import org.koin.core.annotation.Named
 @KoinViewModel
 class HomerPlayerUiVM(
     @Named(DATASTORE_APP_STATE) appState: DataStore<StoredAppState>,
-    @Named(DATASTORE_UI_SETTINGS) uiSettings: DataStore<UiSettings>,
+    @Named(SettingsDataModule.UI) uiSettings: DataStore<UiSettings>,
 ) : ViewModel() {
     val viewState: StateFlow<HomerPlayerViewState?> = combine(
         appState.data,

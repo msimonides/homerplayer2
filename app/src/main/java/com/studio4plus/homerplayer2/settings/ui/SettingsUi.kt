@@ -34,7 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studio4plus.homerplayer2.R
-import com.studio4plus.homerplayer2.settings.UiThemeMode
+import com.studio4plus.homerplayer2.settingsdata.UiThemeMode
 import org.koin.androidx.compose.koinViewModel
 
 private enum class SettingsUiDialogType {

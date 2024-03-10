@@ -37,8 +37,8 @@ import com.studio4plus.homerplayer2.player.Audiobook
 import com.studio4plus.homerplayer2.player.AudiobookFile
 import com.studio4plus.homerplayer2.player.PlaybackUiStateRepository
 import com.studio4plus.homerplayer2.player.toAudiobook
-import com.studio4plus.homerplayer2.settings.DATASTORE_UI_SETTINGS
-import com.studio4plus.homerplayer2.settings.UiSettings
+import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
+import com.studio4plus.homerplayer2.settingsdata.UiSettings
 import com.studio4plus.homerplayer2.speech.Speaker
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -63,7 +63,7 @@ import org.koin.core.annotation.Named
 class PlayerViewModel(
     private val playbackState: PlaybackState,
     audiobooksDao: AudiobooksDao,
-    @Named(DATASTORE_UI_SETTINGS) uiSettingsStore: DataStore<UiSettings>,
+    @Named(SettingsDataModule.UI) uiSettingsStore: DataStore<UiSettings>,
     private val playbackUiStateRepository: PlaybackUiStateRepository,
     private val audioManager: AudioManager,
     private val speaker: Speaker,

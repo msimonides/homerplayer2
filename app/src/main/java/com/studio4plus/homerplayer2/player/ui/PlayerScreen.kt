@@ -47,7 +47,6 @@ import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 import com.studio4plus.homerplayer2.battery.BatteryIcon
 import com.studio4plus.homerplayer2.battery.BatteryState
-import com.studio4plus.homerplayer2.settings.ui.OpenSettingsButton
 import kotlinx.coroutines.flow.SharedFlow
 import org.koin.androidx.compose.koinViewModel
 

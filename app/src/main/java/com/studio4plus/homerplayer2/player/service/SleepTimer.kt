@@ -28,8 +28,8 @@ import android.os.PowerManager.WakeLock
 import androidx.datastore.core.DataStore
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
-import com.studio4plus.homerplayer2.player.DATASTORE_PLAYBACK_SETTINGS
-import com.studio4plus.homerplayer2.player.PlaybackSettings
+import com.studio4plus.homerplayer2.settingsdata.PlaybackSettings
+import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
 import com.studio4plus.homerplayer2.utils.Clock
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -58,7 +58,7 @@ class SleepTimer(
     private val deviceMotionDetector: DeviceMotionDetector,
     private val clock: Clock,
     private val wakeLock: WakeLock,
-    @Named(DATASTORE_PLAYBACK_SETTINGS) playbackSettings: DataStore<PlaybackSettings>
+    @Named(SettingsDataModule.PLAYBACK) playbackSettings: DataStore<PlaybackSettings>
 ) : Player.Listener {
 
     private var motionDetectionJob: Job? = null

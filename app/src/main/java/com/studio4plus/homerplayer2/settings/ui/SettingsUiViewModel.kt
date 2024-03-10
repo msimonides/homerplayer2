@@ -26,15 +26,13 @@ package com.studio4plus.homerplayer2.settings.ui
 
 import android.app.admin.DevicePolicyManager
 import android.content.Context
-import android.os.Build
-import android.os.Vibrator
 import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.studio4plus.homerplayer2.base.ui.VibratorProvider
-import com.studio4plus.homerplayer2.settings.DATASTORE_UI_SETTINGS
-import com.studio4plus.homerplayer2.settings.UiSettings
-import com.studio4plus.homerplayer2.settings.UiThemeMode
+import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
+import com.studio4plus.homerplayer2.settingsdata.UiSettings
+import com.studio4plus.homerplayer2.settingsdata.UiThemeMode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
@@ -44,7 +42,7 @@ import org.koin.core.annotation.Named
 
 @KoinViewModel
 class SettingsUiViewModel(
-    @Named(DATASTORE_UI_SETTINGS) private val uiSettingsStore: DataStore<UiSettings>,
+    @Named(SettingsDataModule.UI) private val uiSettingsStore: DataStore<UiSettings>,
     private val mainScope: CoroutineScope,
     private val vibratorProvider: VibratorProvider,
     private val appContext: Context,

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Marcin Simonides
+ * Copyright (c) 2024 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,12 +22,11 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.player
+package com.studio4plus.homerplayer2.settingsdata
 
 import android.content.Context
 import androidx.datastore.core.DataStore
 import com.studio4plus.homerplayer2.base.DispatcherProvider
-import com.studio4plus.homerplayer2.exoplayer.ExoplayerModule
 import com.studio4plus.homerplayer2.loccalstorage.LOCAL_STORAGE_JSON
 import com.studio4plus.homerplayer2.loccalstorage.LocalStorageModule
 import com.studio4plus.homerplayer2.loccalstorage.createDataStore
@@ -37,28 +36,44 @@ import org.koin.core.annotation.Module
 import org.koin.core.annotation.Named
 import org.koin.core.annotation.Single
 
-@Module(includes = [ExoplayerModule::class, LocalStorageModule::class])
-@ComponentScan("com.studio4plus.homerplayer2.player")
-class PlayerModule {
+@Module(includes = [LocalStorageModule::class])
+@ComponentScan("com.studio4plus.homerplayer2.settingsdata")
+class SettingsDataModule {
 
     @Single
-    @Named(UI_STATE)
-    fun playbackUiStateDatastore(
+    @Named(UI)
+    fun uiSettingsDatastore(
         appContext: Context,
         dispatcherProvider: DispatcherProvider,
         @Named(LOCAL_STORAGE_JSON) json: Json
-    ): DataStore<PlaybackUiState> =
+    ): DataStore<UiSettings> =
         createDataStore(
             appContext,
             dispatcherProvider,
             json,
-            UI_STATE,
-            PlaybackUiState(),
-            PlaybackUiState.serializer()
+            UI,
+            UiSettings(),
+            UiSettings.serializer()
+        )
+
+    @Single
+    @Named(PLAYBACK)
+    fun playbackSettingsDatastore(
+        appContext: Context,
+        dispatcherProvider: DispatcherProvider,
+        @Named(LOCAL_STORAGE_JSON) json: Json
+    ): DataStore<PlaybackSettings> =
+        createDataStore(
+            appContext,
+            dispatcherProvider,
+            json,
+            PLAYBACK,
+            PlaybackSettings(),
+            PlaybackSettings.serializer()
         )
 
     companion object {
-        const val UI_STATE = "playbackUiState"
+        const val PLAYBACK = "playbackSettings"
+        const val UI = "uiSettings"
     }
-
 }

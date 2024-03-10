@@ -22,21 +22,13 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.settings
+package com.studio4plus.homerplayer2.settingsdata
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-enum class UiThemeMode {
-    SYSTEM, LIGHT, DARK
-}
-
-@Serializable
-data class UiSettings(
-    val enableHapticFeedback: Boolean = false,
-    val fullKioskMode: Boolean = false,
-    val hideSettingsButton: Boolean = false,
-    val readBookTitles: Boolean = false,
-    val showBatteryIndicator: Boolean = false,
-    val uiThemeMode: UiThemeMode = UiThemeMode.SYSTEM,
+data class PlaybackSettings(
+    val rewindOnResumeSeconds: Int = 0,
+    val sleepTimerSeconds: Int = 0,
+    val playbackSpeed: Float = 1f,
 )

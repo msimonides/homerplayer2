@@ -31,12 +31,10 @@ import androidx.lifecycle.viewModelScope
 import com.studio4plus.homerplayer2.audiobooks.ui.AudiobookFolderNamesFlow
 import com.studio4plus.homerplayer2.audiobooks.ui.joinToEllipsizedString
 import com.studio4plus.homerplayer2.logging.PrepareIntentForLogSharing
-import com.studio4plus.homerplayer2.settings.DATASTORE_UI_SETTINGS
-import com.studio4plus.homerplayer2.settings.UiSettings
-import kotlinx.coroutines.CoroutineScope
+import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
+import com.studio4plus.homerplayer2.settingsdata.UiSettings
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import org.koin.android.annotation.KoinViewModel
 import org.koin.core.annotation.Named
@@ -45,7 +43,7 @@ import org.koin.core.annotation.Named
 class SettingsMainViewModel(
     audiobookFolderNamesFlow: AudiobookFolderNamesFlow,
     private val prepareIntentForLogSharing: PrepareIntentForLogSharing,
-    @Named(DATASTORE_UI_SETTINGS) private val uiSettingsStore: DataStore<UiSettings>
+    @Named(SettingsDataModule.UI) private val uiSettingsStore: DataStore<UiSettings>
 ) : ViewModel() {
 
     class ViewState(

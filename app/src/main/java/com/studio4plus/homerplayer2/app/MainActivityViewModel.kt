@@ -30,8 +30,8 @@ import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksUpdater
-import com.studio4plus.homerplayer2.settings.DATASTORE_UI_SETTINGS
-import com.studio4plus.homerplayer2.settings.UiSettings
+import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
+import com.studio4plus.homerplayer2.settingsdata.UiSettings
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -43,7 +43,7 @@ class MainActivityViewModel(
     appContext: Context,
     dpm: DevicePolicyManager,
     @Named(DATASTORE_APP_STATE) appState: DataStore<StoredAppState>,
-    @Named(DATASTORE_UI_SETTINGS) uiSettings: DataStore<UiSettings>,
+    @Named(SettingsDataModule.UI) uiSettings: DataStore<UiSettings>,
     private val audiobooksUpdater: AudiobooksUpdater,
 ) : ViewModel() {
     val viewState = appState.data.map {

@@ -27,9 +27,8 @@ package com.studio4plus.homerplayer2.settings.ui
 import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.studio4plus.homerplayer2.player.DATASTORE_PLAYBACK_SETTINGS
-import com.studio4plus.homerplayer2.settings.DATASTORE_UI_SETTINGS
-import com.studio4plus.homerplayer2.settings.UiSettings
+import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
+import com.studio4plus.homerplayer2.settingsdata.UiSettings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
@@ -40,7 +39,7 @@ import org.koin.core.annotation.Named
 @KoinViewModel
 class SettingsTtsViewModel(
     private val mainScope: CoroutineScope,
-    @Named(DATASTORE_UI_SETTINGS) private val settings: DataStore<UiSettings>
+    @Named(SettingsDataModule.UI) private val settings: DataStore<UiSettings>
 ) : ViewModel() {
 
     data class ViewState(

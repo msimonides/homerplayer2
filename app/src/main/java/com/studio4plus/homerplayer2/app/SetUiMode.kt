@@ -29,9 +29,9 @@ import android.content.Context
 import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.datastore.core.DataStore
-import com.studio4plus.homerplayer2.settings.DATASTORE_UI_SETTINGS
-import com.studio4plus.homerplayer2.settings.UiSettings
-import com.studio4plus.homerplayer2.settings.UiThemeMode
+import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
+import com.studio4plus.homerplayer2.settingsdata.UiSettings
+import com.studio4plus.homerplayer2.settingsdata.UiThemeMode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
@@ -43,7 +43,7 @@ import org.koin.core.annotation.Single
 class SetUiMode(
     mainScope: CoroutineScope,
     appContext: Context,
-    @Named(DATASTORE_UI_SETTINGS) uiSettings: DataStore<UiSettings>
+    @Named(SettingsDataModule.UI) uiSettings: DataStore<UiSettings>
 ) {
     private val uiModeFlow = uiSettings.data.map {
         it.uiThemeMode
