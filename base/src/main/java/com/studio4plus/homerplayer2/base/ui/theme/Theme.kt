@@ -3,6 +3,7 @@ package com.studio4plus.homerplayer2.base.ui.theme
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
+import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -148,10 +149,15 @@ fun HomerPlayer2Theme(
     if (!view.isInEditMode && setWindowColors) {
         SideEffect {
             val window = (view.context.getActivity()).window
+            val insetsControllerCompat = WindowInsetsControllerCompat(window, view)
             val backgroundColorArgb = materialColorScheme.background.toArgb()
             window.statusBarColor = backgroundColorArgb
-            window.navigationBarColor = backgroundColorArgb
-            WindowInsetsControllerCompat(window, view).isAppearanceLightStatusBars = !darkTheme
+            insetsControllerCompat.isAppearanceLightStatusBars = !darkTheme
+
+            if (Build.VERSION.SDK_INT >= 26) {
+                window.navigationBarColor = backgroundColorArgb
+                insetsControllerCompat.isAppearanceLightNavigationBars = !darkTheme
+            }
         }
     }
 
