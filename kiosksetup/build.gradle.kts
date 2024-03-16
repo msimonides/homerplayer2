@@ -32,6 +32,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.sentry)
 }
 
 android {
@@ -50,7 +51,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -102,6 +103,7 @@ dependencies {
     implementation(libs.koin.androidx.compose)
     implementation(libs.koin.annotations)
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.sentry.android)
 
     testImplementation(libs.junit)
 }

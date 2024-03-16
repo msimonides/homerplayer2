@@ -26,17 +26,20 @@ package com.studio4plus.homerplayer2.app
 
 import android.app.Application
 import com.studio4plus.homerplayer2.BuildConfig
+import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.logging.FileLoggerTreeProvider
+import io.sentry.android.core.SentryAndroid
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
-import org.koin.ksp.generated.*
+import org.koin.ksp.generated.module
 import timber.log.Timber
 
 class HomerPlayerApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        initCrashReporting()
 
         startKoin {
             androidContext(this@HomerPlayerApp)
@@ -48,5 +51,20 @@ class HomerPlayerApp : Application() {
         }
         val fileLoggerProvider: FileLoggerTreeProvider by inject()
         Timber.plant(fileLoggerProvider())
+    }
+
+    // Try to share Sentry configuration between app and kiosksetup.
+    private fun initCrashReporting() {
+        if (!BuildConfig.DEBUG) {
+            SentryAndroid.init(this) { options ->
+                options.dsn = getString(R.string.sentry_dsn)
+                options.isEnableAppLifecycleBreadcrumbs = true
+                options.isEnableAppComponentBreadcrumbs = true
+
+                options.isEnableUserInteractionBreadcrumbs = false
+                options.isEnableActivityLifecycleBreadcrumbs = false
+                options.isEnableNetworkEventBreadcrumbs = false
+            }
+        }
     }
 }

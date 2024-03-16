@@ -14,6 +14,7 @@ kotlin = '1.9.21'
 kotlinx-coroutines = '1.7.3'
 media3 = '1.2.1'
 room = '2.6.1'
+sentry-android = '7.6.0'
 
 [libraries]
 
@@ -50,6 +51,8 @@ kotlinx-coroutines-android = { module = 'org.jetbrains.kotlinx:kotlinx-coroutine
 
 kotlinx-serialization-json = { module = 'org.jetbrains.kotlinx:kotlinx-serialization-json', version = '1.5.1' }
 
+sentry-android = { module = 'io.sentry:sentry-android', version.ref = 'sentry-android' }
+
 timber = 'com.jakewharton.timber:timber:5.0.1'
 treessence = 'com.github.bastienpaulfr:Treessence:1.1.2'
 
@@ -63,3 +66,4 @@ android-library = { id = "com.android.library", version.ref = "android-gradle-pl
 kotlin-jvm = { id = 'org.jetbrains.kotlin.android', version.ref = 'kotlin' }
 kotlin-serialization = { id = 'org.jetbrains.kotlin.plugin.serialization', version.ref = 'kotlin' }
 ksp = 'com.google.devtools.ksp:1.9.21-1.0.15'
+sentry = 'io.sentry.android.gradle:4.3.1'

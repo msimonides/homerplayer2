@@ -30,7 +30,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import org.koin.android.annotation.KoinViewModel
-import kotlin.properties.Delegates
 
 @KoinViewModel
 class OnboardingSpeechViewModel(

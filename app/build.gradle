@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.aboutlibraries)
+    alias(libs.plugins.sentry)
 }
 
 def enableComposeMetrics = project.hasProperty("enableComposeMetrics") ? project["enableComposeMetrics"] : false
@@ -37,7 +38,7 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -67,6 +68,20 @@ android {
     }
 }
 
+sentry {
+    tracingInstrumentation {
+        enabled = false
+        logcat {
+            enabled = false
+        }
+    }
+    autoInstallation {
+        enabled = false
+    }
+
+    ignoredBuildTypes = ["debug"]
+}
+
 dependencies {
     implementation project(':base')
 
@@ -94,8 +109,10 @@ dependencies {
     implementation libs.koin.annotations
     implementation libs.kotlinx.coroutines.android
     implementation libs.kotlinx.serialization.json
+    implementation libs.sentry.android
     implementation libs.timber
     implementation libs.treessence
+
 
     testImplementation libs.junit
     androidTestImplementation libs.androidx.test.espresso.core

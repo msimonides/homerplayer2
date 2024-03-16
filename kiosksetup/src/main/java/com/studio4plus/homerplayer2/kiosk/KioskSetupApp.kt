@@ -25,6 +25,7 @@
 package com.studio4plus.homerplayer2.kiosk
 
 import android.app.Application
+import io.sentry.android.core.SentryAndroid
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.GlobalContext.startKoin
 import org.koin.ksp.generated.*
@@ -33,10 +34,25 @@ class KioskSetupApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        initCrashReporting()
 
         startKoin {
             androidContext(this@KioskSetupApp)
             modules(AppModule().module)
+        }
+    }
+
+    private fun initCrashReporting() {
+        if (!BuildConfig.DEBUG) {
+            SentryAndroid.init(this) { options ->
+                options.dsn = getString(R.string.sentry_dsn)
+                options.isEnableAppLifecycleBreadcrumbs = true
+                options.isEnableAppComponentBreadcrumbs = true
+
+                options.isEnableUserInteractionBreadcrumbs = false
+                options.isEnableActivityLifecycleBreadcrumbs = false
+                options.isEnableNetworkEventBreadcrumbs = false
+            }
         }
     }
 }
