@@ -27,11 +27,14 @@ package com.studio4plus.homerplayer2.settings.ui
 import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.studio4plus.homerplayer2.settingsdata.PlaybackSettings
 import com.studio4plus.homerplayer2.settingsdata.PlayerUiSettings
 import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
 import com.studio4plus.homerplayer2.settingsdata.UiSettings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import org.koin.android.annotation.KoinViewModel
@@ -40,11 +43,27 @@ import org.koin.core.annotation.Named
 @KoinViewModel
 class SettingsPlayerUiViewModel(
     private val mainScope: CoroutineScope,
+    @Named(SettingsDataModule.PLAYBACK) private val playbackSettingsStore: DataStore<PlaybackSettings>,
     @Named(SettingsDataModule.UI) private val uiSettingStore: DataStore<UiSettings>,
 ) : ViewModel() {
-    val playerUiSettings = uiSettingStore.data.map { uiSettings ->
-        uiSettings.playerUiSettings
+    data class ViewState(
+        val flipToStop: Boolean,
+        val playerUiSettings: PlayerUiSettings,
+    )
+
+    val viewState = combine(
+        playbackSettingsStore.data,
+        uiSettingStore.data
+    ) { playbackSettings, uiSettings ->
+        ViewState(
+            flipToStop = playbackSettings.flipToStop,
+            playerUiSettings = uiSettings.playerUiSettings,
+        )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
+
+    fun setFlipToStop(enabled: Boolean) {
+        mainScope.launchUpdate(playbackSettingsStore) { it.copy(flipToStop = enabled) }
+    }
 
     fun setShowVolumeControls(enabled: Boolean) {
         updatePlayerUiSettings { it.copy(showVolumeControls = enabled) }

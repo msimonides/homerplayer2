@@ -60,10 +60,11 @@ import org.koin.androidx.compose.koinViewModel
 fun SettingsPlayerUiRoute(
     viewModel: SettingsPlayerUiViewModel = koinViewModel(),
 ) {
-    val playerUiSettings = viewModel.playerUiSettings.collectAsStateWithLifecycle().value
-    if (playerUiSettings != null) {
+    val viewState = viewModel.viewState.collectAsStateWithLifecycle().value
+    if (viewState != null) {
         SettingsPlayerUi(
-            playerUiSettings,
+            viewState,
+            onSetFlipToStop = viewModel::setFlipToStop,
             onSetShowVolumeControls = viewModel::setShowVolumeControls,
             onSetShowFfRewindControls = viewModel::setShowFfRewindControls,
             onSetShowSeekControls = viewModel::setShowSeekControls,
@@ -73,7 +74,8 @@ fun SettingsPlayerUiRoute(
 
 @Composable
 private fun SettingsPlayerUi(
-    playerUiSettings: PlayerUiSettings,
+    viewState: SettingsPlayerUiViewModel.ViewState,
+    onSetFlipToStop: (Boolean) -> Unit,
     onSetShowVolumeControls: (Boolean) -> Unit,
     onSetShowFfRewindControls: (Boolean) -> Unit,
     onSetShowSeekControls: (Boolean) -> Unit,
@@ -96,7 +98,7 @@ private fun SettingsPlayerUi(
                 isPlaying = true,
                 index = 0,
                 playerActions = PlayerActions.EMPTY,
-                playerUiSettings = playerUiSettings,
+                playerUiSettings = viewState.playerUiSettings,
                 modifier = Modifier
                     .weight(1f)
                     .aspectRatio(screenAspectRatio)
@@ -113,20 +115,27 @@ private fun SettingsPlayerUi(
             val settingItemModifier = Modifier.defaultSettingsItem()
             SettingSwitch(
                 label = stringResource(R.string.settings_ui_player_ui_volume_controls),
-                value = playerUiSettings.showVolumeControls,
+                value = viewState.playerUiSettings.showVolumeControls,
                 onChange = onSetShowVolumeControls,
                 modifier = settingItemModifier,
             )
             SettingSwitch(
                 label = stringResource(R.string.settings_ui_player_ui_ff_rewind_controls),
-                value = playerUiSettings.showFfRewindControls,
+                value = viewState.playerUiSettings.showFfRewindControls,
                 onChange = onSetShowFfRewindControls,
                 modifier = settingItemModifier,
             )
             SettingSwitch(
                 label = stringResource(R.string.settings_ui_player_ui_seek_controls),
-                value = playerUiSettings.showSeekControls,
+                value = viewState.playerUiSettings.showSeekControls,
                 onChange = onSetShowSeekControls,
+                modifier = settingItemModifier,
+            )
+            SettingSwitch(
+                label = stringResource(R.string.settings_ui_playback_flip_to_stop_item),
+                summary = stringResource(R.string.settings_ui_playback_flip_to_stop_summary),
+                value = viewState.flipToStop,
+                onChange = onSetFlipToStop,
                 modifier = settingItemModifier,
             )
         }

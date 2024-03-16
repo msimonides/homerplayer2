@@ -50,9 +50,10 @@ fun SettingSwitch(
     label: String,
     value: Boolean,
     onChange: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    summary: String? = null,
 ) {
-    Row(
+    SettingRow(
         modifier = Modifier
             .toggleable(
                 value = value,
@@ -60,11 +61,15 @@ fun SettingSwitch(
                 role = Role.Switch
             )
             .then(modifier),
-        verticalAlignment = Alignment.CenterVertically
+        summary = summary,
     ) {
-        Text(label, modifier = Modifier.weight(1f))
-        Spacer(modifier = Modifier.width(HomerTheme.dimensions.labelSpacing))
-        Switch(checked = value, onCheckedChange = null, modifier = Modifier.clearAndSetSemantics {})
+        Row (
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(label, modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.width(HomerTheme.dimensions.labelSpacing))
+            Switch(checked = value, onCheckedChange = null, modifier = Modifier.clearAndSetSemantics {})
+        }
     }
 }
 
@@ -76,18 +81,32 @@ fun SettingItem(
     summary: String? = null,
 ) {
     val click = if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier
-    Column(
+    SettingRow(
         modifier = Modifier
             .then(click)
             .then(modifier),
+        summary = summary,
+    ) {
+        Text(label, modifier = Modifier.padding(bottom = if (summary != null) 4.dp else 0.dp))
+    }
+}
+
+@Composable
+private fun SettingRow(
+    modifier: Modifier = Modifier,
+    summary: String? = null,
+    labelRow: @Composable () -> Unit
+) {
+    Column(
+        modifier = modifier,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(label, modifier = Modifier.padding(bottom = 4.dp))
+        labelRow()
         if (summary != null) {
             Text(
                 summary,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }
@@ -95,8 +114,24 @@ fun SettingItem(
 
 @Preview
 @Composable
-fun SettingItemPreview() {
+private fun SettingItemPreview() {
     HomerPlayer2Theme {
         SettingItem("Some setting", summary = "Enabled", onClick = {})
+    }
+}
+
+@Preview
+@Composable
+private fun SettingSwitchWithSummaryPreview() {
+    HomerPlayer2Theme {
+        SettingSwitch("Some switch", summary = "Description", value = false, onChange = {})
+    }
+}
+
+@Preview
+@Composable
+private fun SettingSwitchWithoutSummaryPreview() {
+    HomerPlayer2Theme {
+        SettingSwitch("Some switch", value = false, onChange = {})
     }
 }

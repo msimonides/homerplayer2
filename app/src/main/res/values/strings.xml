@@ -61,6 +61,8 @@
     <string name="settings_ui_mode_dark">Dark</string>
     <string name="settings_ui_mode_light">Light</string>
     <string name="settings_ui_mode_system">System</string>
+    <string name="settings_ui_playback_flip_to_stop_item">Flip to stop</string>
+    <string name="settings_ui_playback_flip_to_stop_summary">Put device screen down to stop playback</string>
     <string name="settings_ui_playback_play_speed_title">Playback speed</string>
     <string name="settings_ui_playback_rewind_on_resume_label">Rewind when resuming playback</string>
     <string name="settings_ui_playback_rewind_on_resume_setting_disabled">Disabled</string>

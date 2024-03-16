@@ -58,12 +58,13 @@ class PlaybackService : MediaSessionService() {
         CoroutineScope(mainScope.coroutineContext + SupervisorJob())
     // Note: can scopes be used instead of parameters?
     private val sleepTimer: SleepTimer by inject { parametersOf(exoPlayer) }
+    private val stopOnFaceDown: StopOnFaceDown by inject { parametersOf(exoPlayer) }
 
     override fun onCreate() {
         super.onCreate()
 
         exoPlayer.addListener(playPositionUpdater)
-        exoPlayer.addListener(PlayStopOnFaceDown(mainScope, exoPlayer, deviceMotionDetector))
+        exoPlayer.addListener(stopOnFaceDown)
         exoPlayer.addListener(sleepTimer)
         mediaSession = MediaSession.Builder(this, exoPlayer)
             .setCallback(playerMediaSessionCallback)
@@ -88,28 +89,4 @@ class PlaybackService : MediaSessionService() {
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? =
         mediaSession
-
-    // TODO: inject it with koin?
-    private class PlayStopOnFaceDown(
-        private val mainScope: CoroutineScope,
-        private val player: ExoPlayer,
-        private val deviceMotionDetector: DeviceMotionDetector
-    ) : Player.Listener {
-
-        private var motionDetectionJob: Job? = null
-
-        override fun onIsPlayingChanged(isPlaying: Boolean) {
-            super.onIsPlayingChanged(isPlaying)
-            if (isPlaying) {
-                motionDetectionJob?.cancel()
-                motionDetectionJob =
-                    deviceMotionDetector.motionType
-                        .filter { it == DeviceMotionDetector.MotionType.FACE_DOWN }
-                        .onEach { player.stop() }
-                        .launchIn(mainScope)
-            } else {
-                motionDetectionJob?.cancel()
-            }
-        }
-    }
 }

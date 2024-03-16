@@ -65,7 +65,7 @@ private enum class SettingsDialogType {
 }
 
 @Composable
-fun SettingsPlayback(
+private fun SettingsPlayback(
     viewState: SettingsPlaybackViewModel.ViewState,
     onPlaySpeedSample: (Float) -> Unit,
     onSetPlaybackSpeed: (Float) -> Unit,
