@@ -11,7 +11,7 @@
     <string name="button_setup_instructions_website">Open instructions</string>
 
     <string name="drop_privilege_button">Drop kiosk mode privilege</string>
-    <string name="drop_privilege_confirm_message">This action cannot be easily undone.\nThis will return the device to regular use, it will no longer be possible to use full kiosk mode in Homer Player.\n\nUse Factory Reset instead (or in addition to) using this function.</string>
+    <string name="drop_privilege_confirm_message">This action cannot be easily undone.\nReturn the device to regular use, it will no longer be possible to use full kiosk mode in Homer Player.\n\nUse Factory Reset instead of (or in addition to) using this function.</string>
     <string name="drop_privilege_confirm_confirm_button">Remove privilege</string>
     <string name="drop_privilege_confirm_cancel_button">Cancel</string>
 
