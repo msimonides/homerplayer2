@@ -115,7 +115,10 @@ private fun SettingsTopBar(toolbarTitle: String?, onBack: () -> Unit) {
             IconButton(
                 onClick = onBack,
             ) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null) // TODO: contentDescription
+                Icon(
+                    Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = stringResource(R.string.generic_navigate_back)
+                )
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
