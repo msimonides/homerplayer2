@@ -34,6 +34,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -92,7 +93,7 @@ fun MainScreen(
             .padding(bottom = HomerTheme.dimensions.screenContentPadding)
     ) {
         Image(
-            painterResource(BaseR.drawable.app_icon_player_foreground),
+            painterResource(BaseR.drawable.app_icon_setup_foreground),
             contentDescription = null,
             contentScale = ContentScale.FillHeight,
             modifier = Modifier

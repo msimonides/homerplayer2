@@ -67,7 +67,7 @@ private val RedStop = Color(0xffc31e1e)
 private val DarkColorScheme = darkColorScheme(
     primary = HomerGreen,
     onPrimary = Color.White,
-    background = Color.Black
+    background = Color.Black,
 )
 
 private val ExtendedDarkColors = ExtendedColors(
@@ -83,6 +83,7 @@ private val ExtendedDarkColors = ExtendedColors(
 private val LightColorScheme = lightColorScheme(
     primary = HomerGreen,
     onPrimary = Color.White,
+    background = Color.White,
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),

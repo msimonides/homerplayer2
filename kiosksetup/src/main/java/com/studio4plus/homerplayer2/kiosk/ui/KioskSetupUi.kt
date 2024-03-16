@@ -24,17 +24,22 @@
 
 package com.studio4plus.homerplayer2.kiosk.ui
 
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 
 @Composable
 fun KioskSetupUi() {
-    HomerPlayer2Theme {
+    HomerPlayer2Theme(
+        setWindowColors = false
+    ) {
         // A surface container using the 'background' color from the theme
         Surface(
-            color = MaterialTheme.colorScheme.background
+            color = MaterialTheme.colorScheme.background,
+            modifier = Modifier.navigationBarsPadding()
         ) {
             MainScreenRoute()
         }
