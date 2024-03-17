@@ -27,7 +27,7 @@ package com.studio4plus.homerplayer2.kiosk.ui
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import com.studio4plus.homerplayer2.kiosk.Constants
+import com.studio4plus.homerplayer2.base.Constants
 import org.koin.core.annotation.Factory
 
 @Factory
@@ -35,15 +35,15 @@ class Intents(
     private val packageManager: PackageManager,
 ) {
     fun openPlayer(): Intent? =
-        packageManager.getLaunchIntentForPackage(Constants.TargetAppPackage)
+        packageManager.getLaunchIntentForPackage(Constants.PlayerAppPackage)
 
     fun installPlayer(): Intent = Intent(
         Intent.ACTION_VIEW,
-        Uri.parse("https://play.google.com/store/apps/details?id=${Constants.TargetAppPackage}")
+        Uri.parse("https://play.google.com/store/apps/details?id=${Constants.PlayerAppPackage}")
     )
 
     fun openInstructions(): Intent = Intent(
         Intent.ACTION_VIEW,
-        Uri.parse(Constants.UrlSetupInstructions)
+        Uri.parse(Constants.UrlKioskSetupInstructions)
     )
 }

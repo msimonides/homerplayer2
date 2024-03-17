@@ -30,7 +30,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import com.studio4plus.homerplayer2.kiosk.Constants
+import com.studio4plus.homerplayer2.base.Constants
 import org.koin.core.annotation.Factory
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -46,12 +46,12 @@ class DeviceAdmin(
         if (isOwner) {
             dpm.setLockTaskPackages(
                 DeviceAdminReceiver.component(appContext),
-                arrayOf(Constants.TargetAppPackage)
+                arrayOf(Constants.PlayerAppPackage)
             )
             setPreferredHomeActivity(
                 appContext,
                 dpm,
-                ComponentName(Constants.TargetAppPackage, Constants.TargetHomeActivityClass)
+                ComponentName(Constants.PlayerAppPackage, Constants.PlayerHomeActivityClass)
             )
             deviceAdminStatus.setIsDeviceOwner(true)
         }
@@ -63,7 +63,7 @@ class DeviceAdmin(
         if (dpm.isDeviceOwnerApp(appContext.packageName)) {
             dpm.clearPackagePersistentPreferredActivities(
                 DeviceAdminReceiver.component(appContext),
-                Constants.TargetAppPackage
+                Constants.PlayerAppPackage
             )
         }
     }

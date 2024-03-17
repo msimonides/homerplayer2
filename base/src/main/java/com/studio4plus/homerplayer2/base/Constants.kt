@@ -22,10 +22,11 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.kiosk
+package com.studio4plus.homerplayer2.base
 
 object Constants {
-    const val TargetAppPackage = "com.studio4plus.homerplayer2"
-    const val TargetHomeActivityClass = "com.studio4plus.homerplayer2.app.HomeActivity"
-    const val UrlSetupInstructions = "https://msimonides.github.io/homerplayer"
+    const val PlayerAppPackage = "com.studio4plus.homerplayer2"
+    const val PlayerHomeActivityClass = "com.studio4plus.homerplayer2.app.HomeActivity"
+    const val UrlKioskSetupInstructions = "https://msimonides.github.io/homerplayer2"
+    const val UrlPrivacyPolicy = "https://msimonides.github.io/homerplayer2/privacy"
 }

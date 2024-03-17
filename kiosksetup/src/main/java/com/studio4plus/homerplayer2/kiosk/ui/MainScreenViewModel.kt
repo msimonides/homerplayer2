@@ -24,13 +24,11 @@
 
 package com.studio4plus.homerplayer2.kiosk.ui
 
-import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.studio4plus.homerplayer2.kiosk.Constants
+import com.studio4plus.homerplayer2.base.Constants
 import com.studio4plus.homerplayer2.kiosk.R
 import com.studio4plus.homerplayer2.kiosk.deviceadmin.DeviceAdminStatus
 import kotlinx.coroutines.flow.Flow
@@ -78,7 +76,7 @@ class MainScreenViewModel(
             mainActionIntent =
                 if (isDeviceOwner) playerIntent ?: intents.installPlayer()
                 else intents.openInstructions(),
-            mainActionWebsiteUrl = Constants.UrlSetupInstructions.takeIf { !isDeviceOwner },
+            mainActionWebsiteUrl = Constants.UrlKioskSetupInstructions.takeIf { !isDeviceOwner },
             dropPrivilegeEnabled = isDeviceOwner
         )
     }.shareIn(viewModelScope, SharingStarted.WhileSubscribed())

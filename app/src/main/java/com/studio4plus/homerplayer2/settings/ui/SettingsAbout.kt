@@ -31,15 +31,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.studio4plus.homerplayer2.BuildConfig
 import com.studio4plus.homerplayer2.R
+import com.studio4plus.homerplayer2.base.Constants
 import com.studio4plus.homerplayer2.utils.openWebUrl
 
 @Composable
 fun SettingsAboutRoute(
     navigateLicenses: () -> Unit,
 ) {
-    val privacyPolicyUrl = stringResource(R.string.privacy_policy_url)
     val context = LocalContext.current
-    val openPrivacyPolicy = { openWebUrl(context, privacyPolicyUrl) }
+    val openPrivacyPolicy = { openWebUrl(context, Constants.UrlPrivacyPolicy) }
 
     SettingsAbout(
         navigateLicenses = navigateLicenses,
