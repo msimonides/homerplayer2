@@ -1,0 +1,29 @@
+---
+---
+
+@import "{{ site.theme }}";
+
+div.screenshots {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    row-gap: 1em;
+}
+
+div.screenshots img {
+    border: 1px solid #000;
+    @include large {
+        width: 30%;
+    }
+    @include medium {
+        width: 48%;
+    }
+    @include small {
+        width: 48%;
+    }
+}
+
+img#devicePhoto {
+    display: block;
+    width: 100%;
+}
