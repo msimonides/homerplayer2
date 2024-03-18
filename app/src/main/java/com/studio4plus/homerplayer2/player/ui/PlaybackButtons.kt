@@ -27,6 +27,7 @@ package com.studio4plus.homerplayer2.player.ui
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.CircleShape
@@ -49,6 +50,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.base.ui.HomerHapticFeedbackType
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
@@ -88,12 +90,13 @@ fun RoundIconButton(
             containerColor = containerColor,
             contentColor = Color.White // TODO: should this be configurable?
         ),
+        contentPadding = PaddingValues(0.dp),
         interactionSource = interactionSource
     ) {
         Icon(
             iconImage,
             contentDescription = iconContentDescription,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(0.9f)
         )
     }
 }
