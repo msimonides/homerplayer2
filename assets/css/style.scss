@@ -23,7 +23,13 @@ div.screenshots img {
     }
 }
 
-img#devicePhoto {
+img#device_photo {
     display: block;
     width: 100%;
+}
+
+img#kiosk_qr_code {
+    display: block;
+    margin: 4em auto;
+    max-width: 20em;
 }
