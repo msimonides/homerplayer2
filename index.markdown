@@ -2,6 +2,8 @@
 ---
 Homer Player 2 is a very simple audiobook player application for Android phones and tablets.
 
+<a id='google_play_badge' href='https://play.google.com/store/apps/details?id=com.studio4plus.homerplayer2&utm_source=website&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png'/></a>
+
 ## Screenshots
 
 <div class="screenshots">
@@ -21,7 +23,7 @@ Homer Player 2 is a very simple audiobook player application for Android phones 
 
 The project is currently at a very early stage, it is far from polished and some functionality is likely to change.
 
-**The app will be available soon on the Play Store.**
+<a id='google_play_badge' href='https://play.google.com/store/apps/details?id=com.studio4plus.homerplayer2&utm_source=website&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png'/></a>
 
 ## Single application/kiosk mode
 
@@ -31,7 +33,7 @@ This way a tablet can be converted into a simple to use, single purpose audioboo
 
 ### Kiosk installation steps
 
-**The following procedure requires wiping out all data from your device. ALL DATA, ACCOUNTS, INSTALLED APPS.** This is what you want to do for a single-app device, right?
+**The following procedure requires wiping out all data from your device. ALL DATA, ACCOUNTS, INSTALLED APPS.** This is what you want to do for a single-app device.
 
 Please read the instructions to the end before starting the procedure.
 
@@ -61,3 +63,6 @@ If you want to return your device to its original state:
 3. Follow the regular configuration steps.
 
 You can also use the Homer Kiosk Setup app also to drop the special privilege (it can't be undone without repeating the setup procedure above). You can use it if there are some issues with removing the apps. It is best to perform a factory reset afterwards anyway to make sure the device is reset to its original state.
+
+<a id='google_play_badge' href='https://play.google.com/store/apps/details?id=com.studio4plus.homerplayer2&utm_source=website&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png'/></a>
+
