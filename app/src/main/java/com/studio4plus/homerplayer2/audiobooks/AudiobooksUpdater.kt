@@ -41,7 +41,7 @@ class AudiobooksUpdater(
     private val scanner: Scanner
 ) {
     private val triggerFlow: MutableSharedFlow<Unit> =
-        MutableSharedFlow(extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+        MutableSharedFlow(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
     private val _isScanning = MutableStateFlow(false)
     val isScanning: StateFlow<Boolean> get() = _isScanning

@@ -27,11 +27,11 @@ package com.studio4plus.homerplayer2.player.ui
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -55,7 +55,7 @@ fun BooksPager(
     val books = state.books
     val insanePageCount = 10_000
     val zeroPage = insanePageCount / 2
-    fun bookIndex(pageIndex: Int) = (pageIndex - zeroPage).floorMod(books.size)
+    val getBookIndex = rememberBookIndexLambda(zeroPage, state)
 
     val pagerState = rememberPagerState(
         initialPage = zeroPage + state.selectedIndex,
@@ -63,14 +63,14 @@ fun BooksPager(
     )
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.currentPage }.collect { pageIndex ->
-            val bookIndex = (pageIndex - zeroPage).floorMod(books.size)
-            onPageChanged(bookIndex)
+            onPageChanged(getBookIndex(pageIndex))
         }
     }
     LaunchedEffect(pagerState, state.selectedIndex) {
         // scrollToPage breaks the next tap gesture (user needs to tap twice to trigger buttons)
         // Avoid unnecessary calls to minimize the issue. TODO: report to Google.
-        if (bookIndex(pagerState.currentPage) != state.selectedIndex) {
+        val currentSelectedIndex = getBookIndex(pagerState.currentPage)
+        if (currentSelectedIndex != state.selectedIndex) {
             pagerState.scrollToPage(zeroPage + state.selectedIndex)
         }
     }
@@ -79,7 +79,7 @@ fun BooksPager(
         userScrollEnabled = !state.isPlaying
     // TODO: set key
     ) { pageIndex ->
-        val bookIndex = bookIndex(pageIndex)
+        val bookIndex = getBookIndex(pageIndex)
         val book = books[bookIndex]
         BookPage(
             index = bookIndex,
@@ -91,6 +91,17 @@ fun BooksPager(
             landscape = landscape,
             modifier = modifier.padding(itemPadding)
         )
+    }
+}
+
+@Composable
+private fun rememberBookIndexLambda(
+    zeroPage: Int,
+    state: PlayerViewModel.BooksState.Books
+): (pageIndex: Int) -> Int {
+    val bookCountState = rememberUpdatedState(state.books.size)
+    return remember(zeroPage, bookCountState) {
+        { pageIndex: Int -> (pageIndex - zeroPage).floorMod(bookCountState.value) }
     }
 }
 
