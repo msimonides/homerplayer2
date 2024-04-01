@@ -42,6 +42,7 @@ data class FolderItem(
     val uri: Uri,
     val bookCount: Int,
     val bookTitles: String,
+    val firstBookTitle: String?,
     val isScanning: Boolean,
 )
 
@@ -56,7 +57,14 @@ class AudiobookFoldersViewStateFlow(
     private val folders = audiobookFoldersDao.getAll().map { folders ->
         folders.mapNotNull { folder ->
             DocumentFile.fromTreeUri(appContext, folder.uri)?.let { documentFile ->
-                FolderItem(documentFile.name ?: folder.toString(), folder.uri, 0, "", isScanning = true)
+                FolderItem(
+                    documentFile.name ?: folder.toString(),
+                    folder.uri,
+                    0,
+                    "",
+                    firstBookTitle = null,
+                    isScanning = true
+                )
             }
         }
     }.flowOn(dispatcherProvider.Io)
@@ -71,6 +79,7 @@ class AudiobookFoldersViewStateFlow(
             folder.copy(
                 bookCount = bookTitles?.size ?: 0,
                 bookTitles = bookTitles?.joinToEllipsizedString() ?: "",
+                firstBookTitle = bookTitles?.firstOrNull(),
                 isScanning = isScanning,
             )
         }

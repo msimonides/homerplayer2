@@ -45,7 +45,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.CustomAccessibilityAction
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.customActions
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -85,9 +91,17 @@ private fun AudiobookFolderRow(
     onRemoveClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val removeAction = CustomAccessibilityAction(
+        stringResource(R.string.audiobook_folder_accessibility_menu_action_remove),
+        { onRemoveClicked(); true }
+    )
+    val accessibilityActions = listOf(removeAction)
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
+            .semantics(mergeDescendants = true) {
+                customActions = accessibilityActions
+            }
             .heightIn(min = 56.dp)
             .padding(vertical = 8.dp)
     ) {
@@ -100,12 +114,18 @@ private fun AudiobookFolderRow(
         ) {
             Box {
                 if (item.isScanning) {
-                    SmallCircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                    SmallCircularProgressIndicator(
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .clearAndSetSemantics {}
+                    )
                 } else {
                     Text(
                         item.bookCount.toString(),
                         style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.align(Alignment.Center)
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .clearAndSetSemantics {}
                     )
                 }
             }
@@ -117,21 +137,34 @@ private fun AudiobookFolderRow(
                 0 -> stringResource(R.string.audiobook_folder_no_books_found)
                 else -> item.bookTitles
             }
+            val bookTitlesContentDescription = when (item.bookCount) {
+                0 -> stringResource(R.string.audiobook_folder_no_books_found)
+                else -> pluralStringResource(
+                    id = R.plurals.audiobook_folder_content_description,
+                    count = item.bookCount,
+                    item.bookCount,
+                    item.firstBookTitle!!
+                )
+            }
             Text(item.displayName, style = MaterialTheme.typography.bodyLarge)
             Text(
                 bookTitlesSummary,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.semantics {
+                    contentDescription = bookTitlesContentDescription
+                }
             )
         }
         IconButton(
             onClick = onRemoveClicked,
+            modifier = Modifier.clearAndSetSemantics {}
         ) {
             Icon(
                 imageVector = Icons.Rounded.Delete,
-                contentDescription = stringResource(id = R.string.audiobook_folder_delete_button)
+                contentDescription = null,
             )
         }
     }
@@ -142,7 +175,14 @@ private fun AudiobookFolderRow(
 private fun PreviewFolderRow() {
     HomerPlayer2Theme {
         AudiobookFolderRow(
-            FolderItem("My audiobooks", Uri.EMPTY, 2, "Alice in Wonderland, Hamlet", isScanning = false),
+            FolderItem(
+                "My audiobooks",
+                Uri.EMPTY,
+                2,
+                "Alice in Wonderland, Hamlet",
+                firstBookTitle = "Alice in Wonderland",
+                isScanning = false
+            ),
             {}
         )
     }
@@ -153,7 +193,14 @@ private fun PreviewFolderRow() {
 private fun PreviewFolderRowEmpty() {
     HomerPlayer2Theme {
         AudiobookFolderRow(
-            FolderItem("My audiobooks", Uri.EMPTY, 0, "", isScanning = false),
+            FolderItem(
+                "My audiobooks",
+                Uri.EMPTY,
+                0,
+                "",
+                firstBookTitle = null,
+                isScanning = false
+            ),
             {}
         )
     }
@@ -164,7 +211,7 @@ private fun PreviewFolderRowEmpty() {
 private fun PreviewFolderRowScanning() {
     HomerPlayer2Theme {
         AudiobookFolderRow(
-            FolderItem("My audiobooks", Uri.EMPTY, 0, "", isScanning = true),
+            FolderItem("My audiobooks", Uri.EMPTY, 0, "", firstBookTitle = null, isScanning = true),
             {}
         )
     }

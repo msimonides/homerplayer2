@@ -34,6 +34,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.CollectionInfo
+import androidx.compose.ui.semantics.collectionInfo
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -74,9 +77,13 @@ fun BooksPager(
             pagerState.scrollToPage(zeroPage + state.selectedIndex)
         }
     }
+    val bookCollectionInfo = CollectionInfo(rowCount = 1, columnCount = books.size)
     HorizontalPager(
         state = pagerState,
-        userScrollEnabled = !state.isPlaying
+        userScrollEnabled = !state.isPlaying,
+        modifier = Modifier.semantics {
+            collectionInfo = bookCollectionInfo
+        }
     // TODO: set key
     ) { pageIndex ->
         val bookIndex = getBookIndex(pageIndex)
