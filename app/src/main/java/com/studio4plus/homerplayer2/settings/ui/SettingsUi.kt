@@ -38,74 +38,32 @@ import com.studio4plus.homerplayer2.settingsdata.UiThemeMode
 import org.koin.androidx.compose.koinViewModel
 
 private enum class SettingsUiDialogType {
-    UiMode, HideSettingsConfirmation
+    UiMode
 }
 
 @Composable
 fun SettingsUiRoute(
     viewModel: SettingsUiViewModel = koinViewModel(),
-    navigateKioskModeSettings: () -> Unit,
-    closeSettings: () -> Unit,
 ) {
     SettingsUi(
         viewModel.viewState.collectAsStateWithLifecycle().value,
-        onSetFullKioskMode = viewModel::setFullKioskMode,
         onSetHapticFeedback = viewModel::setHapticFeedback,
-        onSetHideSettingsButton = viewModel::setHideSettingsButton,
-        onSetShowSettingsButton = viewModel::setShowBatteryIndicator,
         onSetUiMode = viewModel::setUiMode,
-        onOpenKioskModeDetails = navigateKioskModeSettings,
-        closeSettings = closeSettings,
     )
 }
 
 @Composable
 fun SettingsUi(
     viewState: SettingsUiViewModel.ViewState?,
-    onOpenKioskModeDetails: () -> Unit,
     onSetHapticFeedback: (isEnabled: Boolean) -> Unit,
-    onSetFullKioskMode: (isEnabled: Boolean) -> Unit,
-    onSetHideSettingsButton: (hide: Boolean) -> Unit,
-    onSetShowSettingsButton: (show: Boolean) -> Unit,
     onSetUiMode: (UiThemeMode) -> Unit,
-    closeSettings: () -> Unit,
 ) {
     if (viewState != null) {
         var showUiModeDialog by rememberSaveable { mutableStateOf<SettingsUiDialogType?>(null) }
         Column {
             val settingItemModifier = Modifier.defaultSettingsItem()
-            if (viewState.fullKioskModeAvailable) {
-                SettingSwitch(
-                    label = stringResource(R.string.settings_ui_full_kiosk_mode_label),
-                    value = viewState.fullKioskMode,
-                    onChange = onSetFullKioskMode,
-                    modifier = settingItemModifier
-                )
-            } else {
-                SettingItem(
-                    label = stringResource(R.string.settings_ui_full_kiosk_mode_more_label),
-                    onClick = onOpenKioskModeDetails,
-                    modifier = settingItemModifier
-                )
-            }
-            SettingSwitch(
-                label = stringResource(R.string.settings_ui_hide_settings_button_label),
-                value = viewState.hideSettingsButton,
-                onChange = { isEnabled ->
-                    if (isEnabled) {
-                        showUiModeDialog = SettingsUiDialogType.HideSettingsConfirmation
-                    } else {
-                        onSetHideSettingsButton(false)
-                    }
-                },
-                modifier = settingItemModifier
-            )
-            SettingSwitch(
-                label = stringResource(R.string.settings_ui_show_battery),
-                value = viewState.showBattery,
-                onChange = onSetShowSettingsButton,
-                modifier = settingItemModifier,
-            )
+            // TODO: once haptic feedback is moved to player controls this will become the only
+            //  setting - move it to top level.
             SettingItem(
                 label = stringResource(R.string.settings_ui_mode_label),
                 summary = stringResource(viewState.uiMode.labelRes()),
@@ -113,6 +71,7 @@ fun SettingsUi(
                 modifier = settingItemModifier
             )
             if (viewState.enableHapticFeedback != null) {
+                // TODO: move to player controls.
                 SettingSwitch(
                     label = stringResource(R.string.settings_ui_haptic_feedback_label),
                     value = viewState.enableHapticFeedback,
@@ -127,14 +86,6 @@ fun SettingsUi(
             SettingsUiDialogType.UiMode -> ChooseUiModeDialog(
                 value = viewState.uiMode,
                 onValueChange = onSetUiMode,
-                onDismissRequest = dismissAction
-            )
-            SettingsUiDialogType.HideSettingsConfirmation -> HideSettingsButtonConfirmationDialog(
-                onConfirm = {
-                    onSetHideSettingsButton(true)
-                    dismissAction()
-                    closeSettings()
-                },
                 onDismissRequest = dismissAction
             )
             null -> Unit

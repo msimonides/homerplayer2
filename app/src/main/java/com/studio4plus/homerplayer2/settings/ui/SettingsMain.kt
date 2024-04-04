@@ -44,18 +44,20 @@ fun SettingsMainRoute(
     navigateUiSettings: () -> Unit,
     navigatePlaybackSettings: () -> Unit,
     navigatePlayerUiSettings: () -> Unit,
+    navigateLockdownSettings: () -> Unit,
     navigateTtsSettings: () -> Unit,
     navigateAbout: () -> Unit,
     viewModel: SettingsMainViewModel = koinViewModel()
 ) {
     SettingsMain(
         viewModel.viewState.collectAsStateWithLifecycle().value,
-        navigateFolders,
-        navigateUiSettings,
-        navigatePlaybackSettings,
-        navigatePlayerUiSettings,
-        navigateTtsSettings,
-        navigateAbout,
+        navigateFolders = navigateFolders,
+        navigateUiSettings = navigateUiSettings,
+        navigatePlaybackSettings = navigatePlaybackSettings,
+        navigatePlayerUiSettings = navigatePlayerUiSettings,
+        navigateLockdownSettings = navigateLockdownSettings,
+        navigateTtsSettings = navigateTtsSettings,
+        navigateAbout = navigateAbout,
         viewModel::shareDiagnosticLogsIntent,
     )
 }
@@ -67,6 +69,7 @@ private fun SettingsMain(
     navigateUiSettings: () -> Unit,
     navigatePlaybackSettings: () -> Unit,
     navigatePlayerUiSettings: () -> Unit,
+    navigateLockdownSettings: () -> Unit,
     navigateTtsSettings: () -> Unit,
     navigateAbout: () -> Unit,
     shareDiagnosticLogIntent: suspend () -> Intent,
@@ -96,17 +99,23 @@ private fun SettingsMain(
                 else -> R.string.settings_ui_tts_settings_disabled
             }
             SettingItem(
+                label = stringResource(R.string.settings_ui_audiobooks_folders_item),
+                summary = viewState.audiobookFolders ?: stringResource(R.string.settings_ui_audiobooks_folders_summary_empty),
+                onClick = navigateFolders,
+                modifier = settingItemModifier
+            )
+            SettingItem(
                 label = stringResource(R.string.settings_ui_tts_settings_item),
                 summary = stringResource(ttsSummaryRes),
                 onClick = navigateTtsSettings,
                 modifier = settingItemModifier,
             )
             SettingItem(
-                label = stringResource(R.string.settings_ui_audiobooks_folders),
-                summary = viewState.audiobookFolders ?: stringResource(R.string.settings_ui_audiobooks_folders_summary_empty),
-                onClick = navigateFolders,
-                modifier = settingItemModifier
+                label = stringResource(R.string.settings_ui_lockdown_settings_item),
+                onClick = navigateLockdownSettings,
+                modifier = settingItemModifier,
             )
+            // TODO: move diagnostic log to "about the app".
             SettingItem(
                 label = stringResource(id = R.string.settings_ui_share_diagnostic_log_title),
                 summary = stringResource(id = R.string.settings_ui_share_diagnostic_log_summary),
@@ -135,6 +144,6 @@ private fun PreviewSettingsMain() {
             audiobookFolders = "AudioBooks, Samples",
             ttsEnabled = true,
         )
-        SettingsMain(viewState, {}, {}, {}, {}, {}, {}, { Intent() })
+        SettingsMain(viewState, {}, {}, {}, {}, {}, {}, {}, { Intent() })
     }
 }

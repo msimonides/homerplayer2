@@ -25,6 +25,15 @@
     <string name="generic_dialog_confirm">OK</string>
     <string name="generic_dialog_cancel">Cancel</string>
     <string name="generic_navigate_back">Back</string>
+    <!-- Displayed below button_setup_instructions_website
+     Tells the user they can open the given website address in a browser, e.g. on their laptop.
+     Parameters:
+     %1$s - address of the instructions web page
+
+     Example:
+     or go to:\nhttps://homerplayer.app/setus
+  -->
+    <string name="generic_website_alternative">or go to:\n%1$s</string>
 
     <string name="onboarding_audiobook_folders_title">Audiobooks</string>
     <string name="onboarding_audiobook_folders_description">Please select at least one folder with your audiobooks.</string>
@@ -49,17 +58,30 @@
     <string name="settings_ui_about_item">About the app…</string>
     <string name="settings_ui_about_title">About Homer Player 2</string>
     <string name="settings_ui_settings_title">Settings</string>
-    <string name="settings_ui_audiobooks_folders">Audiobooks folders</string>
+    <string name="settings_ui_audiobooks_folders_item">Audiobooks folders…</string>
+    <string name="settings_ui_audiobooks_folders_title">Audiobooks folders</string>
     <string name="settings_ui_audiobooks_folders_summary_empty">(no folders selected)</string>
-    <string name="settings_ui_full_kiosk_mode_label">Full kiosk mode</string>
-    <string name="settings_ui_full_kiosk_mode_more_label">Full kiosk mode…</string>
     <string name="settings_ui_haptic_feedback_label">Haptic feedback</string>
-    <string name="settings_ui_hide_settings_button_label">Hide settings button</string>
-    <string name="settings_ui_hide_settings_dialog_title">Press both buttons to open settings</string>
-    <string name="settings_ui_hide_settings_dialog_description">Hide settings button to prevent the user from accidentally opening the settings screen.\nPlease test to enable.</string>
-    <string name="settings_ui_hide_settings_dialog_confirm_button">Hide settings button</string>
-    <string name="settings_ui_kiosk_mode_unavailable_title">Full kiosk mode not available</string>
-    <string name="settings_ui_kiosk_mode_unavailable_description">Use Homer Kiosk Setup app to enable kiosk mode.</string>
+    <string name="settings_ui_lockdown_settings_item">Lockdown settings…</string>
+    <string name="settings_ui_lockdown_settings_title">Lockdown settings</string>
+    <string name="settings_ui_lockdown_settings_description">Lock down the app to make a device only for playing audiobooks.</string>
+    <string name="settings_ui_lockdown_hide_settings_button_item">Hide settings button</string>
+    <string name="settings_ui_lockdown_hide_settings_dialog_title">Press both buttons to open settings</string>
+    <string name="settings_ui_lockdown_hide_settings_dialog_description">Hide settings button to prevent the user from accidentally opening the settings screen.\nPlease test to enable.</string>
+    <string name="settings_ui_lockdown_hide_settings_dialog_confirm_button">Hide settings button</string>
+    <string name="settings_ui_lockdown_kiosk_mode_item">Kiosk mode…</string>
+    <string name="settings_ui_lockdown_kiosk_mode_summary_enabled">Enabled</string>
+    <string name="settings_ui_lockdown_kiosk_mode_summary_disabled">Disabled</string>
+    <string name="settings_ui_lockdown_kiosk_mode_dialog_title">Kiosk mode</string>
+    <string name="settings_ui_lockdown_kiosk_mode_dialog_enable">Enable</string>
+    <string name="settings_ui_lockdown_kiosk_mode_dialog_disable">Disable</string>
+    <string name="settings_ui_kiosk_mode_setup_title">Kiosk mode information</string>
+    <string name="settings_ui_kiosk_mode_setup_description1">Kiosk mode locks down the device within the Homer Player application:</string>
+    <string name="settings_ui_kiosk_mode_setup_description1_bullet1">prevents exiting the application with the "back" button,</string>
+    <string name="settings_ui_kiosk_mode_setup_description1_bullet2">notifications and the top system bar are disabled.</string>
+    <string name="settings_ui_kiosk_mode_setup_description2">This functionality requires a special installation procedure.</string>
+    <string name="settings_ui_kiosk_mode_setup_open_instructions">Open instructions</string>
+    <string name="settings_ui_lockdown_show_battery">Show battery indicator</string>
     <string name="settings_ui_licenses_item">Licenses…</string>
     <string name="settings_ui_licenses_title">Licenses</string>
     <string name="settings_ui_mode_label">Color scheme</string>
@@ -91,7 +113,6 @@
     <string name="settings_ui_privacy_policy_item">Privacy policy…</string>
     <string name="settings_ui_share_diagnostic_log_title">Share diagnostic log</string>
     <string name="settings_ui_share_diagnostic_log_summary">Send diagnostic log to developer to report an issue</string>
-    <string name="settings_ui_show_battery">Show battery indicator</string>
     <string name="settings_ui_tts_settings_item">Text-to-speech…</string>
     <string name="settings_ui_tts_settings_enabled">Enabled</string>
     <string name="settings_ui_tts_settings_disabled">Disabled</string>

@@ -24,48 +24,52 @@
 
 package com.studio4plus.homerplayer2.settings.ui
 
+import android.app.admin.DevicePolicyManager
+import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.studio4plus.homerplayer2.base.ui.VibratorProvider
 import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
 import com.studio4plus.homerplayer2.settingsdata.UiSettings
-import com.studio4plus.homerplayer2.settingsdata.UiThemeMode
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import org.koin.android.annotation.KoinViewModel
 import org.koin.core.annotation.Named
 
 @KoinViewModel
-class SettingsUiViewModel(
+class SettingsLockdownViewModel(
     @Named(SettingsDataModule.UI) private val uiSettingsStore: DataStore<UiSettings>,
     private val mainScope: CoroutineScope,
-    private val vibratorProvider: VibratorProvider,
+    private val appContext: Context,
+    private val dpm: DevicePolicyManager,
 ) : ViewModel() {
 
     class ViewState(
-        val enableHapticFeedback: Boolean?,
-        val uiMode: UiThemeMode,
+        val fullKioskMode: Boolean,
+        val fullKioskModeAvailable: Boolean,
+        val hideSettingsButton: Boolean,
+        val showBattery: Boolean,
     )
 
     val viewState = uiSettingsStore.data.map { uiSettings ->
+        val fullKioskModeAvailable = dpm.isLockTaskPermitted(appContext.packageName)
+        val fullKioskModeEnabled = uiSettings.fullKioskMode && fullKioskModeAvailable
         ViewState(
-            enableHapticFeedback =
-                uiSettings.enableHapticFeedback.takeIf { hapticFeedbackAvailable() },
-            uiMode = uiSettings.uiThemeMode,
+            fullKioskMode = fullKioskModeEnabled,
+            fullKioskModeAvailable = fullKioskModeAvailable,
+            hideSettingsButton = uiSettings.hideSettingsButton,
+            showBattery = uiSettings.showBatteryIndicator,
         )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
-
-
-    fun setHapticFeedback(isEnabled: Boolean) {
-        mainScope.launchUpdate(uiSettingsStore) { it.copy(enableHapticFeedback = isEnabled) }
     }
 
-    fun setUiMode(newUiMode: UiThemeMode) {
-        mainScope.launchUpdate(uiSettingsStore) { it.copy(uiThemeMode = newUiMode) }
+    fun setFullKioskMode(isEnabled: Boolean) {
+        mainScope.launchUpdate(uiSettingsStore) { it.copy(fullKioskMode = isEnabled) }
     }
 
-    private fun hapticFeedbackAvailable() = vibratorProvider.isAvailable
+    fun setHideSettingsButton(isHidden: Boolean) {
+        mainScope.launchUpdate(uiSettingsStore) { it.copy(hideSettingsButton = isHidden) }
+    }
+
+    fun setShowBatteryIndicator(isShown: Boolean) {
+        mainScope.launchUpdate(uiSettingsStore) { it.copy(showBatteryIndicator = isShown) }
+    }
 }

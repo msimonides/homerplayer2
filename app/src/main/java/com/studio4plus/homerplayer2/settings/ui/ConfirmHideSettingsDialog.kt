@@ -124,12 +124,12 @@ private fun HideSettingsButtonConfirmation(
             }
         }
         Text(
-            stringResource(R.string.settings_ui_hide_settings_dialog_title),
+            stringResource(R.string.settings_ui_lockdown_hide_settings_dialog_title),
             style = MaterialTheme.typography.headlineSmall,
             modifier = Modifier.padding(bottom = 16.dp)
         )
         Text(
-            stringResource(R.string.settings_ui_hide_settings_dialog_description),
+            stringResource(R.string.settings_ui_lockdown_hide_settings_dialog_description),
         )
         Button(
             onClick = onConfirm,
@@ -138,7 +138,7 @@ private fun HideSettingsButtonConfirmation(
                 .padding(top = 8.dp),
             enabled = successfullyTested
         ) {
-            Text(stringResource(R.string.settings_ui_hide_settings_dialog_confirm_button))
+            Text(stringResource(R.string.settings_ui_lockdown_hide_settings_dialog_confirm_button))
         }
     }
 }

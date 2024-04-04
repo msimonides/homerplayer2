@@ -136,8 +136,9 @@ private fun SettingsNavHost(
 ) {
     val mainTitle = stringResource(id = R.string.settings_ui_settings_title)
     val aboutTitle = stringResource(id = R.string.settings_ui_about_title)
-    val foldersTitle = stringResource(id = R.string.settings_ui_audiobooks_folders)
-    val kioskModeTitle = stringResource(id = R.string.settings_ui_full_kiosk_mode_label)
+    val foldersTitle = stringResource(id = R.string.settings_ui_audiobooks_folders_title)
+    val kioskSetupTitle = stringResource(id = R.string.settings_ui_kiosk_mode_setup_title)
+    val lockdownTitle = stringResource(id = R.string.settings_ui_lockdown_settings_title)
     val licensesTitle = stringResource(id = R.string.settings_ui_licenses_title)
     val playbackTitle = stringResource(id = R.string.settings_ui_playback_settings_title)
     val playerUiTitle = stringResource(id = R.string.settings_ui_player_ui_title)
@@ -159,6 +160,7 @@ private fun SettingsNavHost(
                 navigateFolders = { navController.navigate("folders") },
                 navigatePlaybackSettings = { navController.navigate("playback_settings") },
                 navigatePlayerUiSettings = { navController.navigate("player_ui_settings") },
+                navigateLockdownSettings = { navController.navigate("lockdown_settings") },
                 navigateTtsSettings = { navController.navigate("tts_settings") },
                 navigateUiSettings = { navController.navigate("ui_settings") },
                 navigateAbout = { navController.navigate("about") }
@@ -172,11 +174,17 @@ private fun SettingsNavHost(
         composable("folders", label = foldersTitle) {
             SettingsFoldersRoute()
         }
-        composable("kiosk_mode_settings", label = kioskModeTitle) {
-            SettingsKioskModeRoute()
+        composable("kiosk_setup", label = kioskSetupTitle) {
+            SettingsKioskModeSetupRoute()
         }
         composable("licenses", label = licensesTitle) {
             SettingsLicenses()
+        }
+        composable("lockdown_settings", label = lockdownTitle) {
+            SettingsLockdownRoute(
+                navigateKioskModeSettings = { navController.navigate("kiosk_setup") },
+                closeSettings = closeSettings
+            )
         }
         composable("playback_settings", label = playbackTitle) {
             SettingsPlaybackRoute()
@@ -188,10 +196,7 @@ private fun SettingsNavHost(
             SettingsTtsRoute(snackbarHostState)
         }
         composable("ui_settings", label = uiTitle) {
-            SettingsUiRoute(
-                closeSettings = closeSettings,
-                navigateKioskModeSettings = { navController.navigate("kiosk_mode_settings") }
-            )
+            SettingsUiRoute()
         }
     }
 }
