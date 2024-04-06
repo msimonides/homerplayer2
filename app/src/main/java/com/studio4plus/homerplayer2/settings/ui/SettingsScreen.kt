@@ -143,7 +143,6 @@ private fun SettingsNavHost(
     val playbackTitle = stringResource(id = R.string.settings_ui_playback_settings_title)
     val playerUiTitle = stringResource(id = R.string.settings_ui_player_ui_title)
     val ttsTitle = stringResource(id = R.string.settings_ui_tts_settings_title)
-    val uiTitle = stringResource(id = R.string.settings_ui_ui_settings_title)
     NavHost(
         modifier = modifier
             .fillMaxSize()
@@ -162,7 +161,6 @@ private fun SettingsNavHost(
                 navigatePlayerUiSettings = { navController.navigate("player_ui_settings") },
                 navigateLockdownSettings = { navController.navigate("lockdown_settings") },
                 navigateTtsSettings = { navController.navigate("tts_settings") },
-                navigateUiSettings = { navController.navigate("ui_settings") },
                 navigateAbout = { navController.navigate("about") }
             )
         }
@@ -194,9 +192,6 @@ private fun SettingsNavHost(
         }
         composable("tts_settings", label = ttsTitle) {
             SettingsTtsRoute(snackbarHostState)
-        }
-        composable("ui_settings", label = uiTitle) {
-            SettingsUiRoute()
         }
     }
 }

@@ -24,24 +24,24 @@
 
 package com.studio4plus.homerplayer2.settings.ui
 
-import android.content.Intent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
-import kotlinx.coroutines.launch
+import com.studio4plus.homerplayer2.settingsdata.UiThemeMode
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SettingsMainRoute(
     navigateFolders: () -> Unit,
-    navigateUiSettings: () -> Unit,
     navigatePlaybackSettings: () -> Unit,
     navigatePlayerUiSettings: () -> Unit,
     navigateLockdownSettings: () -> Unit,
@@ -51,39 +51,35 @@ fun SettingsMainRoute(
 ) {
     SettingsMain(
         viewModel.viewState.collectAsStateWithLifecycle().value,
+        onSetUiMode = viewModel::setUiMode,
         navigateFolders = navigateFolders,
-        navigateUiSettings = navigateUiSettings,
         navigatePlaybackSettings = navigatePlaybackSettings,
         navigatePlayerUiSettings = navigatePlayerUiSettings,
         navigateLockdownSettings = navigateLockdownSettings,
         navigateTtsSettings = navigateTtsSettings,
         navigateAbout = navigateAbout,
-        viewModel::shareDiagnosticLogsIntent,
     )
+}
+
+private enum class SettingsMainDialogType {
+    UiMode
 }
 
 @Composable
 private fun SettingsMain(
     viewState: SettingsMainViewModel.ViewState?,
+    onSetUiMode: (UiThemeMode) -> Unit,
     navigateFolders: () -> Unit,
-    navigateUiSettings: () -> Unit,
     navigatePlaybackSettings: () -> Unit,
     navigatePlayerUiSettings: () -> Unit,
     navigateLockdownSettings: () -> Unit,
     navigateTtsSettings: () -> Unit,
     navigateAbout: () -> Unit,
-    shareDiagnosticLogIntent: suspend () -> Intent,
 ) {
     if (viewState != null) {
-        val coroutineScope = rememberCoroutineScope()
-        val context = LocalContext.current
+        var showUiModeDialog by rememberSaveable { mutableStateOf<SettingsMainDialogType?>(null) }
         Column {
             val settingItemModifier = Modifier.defaultSettingsItem()
-            SettingItem(
-                label = stringResource(R.string.settings_ui_ui_settings_item),
-                onClick = navigateUiSettings,
-                modifier = settingItemModifier,
-            )
             SettingItem(
                 label = stringResource(R.string.settings_ui_player_ui_item),
                 onClick = navigatePlayerUiSettings,
@@ -111,21 +107,15 @@ private fun SettingsMain(
                 modifier = settingItemModifier,
             )
             SettingItem(
+                label = stringResource(R.string.settings_ui_mode_label),
+                summary = stringResource(viewState.uiMode.labelRes()),
+                onClick = { showUiModeDialog = SettingsMainDialogType.UiMode },
+                modifier = settingItemModifier
+            )
+            SettingItem(
                 label = stringResource(R.string.settings_ui_lockdown_settings_item),
                 onClick = navigateLockdownSettings,
                 modifier = settingItemModifier,
-            )
-            // TODO: move diagnostic log to "about the app".
-            SettingItem(
-                label = stringResource(id = R.string.settings_ui_share_diagnostic_log_title),
-                summary = stringResource(id = R.string.settings_ui_share_diagnostic_log_summary),
-                onClick = {
-                    coroutineScope.launch {
-                        val shareIntent = shareDiagnosticLogIntent()
-                        context.startActivity(shareIntent)
-                    }
-                },
-                modifier = settingItemModifier
             )
             SettingItem(
                 label = stringResource(R.string.settings_ui_about_item),
@@ -133,7 +123,39 @@ private fun SettingsMain(
                 modifier = settingItemModifier
             )
         }
+
+        val dismissAction = { showUiModeDialog = null }
+        when (showUiModeDialog) {
+            SettingsMainDialogType.UiMode -> ChooseUiModeDialog(
+                value = viewState.uiMode,
+                onValueChange = onSetUiMode,
+                onDismissRequest = dismissAction
+            )
+            null -> Unit
+        }
     }
+}
+
+@Composable
+private fun ChooseUiModeDialog(
+    value: UiThemeMode,
+    onValueChange: (UiThemeMode) -> Unit,
+    onDismissRequest: () -> Unit
+) {
+    SelectFromListDialog(
+        selectedValue = value,
+        values = listOf(UiThemeMode.SYSTEM, UiThemeMode.LIGHT, UiThemeMode.DARK),
+        produceLabel = { stringResource(id = it.labelRes()) },
+        title = stringResource(id = R.string.settings_ui_mode_label),
+        onValueChange = onValueChange,
+        onDismissRequest = onDismissRequest
+    )
+}
+
+private fun UiThemeMode.labelRes() = when(this) {
+    UiThemeMode.SYSTEM -> R.string.settings_ui_mode_system
+    UiThemeMode.LIGHT -> R.string.settings_ui_mode_light
+    UiThemeMode.DARK -> R.string.settings_ui_mode_dark
 }
 
 @Preview
@@ -143,7 +165,8 @@ private fun PreviewSettingsMain() {
         val viewState = SettingsMainViewModel.ViewState(
             audiobookFolders = "AudioBooks, Samples",
             ttsEnabled = true,
+            uiMode = UiThemeMode.SYSTEM,
         )
-        SettingsMain(viewState, {}, {}, {}, {}, {}, {}, {}, { Intent() })
+        SettingsMain(viewState, {}, {}, {}, {}, {}, {}, {})
     }
 }

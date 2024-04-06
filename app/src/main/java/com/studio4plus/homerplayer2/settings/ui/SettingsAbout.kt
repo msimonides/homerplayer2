@@ -24,15 +24,20 @@
 
 package com.studio4plus.homerplayer2.settings.ui
 
+import android.content.Intent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.studio4plus.homerplayer2.BuildConfig
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.base.Constants
+import com.studio4plus.homerplayer2.logging.PrepareIntentForLogSharing
 import com.studio4plus.homerplayer2.utils.openWebUrl
+import kotlinx.coroutines.launch
+import org.koin.compose.koinInject
 
 @Composable
 fun SettingsAboutRoute(
@@ -40,20 +45,36 @@ fun SettingsAboutRoute(
 ) {
     val context = LocalContext.current
     val openPrivacyPolicy = { openWebUrl(context, Constants.UrlPrivacyPolicy) }
+    val prepareIntentForLogSharing: PrepareIntentForLogSharing = koinInject()
 
     SettingsAbout(
+        shareDiagnosticLogIntent = prepareIntentForLogSharing::invoke,
         navigateLicenses = navigateLicenses,
-        navigatePrivacyPolicy = openPrivacyPolicy
+        navigatePrivacyPolicy = openPrivacyPolicy,
     )
 }
 
 @Composable
 private fun SettingsAbout(
+    shareDiagnosticLogIntent: suspend () -> Intent,
     navigateLicenses: () -> Unit,
     navigatePrivacyPolicy: () -> Unit,
 ) {
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
     Column {
         val settingItemModifier = Modifier.defaultSettingsItem()
+        SettingItem(
+            label = stringResource(id = R.string.settings_ui_share_diagnostic_log_title),
+            summary = stringResource(id = R.string.settings_ui_share_diagnostic_log_summary),
+            onClick = {
+                coroutineScope.launch {
+                    val shareIntent = shareDiagnosticLogIntent()
+                    context.startActivity(shareIntent)
+                }
+            },
+            modifier = settingItemModifier
+        )
         SettingItem(
             label = stringResource(R.string.settings_ui_privacy_policy_item),
             onClick = navigatePrivacyPolicy,

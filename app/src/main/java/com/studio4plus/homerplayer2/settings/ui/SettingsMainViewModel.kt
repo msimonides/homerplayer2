@@ -33,6 +33,8 @@ import com.studio4plus.homerplayer2.audiobooks.ui.joinToEllipsizedString
 import com.studio4plus.homerplayer2.logging.PrepareIntentForLogSharing
 import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
 import com.studio4plus.homerplayer2.settingsdata.UiSettings
+import com.studio4plus.homerplayer2.settingsdata.UiThemeMode
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
@@ -41,14 +43,15 @@ import org.koin.core.annotation.Named
 
 @KoinViewModel
 class SettingsMainViewModel(
+    private val mainScope: CoroutineScope,
     audiobookFolderNamesFlow: AudiobookFolderNamesFlow,
-    private val prepareIntentForLogSharing: PrepareIntentForLogSharing,
     @Named(SettingsDataModule.UI) private val uiSettingsStore: DataStore<UiSettings>
 ) : ViewModel() {
 
     class ViewState(
         val audiobookFolders: String?,
         val ttsEnabled: Boolean,
+        val uiMode: UiThemeMode,
     )
 
     val viewState = combine(
@@ -57,9 +60,12 @@ class SettingsMainViewModel(
     ) { folderNames, uiSettings ->
         ViewState(
             audiobookFolders = folderNames.takeIf { it.isNotEmpty() }?.joinToEllipsizedString(),
-            ttsEnabled = uiSettings.readBookTitles
+            ttsEnabled = uiSettings.readBookTitles,
+            uiMode = uiSettings.uiThemeMode,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
-    suspend fun shareDiagnosticLogsIntent(): Intent = prepareIntentForLogSharing()
+    fun setUiMode(newUiMode: UiThemeMode) {
+        mainScope.launchUpdate(uiSettingsStore) { it.copy(uiThemeMode = newUiMode) }
+    }
 }

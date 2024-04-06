@@ -27,6 +27,7 @@ package com.studio4plus.homerplayer2.settings.ui
 import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.studio4plus.homerplayer2.base.ui.VibratorProvider
 import com.studio4plus.homerplayer2.settingsdata.PlaybackSettings
 import com.studio4plus.homerplayer2.settingsdata.PlayerUiSettings
 import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
@@ -44,25 +45,32 @@ import org.koin.core.annotation.Named
 class SettingsPlayerUiViewModel(
     private val mainScope: CoroutineScope,
     @Named(SettingsDataModule.PLAYBACK) private val playbackSettingsStore: DataStore<PlaybackSettings>,
-    @Named(SettingsDataModule.UI) private val uiSettingStore: DataStore<UiSettings>,
+    @Named(SettingsDataModule.UI) private val uiSettingsStore: DataStore<UiSettings>,
+    private val vibratorProvider: VibratorProvider,
 ) : ViewModel() {
     data class ViewState(
         val flipToStop: Boolean,
+        val hapticFeedback: Boolean?,
         val playerUiSettings: PlayerUiSettings,
     )
 
     val viewState = combine(
         playbackSettingsStore.data,
-        uiSettingStore.data
+        uiSettingsStore.data
     ) { playbackSettings, uiSettings ->
         ViewState(
             flipToStop = playbackSettings.flipToStop,
+            hapticFeedback = uiSettings.enableHapticFeedback.takeIf { hapticFeedbackAvailable() },
             playerUiSettings = uiSettings.playerUiSettings,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
     fun setFlipToStop(enabled: Boolean) {
         mainScope.launchUpdate(playbackSettingsStore) { it.copy(flipToStop = enabled) }
+    }
+
+    fun setHapticFeedback(isEnabled: Boolean) {
+        mainScope.launchUpdate(uiSettingsStore) { it.copy(enableHapticFeedback = isEnabled) }
     }
 
     fun setShowVolumeControls(enabled: Boolean) {
@@ -78,6 +86,8 @@ class SettingsPlayerUiViewModel(
     }
 
     private fun updatePlayerUiSettings(transform: (PlayerUiSettings) -> PlayerUiSettings) {
-        mainScope.launchUpdate(uiSettingStore) { it.copy(playerUiSettings = transform(it.playerUiSettings)) }
+        mainScope.launchUpdate(uiSettingsStore) { it.copy(playerUiSettings = transform(it.playerUiSettings)) }
     }
+
+    private fun hapticFeedbackAvailable() = vibratorProvider.isAvailable
 }

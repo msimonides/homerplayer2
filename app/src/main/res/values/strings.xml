@@ -119,8 +119,6 @@
     <string name="settings_ui_tts_settings_title">Text-to-speech</string>
     <string name="settings_ui_tts_read_book_titles">Read book titles</string>
     <string name="settings_ui_tts_open_settings">Open text-to-speech settings…</string>
-    <string name="settings_ui_ui_settings_item">UI settings…</string>
-    <string name="settings_ui_ui_settings_title">UI settings</string>
     <string name="settings_ui_version_item">Version</string>
 
     <plurals name="settings_time_seconds">

@@ -65,6 +65,7 @@ fun SettingsPlayerUiRoute(
         SettingsPlayerUi(
             viewState,
             onSetFlipToStop = viewModel::setFlipToStop,
+            onSetHapticFeedback = viewModel::setHapticFeedback,
             onSetShowVolumeControls = viewModel::setShowVolumeControls,
             onSetShowFfRewindControls = viewModel::setShowFfRewindControls,
             onSetShowSeekControls = viewModel::setShowSeekControls,
@@ -76,6 +77,7 @@ fun SettingsPlayerUiRoute(
 private fun SettingsPlayerUi(
     viewState: SettingsPlayerUiViewModel.ViewState,
     onSetFlipToStop: (Boolean) -> Unit,
+    onSetHapticFeedback: (Boolean) -> Unit,
     onSetShowVolumeControls: (Boolean) -> Unit,
     onSetShowFfRewindControls: (Boolean) -> Unit,
     onSetShowSeekControls: (Boolean) -> Unit,
@@ -138,6 +140,14 @@ private fun SettingsPlayerUi(
                 onChange = onSetFlipToStop,
                 modifier = settingItemModifier,
             )
+            if (viewState.hapticFeedback != null) {
+                SettingSwitch(
+                    label = stringResource(R.string.settings_ui_haptic_feedback_label),
+                    value = viewState.hapticFeedback,
+                    onChange = onSetHapticFeedback,
+                    modifier = settingItemModifier,
+                )
+            }
         }
     }
 }
