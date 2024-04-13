@@ -57,24 +57,22 @@ class MediaDurationExtractor(
 
     private suspend fun ExoPlayer.extractDuration(uri: Uri): AudiobookFileDuration =
         suspendCoroutine { continuation ->
-            fun result(durationMs: Long) = AudiobookFileDuration(uri, durationMs)
-
             val listener = object : Player.Listener {
+                private fun result(durationMs: Long) {
+                    removeListener(this)
+                    continuation.resume(AudiobookFileDuration(uri, durationMs))
+                }
+
                 override fun onPlayerError(error: PlaybackException) {
                     super.onPlayerError(error)
-                    removeListener(this)
-                    continuation.resume(result(AudiobookFileDuration.INVALID))
+                    result(AudiobookFileDuration.INVALID)
                 }
 
                 override fun onPlaybackStateChanged(playbackState: Int) {
                     super.onPlaybackStateChanged(playbackState)
                     when (playbackState) {
-                        Player.STATE_READY -> {
-                            removeListener(this)
-                            continuation.resume(result(this@extractDuration.duration))
-                        }
-
-                        Player.STATE_ENDED -> continuation.resume(result(AudiobookFileDuration.INVALID))
+                        Player.STATE_READY -> result(this@extractDuration.duration)
+                        Player.STATE_ENDED -> result(AudiobookFileDuration.INVALID)
                         Player.STATE_BUFFERING -> Unit
                         Player.STATE_IDLE -> Unit
                     }
