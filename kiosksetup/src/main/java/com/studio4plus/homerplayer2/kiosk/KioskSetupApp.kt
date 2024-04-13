@@ -46,6 +46,7 @@ class KioskSetupApp : Application() {
         if (!BuildConfig.DEBUG) {
             SentryAndroid.init(this) { options ->
                 options.dsn = getString(R.string.sentry_dsn)
+                options.isAnrEnabled = false
                 options.isEnableAppLifecycleBreadcrumbs = true
                 options.isEnableAppComponentBreadcrumbs = true
 
