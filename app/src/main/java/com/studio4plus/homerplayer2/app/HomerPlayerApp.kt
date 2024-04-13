@@ -51,6 +51,9 @@ class HomerPlayerApp : Application() {
         }
         val fileLoggerProvider: FileLoggerTreeProvider by inject()
         Timber.plant(fileLoggerProvider())
+
+        val appIsInForeground: AppIsInForeground by inject()
+        registerActivityLifecycleCallbacks(appIsInForeground)
     }
 
     // Try to share Sentry configuration between app and kiosksetup.

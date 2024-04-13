@@ -24,14 +24,11 @@
 
 package com.studio4plus.homerplayer2.app
 
-import android.app.admin.DevicePolicyManager
-import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksUpdater
-import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
-import com.studio4plus.homerplayer2.settingsdata.UiSettings
+import com.studio4plus.homerplayer2.fullkioskmode.IsFullKioskEnabled
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -40,19 +37,17 @@ import org.koin.core.annotation.Named
 
 @KoinViewModel
 class MainActivityViewModel(
-    appContext: Context,
-    dpm: DevicePolicyManager,
     @Named(DATASTORE_APP_STATE) appState: DataStore<StoredAppState>,
-    @Named(SettingsDataModule.UI) uiSettings: DataStore<UiSettings>,
+    isFullKioskEnabled: IsFullKioskEnabled,
     private val audiobooksUpdater: AudiobooksUpdater,
 ) : ViewModel() {
     val viewState = appState.data.map {
         MainActivityViewState.Ready(!it.onboardingCompleted)
     }.stateIn(viewModelScope, SharingStarted.Eagerly, MainActivityViewState.Loading)
 
-    val lockTask = uiSettings.data.map {
-        it.fullKioskMode && dpm.isLockTaskPermitted(appContext.packageName)
-    }.stateIn(viewModelScope, SharingStarted.Eagerly, false)
+    val lockTask = isFullKioskEnabled()
+        .map { it.isEnabledNow }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
     fun onResume() {
         audiobooksUpdater.trigger()

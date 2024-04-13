@@ -36,6 +36,7 @@ import com.studio4plus.homerplayer2.audiobooks.AudiobooksModule
 import com.studio4plus.homerplayer2.base.BaseModule
 import com.studio4plus.homerplayer2.base.DispatcherProvider
 import com.studio4plus.homerplayer2.battery.BatteryModule
+import com.studio4plus.homerplayer2.fullkioskmode.FullKioskModeModule
 import com.studio4plus.homerplayer2.loccalstorage.LOCAL_STORAGE_JSON
 import com.studio4plus.homerplayer2.loccalstorage.LocalStorageModule
 import com.studio4plus.homerplayer2.loccalstorage.createDataStore
@@ -46,6 +47,7 @@ import com.studio4plus.homerplayer2.settings.SettingsModule
 import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
 import com.studio4plus.homerplayer2.utils.Clock
 import com.studio4plus.homerplayer2.utils.DefaultClock
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.serialization.json.Json
 import org.koin.core.annotation.ComponentScan
 import org.koin.core.annotation.Factory
@@ -60,6 +62,7 @@ const val DATASTORE_APP_STATE = "appState"
         AudiobooksModule::class,
         BaseModule::class,
         BatteryModule::class,
+        FullKioskModeModule::class,
         LocalStorageModule::class,
         LoggingModule::class,
         OnboardingModule::class,
@@ -75,11 +78,13 @@ class AppModule {
     @Named(DATASTORE_APP_STATE)
     fun appStateDatastore(
         appContext: Context,
+        mainScope: CoroutineScope,
         dispatcherProvider: DispatcherProvider,
         @Named(LOCAL_STORAGE_JSON) json: Json
     ): DataStore<StoredAppState> =
         createDataStore(
             appContext,
+            mainScope,
             dispatcherProvider,
             json,
             DATASTORE_APP_STATE,

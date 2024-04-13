@@ -124,7 +124,7 @@ private fun SelectRewindOnResumeDialog(
     onValueChange: (Int) -> Unit,
     onDismissRequest: () -> Unit
 ) {
-    SelectFromListDialog(
+    SelectFromRadioListDialog(
         selectedValue = value,
         values = listOf(0, 5, 15, 30, 60),
         produceLabel = { rewindOnResumeSettingString(it) },
@@ -147,7 +147,7 @@ private fun SelectSleepTimerDialog(
     onValueChange: (Int) -> Unit,
     onDismissRequest: () -> Unit
 ) {
-    SelectFromListDialog(
+    SelectFromRadioListDialog(
         selectedValue = value,
         values = listOf(
             0,
@@ -186,7 +186,7 @@ private fun SelectPlaybackSpeedDialog(
         onPlaySample(speed)
         selection = speed
     }
-    SelectFromListDialog(
+    SelectFromRadioListDialog(
         title = stringResource(R.string.settings_ui_playback_speed_title),
         selectedValue = selection,
         values = listOf(2.0f, 1.5f, 1.0f, 0.8f, 0.65f, 0.5f),

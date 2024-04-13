@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Marcin Simonides
+ * Copyright (c) 2024 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,41 +27,25 @@ package com.studio4plus.homerplayer2.app
 import android.content.ComponentName
 import android.content.Context
 import android.content.pm.PackageManager
-import androidx.datastore.core.DataStore
-import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
-import com.studio4plus.homerplayer2.settingsdata.UiSettings
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
-import org.koin.core.annotation.Named
-import org.koin.core.annotation.Single
+import com.studio4plus.homerplayer2.fullkioskmode.HomeComponent
+import org.koin.core.annotation.Factory
 
 private const val HOME_ACTIVITY_ALIAS = "com.studio4plus.homerplayer2.app.HomeActivity"
 
-@Single(createdAtStart = true)
-class SetHomeActivity(
-    mainScope: CoroutineScope,
-    appContext: Context,
-    @Named(SettingsDataModule.UI) uiSettings: DataStore<UiSettings>
-) {
+@Factory
+class AppHomeComponent(
+    private val appContext: Context
+) : HomeComponent {
 
-    private val fullKioskEnabled = uiSettings.data.map {
-        it.fullKioskMode
-    }
-
-    init {
-        fullKioskEnabled
-            .onEach { isEnabled ->
-                val homeComponentName = ComponentName(appContext, HOME_ACTIVITY_ALIAS)
-                val enabledState =
-                    if (isEnabled) PackageManager.COMPONENT_ENABLED_STATE_ENABLED
-                    else PackageManager.COMPONENT_ENABLED_STATE_DISABLED
-                appContext.packageManager.setComponentEnabledSetting(
-                    homeComponentName,
-                    enabledState,
-                    PackageManager.DONT_KILL_APP
-                )
-            }.launchIn(mainScope)
+    override fun setEnabled(enable: Boolean) {
+        val homeComponentName = ComponentName(appContext, HOME_ACTIVITY_ALIAS)
+        val enabledState =
+            if (enable) PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+            else PackageManager.COMPONENT_ENABLED_STATE_DISABLED
+        appContext.packageManager.setComponentEnabledSetting(
+            homeComponentName,
+            enabledState,
+            PackageManager.DONT_KILL_APP
+        )
     }
 }

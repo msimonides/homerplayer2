@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Marcin Simonides
+ * Copyright (c) 2024 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,22 +22,15 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.settings
+package com.studio4plus.homerplayer2.testutils
 
-import com.studio4plus.homerplayer2.fullkioskmode.FullKioskModeModule
-import com.studio4plus.homerplayer2.logging.LoggingModule
-import com.studio4plus.homerplayer2.player.PlayerModule
-import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
-import org.koin.core.annotation.ComponentScan
-import org.koin.core.annotation.Module
+import com.studio4plus.homerplayer2.utils.Clock
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.currentTime
 
-@Module(
-    includes = [
-        FullKioskModeModule::class,
-        LoggingModule::class,
-        PlayerModule::class,
-        SettingsDataModule::class
-    ]
-)
-@ComponentScan("com.studio4plus.homerplayer2.settings")
-class SettingsModule
+@OptIn(ExperimentalCoroutinesApi::class)
+class TestClock(private val testScope: TestScope) : Clock {
+    override fun elapsedRealTime(): Long = testScope.currentTime
+    override fun wallTime(): Long = testScope.currentTime
+}

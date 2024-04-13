@@ -24,45 +24,64 @@
 
 package com.studio4plus.homerplayer2.settings.ui
 
-import android.app.admin.DevicePolicyManager
-import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
+import com.studio4plus.homerplayer2.fullkioskmode.IsFullKioskAvailable
+import com.studio4plus.homerplayer2.fullkioskmode.IsFullKioskEnabled
+import com.studio4plus.homerplayer2.settingsdata.FullKioskModeSetting
 import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
 import com.studio4plus.homerplayer2.settingsdata.UiSettings
+import com.studio4plus.homerplayer2.utils.Clock
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import org.koin.android.annotation.KoinViewModel
 import org.koin.core.annotation.Named
+import kotlin.time.Duration.Companion.minutes
+
+private val TEMPORARY_KIOSK_MODE_DISABLE_DURATION = 10.minutes
 
 @KoinViewModel
 class SettingsLockdownViewModel(
     @Named(SettingsDataModule.UI) private val uiSettingsStore: DataStore<UiSettings>,
     private val mainScope: CoroutineScope,
-    private val appContext: Context,
-    private val dpm: DevicePolicyManager,
+    private val isFullKioskAvailable: IsFullKioskAvailable,
+    private val clock: Clock,
+    isFullKioskEnabled: IsFullKioskEnabled,
 ) : ViewModel() {
 
+    enum class FullKioskModeSetValue {
+        Enable, Disable, DisableTemporarily
+    }
+
     class ViewState(
-        val fullKioskMode: Boolean,
+        val fullKioskMode: IsFullKioskEnabled.Value,
         val fullKioskModeAvailable: Boolean,
         val hideSettingsButton: Boolean,
         val showBattery: Boolean,
     )
 
-    val viewState = uiSettingsStore.data.map { uiSettings ->
-        val fullKioskModeAvailable = dpm.isLockTaskPermitted(appContext.packageName)
-        val fullKioskModeEnabled = uiSettings.fullKioskMode && fullKioskModeAvailable
+    val viewState = combine(
+        uiSettingsStore.data,
+        isFullKioskEnabled()
+    ) { uiSettings, fullKioskModeValue ->
         ViewState(
-            fullKioskMode = fullKioskModeEnabled,
-            fullKioskModeAvailable = fullKioskModeAvailable,
+            fullKioskMode = fullKioskModeValue,
+            fullKioskModeAvailable = isFullKioskAvailable(),
             hideSettingsButton = uiSettings.hideSettingsButton,
             showBattery = uiSettings.showBatteryIndicator,
         )
     }
 
-    fun setFullKioskMode(isEnabled: Boolean) {
-        mainScope.launchUpdate(uiSettingsStore) { it.copy(fullKioskMode = isEnabled) }
+    fun setFullKioskMode(value: FullKioskModeSetValue) {
+        mainScope.launchUpdate(uiSettingsStore) {
+            val enableTimestamp = when (value) {
+                FullKioskModeSetValue.Enable -> FullKioskModeSetting.ENABLED
+                FullKioskModeSetValue.Disable -> FullKioskModeSetting.DISABLED
+                FullKioskModeSetValue.DisableTemporarily ->
+                    clock.wallTime() + TEMPORARY_KIOSK_MODE_DISABLE_DURATION.inWholeMilliseconds
+            }
+            it.copy(fullKioskModeEnableTimestamp = enableTimestamp)
+        }
     }
 
     fun setHideSettingsButton(isHidden: Boolean) {

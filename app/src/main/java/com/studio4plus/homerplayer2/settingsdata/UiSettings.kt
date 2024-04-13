@@ -24,11 +24,17 @@
 
 package com.studio4plus.homerplayer2.settingsdata
 
+import androidx.datastore.core.DataMigration
 import kotlinx.serialization.Serializable
 
 @Serializable
 enum class UiThemeMode {
     SYSTEM, LIGHT, DARK
+}
+
+object FullKioskModeSetting {
+    const val ENABLED = 0L
+    const val DISABLED = Long.MAX_VALUE
 }
 
 @Serializable
@@ -42,11 +48,21 @@ data class PlayerUiSettings(
 
 @Serializable
 data class UiSettings(
+    @Deprecated("Use fullKioskModeEnableTimestamp") val fullKioskMode: Boolean? = null,
+
     val enableHapticFeedback: Boolean = false,
-    val fullKioskMode: Boolean = false,
+    val fullKioskModeEnableTimestamp: Long = migrate(fullKioskMode) ?: FullKioskModeSetting.DISABLED,
     val hideSettingsButton: Boolean = false,
     val playerUiSettings: PlayerUiSettings = PlayerUiSettings(),
     val readBookTitles: Boolean = false,
     val showBatteryIndicator: Boolean = false,
     val uiThemeMode: UiThemeMode = UiThemeMode.SYSTEM,
-)
+) {
+    companion object {
+        fun migrate(oldValue: Boolean?) = when (oldValue) {
+            true -> FullKioskModeSetting.ENABLED
+            false -> FullKioskModeSetting.DISABLED
+            null -> null
+        }
+    }
+}

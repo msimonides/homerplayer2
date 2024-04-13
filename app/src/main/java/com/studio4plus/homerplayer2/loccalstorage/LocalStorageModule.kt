@@ -25,12 +25,14 @@
 package com.studio4plus.homerplayer2.loccalstorage
 
 import android.content.Context
+import androidx.datastore.core.DataMigration
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.dataStoreFile
 import com.studio4plus.homerplayer2.base.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.plus
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
 import org.koin.core.annotation.ComponentScan
@@ -53,13 +55,16 @@ class LocalStorageModule {
 
 fun <T> createDataStore(
     appContext: Context,
+    mainScope: CoroutineScope,
     dispatcherProvider: DispatcherProvider,
     json: Json,
     name: String,
     defaultValue: T,
-    serializer: KSerializer<T>
+    serializer: KSerializer<T>,
+    migrations: List<DataMigration<T>> = emptyList(),
 ): DataStore<T> = DataStoreFactory.create(
     DataStoreJsonSerializer(defaultValue, serializer, json),
-    scope = CoroutineScope(dispatcherProvider.Io + SupervisorJob()),
-    produceFile = { appContext.dataStoreFile(name) }
+    scope = mainScope + dispatcherProvider.Io,
+    produceFile = { appContext.dataStoreFile(name) },
+    migrations = migrations
 )

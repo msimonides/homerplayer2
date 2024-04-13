@@ -142,7 +142,7 @@ private fun ChooseUiModeDialog(
     onValueChange: (UiThemeMode) -> Unit,
     onDismissRequest: () -> Unit
 ) {
-    SelectFromListDialog(
+    SelectFromRadioListDialog(
         selectedValue = value,
         values = listOf(UiThemeMode.SYSTEM, UiThemeMode.LIGHT, UiThemeMode.DARK),
         produceLabel = { stringResource(id = it.labelRes()) },

@@ -24,13 +24,14 @@
 
 package com.studio4plus.homerplayer2.settings.ui
 
-import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -82,7 +83,7 @@ fun SettingsDialog(
 }
 
 @Composable
-fun <T> SelectFromListDialog(
+fun <T> SelectFromRadioListDialog(
     selectedValue: T,
     values: List<T>,
     produceLabel: @Composable (T) -> String,
@@ -106,8 +107,41 @@ fun <T> SelectFromListDialog(
                     onValueChange(value)
                     if (buttons == null) onDismissRequest()
                 },
-                modifier = Modifier.padding(vertical = 8.dp, horizontal = horizontalPadding)
+                modifier = Modifier
+                    .heightIn(min = 48.dp)
+                    .padding(vertical = 8.dp, horizontal = horizontalPadding)
             )
         }
     }
 }
+
+@Composable
+fun <T> SelectFromListDialog(
+    values: List<T>,
+    produceLabel: @Composable (T) -> String,
+    title: String,
+    onValueChange: (T) -> Unit,
+    onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    SettingsDialog(
+        title = title,
+        onDismissRequest = onDismissRequest,
+        modifier = modifier,
+    ) { horizontalPadding ->
+        values.map { value ->
+            Text(
+                text = produceLabel(value),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        onValueChange(value)
+                        onDismissRequest()
+                    }
+                    .heightIn(min = 48.dp)
+                    .padding(vertical = 8.dp, horizontal = horizontalPadding)
+            )
+        }
+    }
+}
+

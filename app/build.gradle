@@ -21,8 +21,10 @@ android {
         versionName "1.0.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary true
+        testOptions {
+            unitTests {
+                includeAndroidResources = true
+            }
         }
 
         javaCompileOptions {
@@ -45,6 +47,7 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
+        coreLibraryDesugaringEnabled true
     }
     kotlinOptions {
         jvmTarget = '17'
@@ -85,6 +88,8 @@ sentry {
 dependencies {
     implementation project(':base')
 
+    coreLibraryDesugaring libs.desugarjdk
+
     ksp libs.androidx.room.compiler
     ksp libs.koin.compiler
 
@@ -114,7 +119,12 @@ dependencies {
     implementation libs.treessence
 
 
+    testImplementation libs.androidx.test.corektx
     testImplementation libs.junit
+    testImplementation libs.kotlinx.coroutines.test
+    testImplementation libs.robolectric
+    testImplementation libs.turbine
+
     androidTestImplementation libs.androidx.test.espresso.core
     androidTestImplementation libs.androidx.test.junit
     androidTestImplementation libs.compose.ui.test.junit

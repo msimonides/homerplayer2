@@ -31,6 +31,7 @@ import com.studio4plus.homerplayer2.exoplayer.ExoplayerModule
 import com.studio4plus.homerplayer2.loccalstorage.LOCAL_STORAGE_JSON
 import com.studio4plus.homerplayer2.loccalstorage.LocalStorageModule
 import com.studio4plus.homerplayer2.loccalstorage.createDataStore
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.serialization.json.Json
 import org.koin.core.annotation.ComponentScan
 import org.koin.core.annotation.Module
@@ -45,11 +46,13 @@ class PlayerModule {
     @Named(UI_STATE)
     fun playbackUiStateDatastore(
         appContext: Context,
+        mainScope: CoroutineScope,
         dispatcherProvider: DispatcherProvider,
         @Named(LOCAL_STORAGE_JSON) json: Json
     ): DataStore<PlaybackUiState> =
         createDataStore(
             appContext,
+            mainScope,
             dispatcherProvider,
             json,
             UI_STATE,

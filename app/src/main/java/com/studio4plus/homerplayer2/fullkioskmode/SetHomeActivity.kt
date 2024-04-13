@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Marcin Simonides
+ * Copyright (c) 2024 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,22 +22,26 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.settings
+package com.studio4plus.homerplayer2.fullkioskmode
 
-import com.studio4plus.homerplayer2.fullkioskmode.FullKioskModeModule
-import com.studio4plus.homerplayer2.logging.LoggingModule
-import com.studio4plus.homerplayer2.player.PlayerModule
-import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
-import org.koin.core.annotation.ComponentScan
-import org.koin.core.annotation.Module
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import org.koin.core.annotation.Single
 
-@Module(
-    includes = [
-        FullKioskModeModule::class,
-        LoggingModule::class,
-        PlayerModule::class,
-        SettingsDataModule::class
-    ]
-)
-@ComponentScan("com.studio4plus.homerplayer2.settings")
-class SettingsModule
+@Single(createdAtStart = true)
+class SetHomeActivity(
+    mainScope: CoroutineScope,
+    homeComponent: HomeComponent,
+    isFullKioskEnabled: IsFullKioskEnabled,
+) {
+    init {
+        isFullKioskEnabled()
+            .map { it.isEnabledNow }
+            .distinctUntilChanged()
+            .onEach { enable -> homeComponent.setEnabled(enable) }
+            .launchIn(mainScope)
+    }
+}

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Marcin Simonides
+ * Copyright (c) 2024 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,22 +22,27 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.settings
+package com.studio4plus.homerplayer2.testutils
 
-import com.studio4plus.homerplayer2.fullkioskmode.FullKioskModeModule
-import com.studio4plus.homerplayer2.logging.LoggingModule
-import com.studio4plus.homerplayer2.player.PlayerModule
-import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
-import org.koin.core.annotation.ComponentScan
-import org.koin.core.annotation.Module
+import androidx.datastore.core.DataStore
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 
-@Module(
-    includes = [
-        FullKioskModeModule::class,
-        LoggingModule::class,
-        PlayerModule::class,
-        SettingsDataModule::class
-    ]
-)
-@ComponentScan("com.studio4plus.homerplayer2.settings")
-class SettingsModule
+class FakeDataStore<T>(
+    initialValue: T
+) : DataStore<T> {
+
+    private val dataState = MutableStateFlow(initialValue)
+
+    override val data: Flow<T> = dataState
+
+    override suspend fun updateData(transform: suspend (t: T) -> T): T {
+        while (true) {
+            val prevValue = dataState.value
+            val nextValue = transform(prevValue)
+            if (dataState.compareAndSet(prevValue, nextValue)) {
+                return nextValue
+            }
+        }
+    }
+}

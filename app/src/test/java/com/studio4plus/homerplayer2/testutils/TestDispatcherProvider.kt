@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Marcin Simonides
+ * Copyright (c) 2024 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,22 +22,15 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.settings
+package com.studio4plus.homerplayer2.testutils
 
-import com.studio4plus.homerplayer2.fullkioskmode.FullKioskModeModule
-import com.studio4plus.homerplayer2.logging.LoggingModule
-import com.studio4plus.homerplayer2.player.PlayerModule
-import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
-import org.koin.core.annotation.ComponentScan
-import org.koin.core.annotation.Module
+import com.studio4plus.homerplayer2.base.DispatcherProvider
+import kotlinx.coroutines.CoroutineDispatcher
 
-@Module(
-    includes = [
-        FullKioskModeModule::class,
-        LoggingModule::class,
-        PlayerModule::class,
-        SettingsDataModule::class
-    ]
-)
-@ComponentScan("com.studio4plus.homerplayer2.settings")
-class SettingsModule
+class TestDispatcherProvider(
+    dispatcher: CoroutineDispatcher
+) : DispatcherProvider {
+    override val Main: CoroutineDispatcher = dispatcher
+    override val Io: CoroutineDispatcher = dispatcher
+    override val Computation: CoroutineDispatcher = dispatcher
+}

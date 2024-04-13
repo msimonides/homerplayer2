@@ -29,9 +29,11 @@ import org.koin.core.annotation.Factory
 
 interface Clock {
     fun elapsedRealTime(): Long
+    fun wallTime(): Long
 }
 
 @Factory
 class DefaultClock : Clock {
     override fun elapsedRealTime(): Long = SystemClock.elapsedRealtime()
+    override fun wallTime(): Long = System.currentTimeMillis()
 }

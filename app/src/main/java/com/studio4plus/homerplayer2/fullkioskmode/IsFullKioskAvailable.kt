@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Marcin Simonides
+ * Copyright (c) 2024 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,22 +22,22 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.settings
+package com.studio4plus.homerplayer2.fullkioskmode
 
-import com.studio4plus.homerplayer2.fullkioskmode.FullKioskModeModule
-import com.studio4plus.homerplayer2.logging.LoggingModule
-import com.studio4plus.homerplayer2.player.PlayerModule
-import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
-import org.koin.core.annotation.ComponentScan
-import org.koin.core.annotation.Module
+import android.app.admin.DevicePolicyManager
+import android.content.Context
+import org.koin.core.annotation.Factory
 
-@Module(
-    includes = [
-        FullKioskModeModule::class,
-        LoggingModule::class,
-        PlayerModule::class,
-        SettingsDataModule::class
-    ]
-)
-@ComponentScan("com.studio4plus.homerplayer2.settings")
-class SettingsModule
+fun interface IsFullKioskAvailable {
+    operator fun invoke(): Boolean
+}
+
+@Factory
+class DefaultIsFullKioskAvailable(
+    private val appContext: Context,
+    private val dpm: DevicePolicyManager
+) : IsFullKioskAvailable {
+
+    override fun invoke(): Boolean = dpm.isLockTaskPermitted(appContext.packageName)
+
+}
