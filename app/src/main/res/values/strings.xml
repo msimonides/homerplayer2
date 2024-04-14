@@ -119,6 +119,7 @@
     <string name="settings_ui_player_ui_ff_rewind_controls">Skip chapter controls</string>
     <string name="settings_ui_player_ui_seek_controls">Forward/back controls</string>
     <string name="settings_ui_privacy_policy_item">Privacy policy…</string>
+    <string name="settings_ui_rate_app_item">Rate the application…</string>
     <string name="settings_ui_share_diagnostic_log_title">Share diagnostic log</string>
     <string name="settings_ui_share_diagnostic_log_summary">Send diagnostic log to developer to report an issue</string>
     <string name="settings_ui_tts_settings_item">Text-to-speech…</string>

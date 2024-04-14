@@ -24,6 +24,10 @@
 
 package com.studio4plus.homerplayer2.settings.ui
 
+
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -35,12 +39,14 @@ import com.studio4plus.homerplayer2.settingsdata.UiThemeMode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import org.koin.android.annotation.KoinViewModel
 import org.koin.core.annotation.Named
 
 @KoinViewModel
 class SettingsMainViewModel(
+    private val appContext: Context,
     private val mainScope: CoroutineScope,
     audiobookFolderNamesFlow: AudiobookFolderNamesFlow,
     @Named(SettingsDataModule.UI) private val uiSettingsStore: DataStore<UiSettings>
@@ -48,16 +54,24 @@ class SettingsMainViewModel(
 
     class ViewState(
         val audiobookFolders: String?,
+        val rateAppIntent: Intent?,
         val ttsEnabled: Boolean,
         val uiMode: UiThemeMode,
     )
 
+    private val rateAppIntent = flow {
+        val intent = playStorePageIntent()
+        emit(intent.takeIf { it.resolveActivity(appContext.packageManager) != null })
+    }
+
     val viewState = combine(
         audiobookFolderNamesFlow,
-        uiSettingsStore.data
-    ) { folderNames, uiSettings ->
+        uiSettingsStore.data,
+        rateAppIntent,
+    ) { folderNames, uiSettings, rateAppIntent ->
         ViewState(
             audiobookFolders = folderNames.takeIf { it.isNotEmpty() }?.joinToEllipsizedString(),
+            rateAppIntent = rateAppIntent,
             ttsEnabled = uiSettings.readBookTitles,
             uiMode = uiSettings.uiThemeMode,
         )
@@ -65,5 +79,13 @@ class SettingsMainViewModel(
 
     fun setUiMode(newUiMode: UiThemeMode) {
         mainScope.launchUpdate(uiSettingsStore) { it.copy(uiThemeMode = newUiMode) }
+    }
+
+    private fun playStorePageIntent() = Intent(Intent.ACTION_VIEW).apply {
+        val packageName = appContext.packageName
+        data = Uri.parse("https://play.google.com/store/apps/details?id=$packageName")
+        flags = Intent.FLAG_ACTIVITY_NEW_TASK and Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED
+        // https://developer.android.com/distribute/marketing-tools/linking-to-google-play#android-app
+        setPackage("com.android.vending")
     }
 }

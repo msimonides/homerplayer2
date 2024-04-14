@@ -24,6 +24,7 @@
 
 package com.studio4plus.homerplayer2.settings.ui
 
+import android.content.Intent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -33,6 +34,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -126,6 +128,14 @@ private fun SettingsMain(
                 onClick = navigateAbout,
                 modifier = settingItemModifier
             )
+            if (viewState.rateAppIntent != null) {
+                val context = LocalContext.current
+                SettingItem(
+                    label = stringResource(R.string.settings_ui_rate_app_item),
+                    onClick = { context.startActivity(viewState.rateAppIntent) },
+                    modifier = settingItemModifier
+                )
+            }
         }
 
         val dismissAction = { showUiModeDialog = null }
@@ -168,6 +178,7 @@ private fun PreviewSettingsMain() {
     HomerPlayer2Theme {
         val viewState = SettingsMainViewModel.ViewState(
             audiobookFolders = "AudioBooks, Samples",
+            rateAppIntent = null,
             ttsEnabled = true,
             uiMode = UiThemeMode.SYSTEM,
         )
