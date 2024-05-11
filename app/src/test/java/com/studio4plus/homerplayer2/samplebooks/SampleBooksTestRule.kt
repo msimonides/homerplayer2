@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Marcin Simonides
+ * Copyright (c) 2024 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,28 +22,34 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.audiobooks
+package com.studio4plus.homerplayer2.samplebooks
 
-import android.net.Uri
-import androidx.room.*
-import kotlinx.coroutines.flow.Flow
+import org.junit.rules.TemporaryFolder
+import org.junit.rules.TestRule
+import org.junit.runner.Description
+import org.junit.runners.model.Statement
+import java.io.File
+import java.io.InputStream
 
-@Dao
-interface AudiobookFoldersDao {
+class SampleBooksTestRule : TestRule {
 
-    @Query("SELECT * FROM audiobooks_folders")
-    fun getAll(): Flow<List<AudiobooksFolder>>
+    private val TEST_FILES_PATH = "/samplebooks/"
 
-    @Query("""
-        SELECT audiobooks_folders.uri, audiobooks.display_name
-        FROM  audiobooks_folders JOIN audiobooks ON audiobooks_folders.uri = audiobooks.root_folder_uri
-        ORDER BY display_name COLLATE LOCALIZED
-    """)
-    fun getAllWithBookTitles(): Flow<Map<@MapColumn(columnName = "uri") Uri, List<@MapColumn(columnName="display_name") String>>>
+    fun inputStream(name: String): InputStream =
+        this.javaClass.getResourceAsStream(TEST_FILES_PATH + name)!!
 
-    @Insert
-    suspend fun insert(folder: AudiobooksFolder)
+    lateinit var outputFolder: File
+        private set
 
-    @Query("DELETE FROM audiobooks_folders WHERE uri = :uri")
-    suspend fun delete(uri: Uri)
+    private val tmpFolderRule = TemporaryFolder()
+
+    override fun apply(base: Statement?, description: Description?): Statement {
+        val statement = object : Statement() {
+            override fun evaluate() {
+                outputFolder = tmpFolderRule.newFolder()
+                base?.evaluate()
+            }
+        }
+        return tmpFolderRule.apply(statement, description)
+    }
 }

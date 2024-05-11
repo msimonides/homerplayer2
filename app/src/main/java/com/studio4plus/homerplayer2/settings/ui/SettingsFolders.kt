@@ -24,31 +24,49 @@
 
 package com.studio4plus.homerplayer2.settings.ui
 
+import android.content.Context
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFoldersManagementPanel
 import com.studio4plus.homerplayer2.audiobookfoldersui.OpenAudiobooksTreeScreenWrapper
+import com.studio4plus.homerplayer2.audiobookfoldersui.samplesInstallErrorMessage
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
+import com.studio4plus.homerplayer2.samplebooks.SamplesInstallError
+import com.studio4plus.homerplayer2.speech.LaunchErrorSnackDisplay
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SettingsFoldersRoute(
+    snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
     viewModel: SettingsFoldersViewModel = koinViewModel()
 ) {
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
 
+    val context = LocalContext.current
+    LaunchErrorSnackDisplay(viewModel.samplesInstallError, snackbarHostState) {
+        samplesInstallErrorMessage(context, it)
+    }
+
     OpenAudiobooksTreeScreenWrapper(
         onFolderSelected = { uri -> viewModel.addFolder(uri) },
     ) { openAudiobooksTree ->
         AudiobookFoldersManagementPanel(
-            folders = viewState.folderItems,
+            state = viewState,
             onAddFolder = openAudiobooksTree,
             onRemoveFolder = viewModel::removeFolder,
-            modifier = modifier.padding(horizontal = HomerTheme.dimensions.screenContentPadding)
+            onDownloadSamples = viewModel::startSamplesInstall,
+            modifier = modifier.padding(horizontal = HomerTheme.dimensions.screenContentPadding),
         )
     }
 }

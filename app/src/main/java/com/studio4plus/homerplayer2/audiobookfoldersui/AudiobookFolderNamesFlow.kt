@@ -36,17 +36,13 @@ import org.koin.core.annotation.Factory
 
 @Factory
 class AudiobookFolderNamesFlow(
-    private val appContext: Context,
     dispatcherProvider: DispatcherProvider,
     audiobookFoldersDao: AudiobookFoldersDao,
+    audiobooksFolderName: AudiobooksFolderName,
 ): Flow<List<String>> {
 
     private val foldersFlow =  audiobookFoldersDao.getAll().map { folders ->
-        folders.mapNotNull { folder ->
-            DocumentFile.fromTreeUri(appContext, folder.uri)?.let { documentFile ->
-                documentFile.name ?: folder.toString()
-            }
-        }
+        folders.mapNotNull { folder -> audiobooksFolderName(folder) }
     }.flowOn(dispatcherProvider.Io)
 
     override suspend fun collect(collector: FlowCollector<List<String>>) {

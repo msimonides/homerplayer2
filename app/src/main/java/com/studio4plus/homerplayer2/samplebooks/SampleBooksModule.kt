@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Marcin Simonides
+ * Copyright (c) 2024 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,28 +22,11 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.audiobooks
+package com.studio4plus.homerplayer2.samplebooks
 
-import android.net.Uri
-import androidx.room.*
-import kotlinx.coroutines.flow.Flow
+import org.koin.core.annotation.ComponentScan
+import org.koin.core.annotation.Module
 
-@Dao
-interface AudiobookFoldersDao {
-
-    @Query("SELECT * FROM audiobooks_folders")
-    fun getAll(): Flow<List<AudiobooksFolder>>
-
-    @Query("""
-        SELECT audiobooks_folders.uri, audiobooks.display_name
-        FROM  audiobooks_folders JOIN audiobooks ON audiobooks_folders.uri = audiobooks.root_folder_uri
-        ORDER BY display_name COLLATE LOCALIZED
-    """)
-    fun getAllWithBookTitles(): Flow<Map<@MapColumn(columnName = "uri") Uri, List<@MapColumn(columnName="display_name") String>>>
-
-    @Insert
-    suspend fun insert(folder: AudiobooksFolder)
-
-    @Query("DELETE FROM audiobooks_folders WHERE uri = :uri")
-    suspend fun delete(uri: Uri)
-}
+@Module
+@ComponentScan("com.studio4plus.homerplayer2.samplebooks")
+class SampleBooksModule

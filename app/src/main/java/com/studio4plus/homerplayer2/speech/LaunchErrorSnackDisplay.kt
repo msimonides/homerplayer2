@@ -29,7 +29,11 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.flowWithLifecycle
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
@@ -37,20 +41,37 @@ import kotlinx.coroutines.launch
 fun LaunchErrorSnackDisplay(
     errorStringEvent: Channel<Int?>,
     snackbarHostState: SnackbarHostState,
+    lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current,
 ) {
     val context = LocalContext.current
-    LaunchedEffect(errorStringEvent) {
-        errorStringEvent.receiveAsFlow().collect { errorResId ->
-            if (errorResId != null) {
-                launch {
-                    snackbarHostState.showSnackbar(
-                        context.resources.getString(errorResId),
-                        duration = SnackbarDuration.Long
-                    )
+    LaunchErrorSnackDisplay(
+        errorStringEvent.receiveAsFlow(),
+        snackbarHostState,
+        lifecycleOwner
+    ) { context.getString(it) }
+}
+
+@Composable
+fun <T> LaunchErrorSnackDisplay(
+    errorEvent: Flow<T?>,
+    snackbarHostState: SnackbarHostState,
+    lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current,
+    messageProducer: (T) -> String,
+) {
+    LaunchedEffect(errorEvent) {
+        errorEvent
+            .flowWithLifecycle(lifecycleOwner.lifecycle)
+            .collect { error ->
+                if (error != null) {
+                    launch {
+                        snackbarHostState.showSnackbar(
+                            messageProducer(error),
+                            duration = SnackbarDuration.Long
+                        )
+                    }
+                } else {
+                    snackbarHostState.currentSnackbarData?.dismiss()
                 }
-            } else {
-                snackbarHostState.currentSnackbarData?.dismiss()
             }
-        }
     }
 }

@@ -35,7 +35,8 @@ object PreviewData {
             2,
             "Alice's Adventures in Wonderland, Hamlet",
             firstBookTitle = "Alice's Adventures in Wonderland",
-            false
+            isScanning = false,
+            isSamplesFolder = false,
         )
     )
 
@@ -48,7 +49,8 @@ object PreviewData {
                 titles.size,
                 titles.joinToEllipsizedString(),
                 firstBookTitle = titles.firstOrNull(),
-                false
+                isScanning = false,
+                isSamplesFolder = false,
             )
         }
 }

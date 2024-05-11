@@ -54,7 +54,7 @@ class BaseModule {
         appContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
     @Factory
-    fun defaultLocale(): Locale = Locale.getDefault()
+    fun defaultLocale(): Locale = Locale.getDefault() // TODO: see if there's a better way.
 
     @Single
     fun mainScope(): CoroutineScope = MainScope()

@@ -170,7 +170,7 @@ private fun SettingsNavHost(
             )
         }
         composable("folders", label = foldersTitle) {
-            SettingsFoldersRoute()
+            SettingsFoldersRoute(snackbarHostState)
         }
         composable("kiosk_setup", label = kioskSetupTitle) {
             SettingsKioskModeSetupRoute()

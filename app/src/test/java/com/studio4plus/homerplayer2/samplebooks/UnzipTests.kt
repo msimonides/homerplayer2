@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Marcin Simonides
+ * Copyright (c) 2024 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,28 +22,36 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.audiobooks
+package com.studio4plus.homerplayer2.samplebooks
 
-import android.net.Uri
-import androidx.room.*
-import kotlinx.coroutines.flow.Flow
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
+import org.junit.Rule
+import org.junit.Test
+import java.io.File
 
-@Dao
-interface AudiobookFoldersDao {
+class UnzipTests {
 
-    @Query("SELECT * FROM audiobooks_folders")
-    fun getAll(): Flow<List<AudiobooksFolder>>
+    @get:Rule
+    val rule = SampleBooksTestRule()
 
-    @Query("""
-        SELECT audiobooks_folders.uri, audiobooks.display_name
-        FROM  audiobooks_folders JOIN audiobooks ON audiobooks_folders.uri = audiobooks.root_folder_uri
-        ORDER BY display_name COLLATE LOCALIZED
-    """)
-    fun getAllWithBookTitles(): Flow<Map<@MapColumn(columnName = "uri") Uri, List<@MapColumn(columnName="display_name") String>>>
+    @Test
+    fun `zip with 2 folders`() {
+        unzip(rule.inputStream("zip_sample.zip"), rule.outputFolder)
 
-    @Insert
-    suspend fun insert(folder: AudiobooksFolder)
+        val book1Folder = File(rule.outputFolder, "book1")
+        val book2Folder = File(rule.outputFolder, "book2")
+        assertTrue(book1Folder.isDirectory)
+        assertTrue(book2Folder.isDirectory)
+        assertEquals(1L, File(book1Folder, "file1.txt").length())
+        assertEquals(2L, File(book2Folder, "file1.txt").length())
+        assertEquals(3L, File(book2Folder, "file2.txt").length())
+    }
 
-    @Query("DELETE FROM audiobooks_folders WHERE uri = :uri")
-    suspend fun delete(uri: Uri)
+    // TODO: zip with path traversal
+
+    @Test(expected = IllegalArgumentException::class)
+    fun `when file is not ZIP then unzip fails`() {
+        unzip(rule.inputStream("non_zip.txt"), rule.outputFolder)
+    }
 }

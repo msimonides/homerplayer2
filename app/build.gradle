@@ -95,6 +95,7 @@ dependencies {
     implementation libs.androidx.datastore.core
     implementation libs.androidx.documentfile
     implementation libs.androidx.lifecycle.runtime.compose
+    implementation libs.androidx.lifecycle.service
     implementation libs.androidx.lifecycle.viewmodel
     implementation libs.androidx.media3.exoplayer
     implementation libs.androidx.media3.session
@@ -110,6 +111,7 @@ dependencies {
     implementation libs.koin.annotations
     implementation libs.kotlinx.coroutines.android
     implementation libs.kotlinx.serialization.json
+    implementation libs.okhttp
     implementation libs.sentry.android
     implementation libs.timber
     implementation libs.treessence

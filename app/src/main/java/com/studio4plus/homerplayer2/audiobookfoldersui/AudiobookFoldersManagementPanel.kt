@@ -25,6 +25,7 @@
 package com.studio4plus.homerplayer2.audiobookfoldersui
 
 import android.net.Uri
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -40,6 +41,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -58,23 +60,37 @@ import androidx.compose.ui.unit.dp
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.base.ui.SmallCircularProgressIndicator
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
+import com.studio4plus.homerplayer2.samplebooks.SamplesInstallState
 
 @Composable
 fun AudiobookFoldersManagementPanel(
-    folders: List<FolderItem>,
+    state: AudiobookFoldersPanelViewState,
     onAddFolder: () -> Unit,
     onRemoveFolder: (FolderItem) -> Unit,
+    onDownloadSamples: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
     ) {
-        Button(onClick = onAddFolder) {
-            Text(stringResource(id = R.string.audiobook_folder_add_button))
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Button(onClick = onAddFolder) {
+                Text(stringResource(id = R.string.audiobook_folder_add_button))
+            }
+            if (state.samplesInstallState != null) {
+                OutlinedButton(
+                    onClick = onDownloadSamples,
+                    enabled = state.samplesInstallState is SamplesInstallState.Idle
+                ) {
+                    Text(stringResource(id = R.string.audiobook_folder_download_samples_button))
+                }
+            }
         }
         LazyColumn {
             items(
-                folders,
+                state.folders,
                 key = FolderItem::uri,
                 itemContent = { item ->
                     AudiobookFolderRow(item = item, onRemoveClicked = { onRemoveFolder(item) })
@@ -180,7 +196,8 @@ private fun PreviewFolderRow() {
                 2,
                 "Alice in Wonderland, Hamlet",
                 firstBookTitle = "Alice in Wonderland",
-                isScanning = false
+                isScanning = false,
+                isSamplesFolder = false
             ),
             {}
         )
@@ -198,7 +215,8 @@ private fun PreviewFolderRowEmpty() {
                 0,
                 "",
                 firstBookTitle = null,
-                isScanning = false
+                isScanning = false,
+                isSamplesFolder = false,
             ),
             {}
         )
@@ -209,10 +227,16 @@ private fun PreviewFolderRowEmpty() {
 @Composable
 private fun PreviewFolderRowScanning() {
     HomerPlayer2Theme {
-        AudiobookFolderRow(
-            FolderItem("My audiobooks", Uri.EMPTY, 0, "", firstBookTitle = null, isScanning = true),
-            {}
+        val folder = FolderItem(
+            "My audiobooks",
+            Uri.EMPTY,
+            0,
+            "",
+            firstBookTitle = null,
+            isScanning = true,
+            isSamplesFolder = false
         )
+        AudiobookFolderRow(folder, {})
     }
 }
 
@@ -220,6 +244,9 @@ private fun PreviewFolderRowScanning() {
 @Composable
 private fun PreviewAudiobookFoldersManagementPanel50() {
     HomerPlayer2Theme {
-        AudiobookFoldersManagementPanel(PreviewData.folderItems50, {}, {})
+        AudiobookFoldersManagementPanel(
+            AudiobookFoldersPanelViewState(PreviewData.folderItems50, SamplesInstallState.Idle),
+            {}, {}, {}
+        )
     }
 }

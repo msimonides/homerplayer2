@@ -25,15 +25,18 @@
 package com.studio4plus.homerplayer2.audiobooks
 
 import android.content.ContentResolver
+import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 import android.provider.DocumentsContract
 import android.util.Base64
 import androidx.annotation.WorkerThread
 import com.studio4plus.homerplayer2.base.DispatcherProvider
+import com.studio4plus.homerplayer2.utils.hasFileScheme
 import kotlinx.coroutines.withContext
 import org.koin.core.annotation.Single
 import timber.log.Timber
+import java.io.File
 import java.nio.ByteBuffer
 import java.security.MessageDigest
 
@@ -56,15 +59,22 @@ class Scanner(
     private val contentResolver: ContentResolver,
     private val dispatcherProvider: DispatcherProvider
 ) {
+    private data class ScannedFile(val fileUri: Uri, val path: String, val size: Long)
+
     data class ScanResult(val audiobook: Audiobook, val uris: List<Uri>)
 
     suspend fun scan(folderUris: List<Uri>): List<ScanResult> =
         withContext(dispatcherProvider.Io) {
-            folderUris.flatMap { scanFolder(it) }
+            folderUris.flatMap {
+                when {
+                    it.hasFileScheme() -> scanFileFolder(it)
+                    else -> scanDocumentFolder(it)
+                }
+            }
         }
 
     @WorkerThread
-    private fun scanFolder(folderUri: Uri): List<ScanResult> {
+    private fun scanDocumentFolder(folderUri: Uri): List<ScanResult> {
         val childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(
             folderUri,
             DocumentsContract.getTreeDocumentId(folderUri)
@@ -90,8 +100,25 @@ class Scanner(
         }
     }
 
-    private fun scanAudiobook(rootFolderUri: Uri, folderDocumentId: String, path: String): ScanResult {
-        val files = scanAudiobookFiles(rootFolderUri, folderDocumentId, path)
+    @WorkerThread
+    private fun scanFileFolder(folderUri: Uri): List<ScanResult> {
+        val folder = File(requireNotNull(folderUri.path))
+        Timber.d("Scan audiobooks in: %s", folder.canonicalPath)
+        val subfolders = requireNotNull(folder.listFiles { file: File -> file.isDirectory })
+        return subfolders.map { scanAudiobook(folderUri, it) }
+    }
+
+    private fun scanAudiobook(rootFolderUri: Uri, folderDocumentId: String, folderName: String): ScanResult {
+        val files = scanAudiobookFiles(rootFolderUri, folderDocumentId, folderName)
+        return scanAudiobook(rootFolderUri, folderName, files)
+    }
+
+    private fun scanAudiobook(rootFolderUri: Uri, folder: File): ScanResult {
+        val files = scanAudiobookFiles(folder)
+        return scanAudiobook(rootFolderUri, folder.name, files)
+    }
+
+    private fun scanAudiobook(rootFolderUri: Uri, displayName: String, files: List<ScannedFile>): ScanResult {
         val sizeBuffer = ByteBuffer.allocate(Long.SIZE_BYTES)
         val id = files.fold(MessageDigest.getInstance("MD5")) { md5, (_, path, size) ->
             md5.update(path.encodeToByteArray())
@@ -101,12 +128,12 @@ class Scanner(
         }.digest().let { digest ->
             Base64.encodeToString(digest, Base64.NO_PADDING or Base64.NO_WRAP)
         }
-        return ScanResult(Audiobook(id, path, rootFolderUri), files.map { it.first })
+        return ScanResult(Audiobook(id, displayName, rootFolderUri), files.map { it.fileUri })
     }
 
     private fun scanAudiobookFiles(
         rootUri: Uri, folderDocumentId: String, path: String
-    ): List<Triple<Uri, String, Long>> {
+    ): List<ScannedFile> {
         val childrenUri =
             DocumentsContract.buildChildDocumentsUriUsingTree(rootUri, folderDocumentId)
         val cursor = contentResolver.query(
@@ -128,11 +155,22 @@ class Scanner(
                     scanAudiobookFiles(rootUri, documentId, filePath)
                 } else {
                     val uri = DocumentsContract.buildDocumentUriUsingTree(rootUri, documentId)
-                    listOf(Triple(uri, filePath, cursor.getLong(COLUMN_SIZE)))
+                    listOf(ScannedFile(uri, filePath, cursor.getLong(COLUMN_SIZE)))
                 }
             }
         }
     }
+
+    private fun scanAudiobookFiles(folder: File): List<ScannedFile> =
+        folder.listFiles()?.flatMap { file ->
+            when {
+                file.isDirectory -> scanAudiobookFiles(file)
+                // mp3 is good enough for samples. One day scanning should be improved to filter out
+                // non-audio files for all scan types.
+                file.isFile && file.extension == "mp3" -> listOf(ScannedFile(Uri.fromFile(file), file.path, file.length()))
+                else -> emptyList()
+            }
+        } ?: emptyList()
 
     private fun isFolder(mimeType: String?): Boolean {
         return DocumentsContract.Document.MIME_TYPE_DIR == mimeType

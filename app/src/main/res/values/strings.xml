@@ -5,6 +5,10 @@
     <string name="audiobook_folder_add_button">Add folder…</string>
     <string name="audiobook_folder_add_error_dialog">Unable to open file chooser</string>
     <string name="audiobook_folder_accessibility_menu_action_remove">Remove</string>
+    <string name="audiobook_folder_download_samples_button">Download samples</string>
+    <string name="audiobook_folder_samples_folder_name">Sample books</string>
+    <string name="audiobook_folder_samples_download_error">Samples download failed. Check your network and try again.</string>
+    <string name="audiobook_folder_samples_install_error">Samples installation failed. %1$s</string>
     <string name="audiobook_folder_no_books_found">(no audiobooks found in this folder)</string>
     <plurals name="audiobook_folder_content_description">
         <item quantity="one">%1$d book: %2$s</item>
@@ -32,7 +36,7 @@
      %1$s - address of the instructions web page
 
      Example:
-     or go to:\nhttps://homerplayer.app/setus
+     or go to:\nhttps://homerplayer.app/setup
   -->
     <string name="generic_website_alternative">or go to:\n%1$s</string>
 

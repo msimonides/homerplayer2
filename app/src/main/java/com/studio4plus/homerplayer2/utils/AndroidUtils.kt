@@ -28,8 +28,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 
 fun broadcastReceiver(block: (Intent) -> Unit): BroadcastReceiver =
     object : BroadcastReceiver() {
@@ -42,3 +40,7 @@ fun openWebUrl(context: Context, url: String) {
     val intent = Intent(Intent.ACTION_VIEW).apply { data = Uri.parse(url) }
     context.startActivity(intent)
 }
+
+fun Uri.hasFileScheme() = scheme?.lowercase() == "file" && path != null
+
+fun Uri.hasContentScheme() = scheme?.lowercase() == "content"

@@ -22,10 +22,15 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.audiobookfoldersui
+package com.studio4plus.homerplayer2.samplebooks
 
-fun List<String>.joinToEllipsizedString(maxItems: Int = 4): String {
-    // TODO: this might need localization.
-    val joined = take(maxItems).joinToString(", ")
-    return if (size <= maxItems) joined else joined + "…"
+sealed interface SamplesInstallState {
+    object Idle : SamplesInstallState
+    object Downloading : SamplesInstallState
+    object Installing : SamplesInstallState
+}
+
+sealed interface SamplesInstallError {
+    object Download : SamplesInstallError
+    class Install(val error: String) : SamplesInstallError
 }

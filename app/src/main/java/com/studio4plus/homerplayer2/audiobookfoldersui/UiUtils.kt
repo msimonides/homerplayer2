@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Marcin Simonides
+ * Copyright (c) 2024 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,28 +22,22 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.audiobooks
+package com.studio4plus.homerplayer2.audiobookfoldersui
 
-import android.net.Uri
-import androidx.room.*
-import kotlinx.coroutines.flow.Flow
+import android.content.Context
+import com.studio4plus.homerplayer2.R
+import com.studio4plus.homerplayer2.samplebooks.SamplesInstallError
 
-@Dao
-interface AudiobookFoldersDao {
-
-    @Query("SELECT * FROM audiobooks_folders")
-    fun getAll(): Flow<List<AudiobooksFolder>>
-
-    @Query("""
-        SELECT audiobooks_folders.uri, audiobooks.display_name
-        FROM  audiobooks_folders JOIN audiobooks ON audiobooks_folders.uri = audiobooks.root_folder_uri
-        ORDER BY display_name COLLATE LOCALIZED
-    """)
-    fun getAllWithBookTitles(): Flow<Map<@MapColumn(columnName = "uri") Uri, List<@MapColumn(columnName="display_name") String>>>
-
-    @Insert
-    suspend fun insert(folder: AudiobooksFolder)
-
-    @Query("DELETE FROM audiobooks_folders WHERE uri = :uri")
-    suspend fun delete(uri: Uri)
+fun List<String>.joinToEllipsizedString(maxItems: Int = 4): String {
+    // TODO: this might need localization.
+    val joined = take(maxItems).joinToString(", ")
+    return if (size <= maxItems) joined else joined + "…"
 }
+
+fun samplesInstallErrorMessage(context: Context, error: SamplesInstallError): String =
+    when (error) {
+        is SamplesInstallError.Download ->
+            context.getString(R.string.audiobook_folder_samples_download_error)
+        is SamplesInstallError.Install ->
+            context.getString(R.string.audiobook_folder_samples_install_error, error.error)
+    }

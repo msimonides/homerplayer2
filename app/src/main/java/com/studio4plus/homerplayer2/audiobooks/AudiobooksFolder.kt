@@ -25,11 +25,14 @@
 package com.studio4plus.homerplayer2.audiobooks
 
 import android.net.Uri
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "audiobooks_folders")
 data class AudiobooksFolder(
     @PrimaryKey
-    val uri: Uri
+    val uri: Uri,
+    @ColumnInfo(defaultValue = "0")
+    val isSamplesFolder: Boolean,
 )

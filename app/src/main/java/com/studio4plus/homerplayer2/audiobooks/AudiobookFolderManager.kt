@@ -27,6 +27,7 @@ package com.studio4plus.homerplayer2.audiobooks
 import android.content.ContentResolver
 import android.content.Intent
 import android.net.Uri
+import com.studio4plus.homerplayer2.utils.hasContentScheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.koin.core.annotation.Single
@@ -42,22 +43,31 @@ class AudiobookFolderManager(
         Timber.i("Adding audiobooks folder: %s", folder.toString())
         contentResolver.takePersistableUriPermission(folder, Intent.FLAG_GRANT_READ_URI_PERMISSION)
         mainScope.launch {
-            dao.insert(AudiobooksFolder(folder))
+            dao.insert(AudiobooksFolder(folder, isSamplesFolder = false))
+        }
+    }
+
+    fun addSamplesFolder(folder: Uri) {
+        Timber.i("Adding samples folder: %s", folder.toString())
+        mainScope.launch {
+            dao.insert(AudiobooksFolder(folder, isSamplesFolder = true))
         }
     }
 
     fun removeFolder(folder: Uri) {
         Timber.i("Removing audiobooks folder: %s", folder.toString())
-        try {
-            contentResolver.releasePersistableUriPermission(
-                folder,
-                Intent.FLAG_GRANT_READ_URI_PERMISSION
-            )
-        } catch (e: SecurityException) {
-            Timber.w(e, "Error releasing permission for: %s", folder.toString())
+        if (folder.hasContentScheme()) {
+            try {
+                contentResolver.releasePersistableUriPermission(
+                    folder,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION
+                )
+            } catch (e: SecurityException) {
+                Timber.w(e, "Error releasing permission for: %s", folder.toString())
+            }
         }
         mainScope.launch {
-            dao.delete(AudiobooksFolder(folder))
+            dao.delete(folder)
         }
     }
 }

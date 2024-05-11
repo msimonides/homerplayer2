@@ -43,12 +43,14 @@ import com.studio4plus.homerplayer2.loccalstorage.createDataStore
 import com.studio4plus.homerplayer2.logging.LoggingModule
 import com.studio4plus.homerplayer2.onboarding.OnboardingModule
 import com.studio4plus.homerplayer2.player.PlayerModule
+import com.studio4plus.homerplayer2.samplebooks.SamplesDownloader
 import com.studio4plus.homerplayer2.settings.SettingsModule
 import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
 import com.studio4plus.homerplayer2.utils.Clock
 import com.studio4plus.homerplayer2.utils.DefaultClock
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.serialization.json.Json
+import okhttp3.OkHttpClient
 import org.koin.core.annotation.ComponentScan
 import org.koin.core.annotation.Factory
 import org.koin.core.annotation.Module
@@ -106,4 +108,11 @@ class AppModule {
 
     @Factory(binds = [Clock::class])
     fun defaultClock(): Clock = DefaultClock()
+
+    @Single
+    fun okHttpClient(): OkHttpClient = OkHttpClient()
+
+    @Single
+    @Named(SamplesDownloader.URL)
+    fun samplesUrl(appContext: Context) = appContext.getString(R.string.samples_download_url)
 }

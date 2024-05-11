@@ -27,9 +27,11 @@ package com.studio4plus.homerplayer2.onboarding
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFoldersPanelViewState
 import com.studio4plus.homerplayer2.audiobooks.AudiobookFolderManager
 import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFoldersViewStateFlow
 import com.studio4plus.homerplayer2.audiobookfoldersui.FolderItem
+import com.studio4plus.homerplayer2.samplebooks.SamplesInstallController
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -39,25 +41,29 @@ import org.koin.android.annotation.KoinViewModel
 class OnboardingAudiobookFoldersViewModel(
     audiobookFoldersViewStateFlow: AudiobookFoldersViewStateFlow,
     private val audiobookFolderManager: AudiobookFolderManager,
-    private val onboardingDelegate: OnboardingDelegate
+    private val onboardingDelegate: OnboardingDelegate,
+    private val samplesInstaller: SamplesInstallController,
 ) : ViewModel() {
 
     data class ViewState(
-        val folders: List<FolderItem>,
-        val canProceed: Boolean
+        val panelState: AudiobookFoldersPanelViewState,
+        val canProceed: Boolean,
     )
 
     val viewState = audiobookFoldersViewStateFlow
-        .map { ViewState(it, it.isNotEmpty()) }
+        .map { ViewState(it, it.folders.isNotEmpty()) }
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000),
-            ViewState(emptyList(), false)
+            ViewState(AudiobookFoldersPanelViewState(emptyList(), null), false)
         )
+    val samplesInstallError = samplesInstaller.errorEvent
 
     fun addFolder(folderUri: Uri) = audiobookFolderManager.addFolder(folderUri)
 
     fun removeFolder(folder: FolderItem) = audiobookFolderManager.removeFolder(folder.uri)
+
+    fun startSamplesInstall() = samplesInstaller.start()
 
     fun onFinished() {
         onboardingDelegate.onOnboardingFinished()

@@ -24,6 +24,7 @@
 
 package com.studio4plus.homerplayer2.app
 
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
@@ -45,7 +46,10 @@ import com.studio4plus.homerplayer2.utils.DbTypeConverters
         AudiobooksFolder::class
     ],
     views = [ AudiobookFileWithDuration::class ],
-    version = 1
+    version = 2,
+    autoMigrations = [
+        AutoMigration(1, 2)
+    ]
 )
 @TypeConverters(DbTypeConverters::class)
 abstract class AppDatabase : RoomDatabase(), AudiobooksDatabase
