@@ -24,6 +24,9 @@
 
 package com.studio4plus.homerplayer2.settings.ui
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -37,6 +40,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
@@ -54,11 +58,11 @@ fun SettingsKioskModeSetupRoute() = SettingsKioskModeSetup()
 @Composable
 fun SettingsKioskModeSetup() {
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = HomerTheme.dimensions.screenContentPadding)
     ) {
+        val context = LocalContext.current
         Text(
             text = stringResource(R.string.settings_ui_kiosk_mode_setup_description1),
             modifier = Modifier.padding(bottom = 4.dp)
@@ -69,8 +73,10 @@ fun SettingsKioskModeSetup() {
         Text(text = stringResource(R.string.settings_ui_kiosk_mode_setup_description2))
 
         Button(
-            onClick = { TODO() },
-            modifier = Modifier.padding(top = 24.dp)
+            onClick = { openSetupInstructions(context) },
+            modifier = Modifier
+                .padding(top = 24.dp)
+                .align(Alignment.CenterHorizontally)
         ) {
             Text(stringResource(R.string.settings_ui_kiosk_mode_setup_open_instructions))
         }
@@ -78,7 +84,9 @@ fun SettingsKioskModeSetup() {
             stringResource(R.string.generic_website_alternative, Constants.UrlKioskSetupInstructions),
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(top = 8.dp)
+            modifier = Modifier
+                .padding(top = 8.dp)
+                .align(Alignment.CenterHorizontally)
         )
     }
 }
@@ -98,6 +106,12 @@ private fun BulletText(
         Text("•", style = style, modifier = Modifier.padding(end  = 4.dp))
         Text(text, style = style)
     }
+}
+
+private fun openSetupInstructions(context: Context) {
+    context.startActivity(
+        Intent(Intent.ACTION_VIEW, Uri.parse(Constants.UrlKioskSetupInstructions))
+    )
 }
 
 @Preview

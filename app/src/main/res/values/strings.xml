@@ -80,7 +80,7 @@
     <string name="settings_ui_kiosk_mode_setup_title">Kiosk mode information</string>
     <string name="settings_ui_kiosk_mode_setup_description1">Kiosk mode locks down the device within the Homer Player application:</string>
     <string name="settings_ui_kiosk_mode_setup_description1_bullet1">prevents exiting the application with the "back" button,</string>
-    <string name="settings_ui_kiosk_mode_setup_description1_bullet2">notifications and the top system bar are disabled.</string>
+    <string name="settings_ui_kiosk_mode_setup_description1_bullet2">notifications and the top system bar are hidden.</string>
     <string name="settings_ui_kiosk_mode_setup_description2">This functionality requires a special installation procedure.</string>
     <string name="settings_ui_kiosk_mode_setup_open_instructions">Open instructions</string>
     <string name="settings_ui_lockdown_show_battery">Show battery indicator</string>
