@@ -24,6 +24,7 @@
 
 package com.studio4plus.homerplayer2.kiosk.deviceadmin;
 
+import android.app.admin.DevicePolicyManager;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -44,11 +45,15 @@ public class GetProvisioningModeActivity extends ComponentActivity {
     private void finishWithDeviceOwnerIntent() {
         Intent intent = new Intent();
         intent.putExtra(
-                android.app.admin.DevicePolicyManager.EXTRA_PROVISIONING_MODE,
-                android.app.admin.DevicePolicyManager.PROVISIONING_MODE_FULLY_MANAGED_DEVICE
+                DevicePolicyManager.EXTRA_PROVISIONING_MODE,
+                DevicePolicyManager.PROVISIONING_MODE_FULLY_MANAGED_DEVICE
         );
         intent.putExtra(
-                android.app.admin.DevicePolicyManager.EXTRA_PROVISIONING_SKIP_EDUCATION_SCREENS,
+                DevicePolicyManager.EXTRA_PROVISIONING_SKIP_EDUCATION_SCREENS,
+                true
+        );
+        intent.putExtra(
+                DevicePolicyManager.EXTRA_PROVISIONING_LEAVE_ALL_SYSTEM_APPS_ENABLED,
                 true
         );
         setResult(RESULT_OK, intent);
