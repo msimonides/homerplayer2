@@ -1,6 +1,6 @@
 {
 "android.app.extra.PROVISIONING_DEVICE_ADMIN_COMPONENT_NAME":"com.studio4plus.homerplayer2.kiosk/com.studio4plus.homerplayer2.kiosk.deviceadmin.DeviceAdminReceiver",
-"android.app.extra.PROVISIONING_DEVICE_ADMIN_PACKAGE_DOWNLOAD_LOCATION":"https://github.com/msimonides/homerplayer2/releases/download/${version}/Homer.Player.2.Kiosk.${version}.apk",
+"android.app.extra.PROVISIONING_DEVICE_ADMIN_PACKAGE_DOWNLOAD_LOCATION":"https://github.com/msimonides/homerplayer2/releases/download/${version}/Homer.Player.2.Kiosk-${version}.apk",
 "android.app.extra.PROVISIONING_DEVICE_ADMIN_PACKAGE_CHECKSUM":"${apkChecksum}",
 "android.app.extra.PROVISIONING_SKIP_ENCRYPTION":true
 }
