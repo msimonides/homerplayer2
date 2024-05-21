@@ -24,7 +24,6 @@
 
 package com.studio4plus.homerplayer2.onboarding
 
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -38,9 +37,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studio4plus.homerplayer2.PreviewData
 import com.studio4plus.homerplayer2.R
-import com.studio4plus.homerplayer2.audiobooks.OpenAudiobooksTree
 import com.studio4plus.homerplayer2.audiobooks.ui.AudiobookFoldersManagementPanel
 import com.studio4plus.homerplayer2.audiobooks.ui.FolderItem
+import com.studio4plus.homerplayer2.audiobooks.ui.OpenAudiobooksTreeScreenWrapper
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 import org.koin.androidx.compose.koinViewModel
@@ -53,22 +52,22 @@ fun OnboardingAudiobookFoldersRoute(
     viewModel: OnboardingAudiobookFoldersViewModel = koinViewModel()
 ) {
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
-    val openAudiobooksTree = rememberLauncherForActivityResult(
-        contract = OpenAudiobooksTree(),
-        onResult = { uri -> uri?.let { viewModel.addFolder(uri) } }
-    )
 
-    OnboardingAudiobookFoldersScreen(
-        viewState = viewState,
-        modifier = modifier,
-        navigateNext = {
-            viewModel.onFinished()
-            navigateNext()
-        },
-        navigateBack = navigateBack,
-        addFolder = { openAudiobooksTree.launch(null) },
-        removeFolder = viewModel::removeFolder
-    )
+    OpenAudiobooksTreeScreenWrapper(
+        onFolderSelected =  { uri -> viewModel.addFolder(uri)}
+    ) { openAudiobooksTree ->
+        OnboardingAudiobookFoldersScreen(
+            viewState = viewState,
+            modifier = modifier,
+            navigateNext = {
+                viewModel.onFinished()
+                navigateNext()
+            },
+            navigateBack = navigateBack,
+            addFolder = openAudiobooksTree,
+            removeFolder = viewModel::removeFolder
+        )
+    }
 }
 
 @Composable

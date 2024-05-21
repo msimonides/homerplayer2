@@ -24,14 +24,13 @@
 
 package com.studio4plus.homerplayer2.settings.ui
 
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.studio4plus.homerplayer2.audiobooks.OpenAudiobooksTree
 import com.studio4plus.homerplayer2.audiobooks.ui.AudiobookFoldersManagementPanel
+import com.studio4plus.homerplayer2.audiobooks.ui.OpenAudiobooksTreeScreenWrapper
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 import org.koin.androidx.compose.koinViewModel
 
@@ -41,15 +40,15 @@ fun SettingsFoldersRoute(
     viewModel: SettingsFoldersViewModel = koinViewModel()
 ) {
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
-    val openAudiobooksTree = rememberLauncherForActivityResult(
-        contract = OpenAudiobooksTree(),
-        onResult = { uri -> uri?.let { viewModel.addFolder(uri) } }
-    )
 
-    AudiobookFoldersManagementPanel(
-        folders = viewState.folderItems,
-        onAddFolder = { openAudiobooksTree.launch(null) },
-        onRemoveFolder = viewModel::removeFolder,
-        modifier = modifier.padding(horizontal = HomerTheme.dimensions.screenContentPadding)
-    )
+    OpenAudiobooksTreeScreenWrapper(
+        onFolderSelected = { uri -> viewModel.addFolder(uri) },
+    ) { openAudiobooksTree ->
+        AudiobookFoldersManagementPanel(
+            folders = viewState.folderItems,
+            onAddFolder = openAudiobooksTree,
+            onRemoveFolder = viewModel::removeFolder,
+            modifier = modifier.padding(horizontal = HomerTheme.dimensions.screenContentPadding)
+        )
+    }
 }

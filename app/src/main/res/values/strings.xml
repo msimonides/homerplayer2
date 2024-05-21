@@ -3,6 +3,7 @@
     <string name="app_tag" translatable="false">homerplayer2</string>
 
     <string name="audiobook_folder_add_button">Add folder…</string>
+    <string name="audiobook_folder_add_error_dialog">Unable to open file chooser</string>
     <string name="audiobook_folder_accessibility_menu_action_remove">Remove</string>
     <string name="audiobook_folder_no_books_found">(no audiobooks found in this folder)</string>
     <plurals name="audiobook_folder_content_description">
