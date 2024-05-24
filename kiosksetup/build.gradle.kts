@@ -1,7 +1,6 @@
 import com.android.build.gradle.api.ApplicationVariant
+import com.studio4plus.homerplayer2.GenerateProvisioningDataTask
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
-import java.security.MessageDigest
-import java.util.Base64
 
 /*
  * MIT License
@@ -116,33 +115,18 @@ fun ApplicationVariant.registerProvisioningInfoTask() {
         throw IllegalArgumentException("Only single APK output is supported")
     }
     val output = outputs.first()
-    tasks.register<Copy>("generateProvisioningData${capitalizedName}") {
+
+    tasks.register<GenerateProvisioningDataTask>("generateProvisioningData${capitalizedName}") {
         description = "create data for provisioning QR code"
         group = "Build"
-        dependsOn += packageApplicationProvider
+        dependsOn += packageApplicationProvider.get()
 
-        from(layout.projectDirectory.file("src/main/provisioning-qrcode.txt"))
-        into(layout.buildDirectory.file("outputs/qrcode/$variantName/"))
-
-        doFirst {
-            val expandValues = mapOf(
-                "version" to android.defaultConfig.versionName,
-                "apkChecksum" to computeApkChecksum(output.outputFile)
-            )
-            expand(expandValues)
-        }
+        template.set(layout.projectDirectory.file("src/main/provisioning-qrcode.txt"))
+        versionName.set(android.defaultConfig.versionName)
+        apkFile.set(output.outputFile)
+        outputDirectory.set(layout.buildDirectory.dir("outputs/qrcode/$variantName/"))
     }
 
     tasks.named("assemble${capitalizedName}").get()
         .dependsOn += "generateProvisioningData${capitalizedName}"
-}
-
-fun computeApkChecksum(file: File): String {
-    val apkDigest = MessageDigest.getInstance("SHA-256")
-    file.forEachBlock { buffer, bytes ->
-        apkDigest.update(buffer, 0, bytes)
-    }
-    val digestBytes = apkDigest.digest()
-    return Base64.getUrlEncoder().withoutPadding()
-        .encodeToString(digestBytes)
 }
