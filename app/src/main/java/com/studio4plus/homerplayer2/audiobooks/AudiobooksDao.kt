@@ -50,6 +50,7 @@ abstract class AudiobooksDao {
     @Query("SELECT * FROM audiobooks ORDER BY display_name COLLATE LOCALIZED")
     abstract fun getAll(): Flow<List<AudiobookWithState>>
 
+    @Transaction
     @Query("SELECT * FROM audiobooks WHERE id = :id")
     abstract suspend fun getAudiobook(id: String): AudiobookWithState?
 
