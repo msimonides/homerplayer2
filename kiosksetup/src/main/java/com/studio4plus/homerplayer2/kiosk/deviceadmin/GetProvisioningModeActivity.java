@@ -52,10 +52,6 @@ public class GetProvisioningModeActivity extends ComponentActivity {
                 DevicePolicyManager.EXTRA_PROVISIONING_SKIP_EDUCATION_SCREENS,
                 true
         );
-        intent.putExtra(
-                DevicePolicyManager.EXTRA_PROVISIONING_LEAVE_ALL_SYSTEM_APPS_ENABLED,
-                true
-        );
         setResult(RESULT_OK, intent);
         finish();
     }
