@@ -99,6 +99,11 @@ class DeviceAdminReceiver : android.app.admin.DeviceAdminReceiver(), KoinCompone
 
     private val deviceAdmin: DeviceAdmin by inject()
 
+    override fun onEnabled(context: Context, intent: Intent) {
+        super.onEnabled(context, intent)
+        deviceAdmin.onDeviceOwnerChanged()
+    }
+
     override fun onDisabled(context: Context, intent: Intent) {
         deviceAdmin.onBeforeDisabled()
         super.onDisabled(context, intent)
