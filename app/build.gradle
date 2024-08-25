@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.aboutlibraries)
+    alias(libs.plugins.room)
     alias(libs.plugins.sentry)
 }
 
@@ -24,16 +25,6 @@ android {
         testOptions {
             unitTests {
                 includeAndroidResources = true
-            }
-        }
-
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments += [
-                        "room.schemaLocation":"$projectDir/schemas".toString(),
-                        "room.incremental":"true",
-                        "room.expandProjection":"true"
-                ]
             }
         }
     }
@@ -70,6 +61,10 @@ android {
             getByName(name) { kotlin.srcDir("build/generated/ksp/${variant.name}/kotlin") }
         }
     }
+}
+
+room {
+    schemaDirectory "$projectDir/schemas"
 }
 
 sentry {
