@@ -28,8 +28,8 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.studio4plus.homerplayer2.audiobooks.AudiobookFolderManager
-import com.studio4plus.homerplayer2.audiobooks.ui.AudiobookFoldersViewStateFlow
-import com.studio4plus.homerplayer2.audiobooks.ui.FolderItem
+import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFoldersViewStateFlow
+import com.studio4plus.homerplayer2.audiobookfoldersui.FolderItem
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn

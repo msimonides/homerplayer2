@@ -22,11 +22,9 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2
+package com.studio4plus.homerplayer2.audiobookfoldersui
 
 import android.net.Uri
-import com.studio4plus.homerplayer2.audiobooks.ui.FolderItem
-import com.studio4plus.homerplayer2.audiobooks.ui.joinToEllipsizedString
 
 object PreviewData {
 

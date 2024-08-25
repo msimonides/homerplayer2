@@ -24,13 +24,11 @@
 
 package com.studio4plus.homerplayer2.settings.ui
 
-import android.content.Intent
 import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.studio4plus.homerplayer2.audiobooks.ui.AudiobookFolderNamesFlow
-import com.studio4plus.homerplayer2.audiobooks.ui.joinToEllipsizedString
-import com.studio4plus.homerplayer2.logging.PrepareIntentForLogSharing
+import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFolderNamesFlow
+import com.studio4plus.homerplayer2.audiobookfoldersui.joinToEllipsizedString
 import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
 import com.studio4plus.homerplayer2.settingsdata.UiSettings
 import com.studio4plus.homerplayer2.settingsdata.UiThemeMode

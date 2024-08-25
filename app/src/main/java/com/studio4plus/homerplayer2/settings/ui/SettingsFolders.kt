@@ -29,8 +29,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.studio4plus.homerplayer2.audiobooks.ui.AudiobookFoldersManagementPanel
-import com.studio4plus.homerplayer2.audiobooks.ui.OpenAudiobooksTreeScreenWrapper
+import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFoldersManagementPanel
+import com.studio4plus.homerplayer2.audiobookfoldersui.OpenAudiobooksTreeScreenWrapper
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 import org.koin.androidx.compose.koinViewModel
 

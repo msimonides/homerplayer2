@@ -22,34 +22,10 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.audiobooks.ui
+package com.studio4plus.homerplayer2.audiobookfoldersui
 
-import android.content.Context
-import androidx.documentfile.provider.DocumentFile
-import com.studio4plus.homerplayer2.audiobooks.AudiobookFoldersDao
-import com.studio4plus.homerplayer2.base.DispatcherProvider
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.FlowCollector
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
-import org.koin.core.annotation.Factory
-
-@Factory
-class AudiobookFolderNamesFlow(
-    private val appContext: Context,
-    dispatcherProvider: DispatcherProvider,
-    audiobookFoldersDao: AudiobookFoldersDao,
-): Flow<List<String>> {
-
-    private val foldersFlow =  audiobookFoldersDao.getAll().map { folders ->
-        folders.mapNotNull { folder ->
-            DocumentFile.fromTreeUri(appContext, folder.uri)?.let { documentFile ->
-                documentFile.name ?: folder.toString()
-            }
-        }
-    }.flowOn(dispatcherProvider.Io)
-
-    override suspend fun collect(collector: FlowCollector<List<String>>) {
-        foldersFlow.collect(collector)
-    }
+fun List<String>.joinToEllipsizedString(maxItems: Int = 4): String {
+    // TODO: this might need localization.
+    val joined = take(maxItems).joinToString(", ")
+    return if (size <= maxItems) joined else joined + "…"
 }

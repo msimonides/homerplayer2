@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.audiobooks.ui
+package com.studio4plus.homerplayer2.audiobookfoldersui
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult

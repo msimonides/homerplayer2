@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.audiobooks.ui
+package com.studio4plus.homerplayer2.audiobookfoldersui
 
 import android.net.Uri
 import androidx.compose.foundation.layout.Box
@@ -55,7 +55,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.studio4plus.homerplayer2.PreviewData
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.base.ui.SmallCircularProgressIndicator
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme

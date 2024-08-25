@@ -35,11 +35,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.studio4plus.homerplayer2.PreviewData
+import com.studio4plus.homerplayer2.audiobookfoldersui.PreviewData
 import com.studio4plus.homerplayer2.R
-import com.studio4plus.homerplayer2.audiobooks.ui.AudiobookFoldersManagementPanel
-import com.studio4plus.homerplayer2.audiobooks.ui.FolderItem
-import com.studio4plus.homerplayer2.audiobooks.ui.OpenAudiobooksTreeScreenWrapper
+import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFoldersManagementPanel
+import com.studio4plus.homerplayer2.audiobookfoldersui.FolderItem
+import com.studio4plus.homerplayer2.audiobookfoldersui.OpenAudiobooksTreeScreenWrapper
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 import org.koin.androidx.compose.koinViewModel
