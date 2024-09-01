@@ -95,6 +95,8 @@ fun PlayerRoute(
             onOpenSettings,
             modifier
         )
+    } else {
+        Box(Modifier.fillMaxSize())
     }
 }
 

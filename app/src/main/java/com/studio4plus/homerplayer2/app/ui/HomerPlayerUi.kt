@@ -27,6 +27,7 @@ package com.studio4plus.homerplayer2.app.ui
 import android.content.Context
 import android.os.Build
 import android.os.Vibrator
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -56,13 +57,17 @@ fun HomerPLayerUi(viewModel: HomerPlayerUiVM = koinViewModel()) {
         val viewState = viewModel.viewState.collectAsStateWithLifecycle().value
 
         Surface(
-            color = MaterialTheme.colorScheme.background
+            color = MaterialTheme.colorScheme.background,
+            modifier = Modifier.fillMaxSize()
         ) {
             if (viewState != null) {
                 CompositionLocalProvider(
                     LocalHapticFeedback provides rememberHapticFeedback(viewState.hapticFeedbackEnabled)
                 ) {
-                    MainNavHost(needsOnboarding = viewState.needsOnboarding)
+                    MainNavHost(
+                        needsOnboarding = viewState.needsOnboarding,
+                        modifier = Modifier.fillMaxSize()
+                    )
                 }
             }
         }
