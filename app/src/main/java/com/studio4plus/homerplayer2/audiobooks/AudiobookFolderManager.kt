@@ -44,6 +44,7 @@ class AudiobookFolderManager(
         contentResolver.takePersistableUriPermission(folder, Intent.FLAG_GRANT_READ_URI_PERMISSION)
         mainScope.launch {
             dao.insert(AudiobooksFolder(folder, isSamplesFolder = false))
+            dao.deleteSamplesFolder()
         }
     }
 

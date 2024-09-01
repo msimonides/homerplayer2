@@ -46,4 +46,7 @@ interface AudiobookFoldersDao {
 
     @Query("DELETE FROM audiobooks_folders WHERE uri = :uri")
     suspend fun delete(uri: Uri)
+
+    @Query("DELETE FROM audiobooks_folders WHERE isSamplesFolder = 1")
+    suspend fun deleteSamplesFolder()
 }
