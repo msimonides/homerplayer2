@@ -25,6 +25,8 @@
 package com.studio4plus.homerplayer2.settings.ui
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -75,7 +77,9 @@ private fun SettingsPlayback(
 ) {
     var showUiModeDialog by rememberSaveable { mutableStateOf<SettingsDialogType?>(null) }
     val settingItemModifier = Modifier.defaultSettingsItem()
-    Column(modifier = modifier) {
+    Column(
+        modifier = modifier.verticalScroll(rememberScrollState())
+    ) {
         SettingItem(
             label = stringResource(id = R.string.settings_ui_playback_rewind_on_resume_label),
             summary = rewindOnResumeSettingString(seconds = viewState.rewindOnResumeSeconds),

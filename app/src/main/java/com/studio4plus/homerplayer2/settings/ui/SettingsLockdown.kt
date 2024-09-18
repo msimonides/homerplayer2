@@ -26,6 +26,8 @@ package com.studio4plus.homerplayer2.settings.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -76,7 +78,9 @@ fun SettingsLockdown(
     closeSettings: () -> Unit,
 ) {
     var showUiModeDialog by rememberSaveable { mutableStateOf<SettingsLockdownDialogType?>(null) }
-    Column {
+    Column(
+        modifier = Modifier.verticalScroll(rememberScrollState())
+    ) {
         val settingItemModifier = Modifier.defaultSettingsItem()
         Text(
             stringResource(R.string.settings_ui_lockdown_settings_description),

@@ -26,6 +26,8 @@ package com.studio4plus.homerplayer2.settings.ui
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -95,7 +97,7 @@ private fun SettingsTtsScreen(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier
+        modifier = modifier.verticalScroll(rememberScrollState())
     ) {
         val settingItemModifier = Modifier.defaultSettingsItem()
         SettingSwitch(

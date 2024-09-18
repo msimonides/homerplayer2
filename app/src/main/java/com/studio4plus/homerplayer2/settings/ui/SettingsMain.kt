@@ -25,6 +25,8 @@
 package com.studio4plus.homerplayer2.settings.ui
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -78,7 +80,9 @@ private fun SettingsMain(
 ) {
     if (viewState != null) {
         var showUiModeDialog by rememberSaveable { mutableStateOf<SettingsMainDialogType?>(null) }
-        Column {
+        Column(
+            modifier = Modifier.verticalScroll(rememberScrollState())
+        ) {
             val settingItemModifier = Modifier.defaultSettingsItem()
             SettingItem(
                 label = stringResource(R.string.settings_ui_player_ui_item),

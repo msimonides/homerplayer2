@@ -26,6 +26,8 @@ package com.studio4plus.homerplayer2.settings.ui
 
 import android.content.Intent
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -62,7 +64,9 @@ private fun SettingsAbout(
 ) {
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
-    Column {
+    Column(
+        modifier = Modifier.verticalScroll(rememberScrollState())
+    ) {
         val settingItemModifier = Modifier.defaultSettingsItem()
         SettingItem(
             label = stringResource(id = R.string.settings_ui_share_diagnostic_log_title),
