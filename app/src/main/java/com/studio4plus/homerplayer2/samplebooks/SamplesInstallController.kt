@@ -75,7 +75,7 @@ class SamplesInstallController(
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val errorEvent = boundService.flatMapLatest { binder ->
+    val errorEvent: Flow<SamplesInstallError> = boundService.flatMapLatest { binder ->
         binder?.errorEvent?.receiveAsFlow() ?: flowOf()
     }
 

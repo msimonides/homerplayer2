@@ -39,13 +39,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.studio4plus.homerplayer2.audiobookfoldersui.PreviewData
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFoldersManagementPanel
 import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFoldersPanelViewState
 import com.studio4plus.homerplayer2.audiobookfoldersui.FolderItem
 import com.studio4plus.homerplayer2.audiobookfoldersui.OpenAudiobooksTreeScreenWrapper
-import com.studio4plus.homerplayer2.audiobookfoldersui.samplesInstallErrorMessage
+import com.studio4plus.homerplayer2.audiobookfoldersui.PreviewData
+import com.studio4plus.homerplayer2.audiobookfoldersui.audiobooksFolderPanelErrorEventMessage
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 import com.studio4plus.homerplayer2.samplebooks.SamplesInstallState
@@ -63,8 +63,8 @@ fun OnboardingAudiobookFoldersRoute(
 
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
-    LaunchErrorSnackDisplay(viewModel.samplesInstallError, snackbarHostState) {
-        samplesInstallErrorMessage(context, it)
+    LaunchErrorSnackDisplay(viewModel.errorEvent, snackbarHostState) {
+        audiobooksFolderPanelErrorEventMessage(context, it)
     }
 
     OpenAudiobooksTreeScreenWrapper(
@@ -79,7 +79,10 @@ fun OnboardingAudiobookFoldersRoute(
                 navigateNext()
             },
             navigateBack = navigateBack,
-            addFolder = openAudiobooksTree,
+            addFolder = {
+                viewModel.clearErrorSnack()
+                openAudiobooksTree()
+            },
             removeFolder = viewModel::removeFolder,
             downloadSamples = viewModel::startSamplesInstall,
         )

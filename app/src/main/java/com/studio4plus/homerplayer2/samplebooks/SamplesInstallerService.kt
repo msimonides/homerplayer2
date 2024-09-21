@@ -41,7 +41,7 @@ class SamplesInstallerService : LifecycleService() {
 
     class LocalBinder(private val samplesInstaller: SamplesInstaller) : Binder() {
         val state: StateFlow<SamplesInstallState> = samplesInstaller.state
-        val errorEvent: ReceiveChannel<SamplesInstallError?> = samplesInstaller.errorEvent
+        val errorEvent: ReceiveChannel<SamplesInstallError> = samplesInstaller.errorEvent
 
         fun abort() {
             samplesInstaller.reset()

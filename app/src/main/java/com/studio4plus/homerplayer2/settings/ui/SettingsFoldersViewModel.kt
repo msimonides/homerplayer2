@@ -31,7 +31,9 @@ import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFoldersPanelView
 import com.studio4plus.homerplayer2.audiobooks.AudiobookFolderManager
 import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFoldersViewStateFlow
 import com.studio4plus.homerplayer2.audiobookfoldersui.FolderItem
+import com.studio4plus.homerplayer2.audiobooks.AudiobookFolderPanelViewModel
 import com.studio4plus.homerplayer2.samplebooks.SamplesInstallController
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -39,10 +41,11 @@ import org.koin.android.annotation.KoinViewModel
 
 @KoinViewModel
 class SettingsFoldersViewModel(
+    mainScope: CoroutineScope,
     audiobookFoldersViewStateFlow: AudiobookFoldersViewStateFlow,
-    private val audiobookFoldersManager: AudiobookFolderManager,
-    private val samplesInstaller: SamplesInstallController,
-): ViewModel() {
+    audiobookFoldersManager: AudiobookFolderManager,
+    samplesInstaller: SamplesInstallController,
+): AudiobookFolderPanelViewModel(mainScope, audiobookFoldersManager, samplesInstaller) {
 
     val viewState = audiobookFoldersViewStateFlow
         .stateIn(
@@ -50,12 +53,4 @@ class SettingsFoldersViewModel(
             SharingStarted.WhileSubscribed(),
             AudiobookFoldersPanelViewState(emptyList(), null)
         )
-
-    val samplesInstallError = samplesInstaller.errorEvent
-
-    fun addFolder(uri: Uri) = audiobookFoldersManager.addFolder(uri)
-
-    fun removeFolder(item: FolderItem) = audiobookFoldersManager.removeFolder(item.uri)
-
-    fun startSamplesInstall() = samplesInstaller.start()
 }

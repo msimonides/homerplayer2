@@ -26,6 +26,7 @@ package com.studio4plus.homerplayer2.audiobookfoldersui
 
 import android.content.Context
 import com.studio4plus.homerplayer2.R
+import com.studio4plus.homerplayer2.audiobooks.AudiobookFolderPanelViewModel
 import com.studio4plus.homerplayer2.samplebooks.SamplesInstallError
 
 fun List<String>.joinToEllipsizedString(maxItems: Int = 4): String {
@@ -34,10 +35,17 @@ fun List<String>.joinToEllipsizedString(maxItems: Int = 4): String {
     return if (size <= maxItems) joined else joined + "…"
 }
 
-fun samplesInstallErrorMessage(context: Context, error: SamplesInstallError): String =
-    when (error) {
-        is SamplesInstallError.Download ->
-            context.getString(R.string.audiobook_folder_samples_download_error)
-        is SamplesInstallError.Install ->
-            context.getString(R.string.audiobook_folder_samples_install_error, error.error)
-    }
+fun audiobooksFolderPanelErrorEventMessage(
+    context: Context,
+    event: AudiobookFolderPanelViewModel.ErrorEvent
+): String = when(event) {
+    is AudiobookFolderPanelViewModel.ErrorEvent.AddFolderExistsError ->
+        context.getString(R.string.audiobook_folder_add_error_folder_exists)
+    is AudiobookFolderPanelViewModel.ErrorEvent.SamplesInstallError ->
+        when (event.error) {
+            is SamplesInstallError.Download ->
+                context.getString(R.string.audiobook_folder_samples_download_error)
+            is SamplesInstallError.Install ->
+                context.getString(R.string.audiobook_folder_samples_install_error, event.error.error)
+        }
+}

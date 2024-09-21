@@ -40,13 +40,17 @@ class AudiobookFolderManager(
     private val dao: AudiobookFoldersDao
 ) {
 
-    fun addFolder(folder: Uri) {
+    suspend fun addFolder(folder: Uri): Boolean {
         Timber.i("Adding audiobooks folder: %s", folder.toString())
         contentResolver.takePersistableUriPermission(folder, Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        mainScope.launch {
-            dao.insert(AudiobooksFolder(folder, isSamplesFolder = false))
+        val id = dao.insert(AudiobooksFolder(folder, isSamplesFolder = false))
+        val success = id >= 0
+        if (success) {
             dao.deleteSamplesFolder()
+        } else {
+            Timber.w("Audiobooks folder already in DB, ignoring: %s", folder.toString())
         }
+        return success
     }
 
     fun addSamplesFolder(folder: Uri) {

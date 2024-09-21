@@ -4,6 +4,7 @@
 
     <string name="audiobook_folder_add_button">Add folder…</string>
     <string name="audiobook_folder_add_error_dialog">Unable to open file chooser</string>
+    <string name="audiobook_folder_add_error_folder_exists">This folder has already been added</string>
     <string name="audiobook_folder_accessibility_menu_action_remove">Remove</string>
     <string name="audiobook_folder_download_samples_button">Download samples</string>
     <string name="audiobook_folder_samples_folder_name">Sample books</string>

@@ -41,8 +41,8 @@ interface AudiobookFoldersDao {
     """)
     fun getAllWithBookTitles(): Flow<Map<@MapColumn(columnName = "uri") Uri, List<@MapColumn(columnName="display_name") String>>>
 
-    @Insert
-    suspend fun insert(folder: AudiobooksFolder)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insert(folder: AudiobooksFolder): Long
 
     @Query("DELETE FROM audiobooks_folders WHERE uri = :uri")
     suspend fun delete(uri: Uri)

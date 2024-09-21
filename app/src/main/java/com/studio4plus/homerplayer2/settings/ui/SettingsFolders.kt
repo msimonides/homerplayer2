@@ -24,25 +24,18 @@
 
 package com.studio4plus.homerplayer2.settings.ui
 
-import android.content.Context
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFoldersManagementPanel
 import com.studio4plus.homerplayer2.audiobookfoldersui.OpenAudiobooksTreeScreenWrapper
-import com.studio4plus.homerplayer2.audiobookfoldersui.samplesInstallErrorMessage
+import com.studio4plus.homerplayer2.audiobookfoldersui.audiobooksFolderPanelErrorEventMessage
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
-import com.studio4plus.homerplayer2.samplebooks.SamplesInstallError
 import com.studio4plus.homerplayer2.speech.LaunchErrorSnackDisplay
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -54,8 +47,8 @@ fun SettingsFoldersRoute(
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
-    LaunchErrorSnackDisplay(viewModel.samplesInstallError, snackbarHostState) {
-        samplesInstallErrorMessage(context, it)
+    LaunchErrorSnackDisplay(viewModel.errorEvent, snackbarHostState) {
+        audiobooksFolderPanelErrorEventMessage(context, it)
     }
 
     OpenAudiobooksTreeScreenWrapper(
@@ -63,7 +56,10 @@ fun SettingsFoldersRoute(
     ) { openAudiobooksTree ->
         AudiobookFoldersManagementPanel(
             state = viewState,
-            onAddFolder = openAudiobooksTree,
+            onAddFolder = {
+                viewModel.clearErrorSnack()
+                openAudiobooksTree()
+            },
             onRemoveFolder = viewModel::removeFolder,
             onDownloadSamples = viewModel::startSamplesInstall,
             modifier = modifier.padding(horizontal = HomerTheme.dimensions.screenContentPadding),

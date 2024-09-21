@@ -54,8 +54,8 @@ class SamplesInstaller(
     val state: StateFlow<SamplesInstallState> get() = currentState
 
     private val errorChannel =
-        Channel<SamplesInstallError?>(capacity = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
-    val errorEvent: ReceiveChannel<SamplesInstallError?> = errorChannel
+        Channel<SamplesInstallError>(capacity = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    val errorEvent: ReceiveChannel<SamplesInstallError> = errorChannel
 
     private var installJob: Job? = null
 
@@ -66,7 +66,6 @@ class SamplesInstaller(
         }
 
         currentState.value = SamplesInstallState.Downloading
-        errorChannel.trySend(null)
         installJob = mainScope.launch {
             doInstall(cacheDir, filesDir)
             currentState.value = SamplesInstallState.Idle
