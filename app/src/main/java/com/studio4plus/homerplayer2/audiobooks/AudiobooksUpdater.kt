@@ -31,14 +31,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.launch
 import org.koin.core.annotation.Single
 
 @Single
 class AudiobooksUpdater(
-    mainScope: CoroutineScope,
+    private val mainScope: CoroutineScope,
     audiobookFoldersDao: AudiobookFoldersDao,
     private val audiobooksDao: AudiobooksDao,
-    private val scanner: Scanner
+    private val scanner: Scanner,
+    private val validateAudiobooksFolders: ValidateAudiobooksFolders,
 ) {
     private val triggerFlow: MutableSharedFlow<Unit> =
         MutableSharedFlow(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
@@ -58,7 +60,11 @@ class AudiobooksUpdater(
     }
 
     fun trigger() {
-        triggerFlow.tryEmit(Unit)
+        mainScope.launch {
+            val changedFolders = validateAudiobooksFolders()
+            if (!changedFolders) // Changing folders already triggers rescan.
+                triggerFlow.tryEmit(Unit)
+        }
     }
 
     private suspend fun scan(folders: List<AudiobooksFolder>) {

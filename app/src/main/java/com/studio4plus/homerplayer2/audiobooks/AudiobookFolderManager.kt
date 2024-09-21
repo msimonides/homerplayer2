@@ -39,6 +39,7 @@ class AudiobookFolderManager(
     private val contentResolver: ContentResolver,
     private val dao: AudiobookFoldersDao
 ) {
+
     fun addFolder(folder: Uri) {
         Timber.i("Adding audiobooks folder: %s", folder.toString())
         contentResolver.takePersistableUriPermission(folder, Intent.FLAG_GRANT_READ_URI_PERMISSION)

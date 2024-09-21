@@ -27,18 +27,32 @@ package com.studio4plus.homerplayer2.audiobooks
 import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
-import androidx.annotation.WorkerThread
 import androidx.documentfile.provider.DocumentFile
+import com.studio4plus.homerplayer2.base.DispatcherProvider
+import com.studio4plus.homerplayer2.utils.hasContentScheme
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withContext
+import org.koin.core.annotation.Factory
 import timber.log.Timber
 
-class AudiobookFoldersValidator(
+@Factory
+class ValidateAudiobooksFolders(
     private val context: Context,
-    private val contentResolver: ContentResolver
+    private val dispatcherProvider: DispatcherProvider,
+    private val contentResolver: ContentResolver,
+    private val audiobookFoldersDao: AudiobookFoldersDao,
+    private val audiobookFolderManager: AudiobookFolderManager,
 ) {
+    suspend operator fun invoke(): Boolean {
+        val folderUris = audiobookFoldersDao.getAll().first()
+            .map { it.uri }.filter { it.hasContentScheme() }
+        return withContext(dispatcherProvider.Io) {
+            val (_, inaccessible) = validatePermissions(folderUris)
+            inaccessible.forEach { audiobookFolderManager.removeFolder(it) }
+            inaccessible.isNotEmpty()
+        }
+    }
 
-    // TODO: finish implementation
-
-    @WorkerThread
     private fun validatePermissions(folderUris: List<Uri>): Pair<List<Uri>, List<Uri>> {
         val appPermissions = contentResolver.persistedUriPermissions
             .filter { it.isReadPermission }
@@ -49,11 +63,11 @@ class AudiobookFoldersValidator(
             val document = DocumentFile.fromTreeUri(context, folderUri)
             document != null && document.exists() && document.isDirectory
         }
-        logRemovedFolders(withoutPermission, notAccessible)
+        logInvalidFolders(withoutPermission, notAccessible)
         return Pair(accessible, withoutPermission + notAccessible)
     }
 
-    private fun logRemovedFolders(noPermission: Collection<Uri>, notAccessible: Collection<Uri>) {
+    private fun logInvalidFolders(noPermission: Collection<Uri>, notAccessible: Collection<Uri>) {
         if (noPermission.isNotEmpty()) Timber.i("Folders with revoked permission: %s", noPermission.joinToString(", "))
         if (notAccessible.isNotEmpty()) Timber.i("Folders not accessible any more: %s", notAccessible.joinToString(", "))
     }
