@@ -27,6 +27,7 @@ package com.studio4plus.homerplayer2.speech
 import android.content.Context
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
+import com.studio4plus.homerplayer2.base.LocaleProvider
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -56,7 +57,7 @@ interface Speaker {
 @Factory
 class SpeakerTts(
     private val appContext: Context,
-    private val locale: Locale
+    private val getLocale: LocaleProvider
 ) : Speaker {
 
     private var speech: TextToSpeech? = null
@@ -77,7 +78,7 @@ class SpeakerTts(
             }
 
         return if (initSuccessful) {
-            when(speech?.isLanguageAvailable(locale)) {
+            when(speech?.isLanguageAvailable(getLocale())) {
                 TextToSpeech.LANG_NOT_SUPPORTED -> {
                     Timber.w("TTS language not supported.")
                     Speaker.TtsInitResult.LANGUAGE_NOT_SUPPORTED

@@ -24,6 +24,7 @@
 
 package com.studio4plus.homerplayer2.samplebooks
 
+import com.studio4plus.homerplayer2.base.LocaleProvider
 import io.sentry.Sentry
 import org.json.JSONObject
 import org.koin.core.annotation.Factory
@@ -39,7 +40,7 @@ private const val FALLBACK_LANG = "default"
 
 @Factory
 class SamplesUnpacker(
-    private val locale: Locale,
+    private val getLocale: LocaleProvider,
 ) {
     @Throws(IOException::class, IllegalArgumentException::class)
     operator fun invoke(zipFile: File, destinationFolder: File) =
@@ -66,6 +67,7 @@ class SamplesUnpacker(
 
     @Throws(IOException::class)
     private fun getTitle(folder: File): String {
+        val locale = getLocale()
         val fullLang = with(locale) { "${language}_$country" }
         val lang = locale.language
         val jsonString = File(folder, TITLE_FILE_NAME).readText()

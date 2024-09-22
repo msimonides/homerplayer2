@@ -24,35 +24,24 @@
 
 package com.studio4plus.homerplayer2.base
 
-import android.app.admin.DevicePolicyManager
-import android.content.ContentResolver
 import android.content.Context
-import android.media.AudioManager
-import android.os.Build
-import android.os.Vibrator
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.MainScope
-import org.koin.core.annotation.ComponentScan
+import androidx.core.os.ConfigurationCompat
 import org.koin.core.annotation.Factory
-import org.koin.core.annotation.Module
-import org.koin.core.annotation.Single
-import java.util.*
+import java.util.Locale
 
-@Module
-@ComponentScan("com.studio4plus.homerplayer2.base")
-class BaseModule {
+fun interface LocaleProvider {
+    operator fun invoke(): Locale
+}
 
-    @Factory
-    fun contentResolver(appContext: Context): ContentResolver = appContext.contentResolver
-
-    @Factory
-    fun devicePolicyManager(appContext: Context): DevicePolicyManager =
-        appContext.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
-
-    @Factory
-    fun audioManager(appContext: Context): AudioManager =
-        appContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-
-    @Single
-    fun mainScope(): CoroutineScope = MainScope()
+@Factory
+class DefaultLocaleProvider(
+    private val appContext: Context
+) : LocaleProvider {
+    override operator fun invoke(): Locale =
+        // Not sure if there's a difference between locale from configuration on the app Context
+        // and Locale.getDefault() - both react to device language change in testing.
+        // It might be a problem for per-app language settings on Android lower than 13
+        // (https://issuetracker.google.com/issues/243457462) but that's not being used.
+        ConfigurationCompat.getLocales(appContext.resources.configuration).get(0)
+            ?: Locale.getDefault()
 }

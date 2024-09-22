@@ -43,7 +43,7 @@ class SamplesUnpackerTests {
 
     @Test
     fun `when translation is missing then default is used`() = runTest {
-        val installer = SamplesUnpacker(Locale("en", "us"))
+        val installer = SamplesUnpacker({ Locale.US })
         installer(rule.inputStream("book_samples.zip"), rule.outputFolder)
 
         val expected = setOf(
@@ -56,7 +56,7 @@ class SamplesUnpackerTests {
     @Test
     fun `when MX Spanish is missing then use generic Spanish`() = runTest {
         val locale = Locale("es", "mx")
-        val installer = SamplesUnpacker(locale)
+        val installer = SamplesUnpacker({ locale })
         installer(rule.inputStream("book_samples.zip"), rule.outputFolder)
 
         val expected = setOf("[es_MX] Sample Book 1", "[es] Sample Book 2")
