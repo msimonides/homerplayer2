@@ -34,6 +34,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import org.koin.core.annotation.Factory
+import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 @Factory
@@ -143,7 +144,7 @@ class DeviceMotionDetector(
             )
             awaitClose { sensorManager.unregisterListener(listener) }
         } else {
-            // TODO: log lack of sensor.
+            Timber.e("The accelerometer sensor is missing!")
             awaitClose()
         }
     }
