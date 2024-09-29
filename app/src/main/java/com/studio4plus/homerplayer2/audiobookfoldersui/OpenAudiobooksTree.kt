@@ -22,8 +22,21 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.audiobooks
+package com.studio4plus.homerplayer2.audiobookfoldersui
 
-interface AudiobooksDatabase {
-    fun audiobooksDao(): AudiobooksDao
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import androidx.activity.result.contract.ActivityResultContracts
+
+private const val EXTRA_SHOW_ADVANCED_1 = "android.provider.extra.SHOW_ADVANCED"
+private const val EXTRA_SHOW_ADVANCED_2 = "android.content.extra.SHOW_ADVANCED"
+
+class OpenAudiobooksTree : ActivityResultContracts.OpenDocumentTree() {
+    override fun createIntent(context: Context, input: Uri?): Intent =
+        super.createIntent(context, input).apply {
+            addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
+            putExtra(EXTRA_SHOW_ADVANCED_1, true)
+            putExtra(EXTRA_SHOW_ADVANCED_2, true)
+        }
 }

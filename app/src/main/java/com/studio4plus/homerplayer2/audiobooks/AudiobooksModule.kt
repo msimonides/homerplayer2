@@ -30,13 +30,9 @@ import org.koin.core.annotation.ComponentScan
 import org.koin.core.annotation.Factory
 import org.koin.core.annotation.Module
 
-@Module(includes = [BaseModule::class, SampleBooksModule::class])
+@Module(includes = [BaseModule::class])
 @ComponentScan("com.studio4plus.homerplayer2.audiobooks")
 class AudiobooksModule {
     @Factory
     fun audiobooksDao(audiobooksDatabase: AudiobooksDatabase) = audiobooksDatabase.audiobooksDao()
-
-    @Factory
-    fun audiobooksFolderDao(audiobooksDatabase: AudiobooksDatabase) =
-        audiobooksDatabase.audiobookFoldersDao()
 }

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Marcin Simonides
+ * Copyright (c) 2024 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,21 +22,31 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.audiobooks
+package com.studio4plus.homerplayer2.audiobookfolders
 
-import android.content.Context
-import android.content.Intent
 import android.net.Uri
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.room.*
+import kotlinx.coroutines.flow.Flow
 
-private const val EXTRA_SHOW_ADVANCED_1 = "android.provider.extra.SHOW_ADVANCED"
-private const val EXTRA_SHOW_ADVANCED_2 = "android.content.extra.SHOW_ADVANCED"
+@Dao
+interface AudiobookFoldersDao {
 
-class OpenAudiobooksTree : ActivityResultContracts.OpenDocumentTree() {
-    override fun createIntent(context: Context, input: Uri?): Intent =
-        super.createIntent(context, input).apply {
-            addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
-            putExtra(EXTRA_SHOW_ADVANCED_1, true)
-            putExtra(EXTRA_SHOW_ADVANCED_2, true)
-        }
+    @Query("SELECT * FROM audiobooks_folders")
+    fun getAll(): Flow<List<AudiobooksFolder>>
+
+    @Query("""
+        SELECT audiobooks_folders.uri, audiobooks.display_name
+        FROM  audiobooks_folders JOIN audiobooks ON audiobooks_folders.uri = audiobooks.root_folder_uri
+        ORDER BY display_name COLLATE LOCALIZED
+    """)
+    fun getAllWithBookTitles(): Flow<Map<@MapColumn(columnName = "uri") Uri, List<@MapColumn(columnName="display_name") String>>>
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insert(folder: AudiobooksFolder): Long
+
+    @Query("DELETE FROM audiobooks_folders WHERE uri = :uri")
+    suspend fun delete(uri: Uri)
+
+    @Query("DELETE FROM audiobooks_folders WHERE isSamplesFolder = 1")
+    suspend fun deleteSamplesFolder()
 }

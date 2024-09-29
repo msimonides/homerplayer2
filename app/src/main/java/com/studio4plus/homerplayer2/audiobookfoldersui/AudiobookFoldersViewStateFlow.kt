@@ -25,8 +25,8 @@
 package com.studio4plus.homerplayer2.audiobookfoldersui
 
 import android.net.Uri
-import com.studio4plus.homerplayer2.audiobooks.AudiobookFoldersDao
-import com.studio4plus.homerplayer2.audiobooks.AudiobooksUpdater
+import com.studio4plus.homerplayer2.audiobookfolders.AudiobookFoldersDao
+import com.studio4plus.homerplayer2.audiobookfolders.AudiobooksUpdater
 import com.studio4plus.homerplayer2.base.DispatcherProvider
 import com.studio4plus.homerplayer2.samplebooks.SamplesInstallController
 import com.studio4plus.homerplayer2.samplebooks.SamplesInstallState

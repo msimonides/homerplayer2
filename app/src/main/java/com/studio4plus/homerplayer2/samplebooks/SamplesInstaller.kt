@@ -25,7 +25,7 @@
 package com.studio4plus.homerplayer2.samplebooks
 
 import android.net.Uri
-import com.studio4plus.homerplayer2.audiobooks.AudiobookFolderManager
+import com.studio4plus.homerplayer2.audiobookfolders.AudiobookFolderManager
 import com.studio4plus.homerplayer2.base.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Marcin Simonides
+ * Copyright (c) 2024 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,15 +22,15 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.audiobooks
+package com.studio4plus.homerplayer2.audiobookfolders
 
 import android.content.ContentResolver
-import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 import android.provider.DocumentsContract
 import android.util.Base64
 import androidx.annotation.WorkerThread
+import com.studio4plus.homerplayer2.audiobooks.Audiobook
 import com.studio4plus.homerplayer2.base.DispatcherProvider
 import com.studio4plus.homerplayer2.utils.hasFileScheme
 import kotlinx.coroutines.withContext

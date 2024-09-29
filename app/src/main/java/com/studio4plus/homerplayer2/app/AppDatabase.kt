@@ -28,13 +28,14 @@ import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.studio4plus.homerplayer2.audiobookfolders.AudiobookFoldersDatabase
+import com.studio4plus.homerplayer2.audiobookfolders.AudiobooksFolder
 import com.studio4plus.homerplayer2.audiobooks.Audiobook
 import com.studio4plus.homerplayer2.audiobooks.AudiobookFile
 import com.studio4plus.homerplayer2.audiobooks.AudiobookFileDuration
 import com.studio4plus.homerplayer2.audiobooks.AudiobookFileWithDuration
 import com.studio4plus.homerplayer2.audiobooks.AudiobookPlaybackState
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksDatabase
-import com.studio4plus.homerplayer2.audiobooks.AudiobooksFolder
 import com.studio4plus.homerplayer2.utils.DbTypeConverters
 
 @Database(
@@ -52,4 +53,4 @@ import com.studio4plus.homerplayer2.utils.DbTypeConverters
     ]
 )
 @TypeConverters(DbTypeConverters::class)
-abstract class AppDatabase : RoomDatabase(), AudiobooksDatabase
+abstract class AppDatabase : RoomDatabase(), AudiobooksDatabase, AudiobookFoldersDatabase

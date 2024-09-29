@@ -24,7 +24,7 @@
 
 package com.studio4plus.homerplayer2.settings
 
-import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobooksFoldersUiModule
+import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFoldersUiModule
 import com.studio4plus.homerplayer2.fullkioskmode.FullKioskModeModule
 import com.studio4plus.homerplayer2.logging.LoggingModule
 import com.studio4plus.homerplayer2.player.PlayerModule
@@ -34,7 +34,7 @@ import org.koin.core.annotation.Module
 
 @Module(
     includes = [
-        AudiobooksFoldersUiModule::class,
+        AudiobookFoldersUiModule::class,
         FullKioskModeModule::class,
         LoggingModule::class,
         PlayerModule::class,

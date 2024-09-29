@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Marcin Simonides
+ * Copyright (c) 2024 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,17 +22,14 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.audiobooks
+package com.studio4plus.homerplayer2.audiobookfoldersui
 
-import android.net.Uri
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import com.studio4plus.homerplayer2.audiobookfolders.AudiobookFoldersModule
+import com.studio4plus.homerplayer2.base.BaseModule
+import com.studio4plus.homerplayer2.samplebooks.SampleBooksModule
+import org.koin.core.annotation.ComponentScan
+import org.koin.core.annotation.Module
 
-@Entity(tableName = "audiobooks_folders")
-data class AudiobooksFolder(
-    @PrimaryKey
-    val uri: Uri,
-    @ColumnInfo(defaultValue = "0")
-    val isSamplesFolder: Boolean,
-)
+@Module(includes = [AudiobookFoldersModule::class, BaseModule::class, SampleBooksModule::class])
+@ComponentScan("com.studio4plus.homerplayer2.audiobookfoldersui")
+class AudiobookFoldersUiModule

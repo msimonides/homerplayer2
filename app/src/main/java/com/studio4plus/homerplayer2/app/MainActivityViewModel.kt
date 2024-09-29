@@ -27,7 +27,7 @@ package com.studio4plus.homerplayer2.app
 import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.studio4plus.homerplayer2.audiobooks.AudiobooksUpdater
+import com.studio4plus.homerplayer2.audiobookfolders.AudiobooksUpdater
 import com.studio4plus.homerplayer2.fullkioskmode.IsFullKioskEnabled
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map

@@ -22,11 +22,11 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.audiobooks
+package com.studio4plus.homerplayer2.audiobookfoldersui
 
 import android.net.Uri
 import androidx.lifecycle.ViewModel
-import com.studio4plus.homerplayer2.audiobookfoldersui.FolderItem
+import com.studio4plus.homerplayer2.audiobookfolders.AudiobookFolderManager
 import com.studio4plus.homerplayer2.samplebooks.SamplesInstallController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.BufferOverflow
@@ -45,7 +45,9 @@ abstract class AudiobookFolderPanelViewModel(
 ) : ViewModel() {
 
     sealed interface ErrorEvent {
-        data class SamplesInstallError(val error: com.studio4plus.homerplayer2.samplebooks.SamplesInstallError) : ErrorEvent
+        data class SamplesInstallError(
+            val error: com.studio4plus.homerplayer2.samplebooks.SamplesInstallError
+        ) : ErrorEvent
         object AddFolderExistsError : ErrorEvent
     }
 

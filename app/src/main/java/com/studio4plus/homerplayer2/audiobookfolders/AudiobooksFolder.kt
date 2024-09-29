@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Marcin Simonides
+ * Copyright (c) 2023 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,31 +22,17 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.audiobooks
+package com.studio4plus.homerplayer2.audiobookfolders
 
 import android.net.Uri
-import androidx.room.*
-import kotlinx.coroutines.flow.Flow
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-@Dao
-interface AudiobookFoldersDao {
-
-    @Query("SELECT * FROM audiobooks_folders")
-    fun getAll(): Flow<List<AudiobooksFolder>>
-
-    @Query("""
-        SELECT audiobooks_folders.uri, audiobooks.display_name
-        FROM  audiobooks_folders JOIN audiobooks ON audiobooks_folders.uri = audiobooks.root_folder_uri
-        ORDER BY display_name COLLATE LOCALIZED
-    """)
-    fun getAllWithBookTitles(): Flow<Map<@MapColumn(columnName = "uri") Uri, List<@MapColumn(columnName="display_name") String>>>
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(folder: AudiobooksFolder): Long
-
-    @Query("DELETE FROM audiobooks_folders WHERE uri = :uri")
-    suspend fun delete(uri: Uri)
-
-    @Query("DELETE FROM audiobooks_folders WHERE isSamplesFolder = 1")
-    suspend fun deleteSamplesFolder()
-}
+@Entity(tableName = "audiobooks_folders")
+data class AudiobooksFolder(
+    @PrimaryKey
+    val uri: Uri,
+    @ColumnInfo(defaultValue = "0")
+    val isSamplesFolder: Boolean,
+)

@@ -31,6 +31,8 @@ import androidx.core.content.getSystemService
 import androidx.datastore.core.DataStore
 import androidx.room.Room
 import com.studio4plus.homerplayer2.R
+import com.studio4plus.homerplayer2.audiobookfolders.AudiobookFoldersDatabase
+import com.studio4plus.homerplayer2.audiobookfolders.AudiobookFoldersModule
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksDatabase
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksModule
 import com.studio4plus.homerplayer2.base.BaseModule
@@ -61,6 +63,7 @@ const val DATASTORE_APP_STATE = "appState"
 
 @Module(
     includes = [
+        AudiobookFoldersModule::class,
         AudiobooksModule::class,
         BaseModule::class,
         BatteryModule::class,
@@ -94,7 +97,13 @@ class AppModule {
             StoredAppState.serializer()
         )
 
-    @Single(binds = [AppDatabase::class, AudiobooksDatabase::class])
+    @Single(
+        binds = [
+            AppDatabase::class,
+            AudiobookFoldersDatabase::class,
+            AudiobooksDatabase::class
+        ]
+    )
     fun database(appContext: Context): AppDatabase =
         Room.databaseBuilder(appContext, AppDatabase::class.java, "app_database")
             .build()

@@ -27,7 +27,7 @@ package com.studio4plus.homerplayer2.audiobookfoldersui
 import android.content.Context
 import androidx.documentfile.provider.DocumentFile
 import com.studio4plus.homerplayer2.R
-import com.studio4plus.homerplayer2.audiobooks.AudiobooksFolder
+import com.studio4plus.homerplayer2.audiobookfolders.AudiobooksFolder
 import org.koin.core.annotation.Factory
 
 @Factory

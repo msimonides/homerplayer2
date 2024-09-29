@@ -22,8 +22,16 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.audiobooks
+package com.studio4plus.homerplayer2.audiobookfolders
 
-interface AudiobooksDatabase {
-    fun audiobooksDao(): AudiobooksDao
+import com.studio4plus.homerplayer2.base.BaseModule
+import org.koin.core.annotation.ComponentScan
+import org.koin.core.annotation.Factory
+import org.koin.core.annotation.Module
+
+@Module(includes = [BaseModule::class])
+@ComponentScan("com.studio4plus.homerplayer2.audiobookfolders")
+class AudiobookFoldersModule {
+    @Factory
+    fun audiobookFoldersDao(db: AudiobookFoldersDatabase) = db.audiobookFoldersDa()
 }

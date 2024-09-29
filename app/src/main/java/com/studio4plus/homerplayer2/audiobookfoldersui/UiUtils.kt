@@ -26,7 +26,6 @@ package com.studio4plus.homerplayer2.audiobookfoldersui
 
 import android.content.Context
 import com.studio4plus.homerplayer2.R
-import com.studio4plus.homerplayer2.audiobooks.AudiobookFolderPanelViewModel
 import com.studio4plus.homerplayer2.samplebooks.SamplesInstallError
 
 fun List<String>.joinToEllipsizedString(maxItems: Int = 4): String {
