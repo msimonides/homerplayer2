@@ -106,6 +106,7 @@ class AppModule {
     )
     fun database(appContext: Context): AppDatabase =
         Room.databaseBuilder(appContext, AppDatabase::class.java, "app_database")
+            .addMigrations(AppDatabase.MIGRATION_2_3)
             .build()
 
     @Factory

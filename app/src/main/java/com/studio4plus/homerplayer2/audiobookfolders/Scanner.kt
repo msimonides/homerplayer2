@@ -28,7 +28,6 @@ import android.content.ContentResolver
 import android.database.Cursor
 import android.net.Uri
 import android.provider.DocumentsContract
-import android.util.Base64
 import androidx.annotation.WorkerThread
 import com.studio4plus.homerplayer2.audiobooks.Audiobook
 import com.studio4plus.homerplayer2.base.DispatcherProvider
@@ -37,8 +36,6 @@ import kotlinx.coroutines.withContext
 import org.koin.core.annotation.Single
 import timber.log.Timber
 import java.io.File
-import java.nio.ByteBuffer
-import java.security.MessageDigest
 
 private val DOCUMENTS_PROJECTION = arrayOf(
     DocumentsContract.Document.COLUMN_DOCUMENT_ID,
@@ -52,7 +49,7 @@ private const val COLUMN_DISPLAY_NAME = 1
 private const val COLUMN_MIME_TYPE = 2
 private const val COLUMN_SIZE = 3
 
-private val SORT_BY_DISPLAY_NAME = DocumentsContract.Document.COLUMN_DISPLAY_NAME + " ASC"
+private const val SORT_BY_DISPLAY_NAME = DocumentsContract.Document.COLUMN_DISPLAY_NAME + " ASC"
 
 @Single
 class Scanner(
@@ -88,11 +85,13 @@ class Scanner(
         } else {
             cursor.mapNotNull {
                 if (isFolder(cursor.getString(COLUMN_MIME_TYPE))) {
-                        scanAudiobook(
-                            folderUri,
-                            cursor.getString(COLUMN_ID),
-                            cursor.getString(COLUMN_DISPLAY_NAME)
-                        )
+                    val folderName = cursor.getString(COLUMN_DISPLAY_NAME)
+                    scanAudiobook(
+                        bookId = "$folderUri/$folderName",
+                        rootFolderUri = folderUri,
+                        folderDocumentId = cursor.getString(COLUMN_ID),
+                        folderName = folderName
+                    )
                 } else {
                     null
                 }
@@ -105,30 +104,27 @@ class Scanner(
         val folder = File(requireNotNull(folderUri.path))
         Timber.d("Scan audiobooks in: %s", folder.canonicalPath)
         val subfolders = requireNotNull(folder.listFiles { file: File -> file.isDirectory })
-        return subfolders.map { scanAudiobook(folderUri, it) }
-    }
-
-    private fun scanAudiobook(rootFolderUri: Uri, folderDocumentId: String, folderName: String): ScanResult {
-        val files = scanAudiobookFiles(rootFolderUri, folderDocumentId, folderName)
-        return scanAudiobook(rootFolderUri, folderName, files)
-    }
-
-    private fun scanAudiobook(rootFolderUri: Uri, folder: File): ScanResult {
-        val files = scanAudiobookFiles(folder)
-        return scanAudiobook(rootFolderUri, folder.name, files)
-    }
-
-    private fun scanAudiobook(rootFolderUri: Uri, displayName: String, files: List<ScannedFile>): ScanResult {
-        val sizeBuffer = ByteBuffer.allocate(Long.SIZE_BYTES)
-        val id = files.fold(MessageDigest.getInstance("MD5")) { md5, (_, path, size) ->
-            md5.update(path.encodeToByteArray())
-            sizeBuffer.putLong(0, size)
-            md5.update(sizeBuffer)
-            md5
-        }.digest().let { digest ->
-            Base64.encodeToString(digest, Base64.NO_PADDING or Base64.NO_WRAP)
+        return subfolders.map { bookFolder ->
+            val bookId = Uri.fromFile(bookFolder).toString()
+            scanAudiobook(bookId = bookId, folder = bookFolder, rootFolderUri = folderUri)
         }
-        return ScanResult(Audiobook(id, displayName, rootFolderUri), files.map { it.fileUri })
+    }
+
+    private fun scanAudiobook(bookId: String, rootFolderUri: Uri, folderDocumentId: String, folderName: String): ScanResult {
+        val files = scanAudiobookFiles(rootFolderUri, folderDocumentId, folderName)
+        return scanAudiobook(bookId, rootFolderUri, folderName, files)
+    }
+
+    private fun scanAudiobook(bookId: String, rootFolderUri: Uri, folder: File): ScanResult {
+        val files = scanAudiobookFiles(folder)
+        return scanAudiobook(bookId, rootFolderUri, folder.name, files)
+    }
+
+    private fun scanAudiobook(bookId: String, rootFolderUri: Uri, displayName: String, files: List<ScannedFile>): ScanResult {
+        return ScanResult(
+            Audiobook(id = bookId, displayName = displayName, rootFolderUri = rootFolderUri),
+            files.map { it.fileUri }
+        )
     }
 
     private fun scanAudiobookFiles(

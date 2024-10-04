@@ -59,7 +59,6 @@ data class AudiobookFile(
     val bookId: String,
 )
 
-// TODO: put duration on the AudiobookFile and drop this table.
 @Entity(
     tableName = "audiobook_file_durations",
     foreignKeys = [

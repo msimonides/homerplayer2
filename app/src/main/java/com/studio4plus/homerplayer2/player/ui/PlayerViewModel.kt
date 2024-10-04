@@ -120,7 +120,10 @@ class PlayerViewModel(
                     matchingFile != null
                 }
                 val b = if (playingBook != null) {
-                    val playingBookState = playingBook.copy(currentUri = matchingFile!!.uri, currentPositionMs = mediaState.positionMs).toUiBook()
+                    val playingBookState = playingBook.copy(
+                        currentUri = matchingFile!!.uri,
+                        currentPositionMs = mediaState.positionMs
+                    ).toUiBook()
                     booksState.bookStates.map {
                         if (it.id == playingBookState.id) playingBookState
                         else it
