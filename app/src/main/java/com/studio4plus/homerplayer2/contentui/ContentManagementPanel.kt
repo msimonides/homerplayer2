@@ -43,18 +43,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.studio4plus.homerplayer2.FeatureFlags
 import com.studio4plus.homerplayer2.R
-import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFolderRow
-import com.studio4plus.homerplayer2.audiobookfoldersui.FolderItem
-import com.studio4plus.homerplayer2.audiobookfoldersui.PreviewData
+import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFolderViewState
+import com.studio4plus.homerplayer2.base.ui.SectionTitle
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
+import com.studio4plus.homerplayer2.podcastsui.PodcastItemViewState
 import com.studio4plus.homerplayer2.samplebooks.SamplesInstallState
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 @Composable
 fun ContentManagementPanel(
     state: ContentPanelViewState,
     onAddFolder: () -> Unit,
-    onRemoveFolder: (FolderItem) -> Unit,
+    onRemoveFolder: (AudiobookFolderViewState) -> Unit,
+    onAddPodcast: () -> Unit,
+    onEditPodcast: (feedUri: String) -> Unit,
     onDownloadSamples: () -> Unit,
     modifier: Modifier = Modifier,
     windowInsets: WindowInsets = WindowInsets(0, 0, 0, 0),
@@ -67,14 +72,19 @@ fun ContentManagementPanel(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Button(onClick = onAddFolder) {
-                Text(stringResource(id = R.string.audiobook_folder_add_button))
+                Text(stringResource(id = R.string.content_add_folder_button))
+            }
+            if (FeatureFlags.Podcasts) {
+                Button(onClick = onAddPodcast) {
+                    Text(stringResource(id = R.string.content_add_podcast_button))
+                }
             }
             if (state.samplesInstallState != null) {
                 OutlinedButton(
                     onClick = onDownloadSamples,
                     enabled = state.samplesInstallState is SamplesInstallState.Idle
                 ) {
-                    Text(stringResource(id = R.string.audiobook_folder_download_samples_button))
+                    Text(stringResource(id = R.string.content_download_samples_button))
                 }
             }
         }
@@ -86,14 +96,43 @@ fun ContentManagementPanel(
             contentPadding = insetsPadding,
             modifier = Modifier.consumeWindowInsets(insetsPadding)
         ) {
-            items(
-                state.folders,
-                key = FolderItem::uri,
-                itemContent = { item ->
-                    AudiobookFolderRow(item = item, onRemoveClicked = { onRemoveFolder(item) })
-                }
-            )
+            if (state.folders.isNotEmpty()) {
+                item { SectionTitle(R.string.content_section_title_audiobooks ) }
+                items(
+                    state.folders,
+                    key = AudiobookFolderViewState::uri,
+                    itemContent = { item ->
+                        AudiobookFolderRow(folder = item, onRemoveClicked = { onRemoveFolder(item) })
+                    }
+                )
+            }
+            if (state.podcasts.isNotEmpty()) {
+                item { SectionTitle(R.string.content_section_title_podcasts) }
+                val dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
+                items(
+                    state.podcasts,
+                    key = PodcastItemViewState::feedUri,
+                    itemContent = { item ->
+                        PodcastRow(
+                            item,
+                            dateFormatter,
+                            onEditClicked = onEditPodcast,
+                            onRemoveClicked = { TODO() },
+                        )
+                    }
+                )
+            }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewContentManagementPanelPodcast() {
+    HomerPlayer2Theme {
+        val viewState =
+            ContentPanelViewState(PreviewData.folderItems1, PreviewData.podcasts1, SamplesInstallState.Idle)
+        ContentManagementPanel(viewState, {}, {}, {}, {}, {})
     }
 }
 
@@ -101,9 +140,8 @@ fun ContentManagementPanel(
 @Composable
 private fun PreviewContentManagementPanel50() {
     HomerPlayer2Theme {
-        ContentManagementPanel(
-            ContentPanelViewState(PreviewData.folderItems50, SamplesInstallState.Idle),
-            {}, {}, {}
-        )
+        val viewState =
+            ContentPanelViewState(PreviewData.folderItems50, emptyList(), SamplesInstallState.Idle)
+        ContentManagementPanel(viewState, {}, {}, {}, {}, {})
     }
 }

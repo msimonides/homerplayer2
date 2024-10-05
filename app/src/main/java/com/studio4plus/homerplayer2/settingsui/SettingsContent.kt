@@ -43,6 +43,8 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun SettingsContentRoute(
     snackbarHostState: SnackbarHostState,
+    onAddPodcast: () -> Unit,
+    onEditPodcast: (feedUri: String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SettingsContentViewModel = koinViewModel()
 ) {
@@ -63,6 +65,8 @@ fun SettingsContentRoute(
                 openAudiobooksTree()
             },
             onRemoveFolder = viewModel::removeFolder,
+            onAddPodcast = onAddPodcast,
+            onEditPodcast= onEditPodcast,
             onDownloadSamples = viewModel::startSamplesInstall,
             modifier = modifier.padding(horizontal = HomerTheme.dimensions.screenContentPadding),
             windowInsets = WindowInsets.navigationBars

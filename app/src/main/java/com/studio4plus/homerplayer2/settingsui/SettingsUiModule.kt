@@ -28,6 +28,7 @@ import com.studio4plus.homerplayer2.contentui.ContentUiModule
 import com.studio4plus.homerplayer2.fullkioskmode.FullKioskModeModule
 import com.studio4plus.homerplayer2.logging.LoggingModule
 import com.studio4plus.homerplayer2.player.PlayerModule
+import com.studio4plus.homerplayer2.podcasts.PodcastsModule
 import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
 import org.koin.core.annotation.ComponentScan
 import org.koin.core.annotation.Module
@@ -38,6 +39,7 @@ import org.koin.core.annotation.Module
         FullKioskModeModule::class,
         LoggingModule::class,
         PlayerModule::class,
+        PodcastsModule::class,
         SettingsDataModule::class
     ]
 )

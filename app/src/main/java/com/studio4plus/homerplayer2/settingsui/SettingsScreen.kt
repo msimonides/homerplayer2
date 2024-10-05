@@ -60,13 +60,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
+import com.studio4plus.homerplayer2.podcastsui.PodcastEditNav
+import com.studio4plus.homerplayer2.podcastsui.PodcastEditRoute
 import com.studio4plus.homerplayer2.utils.composable
+import java.net.URLEncoder
+import java.nio.charset.Charset
+import java.nio.charset.StandardCharsets
 
 @Composable
 fun Modifier.defaultSettingsItem() = this
@@ -172,6 +179,7 @@ private fun SettingsNavHost(
     val licensesTitle = stringResource(id = R.string.settings_ui_licenses_title)
     val playbackTitle = stringResource(id = R.string.settings_ui_playback_settings_title)
     val playerUiTitle = stringResource(id = R.string.settings_ui_player_ui_title)
+    val podcastTitle = stringResource(id = R.string.settings_ui_podcast_title)
     val ttsTitle = stringResource(id = R.string.settings_ui_tts_settings_title)
     NavHost(
         modifier = modifier,
@@ -198,7 +206,14 @@ private fun SettingsNavHost(
             )
         }
         composable("content", label = contentTitle) {
-            SettingsContentRoute(snackbarHostState)
+            SettingsContentRoute(
+                snackbarHostState,
+                onAddPodcast = { navController.navigate("podcast_edit/") },
+                onEditPodcast = { feedUri ->
+                    val argument = URLEncoder.encode(feedUri)
+                    navController.navigate("podcast_edit/$argument")
+                },
+            )
         }
         composable("kiosk_setup", label = kioskSetupTitle) {
             SettingsKioskModeSetupRoute()
@@ -218,6 +233,16 @@ private fun SettingsNavHost(
         }
         composable("player_ui_settings", label = playerUiTitle) {
             SettingsPlayerUiRoute()
+        }
+        // TODO: this is awful, find a better navigation library.
+        composable(
+            "podcast_edit/{${PodcastEditNav.FeedUriKey}}",
+            label = podcastTitle,
+            arguments = listOf(navArgument(PodcastEditNav.FeedUriKey) { NavType.StringType })
+        ) { backStackEntry ->
+            PodcastEditRoute(
+                navigateBack = { navController.popBackStack() }
+            )
         }
         composable("tts_settings", label = ttsTitle) {
             SettingsTtsRoute(snackbarHostState)

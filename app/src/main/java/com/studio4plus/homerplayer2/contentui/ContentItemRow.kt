@@ -22,10 +22,12 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.audiobookfoldersui
+package com.studio4plus.homerplayer2.contentui
 
 import android.net.Uri
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.heightIn
@@ -42,7 +44,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -53,20 +54,71 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.studio4plus.homerplayer2.R
-import com.studio4plus.homerplayer2.base.ui.SmallCircularProgressIndicator
+import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFolderBadgeContent
+import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFolderViewState
+import com.studio4plus.homerplayer2.audiobookfoldersui.subLabel
+import com.studio4plus.homerplayer2.audiobookfoldersui.subLabelContentDescription
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
+import com.studio4plus.homerplayer2.podcastsui.PodcastBadgeContent
+import com.studio4plus.homerplayer2.podcastsui.PodcastItemViewState
+import com.studio4plus.homerplayer2.podcastsui.subLabel
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 @Composable
 fun AudiobookFolderRow(
-    item: FolderItem,
+    folder: AudiobookFolderViewState,
+    onRemoveClicked: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    ContentItemRow(
+        label = folder.displayName,
+        subLabel = folder.subLabel(),
+        subLabelContentDescription = folder.subLabelContentDescription(),
+        circleContent = { AudiobookFolderBadgeContent(folder) },
+        onRemoveClicked = onRemoveClicked,
+        modifier = modifier,
+    )
+}
+
+@Composable
+fun PodcastRow(
+    item: PodcastItemViewState,
+    dateFormatter: DateTimeFormatter,
+    onEditClicked: (feedUri: String) -> Unit,
     onRemoveClicked: () -> Unit,
     modifier: Modifier = Modifier,
+) {
+    ContentItemRow(
+        label = item.displayName,
+        subLabel = item.subLabel(dateFormatter),
+        subLabelContentDescription = null,
+        circleContent = { PodcastBadgeContent() },
+        onRemoveClicked = onRemoveClicked,
+        modifier = modifier
+            .clickable(
+                onClick = { onEditClicked(item.feedUri) },
+                onClickLabel = stringResource(R.string.podcast_accessibility_action_edit)
+            ),
+    )
+}
+
+@Composable
+private fun ContentItemRow(
+    label: String,
+    subLabel: String,
+    subLabelContentDescription: String?,
+    circleContent: @Composable BoxScope.() -> Unit,
+    onRemoveClicked: () -> Unit,
+    modifier: Modifier = Modifier,
+    customAccessibilityActions: List<CustomAccessibilityAction> = emptyList()
 ) {
     val removeAction = CustomAccessibilityAction(
         stringResource(R.string.audiobook_folder_accessibility_menu_action_remove),
         { onRemoveClicked(); true }
     )
-    val accessibilityActions = listOf(removeAction)
+    val accessibilityActions = customAccessibilityActions + removeAction
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
@@ -83,48 +135,28 @@ fun AudiobookFolderRow(
             shape = CircleShape
         ) {
             Box {
-                if (item.isScanning) {
-                    SmallCircularProgressIndicator(
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .clearAndSetSemantics {}
-                    )
-                } else {
-                    Text(
-                        item.bookCount.toString(),
-                        style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .clearAndSetSemantics {}
-                    )
-                }
+                circleContent()
             }
         }
         Column(
             modifier = Modifier.weight(1f)
         ) {
-            val bookTitlesSummary = when (item.bookCount) {
-                0 -> stringResource(R.string.audiobook_folder_no_books_found)
-                else -> item.bookTitles
-            }
-            val bookTitlesContentDescription = when (item.bookCount) {
-                0 -> stringResource(R.string.audiobook_folder_no_books_found)
-                else -> pluralStringResource(
-                    id = R.plurals.audiobook_folder_content_description,
-                    count = item.bookCount,
-                    item.bookCount,
-                    item.firstBookTitle!!
-                )
-            }
-            Text(item.displayName, style = MaterialTheme.typography.bodyLarge)
             Text(
-                bookTitlesSummary,
+                label,
+                style = MaterialTheme.typography.bodyLarge,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            Text(
+                subLabel,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.semantics {
-                    contentDescription = bookTitlesContentDescription
+                    if (subLabelContentDescription != null) {
+                        contentDescription = subLabelContentDescription
+                    }
                 }
             )
         }
@@ -145,7 +177,7 @@ fun AudiobookFolderRow(
 private fun PreviewFolderRow() {
     HomerPlayer2Theme {
         AudiobookFolderRow(
-            FolderItem(
+            AudiobookFolderViewState(
                 "My audiobooks",
                 Uri.EMPTY,
                 2,
@@ -164,7 +196,7 @@ private fun PreviewFolderRow() {
 private fun PreviewFolderRowEmpty() {
     HomerPlayer2Theme {
         AudiobookFolderRow(
-            FolderItem(
+            AudiobookFolderViewState(
                 "My audiobooks",
                 Uri.EMPTY,
                 0,
@@ -182,7 +214,7 @@ private fun PreviewFolderRowEmpty() {
 @Composable
 private fun PreviewFolderRowScanning() {
     HomerPlayer2Theme {
-        val folder = FolderItem(
+        val folder = AudiobookFolderViewState(
             "My audiobooks",
             Uri.EMPTY,
             0,
@@ -192,5 +224,15 @@ private fun PreviewFolderRowScanning() {
             isSamplesFolder = false
         )
         AudiobookFolderRow(folder, {})
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewPodcastRow() {
+    HomerPlayer2Theme {
+        val item = PodcastItemViewState("https:dummy", "Najlepszy podcast", LocalDate.now())
+        val dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)
+        PodcastRow(item, dateFormatter, {}, {})
     }
 }

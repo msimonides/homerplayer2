@@ -22,22 +22,26 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.contentui
+package com.studio4plus.homerplayer2.podcasts
 
-import com.studio4plus.homerplayer2.audiobookfolders.AudiobookFoldersModule
-import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFoldersUiModule
+import com.prof18.rssparser.RssParser
+import com.prof18.rssparser.RssParserBuilder
 import com.studio4plus.homerplayer2.base.BaseModule
-import com.studio4plus.homerplayer2.podcastsui.PodcastsUiModule
-import com.studio4plus.homerplayer2.samplebooks.SampleBooksModule
+import com.studio4plus.homerplayer2.net.NetModule
+import com.studio4plus.homerplayer2.podcasts.data.PodcastsDao
+import com.studio4plus.homerplayer2.podcasts.data.PodcastsDatabase
+import okhttp3.OkHttpClient
 import org.koin.core.annotation.ComponentScan
+import org.koin.core.annotation.Factory
 import org.koin.core.annotation.Module
 
-@Module(includes = [
-    AudiobookFoldersModule::class,
-    AudiobookFoldersUiModule::class,
-    BaseModule::class,
-    PodcastsUiModule::class,
-    SampleBooksModule::class,
-])
-@ComponentScan("com.studio4plus.homerplayer2.contentui")
-class ContentUiModule
+@Module(includes = [BaseModule::class, NetModule::class])
+@ComponentScan("com.studio4plus.homerplayer2.podcasts")
+class PodcastsModule {
+    @Factory
+    fun provideRssParser(okHttpClient: OkHttpClient): RssParser =
+        RssParserBuilder(callFactory = okHttpClient).build()
+
+    @Factory
+    fun providePodcastsDao(db: PodcastsDatabase): PodcastsDao = db.podcastsDao()
+}

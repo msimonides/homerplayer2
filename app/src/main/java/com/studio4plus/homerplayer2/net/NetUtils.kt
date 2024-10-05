@@ -22,22 +22,34 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.contentui
+package com.studio4plus.homerplayer2.net
 
-import com.studio4plus.homerplayer2.audiobookfolders.AudiobookFoldersModule
-import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFoldersUiModule
-import com.studio4plus.homerplayer2.base.BaseModule
-import com.studio4plus.homerplayer2.podcastsui.PodcastsUiModule
-import com.studio4plus.homerplayer2.samplebooks.SampleBooksModule
-import org.koin.core.annotation.ComponentScan
-import org.koin.core.annotation.Module
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.suspendCancellableCoroutine
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.Response
+import okhttp3.internal.closeQuietly
+import java.io.IOException
+import kotlin.coroutines.resumeWithException
 
-@Module(includes = [
-    AudiobookFoldersModule::class,
-    AudiobookFoldersUiModule::class,
-    BaseModule::class,
-    PodcastsUiModule::class,
-    SampleBooksModule::class,
-])
-@ComponentScan("com.studio4plus.homerplayer2.contentui")
-class ContentUiModule
+
+@OptIn(ExperimentalCoroutinesApi::class)
+suspend fun Call.executeAwait(): Response = suspendCancellableCoroutine { continuation ->
+    continuation.invokeOnCancellation {
+        cancel()
+    }
+    val callback = object : Callback {
+        override fun onFailure(call: Call, e: IOException) {
+            println("### on failure $e")
+            continuation.resumeWithException(e)
+        }
+
+        override fun onResponse(call: Call, response: Response) {
+            continuation.resume(response) {
+                response.closeQuietly()
+            }
+        }
+    }
+    enqueue(callback)
+}

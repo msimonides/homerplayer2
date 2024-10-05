@@ -29,7 +29,7 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.audiobookfolders.AudiobookFolderManager
-import com.studio4plus.homerplayer2.audiobookfoldersui.FolderItem
+import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFolderViewState
 import com.studio4plus.homerplayer2.samplebooks.SamplesInstallController
 import com.studio4plus.homerplayer2.samplebooks.SamplesInstallError
 import kotlinx.coroutines.CoroutineScope
@@ -72,7 +72,7 @@ abstract class ContentPanelViewModel(
             eventAddFolderError.trySend(ErrorEvent.AddFolderExistsError)
     }
 
-    fun removeFolder(folder: FolderItem) {
+    fun removeFolder(folder: AudiobookFolderViewState) {
         clearErrorSnack()
         audiobookFolderManager.removeFolder(folder.uri)
     }
@@ -89,7 +89,7 @@ abstract class ContentPanelViewModel(
     companion object {
         fun errorEventMessage(context: Context, event: ErrorEvent): String = when (event) {
             is ErrorEvent.AddFolderExistsError ->
-                context.getString(R.string.content_add_error_folder_exists)
+                context.getString(R.string.content_add_folder_error_exists)
 
             is ErrorEvent.SamplesInstallError ->
                 when (event.error) {

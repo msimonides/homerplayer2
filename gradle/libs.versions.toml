@@ -59,6 +59,8 @@ kotlinx-serialization-json = { module = 'org.jetbrains.kotlinx:kotlinx-serializa
 
 okhttp = { module = 'com.squareup.okhttp3:okhttp', version.ref = 'okhttp' }
 
+rssparser = 'com.prof18.rssparser:rssparser:6.0.8'
+
 sentry-android = { module = 'io.sentry:sentry-android', version.ref = 'sentry-android' }
 
 timber = 'com.jakewharton.timber:timber:5.0.1'

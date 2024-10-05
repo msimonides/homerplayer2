@@ -22,22 +22,28 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.contentui
+package com.studio4plus.homerplayer2.podcasts.data
 
-import com.studio4plus.homerplayer2.audiobookfolders.AudiobookFoldersModule
-import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFoldersUiModule
-import com.studio4plus.homerplayer2.base.BaseModule
-import com.studio4plus.homerplayer2.podcastsui.PodcastsUiModule
-import com.studio4plus.homerplayer2.samplebooks.SampleBooksModule
-import org.koin.core.annotation.ComponentScan
-import org.koin.core.annotation.Module
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-@Module(includes = [
-    AudiobookFoldersModule::class,
-    AudiobookFoldersUiModule::class,
-    BaseModule::class,
-    PodcastsUiModule::class,
-    SampleBooksModule::class,
-])
-@ComponentScan("com.studio4plus.homerplayer2.contentui")
-class ContentUiModule
+@Entity(
+    tableName = "podcasts"
+)
+data class Podcast(
+    @PrimaryKey
+    @ColumnInfo(name = "feed_uri")
+    val feedUri: String,
+    val title: String,
+    @ColumnInfo(name = "title_override")
+    val titleOverride: String?,
+    @ColumnInfo(name = "include_episode_number")
+    val includeEpisodeNumber: Boolean,
+    @ColumnInfo(name = "include_podcast_title")
+    val includePodcastTitle: Boolean,
+    @ColumnInfo(name = "include_episode_title")
+    val includeEpisodeTitle: Boolean,
+    @ColumnInfo(name = "download_episode_count")
+    val downloadEpisodeCount: Int,
+)

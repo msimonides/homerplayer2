@@ -2,10 +2,8 @@
     <string name="app_name" translatable="false">Homer Player 2</string>
     <string name="app_tag" translatable="false">homerplayer2</string>
 
-    <string name="audiobook_folder_add_button">Add folder…</string>
     <string name="audiobook_folder_add_error_dialog">Unable to open file chooser</string>
     <string name="audiobook_folder_accessibility_menu_action_remove">Remove</string>
-    <string name="audiobook_folder_download_samples_button">Download samples</string>
     <string name="audiobook_folder_samples_folder_name">Sample books</string>
     <string name="audiobook_folder_no_books_found">(no audiobooks found in this folder)</string>
     <plurals name="audiobook_folder_content_description">
@@ -25,9 +23,14 @@
 
     <string name="browse_settings_button_accessibility_label">Settings</string>
 
-    <string name="content_add_error_folder_exists">This folder has already been added</string>
+    <string name="content_add_folder_button">Add folder…</string>
+    <string name="content_add_folder_error_exists">This folder has already been added</string>
+    <string name="content_add_podcast_button">Add podcast…</string>
+    <string name="content_download_samples_button">Download samples</string>
     <string name="content_samples_download_error">Samples download failed. Check your network and try again.</string>
     <string name="content_samples_install_error">Samples installation failed. %1$s</string>
+    <string name="content_section_title_audiobooks">Audiobooks folders</string>
+    <string name="content_section_title_podcasts">Podcasts</string>
 
     <string name="generic_dialog_confirm">OK</string>
     <string name="generic_dialog_cancel">Cancel</string>
@@ -62,6 +65,16 @@
     <string name="playback_stop_button_description">Stop</string>
     <string name="playback_volume_up_button_description">Volume Up</string>
     <string name="playback_volume_down_button_description">Volume Down</string>
+
+    <string name="podcast_accessibility_action_edit">Edit</string>
+    <string name="podcast_feed_error_doesnt_exist">Incorrect URL</string>
+    <string name="podcast_feed_error_download">Unable to download</string>
+    <string name="podcast_feed_error_parse">Unable to process podcast data</string>
+    <string name="podcast_info_no_episodes_found">Podcast has no episodes</string>
+    <string name="podcast_info_latest_episode_date">Latest: %1$s</string>
+    <string name="podcast_episode_name_title_number_episode">%1$s %2$d. %3$s</string>
+    <string name="podcast_episode_name_title_episode">%1$s. %2$s</string>
+    <string name="podcast_episode_name_title_number">%1$s %2$d</string>
 
     <string name="settings_ui_settings_title">Settings</string>
     <string name="settings_ui_about_item">About the app…</string>
@@ -128,6 +141,7 @@
     <string name="settings_ui_player_ui_volume_controls">Volume controls</string>
     <string name="settings_ui_player_ui_ff_rewind_controls">Skip chapter controls</string>
     <string name="settings_ui_player_ui_seek_controls">Forward/back controls</string>
+    <string name="settings_ui_podcast_title">Podcast</string>
     <string name="settings_ui_privacy_policy_item">Privacy policy…</string>
     <string name="settings_ui_rate_app_item">Rate the application…</string>
     <string name="settings_ui_share_diagnostic_log_title">Share diagnostic log</string>
