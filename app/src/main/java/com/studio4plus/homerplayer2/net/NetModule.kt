@@ -22,27 +22,18 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.samplebooks
+package com.studio4plus.homerplayer2.net
 
-import com.studio4plus.homerplayer2.net.FileDownloader
-import org.koin.core.annotation.Factory
-import org.koin.core.annotation.Named
-import java.io.File
-import java.io.IOException
+import com.studio4plus.homerplayer2.base.BaseModule
+import okhttp3.OkHttpClient
+import org.koin.core.annotation.ComponentScan
+import org.koin.core.annotation.Module
+import org.koin.core.annotation.Single
 
-@Factory
-class SamplesDownloader(
-    private val downloadFile: FileDownloader,
-    @Named(URL) private val samplesUrl: String,
-) {
+@Module(includes = [BaseModule::class])
+@ComponentScan("com.studio4plus.homerplayer2.net")
+class NetModule {
 
-    @Throws(IOException::class)
-    suspend operator fun invoke(outputFile: File) {
-        downloadFile(outputFile, samplesUrl)
-    }
-
-    companion object {
-        const val URL = "SamplesDownloader.Url"
-    }
+    @Single
+    fun okHttpClient(): OkHttpClient = OkHttpClient()
 }
-

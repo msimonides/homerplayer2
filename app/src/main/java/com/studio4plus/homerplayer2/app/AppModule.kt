@@ -43,6 +43,7 @@ import com.studio4plus.homerplayer2.loccalstorage.LOCAL_STORAGE_JSON
 import com.studio4plus.homerplayer2.loccalstorage.LocalStorageModule
 import com.studio4plus.homerplayer2.loccalstorage.createDataStore
 import com.studio4plus.homerplayer2.logging.LoggingModule
+import com.studio4plus.homerplayer2.net.NetModule
 import com.studio4plus.homerplayer2.onboarding.OnboardingModule
 import com.studio4plus.homerplayer2.player.PlayerModule
 import com.studio4plus.homerplayer2.samplebooks.SamplesDownloader
@@ -70,6 +71,7 @@ const val DATASTORE_APP_STATE = "appState"
         FullKioskModeModule::class,
         LocalStorageModule::class,
         LoggingModule::class,
+        NetModule::class,
         OnboardingModule::class,
         PlayerModule::class,
         SettingsDataModule::class,
@@ -118,9 +120,6 @@ class AppModule {
 
     @Factory(binds = [Clock::class])
     fun defaultClock(): Clock = DefaultClock()
-
-    @Single
-    fun okHttpClient(): OkHttpClient = OkHttpClient()
 
     @Single
     @Named(SamplesDownloader.URL)
