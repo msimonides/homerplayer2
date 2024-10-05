@@ -22,35 +22,33 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.audiobookfoldersui
+package com.studio4plus.homerplayer2.base.ui
 
-import android.net.Uri
+import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.dp
 
-object PreviewData {
+@Composable
+fun SectionTitle(@StringRes header: Int, modifier: Modifier = Modifier) {
+    SectionTitle(stringResource(header), modifier)
+}
 
-    val folderItems1 = listOf(
-        FolderItem(
-            "Audiobooks",
-            Uri.EMPTY,
-            2,
-            "Alice's Adventures in Wonderland, Hamlet",
-            firstBookTitle = "Alice's Adventures in Wonderland",
-            isScanning = false,
-            isSamplesFolder = false,
-        )
+@Composable
+fun SectionTitle(header: String, modifier: Modifier = Modifier) {
+    Text(
+        header,
+        style = MaterialTheme.typography.titleMedium,
+        modifier = modifier
+            .padding(top = 24.dp, bottom = 4.dp)
+            .semantics {
+                heading()
+            }
     )
-
-    val folderItems50
-        get() = (1..50).map { index ->
-            val titles = (1..index).map { "Book $it" }
-            FolderItem(
-                "Folder $index",
-                Uri.parse("dummy://$index"),
-                titles.size,
-                titles.joinToEllipsizedString(),
-                firstBookTitle = titles.firstOrNull(),
-                isScanning = false,
-                isSamplesFolder = false,
-            )
-        }
 }

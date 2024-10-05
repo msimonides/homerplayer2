@@ -40,9 +40,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studio4plus.homerplayer2.R
-import com.studio4plus.homerplayer2.audiobookfoldersui.FolderItem
+import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFolderViewState
 import com.studio4plus.homerplayer2.audiobookfoldersui.OpenAudiobooksTreeScreenWrapper
-import com.studio4plus.homerplayer2.audiobookfoldersui.PreviewData
+import com.studio4plus.homerplayer2.contentui.PreviewData
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 import com.studio4plus.homerplayer2.contentui.ContentManagementPanel
@@ -96,7 +96,7 @@ fun OnboardingContentScreen(
     navigateNext: () -> Unit,
     navigateBack: () -> Unit,
     addFolder: () -> Unit,
-    removeFolder: (FolderItem) -> Unit,
+    removeFolder: (AudiobookFolderViewState) -> Unit,
     downloadSamples: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -131,7 +131,7 @@ private fun ScreenContent(
     modifier: Modifier = Modifier,
     panelState: ContentPanelViewState,
     onAddFolder: () -> Unit,
-    onRemoveFolder: (FolderItem) -> Unit,
+    onRemoveFolder: (AudiobookFolderViewState) -> Unit,
     onDownloadSamples: () -> Unit
 ) {
     Column(modifier = modifier) {
@@ -145,6 +145,8 @@ private fun ScreenContent(
             state = panelState,
             onAddFolder = onAddFolder,
             onRemoveFolder = onRemoveFolder,
+            onAddPodcast = {},
+            onEditPodcast = {},
             onDownloadSamples = onDownloadSamples,
         )
     }
@@ -155,7 +157,7 @@ private fun ScreenContent(
 private fun PreviewOnboardingAudiobookFoldersScreen1() {
     HomerPlayer2Theme {
         val state = OnboardingContentViewModel.ViewState(
-            ContentPanelViewState(PreviewData.folderItems1, SamplesInstallState.Idle),
+            ContentPanelViewState(PreviewData.folderItems1, PreviewData.podcasts1, SamplesInstallState.Idle),
             canProceed = true
         )
         OnboardingContentScreen(state, SnackbarHostState(), {}, {}, {}, {}, {})
@@ -167,7 +169,7 @@ private fun PreviewOnboardingAudiobookFoldersScreen1() {
 private fun PreviewOnboardingAudiobookFoldersScreen50() {
     HomerPlayer2Theme {
         val state = OnboardingContentViewModel.ViewState(
-            ContentPanelViewState(PreviewData.folderItems50, SamplesInstallState.Idle),
+            ContentPanelViewState(PreviewData.folderItems50, emptyList(), SamplesInstallState.Idle),
             canProceed = true
         )
         OnboardingContentScreen(state, SnackbarHostState(), {}, {}, {}, {}, {})

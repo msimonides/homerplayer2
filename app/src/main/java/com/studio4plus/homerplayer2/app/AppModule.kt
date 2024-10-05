@@ -46,6 +46,8 @@ import com.studio4plus.homerplayer2.logging.LoggingModule
 import com.studio4plus.homerplayer2.net.NetModule
 import com.studio4plus.homerplayer2.onboarding.OnboardingModule
 import com.studio4plus.homerplayer2.player.PlayerModule
+import com.studio4plus.homerplayer2.podcasts.PodcastsModule
+import com.studio4plus.homerplayer2.podcasts.data.PodcastsDatabase
 import com.studio4plus.homerplayer2.samplebooks.SamplesDownloader
 import com.studio4plus.homerplayer2.settings.SettingsModule
 import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
@@ -74,6 +76,7 @@ const val DATASTORE_APP_STATE = "appState"
         NetModule::class,
         OnboardingModule::class,
         PlayerModule::class,
+        PodcastsModule::class,
         SettingsDataModule::class,
         SettingsModule::class,
     ]
@@ -103,7 +106,8 @@ class AppModule {
         binds = [
             AppDatabase::class,
             AudiobookFoldersDatabase::class,
-            AudiobooksDatabase::class
+            AudiobooksDatabase::class,
+            PodcastsDatabase::class,
         ]
     )
     fun database(appContext: Context): AppDatabase =

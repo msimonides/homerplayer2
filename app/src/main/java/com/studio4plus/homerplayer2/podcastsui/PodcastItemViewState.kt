@@ -22,22 +22,37 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.contentui
+package com.studio4plus.homerplayer2.podcastsui
 
-import com.studio4plus.homerplayer2.audiobookfolders.AudiobookFoldersModule
-import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFoldersUiModule
-import com.studio4plus.homerplayer2.base.BaseModule
-import com.studio4plus.homerplayer2.podcastsui.PodcastsUiModule
-import com.studio4plus.homerplayer2.samplebooks.SampleBooksModule
-import org.koin.core.annotation.ComponentScan
-import org.koin.core.annotation.Module
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Podcasts
+import androidx.compose.material3.Icon
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.studio4plus.homerplayer2.R
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
-@Module(includes = [
-    AudiobookFoldersModule::class,
-    AudiobookFoldersUiModule::class,
-    BaseModule::class,
-    PodcastsUiModule::class,
-    SampleBooksModule::class,
-])
-@ComponentScan("com.studio4plus.homerplayer2.contentui")
-class ContentUiModule
+data class PodcastItemViewState(
+    val feedUri: String,
+    val displayName: String,
+    val latestEpisodeDate: LocalDate?,
+)
+
+@Composable
+fun PodcastItemViewState.subLabel(dateFormatter: DateTimeFormatter) = when (latestEpisodeDate) {
+    null -> stringResource(R.string.podcast_info_no_episodes_found)
+    else -> stringResource(R.string.podcast_info_latest_episode_date, dateFormatter.format(latestEpisodeDate))
+}
+
+@Composable
+fun BoxScope.PodcastBadgeContent() {
+    Icon(
+        Icons.Default.Podcasts,
+        contentDescription = null,
+        modifier = Modifier.align(Alignment.Center)
+    )
+}

@@ -38,6 +38,9 @@ import com.studio4plus.homerplayer2.audiobooks.AudiobookFileDuration
 import com.studio4plus.homerplayer2.audiobooks.AudiobookFileWithDuration
 import com.studio4plus.homerplayer2.audiobooks.AudiobookPlaybackState
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksDatabase
+import com.studio4plus.homerplayer2.podcasts.data.Podcast
+import com.studio4plus.homerplayer2.podcasts.data.PodcastEpisode
+import com.studio4plus.homerplayer2.podcasts.data.PodcastsDatabase
 import com.studio4plus.homerplayer2.utils.DbTypeConverters
 
 @Database(
@@ -46,16 +49,24 @@ import com.studio4plus.homerplayer2.utils.DbTypeConverters
         AudiobookFile::class,
         AudiobookFileDuration::class,
         AudiobookPlaybackState::class,
-        AudiobooksFolder::class
+        AudiobooksFolder::class,
+        Podcast::class,
+        PodcastEpisode::class,
     ],
     views = [ AudiobookFileWithDuration::class ],
-    version = 3,
+    version = 4,
     autoMigrations = [
         AutoMigration(1, 2),
+        AutoMigration(3, 4),
     ],
 )
 @TypeConverters(DbTypeConverters::class)
-abstract class AppDatabase : RoomDatabase(), AudiobooksDatabase, AudiobookFoldersDatabase {
+abstract class AppDatabase :
+    RoomDatabase(),
+    AudiobooksDatabase,
+    AudiobookFoldersDatabase,
+    PodcastsDatabase
+{
 
     companion object {
         val MIGRATION_2_3 = object : Migration(2, 3) {

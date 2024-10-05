@@ -54,7 +54,7 @@ class OnboardingContentViewModel(
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000),
-            ViewState(ContentPanelViewState(emptyList(), null), false)
+            ViewState(ContentPanelViewState(emptyList(), emptyList(), null), false)
         )
 
     fun onFinished() {

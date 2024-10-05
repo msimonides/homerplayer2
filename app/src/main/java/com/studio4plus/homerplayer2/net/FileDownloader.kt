@@ -25,17 +25,10 @@
 package com.studio4plus.homerplayer2.net
 
 import com.studio4plus.homerplayer2.base.DispatcherProvider
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runInterruptible
-import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
-import okhttp3.Call
-import okhttp3.Callback
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.Response
-import okhttp3.internal.addHeaderLenient
-import okhttp3.internal.closeQuietly
 import okio.buffer
 import okio.sink
 import org.koin.core.annotation.Factory
@@ -43,7 +36,6 @@ import timber.log.Timber
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
-import kotlin.coroutines.resumeWithException
 
 @Factory
 class FileDownloader(
@@ -63,7 +55,7 @@ class FileDownloader(
         val call = okHttpClient.newCall(requestBuilder.build())
         val response = call.executeAwait()
         val body = response.body
-        Timber.i("Response: ${response.code}")
+        Timber.i("Response: ${response.code}: ${response.message.take(200)}")
         runInterruptible(dispatcherProvider.Io) {
             val isSuccess = response.code == 200 || response.code == 206
             val isPartialResponse = response.code == 206
@@ -94,23 +86,4 @@ class FileDownloader(
             null
         }
     }
-}
-
-@OptIn(ExperimentalCoroutinesApi::class)
-private suspend fun Call.executeAwait(): Response = suspendCancellableCoroutine { continuation ->
-    continuation.invokeOnCancellation {
-        cancel()
-    }
-    val callback = object : Callback {
-        override fun onFailure(call: Call, e: IOException) {
-            continuation.resumeWithException(e)
-        }
-
-        override fun onResponse(call: Call, response: Response) {
-            continuation.resume(response) {
-                response.closeQuietly()
-            }
-        }
-    }
-    enqueue(callback)
 }

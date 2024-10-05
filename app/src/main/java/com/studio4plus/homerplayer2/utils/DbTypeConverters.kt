@@ -26,6 +26,7 @@ package com.studio4plus.homerplayer2.utils
 
 import android.net.Uri
 import androidx.room.TypeConverter
+import java.time.Instant
 
 class DbTypeConverters {
     @TypeConverter
@@ -33,4 +34,10 @@ class DbTypeConverters {
 
     @TypeConverter
     fun fromUri(uri: Uri): String = uri.toString()
+
+    @TypeConverter
+    fun toLocalDateTime(instantString: String): Instant = Instant.parse(instantString)
+
+    @TypeConverter
+    fun fromLocalDateTime(dateTime: Instant): String = dateTime.toString()
 }

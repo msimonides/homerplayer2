@@ -24,7 +24,6 @@
 
 package com.studio4plus.homerplayer2.audiobookfoldersui
 
-import android.net.Uri
 import com.studio4plus.homerplayer2.audiobookfolders.AudiobookFoldersDao
 import com.studio4plus.homerplayer2.audiobookfolders.AudiobooksUpdater
 import com.studio4plus.homerplayer2.base.DispatcherProvider
@@ -35,27 +34,17 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import org.koin.core.annotation.Factory
 
-data class FolderItem(
-    val displayName: String,
-    val uri: Uri,
-    val bookCount: Int,
-    val bookTitles: String,
-    val firstBookTitle: String?,
-    val isScanning: Boolean,
-    val isSamplesFolder: Boolean,
-)
-
 @Factory
 class AudiobookFoldersViewStateFlow(
     dispatcherProvider: DispatcherProvider,
     audiobookFoldersDao: AudiobookFoldersDao,
     audiobooksFolderName: AudiobooksFolderName,
     audiobooksUpdater: AudiobooksUpdater,
-) : Flow<List<FolderItem>> {
+) : Flow<List<AudiobookFolderViewState>> {
     private val folders = audiobookFoldersDao.getAll().map { folders ->
         folders.mapNotNull { folder ->
             audiobooksFolderName(folder)?.let { folderName ->
-                FolderItem(
+                AudiobookFolderViewState(
                     folderName,
                     folder.uri,
                     0,
@@ -84,7 +73,7 @@ class AudiobookFoldersViewStateFlow(
         }
     }
 
-    override suspend fun collect(collector: FlowCollector<List<FolderItem>>) {
+    override suspend fun collect(collector: FlowCollector<List<AudiobookFolderViewState>>) {
         flow.collect(collector)
     }
 }

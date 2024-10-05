@@ -47,6 +47,6 @@ class SettingsContentViewModel(
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(),
-            ContentPanelViewState(emptyList(), null)
+            ContentPanelViewState(emptyList(), emptyList(), null)
         )
 }

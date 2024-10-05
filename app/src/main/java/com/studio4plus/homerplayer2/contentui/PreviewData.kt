@@ -24,45 +24,41 @@
 
 package com.studio4plus.homerplayer2.contentui
 
-import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFoldersViewStateFlow
+import android.net.Uri
 import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFolderViewState
+import com.studio4plus.homerplayer2.audiobookfoldersui.joinToEllipsizedString
 import com.studio4plus.homerplayer2.podcastsui.PodcastItemViewState
-import com.studio4plus.homerplayer2.podcastsui.PodcastsViewStateFlow
-import com.studio4plus.homerplayer2.samplebooks.SamplesInstallController
-import com.studio4plus.homerplayer2.samplebooks.SamplesInstallState
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.FlowCollector
-import kotlinx.coroutines.flow.combine
-import org.koin.core.annotation.Factory
+import java.time.LocalDate
 
-data class ContentPanelViewState(
-    val folders: List<AudiobookFolderViewState>,
-    val podcasts: List<PodcastItemViewState>,
-    val samplesInstallState: SamplesInstallState?,
-)
+object PreviewData {
 
-@Factory
-class ContentPanelViewStateFlow(
-    audiobookFoldersViewStateFlow: AudiobookFoldersViewStateFlow,
-    podcastsViewStateFlow: PodcastsViewStateFlow,
-    samplesInstallController: SamplesInstallController,
-) : Flow<ContentPanelViewState> {
-
-    private val flow = combine(
-        audiobookFoldersViewStateFlow,
-        podcastsViewStateFlow,
-        samplesInstallController.stateFlow,
-    ) { folders, podcasts, samplesState ->
-        ContentPanelViewState(
-            folders,
-            podcasts,
-            samplesState.takeIf { folders.none { it.isSamplesFolder } }
+    val folderItems1 = listOf(
+        AudiobookFolderViewState(
+            "Audiobooks",
+            Uri.EMPTY,
+            2,
+            "Alice's Adventures in Wonderland, Hamlet",
+            firstBookTitle = "Alice's Adventures in Wonderland",
+            isScanning = false,
+            isSamplesFolder = false,
         )
-    }
+    )
 
-    override suspend fun collect(collector: FlowCollector<ContentPanelViewState>) {
-        flow.collect(collector)
-    }
+    val folderItems50
+        get() = (1..50).map { index ->
+            val titles = (1..index).map { "Book $it" }
+            AudiobookFolderViewState(
+                "Folder $index",
+                Uri.parse("dummy://$index"),
+                titles.size,
+                titles.joinToEllipsizedString(),
+                firstBookTitle = titles.firstOrNull(),
+                isScanning = false,
+                isSamplesFolder = false,
+            )
+        }
 
-
+    val podcasts1 = listOf(
+        PodcastItemViewState("uri", "Podcast 1", LocalDate.of(2024, 1, 2))
+    )
 }
