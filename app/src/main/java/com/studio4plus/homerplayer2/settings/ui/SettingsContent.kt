@@ -31,30 +31,30 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFoldersManagementPanel
 import com.studio4plus.homerplayer2.audiobookfoldersui.OpenAudiobooksTreeScreenWrapper
-import com.studio4plus.homerplayer2.audiobookfoldersui.audiobooksFolderPanelErrorEventMessage
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
+import com.studio4plus.homerplayer2.contentui.ContentManagementPanel
+import com.studio4plus.homerplayer2.contentui.ContentPanelViewModel
 import com.studio4plus.homerplayer2.speech.LaunchErrorSnackDisplay
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun SettingsFoldersRoute(
+fun SettingsContentRoute(
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
-    viewModel: SettingsFoldersViewModel = koinViewModel()
+    viewModel: SettingsContentViewModel = koinViewModel()
 ) {
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
     LaunchErrorSnackDisplay(viewModel.errorEvent, snackbarHostState) {
-        audiobooksFolderPanelErrorEventMessage(context, it)
+        ContentPanelViewModel.errorEventMessage(context, it)
     }
 
     OpenAudiobooksTreeScreenWrapper(
         onFolderSelected = { uri -> viewModel.addFolder(uri) },
     ) { openAudiobooksTree ->
-        AudiobookFoldersManagementPanel(
+        ContentManagementPanel(
             state = viewState,
             onAddFolder = {
                 viewModel.clearErrorSnack()

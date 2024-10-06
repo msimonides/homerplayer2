@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Marcin Simonides
+ * Copyright (c) 2024 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,25 +22,20 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.settings
+package com.studio4plus.homerplayer2.contentui
 
+import com.studio4plus.homerplayer2.audiobookfolders.AudiobookFoldersModule
 import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFoldersUiModule
-import com.studio4plus.homerplayer2.contentui.ContentUiModule
-import com.studio4plus.homerplayer2.fullkioskmode.FullKioskModeModule
-import com.studio4plus.homerplayer2.logging.LoggingModule
-import com.studio4plus.homerplayer2.player.PlayerModule
-import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
+import com.studio4plus.homerplayer2.base.BaseModule
+import com.studio4plus.homerplayer2.samplebooks.SampleBooksModule
 import org.koin.core.annotation.ComponentScan
 import org.koin.core.annotation.Module
 
-@Module(
-    includes = [
-        ContentUiModule::class,
-        FullKioskModeModule::class,
-        LoggingModule::class,
-        PlayerModule::class,
-        SettingsDataModule::class
-    ]
-)
-@ComponentScan("com.studio4plus.homerplayer2.settings")
-class SettingsModule
+@Module(includes = [
+    AudiobookFoldersModule::class,
+    AudiobookFoldersUiModule::class,
+    BaseModule::class,
+    SampleBooksModule::class,
+])
+@ComponentScan("com.studio4plus.homerplayer2.contentui")
+class ContentUiModule

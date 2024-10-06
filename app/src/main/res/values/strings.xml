@@ -4,12 +4,9 @@
 
     <string name="audiobook_folder_add_button">Add folder…</string>
     <string name="audiobook_folder_add_error_dialog">Unable to open file chooser</string>
-    <string name="audiobook_folder_add_error_folder_exists">This folder has already been added</string>
     <string name="audiobook_folder_accessibility_menu_action_remove">Remove</string>
     <string name="audiobook_folder_download_samples_button">Download samples</string>
     <string name="audiobook_folder_samples_folder_name">Sample books</string>
-    <string name="audiobook_folder_samples_download_error">Samples download failed. Check your network and try again.</string>
-    <string name="audiobook_folder_samples_install_error">Samples installation failed. %1$s</string>
     <string name="audiobook_folder_no_books_found">(no audiobooks found in this folder)</string>
     <plurals name="audiobook_folder_content_description">
         <item quantity="one">%1$d book: %2$s</item>
@@ -27,6 +24,10 @@
     </plurals>
 
     <string name="browse_settings_button_accessibility_label">Settings</string>
+
+    <string name="content_add_error_folder_exists">This folder has already been added</string>
+    <string name="content_samples_download_error">Samples download failed. Check your network and try again.</string>
+    <string name="content_samples_install_error">Samples installation failed. %1$s</string>
 
     <string name="generic_dialog_confirm">OK</string>
     <string name="generic_dialog_cancel">Cancel</string>
@@ -61,12 +62,12 @@
     <string name="playback_volume_up_button_description">Volume Up</string>
     <string name="playback_volume_down_button_description">Volume Down</string>
 
+    <string name="settings_ui_settings_title">Settings</string>
     <string name="settings_ui_about_item">About the app…</string>
     <string name="settings_ui_about_title">About Homer Player 2</string>
-    <string name="settings_ui_settings_title">Settings</string>
-    <string name="settings_ui_audiobooks_folders_item">Audiobooks folders…</string>
-    <string name="settings_ui_audiobooks_folders_title">Audiobooks folders</string>
-    <string name="settings_ui_audiobooks_folders_summary_empty">(no folders selected)</string>
+    <string name="settings_ui_content_item">Audiobooks folders…</string>
+    <string name="settings_ui_content_title">Audiobooks folders</string>
+    <string name="settings_ui_content_summary_empty">(no folders selected)</string>
     <string name="settings_ui_haptic_feedback_label">Haptic feedback</string>
     <string name="settings_ui_lockdown_settings_item">Lockdown settings…</string>
     <string name="settings_ui_lockdown_settings_title">Lockdown settings</string>

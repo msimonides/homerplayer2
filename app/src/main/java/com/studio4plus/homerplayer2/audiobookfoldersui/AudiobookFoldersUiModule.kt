@@ -30,6 +30,6 @@ import com.studio4plus.homerplayer2.samplebooks.SampleBooksModule
 import org.koin.core.annotation.ComponentScan
 import org.koin.core.annotation.Module
 
-@Module(includes = [AudiobookFoldersModule::class, BaseModule::class, SampleBooksModule::class])
+@Module(includes = [AudiobookFoldersModule::class, BaseModule::class])
 @ComponentScan("com.studio4plus.homerplayer2.audiobookfoldersui")
 class AudiobookFoldersUiModule

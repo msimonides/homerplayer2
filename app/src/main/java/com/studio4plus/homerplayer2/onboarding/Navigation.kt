@@ -35,7 +35,7 @@ fun NavGraphBuilder.onboardingGraph(navController: NavController, destinationRou
             OnboardingSpeechRoute(navigateNext = { navController.navigate("onboarding/folders") })
         }
         composable("onboarding/folders") {
-            OnboardingAudiobookFoldersRoute(
+            OnboardingContentRoute(
                 navigateNext = {
                     navController.navigate(destinationRoute) {
                         popUpTo("onboarding/tts") { inclusive = true }

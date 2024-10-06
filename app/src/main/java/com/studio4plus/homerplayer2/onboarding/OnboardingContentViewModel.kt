@@ -25,10 +25,10 @@
 package com.studio4plus.homerplayer2.onboarding
 
 import androidx.lifecycle.viewModelScope
-import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFoldersPanelViewState
 import com.studio4plus.homerplayer2.audiobookfolders.AudiobookFolderManager
-import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFoldersViewStateFlow
-import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFolderPanelViewModel
+import com.studio4plus.homerplayer2.contentui.ContentPanelViewModel
+import com.studio4plus.homerplayer2.contentui.ContentPanelViewState
+import com.studio4plus.homerplayer2.contentui.ContentPanelViewStateFlow
 import com.studio4plus.homerplayer2.samplebooks.SamplesInstallController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
@@ -37,24 +37,24 @@ import kotlinx.coroutines.flow.stateIn
 import org.koin.android.annotation.KoinViewModel
 
 @KoinViewModel
-class OnboardingAudiobookFoldersViewModel(
+class OnboardingContentViewModel(
     mainScope: CoroutineScope,
-    audiobookFoldersViewStateFlow: AudiobookFoldersViewStateFlow,
+    contentPanelViewStateFlow: ContentPanelViewStateFlow,
     audiobookFolderManager: AudiobookFolderManager,
     samplesInstaller: SamplesInstallController,
     private val onboardingDelegate: OnboardingDelegate,
-) : AudiobookFolderPanelViewModel(mainScope, audiobookFolderManager, samplesInstaller) {
+) : ContentPanelViewModel(mainScope, audiobookFolderManager, samplesInstaller) {
     data class ViewState(
-        val panelState: AudiobookFoldersPanelViewState,
+        val panelState: ContentPanelViewState,
         val canProceed: Boolean,
     )
 
-    val viewState = audiobookFoldersViewStateFlow
+    val viewState = contentPanelViewStateFlow
         .map { ViewState(it, it.folders.isNotEmpty()) }
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000),
-            ViewState(AudiobookFoldersPanelViewState(emptyList(), null), false)
+            ViewState(ContentPanelViewState(emptyList(), null), false)
         )
 
     fun onFinished() {

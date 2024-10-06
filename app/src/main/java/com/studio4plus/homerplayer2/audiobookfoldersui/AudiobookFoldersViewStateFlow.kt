@@ -28,8 +28,6 @@ import android.net.Uri
 import com.studio4plus.homerplayer2.audiobookfolders.AudiobookFoldersDao
 import com.studio4plus.homerplayer2.audiobookfolders.AudiobooksUpdater
 import com.studio4plus.homerplayer2.base.DispatcherProvider
-import com.studio4plus.homerplayer2.samplebooks.SamplesInstallController
-import com.studio4plus.homerplayer2.samplebooks.SamplesInstallState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.combine
@@ -47,23 +45,16 @@ data class FolderItem(
     val isSamplesFolder: Boolean,
 )
 
-data class AudiobookFoldersPanelViewState(
-    val folders: List<FolderItem>,
-    val samplesInstallState: SamplesInstallState?
-)
-
 @Factory
 class AudiobookFoldersViewStateFlow(
     dispatcherProvider: DispatcherProvider,
     audiobookFoldersDao: AudiobookFoldersDao,
-    audiobooksFolder: AudiobooksFolderName,
+    audiobooksFolderName: AudiobooksFolderName,
     audiobooksUpdater: AudiobooksUpdater,
-    samplesInstallController: SamplesInstallController,
-): Flow<AudiobookFoldersPanelViewState> {
-
+) : Flow<List<FolderItem>> {
     private val folders = audiobookFoldersDao.getAll().map { folders ->
         folders.mapNotNull { folder ->
-            audiobooksFolder(folder)?.let { folderName ->
+            audiobooksFolderName(folder)?.let { folderName ->
                 FolderItem(
                     folderName,
                     folder.uri,
@@ -81,9 +72,8 @@ class AudiobookFoldersViewStateFlow(
         folders,
         audiobookFoldersDao.getAllWithBookTitles(),
         audiobooksUpdater.isScanning,
-        samplesInstallController.stateFlow,
-    ) { folderItems, foldersWithTitles, isScanning, samplesState ->
-        val folders = folderItems.map { folder ->
+    ) { folderItems, foldersWithTitles, isScanning ->
+        folderItems.map { folder ->
             val bookTitles = foldersWithTitles[folder.uri]
             folder.copy(
                 bookCount = bookTitles?.size ?: 0,
@@ -92,15 +82,9 @@ class AudiobookFoldersViewStateFlow(
                 isScanning = isScanning,
             )
         }
-        AudiobookFoldersPanelViewState(
-            folders,
-            samplesState.takeIf { folders.none { it.isSamplesFolder } }
-        )
     }
 
-    override suspend fun collect(collector: FlowCollector<AudiobookFoldersPanelViewState>) {
+    override suspend fun collect(collector: FlowCollector<List<FolderItem>>) {
         flow.collect(collector)
     }
 }
-
-

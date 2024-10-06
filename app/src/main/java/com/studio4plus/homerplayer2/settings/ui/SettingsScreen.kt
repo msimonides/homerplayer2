@@ -33,8 +33,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -138,7 +136,7 @@ private fun SettingsNavHost(
 ) {
     val mainTitle = stringResource(id = R.string.settings_ui_settings_title)
     val aboutTitle = stringResource(id = R.string.settings_ui_about_title)
-    val foldersTitle = stringResource(id = R.string.settings_ui_audiobooks_folders_title)
+    val contentTitle = stringResource(id = R.string.settings_ui_content_title)
     val kioskSetupTitle = stringResource(id = R.string.settings_ui_kiosk_mode_setup_title)
     val lockdownTitle = stringResource(id = R.string.settings_ui_lockdown_settings_title)
     val licensesTitle = stringResource(id = R.string.settings_ui_licenses_title)
@@ -158,7 +156,7 @@ private fun SettingsNavHost(
     ) {
         composable("main", label = mainTitle) {
             SettingsMainRoute(
-                navigateFolders = { navController.navigate("folders") },
+                navigateFolders = { navController.navigate("content") },
                 navigatePlaybackSettings = { navController.navigate("playback_settings") },
                 navigatePlayerUiSettings = { navController.navigate("player_ui_settings") },
                 navigateLockdownSettings = { navController.navigate("lockdown_settings") },
@@ -171,8 +169,8 @@ private fun SettingsNavHost(
                 navigateLicenses = { navController.navigate("licenses") },
             )
         }
-        composable("folders", label = foldersTitle) {
-            SettingsFoldersRoute(snackbarHostState)
+        composable("content", label = contentTitle) {
+            SettingsContentRoute(snackbarHostState)
         }
         composable("kiosk_setup", label = kioskSetupTitle) {
             SettingsKioskModeSetupRoute()

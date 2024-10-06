@@ -101,8 +101,8 @@ private fun SettingsMain(
                 else -> R.string.settings_ui_tts_settings_disabled
             }
             SettingItem(
-                label = stringResource(R.string.settings_ui_audiobooks_folders_item),
-                summary = viewState.audiobookFolders ?: stringResource(R.string.settings_ui_audiobooks_folders_summary_empty),
+                label = stringResource(R.string.settings_ui_content_item),
+                summary = viewState.audiobookFolders ?: stringResource(R.string.settings_ui_content_summary_empty),
                 onClick = navigateFolders,
                 modifier = settingItemModifier
             )

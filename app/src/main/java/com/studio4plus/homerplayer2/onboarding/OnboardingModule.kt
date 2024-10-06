@@ -25,10 +25,11 @@
 package com.studio4plus.homerplayer2.onboarding
 
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksModule
+import com.studio4plus.homerplayer2.contentui.ContentUiModule
 import com.studio4plus.homerplayer2.speech.SpeechModule
 import org.koin.core.annotation.ComponentScan
 import org.koin.core.annotation.Module
 
-@Module(includes = [AudiobooksModule::class, SpeechModule::class])
+@Module(includes = [AudiobooksModule::class, ContentUiModule::class, SpeechModule::class])
 @ComponentScan("com.studio4plus.homerplayer2.onboarding")
 class OnboardingModule

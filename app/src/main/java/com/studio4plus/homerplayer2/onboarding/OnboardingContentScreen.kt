@@ -40,37 +40,37 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studio4plus.homerplayer2.R
-import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFoldersManagementPanel
-import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFoldersPanelViewState
 import com.studio4plus.homerplayer2.audiobookfoldersui.FolderItem
 import com.studio4plus.homerplayer2.audiobookfoldersui.OpenAudiobooksTreeScreenWrapper
 import com.studio4plus.homerplayer2.audiobookfoldersui.PreviewData
-import com.studio4plus.homerplayer2.audiobookfoldersui.audiobooksFolderPanelErrorEventMessage
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
+import com.studio4plus.homerplayer2.contentui.ContentManagementPanel
+import com.studio4plus.homerplayer2.contentui.ContentPanelViewModel
+import com.studio4plus.homerplayer2.contentui.ContentPanelViewState
 import com.studio4plus.homerplayer2.samplebooks.SamplesInstallState
 import com.studio4plus.homerplayer2.speech.LaunchErrorSnackDisplay
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun OnboardingAudiobookFoldersRoute(
+fun OnboardingContentRoute(
     modifier: Modifier = Modifier,
     navigateNext: () -> Unit,
     navigateBack: () -> Unit,
-    viewModel: OnboardingAudiobookFoldersViewModel = koinViewModel()
+    viewModel: OnboardingContentViewModel = koinViewModel()
 ) {
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
 
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
     LaunchErrorSnackDisplay(viewModel.errorEvent, snackbarHostState) {
-        audiobooksFolderPanelErrorEventMessage(context, it)
+        ContentPanelViewModel.errorEventMessage(context, it)
     }
 
     OpenAudiobooksTreeScreenWrapper(
         onFolderSelected =  { uri -> viewModel.addFolder(uri)}
     ) { openAudiobooksTree ->
-        OnboardingAudiobookFoldersScreen(
+        OnboardingContentScreen(
             viewState = viewState,
             snackbarHostState = snackbarHostState,
             modifier = modifier,
@@ -90,8 +90,8 @@ fun OnboardingAudiobookFoldersRoute(
 }
 
 @Composable
-fun OnboardingAudiobookFoldersScreen(
-    viewState: OnboardingAudiobookFoldersViewModel.ViewState,
+fun OnboardingContentScreen(
+    viewState: OnboardingContentViewModel.ViewState,
     snackbarHostState: SnackbarHostState,
     navigateNext: () -> Unit,
     navigateBack: () -> Unit,
@@ -129,7 +129,7 @@ fun OnboardingAudiobookFoldersScreen(
 @Composable
 private fun ScreenContent(
     modifier: Modifier = Modifier,
-    panelState: AudiobookFoldersPanelViewState,
+    panelState: ContentPanelViewState,
     onAddFolder: () -> Unit,
     onRemoveFolder: (FolderItem) -> Unit,
     onDownloadSamples: () -> Unit
@@ -141,7 +141,7 @@ private fun ScreenContent(
         )
         Text(text = stringResource(id = R.string.onboarding_audiobook_folders_description))
 
-        AudiobookFoldersManagementPanel(
+        ContentManagementPanel(
             state = panelState,
             onAddFolder = onAddFolder,
             onRemoveFolder = onRemoveFolder,
@@ -154,11 +154,11 @@ private fun ScreenContent(
 @Composable
 private fun PreviewOnboardingAudiobookFoldersScreen1() {
     HomerPlayer2Theme {
-        val state = OnboardingAudiobookFoldersViewModel.ViewState(
-            AudiobookFoldersPanelViewState(PreviewData.folderItems1, SamplesInstallState.Idle),
+        val state = OnboardingContentViewModel.ViewState(
+            ContentPanelViewState(PreviewData.folderItems1, SamplesInstallState.Idle),
             canProceed = true
         )
-        OnboardingAudiobookFoldersScreen(state, SnackbarHostState(), {}, {}, {}, {}, {})
+        OnboardingContentScreen(state, SnackbarHostState(), {}, {}, {}, {}, {})
     }
 }
 
@@ -166,10 +166,10 @@ private fun PreviewOnboardingAudiobookFoldersScreen1() {
 @Composable
 private fun PreviewOnboardingAudiobookFoldersScreen50() {
     HomerPlayer2Theme {
-        val state = OnboardingAudiobookFoldersViewModel.ViewState(
-            AudiobookFoldersPanelViewState(PreviewData.folderItems50, SamplesInstallState.Idle),
+        val state = OnboardingContentViewModel.ViewState(
+            ContentPanelViewState(PreviewData.folderItems50, SamplesInstallState.Idle),
             canProceed = true
         )
-        OnboardingAudiobookFoldersScreen(state, SnackbarHostState(), {}, {}, {}, {}, {})
+        OnboardingContentScreen(state, SnackbarHostState(), {}, {}, {}, {}, {})
     }
 }

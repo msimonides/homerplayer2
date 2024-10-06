@@ -22,31 +22,41 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.settings.ui
+package com.studio4plus.homerplayer2.contentui
 
-import androidx.lifecycle.viewModelScope
-import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFoldersPanelViewState
-import com.studio4plus.homerplayer2.audiobookfolders.AudiobookFolderManager
 import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFoldersViewStateFlow
-import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFolderPanelViewModel
+import com.studio4plus.homerplayer2.audiobookfoldersui.FolderItem
 import com.studio4plus.homerplayer2.samplebooks.SamplesInstallController
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.stateIn
-import org.koin.android.annotation.KoinViewModel
+import com.studio4plus.homerplayer2.samplebooks.SamplesInstallState
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.flow.combine
+import org.koin.core.annotation.Factory
 
-@KoinViewModel
-class SettingsFoldersViewModel(
-    mainScope: CoroutineScope,
+data class ContentPanelViewState(
+    val folders: List<FolderItem>,
+    val samplesInstallState: SamplesInstallState?
+)
+
+@Factory
+class ContentPanelViewStateFlow(
     audiobookFoldersViewStateFlow: AudiobookFoldersViewStateFlow,
-    audiobookFoldersManager: AudiobookFolderManager,
-    samplesInstaller: SamplesInstallController,
-): AudiobookFolderPanelViewModel(mainScope, audiobookFoldersManager, samplesInstaller) {
+    samplesInstallController: SamplesInstallController,
+) : Flow<ContentPanelViewState> {
 
-    val viewState = audiobookFoldersViewStateFlow
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(),
-            AudiobookFoldersPanelViewState(emptyList(), null)
+    private val flow = combine(
+        audiobookFoldersViewStateFlow,
+        samplesInstallController.stateFlow,
+    ) { folders, samplesState ->
+        ContentPanelViewState(
+            folders,
+            samplesState.takeIf { folders.none { it.isSamplesFolder } }
         )
+    }
+
+    override suspend fun collect(collector: FlowCollector<ContentPanelViewState>) {
+        flow.collect(collector)
+    }
+
+
 }

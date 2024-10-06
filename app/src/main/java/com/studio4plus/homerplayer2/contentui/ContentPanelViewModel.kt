@@ -22,12 +22,16 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.audiobookfoldersui
+package com.studio4plus.homerplayer2.contentui
 
+import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.ViewModel
+import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.audiobookfolders.AudiobookFolderManager
+import com.studio4plus.homerplayer2.audiobookfoldersui.FolderItem
 import com.studio4plus.homerplayer2.samplebooks.SamplesInstallController
+import com.studio4plus.homerplayer2.samplebooks.SamplesInstallError
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
@@ -38,7 +42,7 @@ import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
-abstract class AudiobookFolderPanelViewModel(
+abstract class ContentPanelViewModel(
     private val mainScope: CoroutineScope,
     private val audiobookFolderManager: AudiobookFolderManager,
     private val samplesInstaller: SamplesInstallController,
@@ -80,5 +84,24 @@ abstract class AudiobookFolderPanelViewModel(
 
     fun clearErrorSnack() {
         clearErrorEvent.tryEmit(null)
+    }
+
+    companion object {
+        fun errorEventMessage(context: Context, event: ErrorEvent): String = when (event) {
+            is ErrorEvent.AddFolderExistsError ->
+                context.getString(R.string.content_add_error_folder_exists)
+
+            is ErrorEvent.SamplesInstallError ->
+                when (event.error) {
+                    is SamplesInstallError.Download ->
+                        context.getString(R.string.content_samples_download_error)
+
+                    is SamplesInstallError.Install ->
+                        context.getString(
+                            R.string.content_samples_install_error,
+                            event.error.error
+                        )
+                }
+        }
     }
 }
