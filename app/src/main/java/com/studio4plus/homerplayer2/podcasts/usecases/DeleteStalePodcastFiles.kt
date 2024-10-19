@@ -22,37 +22,32 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.podcastsui
+package com.studio4plus.homerplayer2.podcasts.usecases
 
+import com.studio4plus.homerplayer2.base.DispatcherProvider
+import com.studio4plus.homerplayer2.podcasts.PodcastsFileStorage
 import com.studio4plus.homerplayer2.podcasts.data.PodcastsDao
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.FlowCollector
-import kotlinx.coroutines.flow.map
+import com.studio4plus.homerplayer2.utils.Clock
+import kotlinx.coroutines.withContext
 import org.koin.core.annotation.Factory
-import java.time.LocalDate
-import java.time.ZoneId
+
+private const val MIN_FILE_AGE_MS = 5 * 60 * 1000
 
 @Factory
-class PodcastsViewStateFlow(
-    podcastsDao: PodcastsDao
-) : Flow<List<PodcastItemViewState>> {
-
-    private val podcasts = podcastsDao.observePodcasts()
-        .map { podcasts ->
-            podcasts.map { (podcast, episodes) ->
-                PodcastItemViewState(
-                    feedUri = podcast.feedUri,
-                    displayName = podcast.title,
-                    latestEpisodeDate = episodes
-                        .map { it.publicationTime }
-                        .sortedByDescending { it }
-                        .firstOrNull()
-                        ?.let { LocalDate.ofInstant(it, ZoneId.systemDefault()) }
-                )
+class DeleteStalePodcastFiles(
+    private val dispatcherProvider: DispatcherProvider,
+    private val podcastsFileStorage: PodcastsFileStorage,
+    private val podcastsDao: PodcastsDao,
+    private val clock: Clock,
+) {
+    suspend operator fun invoke() = withContext(dispatcherProvider.Io) {
+        val folder = podcastsFileStorage.folder()
+        val files = folder.listFiles() ?: emptyArray()
+        val now = clock.wallTime()
+        files.forEach { file ->
+            if (!podcastsDao.hasEpisodeForFile(file.name) && now - file.lastModified() > MIN_FILE_AGE_MS) {
+                file.delete()
             }
         }
-
-    override suspend fun collect(collector: FlowCollector<List<PodcastItemViewState>>) {
-        podcasts.collect(collector)
     }
 }

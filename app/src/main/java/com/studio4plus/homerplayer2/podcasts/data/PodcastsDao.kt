@@ -26,6 +26,8 @@ package com.studio4plus.homerplayer2.podcasts.data
 
 import androidx.room.Dao
 import androidx.room.Embedded
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Relation
 import androidx.room.Transaction
@@ -46,16 +48,25 @@ data class PodcastWithEpisodes(
 @Dao
 abstract class PodcastsDao {
     @Query("""SELECT * FROM podcasts ORDER BY title ASC""")
-    abstract fun getPodcasts(): Flow<List<PodcastWithEpisodes>>
+    abstract fun observePodcasts(): Flow<List<PodcastWithEpisodes>>
+
+    @Query("""SELECT * FROM podcasts ORDER BY title ASC""")
+    abstract fun getPodcasts(): List<Podcast>
+
+    @Query("""SELECT EXISTS (SELECT * FROM podcasts)""")
+    abstract fun observeHasAnyPodcast(): Flow<Boolean>
+
+    @Query("""SELECT * FROM podcasts WHERE feed_uri = :feedUri""")
+    abstract fun observePodcast(feedUri: String): Flow<PodcastWithEpisodes?>
+
+    @Query("""SELECT * FROM podcasts WHERE feed_uri = :feedUri""")
+    abstract fun getPodcast(feedUri: String): Podcast?
+
+    @Query("""SELECT EXISTS (SELECT * FROM podcast_episodes WHERE file_id = :fileId)""")
+    abstract fun hasEpisodeForFile(fileId: String): Boolean
 
     @Upsert
     abstract suspend fun upsert(podcast: Podcast)
-
-    @Query("""SELECT * FROM podcasts WHERE feed_uri = :feedUri""")
-    abstract fun getPodcast(feedUri: String): Flow<PodcastWithEpisodes?>
-
-    @Query("""SELECT * FROM podcast_episodes WHERE feed_uri = :feedUri""")
-    abstract fun getEpisodes(feedUri: String): Flow<List<PodcastEpisode>>
 
     @Query("""UPDATE podcasts SET title = :newTitle WHERE feed_uri = :feedUri""")
     abstract suspend fun updatePodcast(feedUri: String, newTitle: String)
@@ -81,17 +92,38 @@ abstract class PodcastsDao {
         includeEpisodeTitle: Boolean
     )
 
+    @Query("""UPDATE podcast_episodes SET is_downloaded = 1 WHERE uri = :episodeUri""")
+    abstract suspend fun updateIsDownloaded(episodeUri: String)
+
+    @Query("""SELECT * FROM podcast_episodes WHERE is_downloaded = 0""")
+    abstract suspend fun getEpisodesForDownload(): List<PodcastEpisode>
+
     @Transaction
-    open suspend fun updateEpisodes(newEpisodes: List<PodcastEpisode>) {
+    open suspend fun updateEpisodes(newEpisodes: List<PodcastEpisode>): List<String> {
         val feedUri = newEpisodes.first().feedUri
-        check(newEpisodes.all { feedUri == it.feedUri})
-        upsertEpisodes(newEpisodes)
+        check(newEpisodes.all { feedUri == it.feedUri })
+        val oldEpisodes = getPodcastEpisodes(feedUri)
+        insertEpisodes(newEpisodes)
         deleteRemainingEpisodes(feedUri, newEpisodes.map { it.uri })
+        return oldEpisodes.map { it.fileId } - newEpisodes.map { it.fileId }
     }
 
-    @Upsert
-    protected abstract suspend fun upsertEpisodes(episodes: List<PodcastEpisode>)
+    @Transaction
+    open suspend fun deletePodcast(feedUri: String): List<String> {
+        val episodes = getPodcastEpisodes(feedUri)
+        deletePodcastRow(feedUri)
+        return episodes.map { it.fileId }
+    }
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    protected abstract suspend fun insertEpisodes(episodes: List<PodcastEpisode>)
+
+    @Query("""DELETE FROM podcasts WHERE feed_uri = :feedUri""")
+    protected abstract suspend fun deletePodcastRow(feedUri: String)
 
     @Query("""DELETE FROM podcast_episodes WHERE feed_uri = :feedUri AND uri NOT IN (:episodeUris)""")
     protected abstract suspend fun deleteRemainingEpisodes(feedUri: String, episodeUris: List<String>)
+
+    @Query("""SELECT * FROM podcast_episodes WHERE feed_uri = :feedUri""")
+    protected abstract suspend fun getPodcastEpisodes(feedUri: String): List<PodcastEpisode>
 }

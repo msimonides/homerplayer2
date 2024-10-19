@@ -48,7 +48,7 @@ data class Audiobook(
             entity = Audiobook::class,
             parentColumns = ["id"],
             childColumns = ["book_id"],
-            onDelete = ForeignKey.CASCADE
+            onDelete = ForeignKey.CASCADE,
         )
     ]
 )

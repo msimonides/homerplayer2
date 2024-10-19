@@ -24,15 +24,12 @@
 
 package com.studio4plus.homerplayer2.contentui
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -57,6 +54,7 @@ fun ContentManagementPanel(
     onRemoveFolder: (AudiobookFolderViewState) -> Unit,
     onAddPodcast: () -> Unit,
     onEditPodcast: (feedUri: String) -> Unit,
+    onRemovePodcast: (PodcastItemViewState) -> Unit,
     onDownloadSamples: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -106,7 +104,7 @@ fun ContentManagementPanel(
                             item,
                             dateFormatter,
                             onEditClicked = onEditPodcast,
-                            onRemoveClicked = { TODO() },
+                            onRemoveClicked = { onRemovePodcast(item) },
                         )
                     }
                 )
@@ -121,7 +119,7 @@ private fun PreviewContentManagementPanelPodcast() {
     HomerPlayer2Theme {
         val viewState =
             ContentPanelViewState(PreviewData.folderItems1, PreviewData.podcasts1, SamplesInstallState.Idle)
-        ContentManagementPanel(viewState, {}, {}, {}, {}, {})
+        ContentManagementPanel(viewState, {}, {}, {}, {}, {}, {})
     }
 }
 
@@ -131,6 +129,6 @@ private fun PreviewContentManagementPanel50() {
     HomerPlayer2Theme {
         val viewState =
             ContentPanelViewState(PreviewData.folderItems50, emptyList(), SamplesInstallState.Idle)
-        ContentManagementPanel(viewState, {}, {}, {}, {}, {})
+        ContentManagementPanel(viewState, {}, {}, {}, {}, {}, {})
     }
 }

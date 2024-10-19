@@ -65,12 +65,36 @@ abstract class AudiobooksDao {
     abstract suspend fun insertAudiobookFileDurations(durations: List<AudiobookFileDuration>)
 
     @Transaction
-    open suspend fun replaceAll(newAudiobooks: List<Audiobook>, newFiles: List<AudiobookFile>) {
-        // TODO: something more efficient?
-        deleteAllAudiobookFiles()
-        deleteAllAudiobooks()
+    open suspend fun replaceBooksFromFolders(
+        newAudiobooks: List<Audiobook>,
+        newFiles: List<AudiobookFile>
+    ) {
+        deleteAudiobooksFromFolders()
         insertAudiobooks(newAudiobooks)
         insertAudiobookFiles(newFiles)
+        deleteOrphanedDurations()
+        deleteOrphanedPlaybackStates()
+    }
+
+    @Transaction
+    open suspend fun insertAudiobook(audiobook: Audiobook, files: List<AudiobookFile>) {
+        insertAudiobooks(listOf(audiobook))
+        insertAudiobookFiles(files)
+    }
+
+    @Query("UPDATE audiobooks SET display_name = :displayName WHERE id = :id")
+    abstract suspend fun updateAudiobookDisplayName(id: String, displayName: String)
+
+    @Transaction
+    open suspend fun deleteBooksFromFolder(rootFolderUri: Uri) {
+        deleteAudiobooksFromFolder(rootFolderUri)
+        deleteOrphanedDurations()
+        deleteOrphanedPlaybackStates()
+    }
+
+    @Transaction
+    open suspend fun deleteAudiobook(id: String) {
+        deleteAudiobookById(id)
         deleteOrphanedDurations()
         deleteOrphanedPlaybackStates()
     }
@@ -89,14 +113,20 @@ abstract class AudiobooksDao {
     @Upsert
     protected abstract suspend fun updatePlaybackState(state: AudiobookPlaybackState)
 
-    @Insert
+    @Upsert
     protected abstract suspend fun insertAudiobooks(audiobooks: List<Audiobook>)
 
-    @Insert
+    @Upsert
     protected abstract suspend fun insertAudiobookFiles(audiobookFiles: List<AudiobookFile>)
 
-    @Query("DELETE FROM audiobooks")
-    protected abstract suspend fun deleteAllAudiobooks()
+    @Query("DELETE FROM audiobooks WHERE id = :id")
+    protected abstract suspend fun deleteAudiobookById(id: String)
+
+    @Query("DELETE FROM audiobooks WHERE root_folder_uri IN (SELECT uri FROM audiobooks_folders)")
+    protected abstract suspend fun deleteAudiobooksFromFolders()
+
+    @Query("DELETE FROM audiobooks WHERE root_folder_uri = :folderUri")
+    protected abstract suspend fun deleteAudiobooksFromFolder(folderUri: Uri)
 
     @Query("DELETE FROM audiobook_files")
     protected abstract suspend fun deleteAllAudiobookFiles()

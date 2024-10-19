@@ -147,6 +147,7 @@ private fun ScreenContent(
             onRemoveFolder = onRemoveFolder,
             onAddPodcast = {},
             onEditPodcast = {},
+            onRemovePodcast = {},
             onDownloadSamples = onDownloadSamples,
         )
     }

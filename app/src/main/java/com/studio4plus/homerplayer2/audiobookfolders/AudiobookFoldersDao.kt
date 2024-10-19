@@ -44,9 +44,10 @@ interface AudiobookFoldersDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(folder: AudiobooksFolder): Long
 
+    // Note: always call AudiobooksDao.deleteBooksFromFolder first!
     @Query("DELETE FROM audiobooks_folders WHERE uri = :uri")
     suspend fun delete(uri: Uri)
 
-    @Query("DELETE FROM audiobooks_folders WHERE isSamplesFolder = 1")
-    suspend fun deleteSamplesFolder()
+    @Query("SELECT uri FROM audiobooks_folders WHERE isSamplesFolder = 1")
+    suspend fun getSamplesFolderUri(): Uri?
 }

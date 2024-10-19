@@ -27,6 +27,7 @@ package com.studio4plus.homerplayer2.audiobookfolders
 import android.content.ContentResolver
 import android.content.Intent
 import android.net.Uri
+import com.studio4plus.homerplayer2.audiobooks.AudiobooksDao
 import com.studio4plus.homerplayer2.utils.hasContentScheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -37,7 +38,8 @@ import timber.log.Timber
 class AudiobookFolderManager(
     private val mainScope: CoroutineScope,
     private val contentResolver: ContentResolver,
-    private val dao: AudiobookFoldersDao
+    private val dao: AudiobookFoldersDao,
+    private val audiobooksDao: AudiobooksDao,
 ) {
 
     suspend fun addFolder(folder: Uri): Boolean {
@@ -46,7 +48,7 @@ class AudiobookFolderManager(
         val id = dao.insert(AudiobooksFolder(folder, isSamplesFolder = false))
         val success = id >= 0
         if (success) {
-            dao.deleteSamplesFolder()
+            deleteSamplesFolder()
         } else {
             Timber.w("Audiobooks folder already in DB, ignoring: %s", folder.toString())
         }
@@ -73,7 +75,16 @@ class AudiobookFolderManager(
             }
         }
         mainScope.launch {
-            dao.delete(folder)
+            deleteFolder(folder)
         }
+    }
+
+    private suspend fun deleteSamplesFolder() {
+        dao.getSamplesFolderUri()?.let { deleteFolder(it) }
+    }
+
+    private suspend fun deleteFolder(folderUri: Uri) {
+        audiobooksDao.deleteBooksFromFolder(folderUri)
+        dao.delete(folderUri)
     }
 }
