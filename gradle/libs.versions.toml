@@ -2,25 +2,25 @@
 
 about-libraries = "11.1.4"
 android-gradle-plugin = "8.6.1"
-android-compileSdk = '34'
+android-compileSdk = '35'
 android-minSdk = '21'
 androidx-lifecycle = '2.8.6'
-compose = '1.7.2'
+compose = '1.7.4'
 compose-kotlincompiler = '1.5.15'
 koin-android = '3.5.6'
 koin-android-compose = "3.5.6"
 koin-annotation= "1.3.1"
 kotlin = '1.9.25'
-kotlinx-coroutines = '1.8.0'
+kotlinx-coroutines = '1.8.1'
 media3 = '1.4.1'
 okhttp = '4.12.0'
 room = '2.6.1'
-sentry-android = '7.14.0'
+sentry-android = '7.15.0'
 
 [libraries]
 
 aboutlibraries-compose = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "about-libraries" }
-androidx-activity-compose = 'androidx.activity:activity-compose:1.9.2'
+androidx-activity-compose = 'androidx.activity:activity-compose:1.9.3'
 androidx-core-ktx = 'androidx.core:core-ktx:1.13.1'
 androidx-datastore-core = 'androidx.datastore:datastore:1.0.0'
 androidx-documentfile ='androidx.documentfile:documentfile:1.0.1'
@@ -29,7 +29,7 @@ androidx-lifecycle-service = { module = 'androidx.lifecycle:lifecycle-service', 
 androidx-lifecycle-viewmodel = { module = 'androidx.lifecycle:lifecycle-viewmodel', version.ref = 'androidx-lifecycle' }
 androidx-media3-exoplayer = { module = 'androidx.media3:media3-exoplayer', version.ref = 'media3' }
 androidx-media3-session = { module = 'androidx.media3:media3-session', version.ref = 'media3' }
-androidx-navigation-compose = "androidx.navigation:navigation-compose:2.8.1"
+androidx-navigation-compose = "androidx.navigation:navigation-compose:2.8.3"
 androidx-room-compiler = { module = 'androidx.room:room-compiler', version.ref = 'room' }
 androidx-room-ktx = { module = 'androidx.room:room-ktx', version.ref = 'room' }
 androidx-test-corektx = 'androidx.test:core-ktx:1.6.1'
@@ -38,7 +38,7 @@ androidx-test-junit = 'androidx.test.ext:junit:1.2.1'
 
 compose-material3 = 'androidx.compose.material3:material3:1.3.0'
 compose-material3-windowsize = 'androidx.compose.material3:material3-window-size-class-android:1.3.0'
-compose-material-icons-extended = { module = 'androidx.compose.material:material-icons-extended', version = '1.7.2' }
+compose-material-icons-extended = { module = 'androidx.compose.material:material-icons-extended', version = '1.7.4' }
 compose-ui-ui = { module = 'androidx.compose.ui:ui', version.ref = 'compose' }
 compose-ui-test-junit = { module = 'androidx.compose.ui:ui-test-junit4', version.ref = 'compose' }
 compose-ui-test-manifest = { module = 'androidx.compose.ui:ui-test-manifest', version.ref = 'compose' }
