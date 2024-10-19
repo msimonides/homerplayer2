@@ -55,7 +55,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -78,7 +77,6 @@ fun PodcastEditRoute(
         viewState = viewState,
         onPodcastUriChange = viewModel::onPodcastUriChange,
         onAddPodcast = viewModel::onAddNewPodcast,
-        onPodcastTitleOverrideChanged = viewModel::onPodcastTitleOverrideChanged,
         onEpisodeCountChanged = viewModel::onEpisodeCountChanged,
         onEpisodeTitleIncludePodcastTitle = viewModel::onEpisodeTitleIncludePodcastTitle,
         onEpisodeTitleIncludeNumber = viewModel::onEpisodeTitleIncludeNumber,
@@ -93,7 +91,6 @@ fun PodcastEdit(
     viewState: PodcastEditViewModel.ViewState,
     onPodcastUriChange: (String) -> Unit,
     onAddPodcast: () -> Unit,
-    onPodcastTitleOverrideChanged: (String) -> Unit,
     onEpisodeCountChanged: (Int) -> Unit,
     onEpisodeTitleIncludePodcastTitle: (Boolean) -> Unit,
     onEpisodeTitleIncludeNumber: (Boolean) -> Unit,
@@ -118,7 +115,6 @@ fun PodcastEdit(
             PodcastEdit(
                 viewState,
                 onEpisodeCountChanged = onEpisodeCountChanged,
-                onPodcastTitleOverrideChanged = onPodcastTitleOverrideChanged,
                 onEpisodeTitleIncludePodcastTitle = onEpisodeTitleIncludePodcastTitle,
                 onEpisodeTitleIncludeNumber = onEpisodeTitleIncludeNumber,
                 onEpisodeTitleIncludeEpisodeTitle = onEpisodeTitleIncludeEpisodeTitle,
@@ -131,7 +127,6 @@ fun PodcastEdit(
 private fun PodcastEdit(
     viewState: PodcastEditViewModel.ViewState.Podcast,
     onEpisodeCountChanged: (Int) -> Unit,
-    onPodcastTitleOverrideChanged: (String) -> Unit,
     onEpisodeTitleIncludePodcastTitle: (Boolean) -> Unit,
     onEpisodeTitleIncludeNumber: (Boolean) -> Unit,
     onEpisodeTitleIncludeEpisodeTitle: (Boolean) -> Unit,
@@ -162,28 +157,12 @@ private fun PodcastEdit(
             modifier = rowModifier
         )
         AnimatedVisibility(podcast.includePodcastTitle) {
-            Column {
-                OutlinedTextField(
-                    value = podcast.titleOverride ?: "",
-                    placeholder = { Text(podcast.title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                    onValueChange = onPodcastTitleOverrideChanged,
-                    singleLine = true,
-                    trailingIcon = {
-                        ClearValueIconButton(
-                            onClick = { onPodcastTitleOverrideChanged("") },
-                            enabled = !podcast.titleOverride.isNullOrEmpty(),
-                            contentDescription = ""
-                        )
-                    },
-                    modifier = rowModifier.padding(vertical = 4.dp)
-                )
-                LabeledSwitch(
-                    "Episode number",
-                    podcast.includeEpisodeNumber,
-                    onEpisodeTitleIncludeNumber,
-                    modifier = rowModifier
-                )
-            }
+            LabeledSwitch(
+                "Episode number",
+                podcast.includeEpisodeNumber,
+                onEpisodeTitleIncludeNumber,
+                modifier = rowModifier
+            )
         }
         LabeledSwitch(
             "Episode title",
@@ -357,6 +336,6 @@ private fun PreviewNewPodcastDialog() {
             podcastTitle = null,
             errorRes = null,
         )
-        PodcastEdit(viewState, {}, {}, {}, {}, {}, {}, {}, {})
+        PodcastEdit(viewState, {}, {}, {}, {}, {}, {}, {})
     }
 }
