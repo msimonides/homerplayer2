@@ -34,9 +34,13 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.studio4plus.homerplayer2.app.ui.HomerPLayerUi
+import io.sentry.Sentry
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.transformLatest
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
 
 class MainActivity : AppCompatActivity() {
 
@@ -58,15 +62,17 @@ class MainActivity : AppCompatActivity() {
         activityViewModel.onResume()
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun setupLockTask() {
         val windowInsetsControllerCompat = WindowInsetsControllerCompat(window, window.decorView)
         val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         activityViewModel.lockTask
             .flowWithLifecycle(lifecycle, Lifecycle.State.RESUMED)
-            .onEach { isEnabled ->
+            // There's no onLatest, so use transformLatest
+            .transformLatest<Boolean, Unit> { isEnabled ->
                 if (isEnabled) {
                     windowInsetsControllerCompat.hide(WindowInsetsCompat.Type.statusBars())
-                    startLockTask()
+                    startLockTaskWithRetry()
                 } else {
                     windowInsetsControllerCompat.show(WindowInsetsCompat.Type.statusBars())
                     if (activityManager.isInLockTaskMode()) {
@@ -77,6 +83,25 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             .launchIn(lifecycleScope)
+    }
+
+    private suspend fun startLockTaskWithRetry() {
+        val retries = 4
+        repeat(retries + 1) { index ->
+            try {
+                startLockTask()
+                return
+            } catch (e: IllegalArgumentException) {
+                if (e.message != "Invalid task, not in foreground")
+                    throw e
+                Timber.e(e, "Error enabling lock task, retrying")
+                if (index == retries) {
+                    Sentry.captureException(e)
+                } else {
+                    delay(100)
+                }
+            }
+        }
     }
 }
 
