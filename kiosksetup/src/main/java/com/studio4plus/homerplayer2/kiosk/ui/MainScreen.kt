@@ -172,29 +172,20 @@ private fun ConfirmDropPrivilegeDialog(
 ) {
     DefaultAlertDialog(
         onDismissRequest = onDismissRequest,
-            ) {
-        Column(
-            modifier = modifier
-                .padding(24.dp),
-        ) {
-            Text(
-                text = stringResource(R.string.drop_privilege_confirm_message),
-                modifier = Modifier.padding(top = 8.dp)
-            )
-            Row(
-                modifier = Modifier
-                    .padding(top = 24.dp)
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
-            ) {
-                TextButton(onClick = onDismissRequest) {
-                    Text(stringResource(R.string.drop_privilege_confirm_cancel_button))
-                }
-                TextButton(onClick = onConfirm) {
-                    Text(stringResource(R.string.drop_privilege_confirm_confirm_button))
-                }
+        modifier = modifier,
+        buttons = {
+            TextButton(onClick = onDismissRequest) {
+                Text(stringResource(R.string.drop_privilege_confirm_cancel_button))
+            }
+            TextButton(onClick = onConfirm) {
+                Text(stringResource(R.string.drop_privilege_confirm_confirm_button))
             }
         }
+    ) { horizontalPadding ->
+        Text(
+            text = stringResource(R.string.drop_privilege_confirm_message),
+            modifier = Modifier.padding(horizontal = horizontalPadding)
+        )
     }
 }
 
