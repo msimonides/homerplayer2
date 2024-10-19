@@ -30,6 +30,8 @@ import androidx.lifecycle.ViewModel
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.audiobookfolders.AudiobookFolderManager
 import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFolderViewState
+import com.studio4plus.homerplayer2.podcasts.usecases.DeletePodcast
+import com.studio4plus.homerplayer2.podcastsui.PodcastItemViewState
 import com.studio4plus.homerplayer2.samplebooks.SamplesInstallController
 import com.studio4plus.homerplayer2.samplebooks.SamplesInstallError
 import kotlinx.coroutines.CoroutineScope
@@ -45,6 +47,7 @@ import kotlinx.coroutines.launch
 abstract class ContentPanelViewModel(
     private val mainScope: CoroutineScope,
     private val audiobookFolderManager: AudiobookFolderManager,
+    private val deletePodcast: DeletePodcast,
     private val samplesInstaller: SamplesInstallController,
 ) : ViewModel() {
 
@@ -73,8 +76,13 @@ abstract class ContentPanelViewModel(
     }
 
     fun removeFolder(folder: AudiobookFolderViewState) {
-        clearErrorSnack()
         audiobookFolderManager.removeFolder(folder.uri)
+    }
+
+    fun removePodcast(podcastItem: PodcastItemViewState) {
+        mainScope.launch {
+            deletePodcast(podcastItem.feedUri)
+        }
     }
 
     fun startSamplesInstall() {

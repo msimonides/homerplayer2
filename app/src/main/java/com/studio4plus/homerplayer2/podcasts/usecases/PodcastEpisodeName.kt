@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.podcasts
+package com.studio4plus.homerplayer2.podcasts.usecases
 
 import android.content.Context
 import com.studio4plus.homerplayer2.R

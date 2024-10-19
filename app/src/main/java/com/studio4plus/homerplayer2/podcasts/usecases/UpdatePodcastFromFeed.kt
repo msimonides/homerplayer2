@@ -22,27 +22,24 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.podcasts
+package com.studio4plus.homerplayer2.podcasts.usecases
 
 import com.prof18.rssparser.model.RssChannel
 import com.studio4plus.homerplayer2.podcasts.data.Podcast
 import com.studio4plus.homerplayer2.podcasts.data.PodcastEpisode
-import com.studio4plus.homerplayer2.podcasts.data.PodcastsDao
 import org.koin.core.annotation.Factory
 import java.time.Instant
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import java.util.UUID
 
 @Factory
-class PodcastFeedUpdater(
-    private val podcastsDao: PodcastsDao
+class UpdatePodcastFromFeed(
+    private val updatePodcastEpisodes: UpdatePodcastEpisodes,
 ) {
 
     // TODO: unit tests
     suspend operator fun invoke(podcast: Podcast, feed: RssChannel): Boolean {
-        // TODO: error handling:
-        //  - there can be network errors
-        //  - the XML may be incorrect or not XML at all
         val latestEpisodes = feed.items
             .mapNotNull {
                 when {
@@ -54,17 +51,18 @@ class PodcastFeedUpdater(
             .take(podcast.downloadEpisodeCount)
         val totalCount = feed.items.size
         val episodes = latestEpisodes.mapIndexed { index, (episode, pubTime) ->
+            val uri = requireNotNull(episode.audio) // Filtered above
             PodcastEpisode(
-                uri = requireNotNull(episode.audio), // Filtered above
+                uri = uri,
                 number = totalCount - index,
                 title = episode.title ?: "",
                 publicationTime = pubTime,
                 feedUri = podcast.feedUri,
                 isDownloaded = false,
+                fileId = UUID.nameUUIDFromBytes(uri.encodeToByteArray()).toString()
             )
         }
-        podcastsDao.updatePodcast(podcast.feedUri, feed.title!!)
-        podcastsDao.updateEpisodes(episodes)
+        updatePodcastEpisodes(podcast, feed.title!!, episodes)
         return latestEpisodes.isNotEmpty()
     }
 

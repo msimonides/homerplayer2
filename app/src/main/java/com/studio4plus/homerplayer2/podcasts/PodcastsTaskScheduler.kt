@@ -22,37 +22,36 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.podcastsui
+package com.studio4plus.homerplayer2.podcasts
 
 import com.studio4plus.homerplayer2.podcasts.data.PodcastsDao
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.FlowCollector
-import kotlinx.coroutines.flow.map
-import org.koin.core.annotation.Factory
-import java.time.LocalDate
-import java.time.ZoneId
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import org.koin.core.annotation.Single
 
-@Factory
-class PodcastsViewStateFlow(
-    podcastsDao: PodcastsDao
-) : Flow<List<PodcastItemViewState>> {
+interface PodcastsTaskScheduler {
+    fun enablePeriodicUpdate()
+    fun disablePeriodicUpdate()
+    fun runUpdate()
+}
 
-    private val podcasts = podcastsDao.observePodcasts()
-        .map { podcasts ->
-            podcasts.map { (podcast, episodes) ->
-                PodcastItemViewState(
-                    feedUri = podcast.feedUri,
-                    displayName = podcast.title,
-                    latestEpisodeDate = episodes
-                        .map { it.publicationTime }
-                        .sortedByDescending { it }
-                        .firstOrNull()
-                        ?.let { LocalDate.ofInstant(it, ZoneId.systemDefault()) }
-                )
-            }
-        }
-
-    override suspend fun collect(collector: FlowCollector<List<PodcastItemViewState>>) {
-        podcasts.collect(collector)
+@Single(createdAtStart = true)
+class PodcastRefreshScheduler(
+    mainScope: CoroutineScope,
+    podcastsDao: PodcastsDao,
+    scheduler: PodcastsTaskScheduler,
+) {
+    init {
+        // TODO: open for some future app start optimizations
+        podcastsDao.observeHasAnyPodcast()
+            .distinctUntilChanged()
+            .onEach { hasPodcasts ->
+                when (hasPodcasts) {
+                    true -> scheduler.enablePeriodicUpdate()
+                    false -> scheduler.disablePeriodicUpdate()
+                }
+            }.launchIn(mainScope)
     }
 }

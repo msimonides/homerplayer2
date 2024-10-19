@@ -60,6 +60,7 @@ fun ContentManagementPanel(
     onRemoveFolder: (AudiobookFolderViewState) -> Unit,
     onAddPodcast: () -> Unit,
     onEditPodcast: (feedUri: String) -> Unit,
+    onRemovePodcast: (PodcastItemViewState) -> Unit,
     onDownloadSamples: () -> Unit,
     modifier: Modifier = Modifier,
     windowInsets: WindowInsets = WindowInsets(0, 0, 0, 0),
@@ -117,7 +118,7 @@ fun ContentManagementPanel(
                             item,
                             dateFormatter,
                             onEditClicked = onEditPodcast,
-                            onRemoveClicked = { TODO() },
+                            onRemoveClicked = { onRemovePodcast(item) },
                         )
                     }
                 )
@@ -132,7 +133,7 @@ private fun PreviewContentManagementPanelPodcast() {
     HomerPlayer2Theme {
         val viewState =
             ContentPanelViewState(PreviewData.folderItems1, PreviewData.podcasts1, SamplesInstallState.Idle)
-        ContentManagementPanel(viewState, {}, {}, {}, {}, {})
+        ContentManagementPanel(viewState, {}, {}, {}, {}, {}, {})
     }
 }
 
@@ -142,6 +143,6 @@ private fun PreviewContentManagementPanel50() {
     HomerPlayer2Theme {
         val viewState =
             ContentPanelViewState(PreviewData.folderItems50, emptyList(), SamplesInstallState.Idle)
-        ContentManagementPanel(viewState, {}, {}, {}, {}, {})
+        ContentManagementPanel(viewState, {}, {}, {}, {}, {}, {})
     }
 }

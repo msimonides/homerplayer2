@@ -29,6 +29,7 @@ import com.studio4plus.homerplayer2.audiobookfolders.AudiobookFolderManager
 import com.studio4plus.homerplayer2.contentui.ContentPanelViewModel
 import com.studio4plus.homerplayer2.contentui.ContentPanelViewState
 import com.studio4plus.homerplayer2.contentui.ContentPanelViewStateFlow
+import com.studio4plus.homerplayer2.podcasts.usecases.DeletePodcast
 import com.studio4plus.homerplayer2.samplebooks.SamplesInstallController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
@@ -40,8 +41,9 @@ class SettingsContentViewModel(
     mainScope: CoroutineScope,
     contentPanelViewStateFlow: ContentPanelViewStateFlow,
     audiobookFoldersManager: AudiobookFolderManager,
+    deletePodcast: DeletePodcast,
     samplesInstaller: SamplesInstallController,
-): ContentPanelViewModel(mainScope, audiobookFoldersManager, samplesInstaller) {
+): ContentPanelViewModel(mainScope, audiobookFoldersManager, deletePodcast, samplesInstaller) {
 
     val viewState = contentPanelViewStateFlow
         .stateIn(

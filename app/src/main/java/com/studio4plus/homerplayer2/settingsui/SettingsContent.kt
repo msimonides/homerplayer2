@@ -37,6 +37,7 @@ import com.studio4plus.homerplayer2.audiobookfoldersui.OpenAudiobooksTreeScreenW
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 import com.studio4plus.homerplayer2.contentui.ContentManagementPanel
 import com.studio4plus.homerplayer2.contentui.ContentPanelViewModel
+import com.studio4plus.homerplayer2.podcastsui.PodcastItemViewState
 import com.studio4plus.homerplayer2.speech.LaunchErrorSnackDisplay
 import org.koin.androidx.compose.koinViewModel
 
@@ -67,6 +68,7 @@ fun SettingsContentRoute(
             onRemoveFolder = viewModel::removeFolder,
             onAddPodcast = onAddPodcast,
             onEditPodcast= onEditPodcast,
+            onRemovePodcast = viewModel::removePodcast,
             onDownloadSamples = viewModel::startSamplesInstall,
             modifier = modifier.padding(horizontal = HomerTheme.dimensions.screenContentPadding),
             windowInsets = WindowInsets.navigationBars

@@ -73,7 +73,10 @@ class AudiobooksUpdater(
         val scannedItems = scanner.scan(folders.map { it.uri }).map { item ->
             Pair(item.audiobook, item.uris.map { AudiobookFile(it, item.audiobook.id) })
         }
-        audiobooksDao.replaceAll(scannedItems.map { it.first }, scannedItems.flatMap { it.second })
+        audiobooksDao.replaceBooksFromFolders(
+            scannedItems.map { it.first },
+            scannedItems.flatMap { it.second }
+        )
     }
 }
 

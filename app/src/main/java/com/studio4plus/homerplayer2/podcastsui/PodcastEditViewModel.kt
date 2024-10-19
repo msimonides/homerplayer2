@@ -28,17 +28,17 @@ import androidx.annotation.StringRes
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.prof18.rssparser.RssParser
-import com.prof18.rssparser.exception.RssParsingException
 import com.prof18.rssparser.model.RssChannel
 import com.studio4plus.homerplayer2.R
-import com.studio4plus.homerplayer2.podcasts.PodcastFeedUpdater
-import com.studio4plus.homerplayer2.podcasts.PodcastEpisodeName
-import com.studio4plus.homerplayer2.podcasts.PodcastFeedDownload
+import com.studio4plus.homerplayer2.podcasts.usecases.UpdatePodcastFromFeed
+import com.studio4plus.homerplayer2.podcasts.usecases.PodcastEpisodeName
+import com.studio4plus.homerplayer2.podcasts.usecases.DownloadPodcastFeed
+import com.studio4plus.homerplayer2.podcasts.PodcastsTaskScheduler
 import com.studio4plus.homerplayer2.podcasts.data.Podcast
 import com.studio4plus.homerplayer2.podcasts.data.PodcastEpisode
 import com.studio4plus.homerplayer2.podcasts.data.PodcastWithEpisodes
 import com.studio4plus.homerplayer2.podcasts.data.PodcastsDao
+import com.studio4plus.homerplayer2.podcasts.usecases.UpdatePodcastNameConfig
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -58,7 +58,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
-import timber.log.Timber
 import java.time.LocalDate
 import java.time.ZoneId
 
@@ -66,11 +65,12 @@ import java.time.ZoneId
 @KoinViewModel
 class PodcastEditViewModel(
     private val savedStateHandle: SavedStateHandle,
-    private val podcastFeedDownload: PodcastFeedDownload,
-    private val rssParser: RssParser,
-    private val podcastFeedUpdater: PodcastFeedUpdater,
+    private val downloadPodcastFeed: DownloadPodcastFeed,
+    private val updatePodcastFromFeed: UpdatePodcastFromFeed,
     private val podcastsDao: PodcastsDao,
     private val podcastEpisodeName: PodcastEpisodeName,
+    private val podcastTaskScheduler: PodcastsTaskScheduler,
+    private val updatePodcastNameConfig: UpdatePodcastNameConfig,
 ) : ViewModel() {
 
     data class EpisodeViewState(
@@ -110,7 +110,7 @@ class PodcastEditViewModel(
     private val podcastParsedFeedFlow = podcastFeedFlow.filterIsInstance<Feed.Parsed>().map { it.channel }
 
     private val podcastFlow: Flow<PodcastWithEpisodes?> = podcastUriFlow.flatMapLatest {
-        podcastsDao.getPodcast(it)
+        podcastsDao.observePodcast(it)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -142,7 +142,7 @@ class PodcastEditViewModel(
             podcastFlow.filterNotNull(),
             podcastParsedFeedFlow
         ) { podcast, feed ->
-            podcastFeedUpdater(podcast.podcast, feed)
+            updatePodcastFromFeed(podcast.podcast, feed)
         }.launchIn(viewModelScope)
 
         if (!isNewPodcast) {
@@ -150,6 +150,12 @@ class PodcastEditViewModel(
                 podcastFeedFlow.value = fetchAndParse(requireNotNull(podcastUri))
             }
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        // TODO: a bit hacky.
+        podcastTaskScheduler.runUpdate()
     }
 
     fun onPodcastUriChange(newUri: String) {
@@ -188,17 +194,17 @@ class PodcastEditViewModel(
     }
 
     fun onEpisodeTitleIncludePodcastTitle(includePodcastTitle: Boolean) = viewModelScope.launch {
-        val podcast = podcastFlow.first()?.podcast ?: return@launch
+        val podcast = podcastFlow.first() ?: return@launch
         if (includePodcastTitle) {
-            podcastsDao.updateEpisodeTitle(
-                podcast.feedUri,
+            updatePodcastNameConfig(
+                podcast,
                 includePodcastTitle = true,
-                includeEpisodeNumber = podcast.includeEpisodeNumber,
-                includeEpisodeTitle = podcast.includeEpisodeTitle
+                includeEpisodeNumber = podcast.podcast.includeEpisodeNumber,
+                includeEpisodeTitle = podcast.podcast.includeEpisodeTitle
             )
         } else {
-            podcastsDao.updateEpisodeTitle(
-                podcast.feedUri,
+            updatePodcastNameConfig(
+                podcast,
                 includePodcastTitle = false,
                 includeEpisodeNumber = false,
                 includeEpisodeTitle = true
@@ -207,18 +213,18 @@ class PodcastEditViewModel(
     }
 
     fun onEpisodeTitleIncludeNumber(includeNumber: Boolean) = viewModelScope.launch {
-        val podcast = podcastFlow.first()?.podcast ?: return@launch
+        val podcast = podcastFlow.first() ?: return@launch
         if (includeNumber) {
-            podcastsDao.updateEpisodeTitle(
-                podcast.feedUri,
+            updatePodcastNameConfig(
+                podcast,
                 includePodcastTitle = true,
                 includeEpisodeNumber = true,
-                includeEpisodeTitle = podcast.includeEpisodeTitle
+                includeEpisodeTitle = podcast.podcast.includeEpisodeTitle
             )
         } else {
-            podcastsDao.updateEpisodeTitle(
-                podcast.feedUri,
-                includePodcastTitle = podcast.includePodcastTitle,
+            updatePodcastNameConfig(
+                podcast,
+                includePodcastTitle = podcast.podcast.includePodcastTitle,
                 includeEpisodeNumber = false,
                 includeEpisodeTitle = true
             )
@@ -226,17 +232,17 @@ class PodcastEditViewModel(
     }
 
     fun onEpisodeTitleIncludeEpisodeTitle(includeEpisodeTitle: Boolean) = viewModelScope.launch {
-        val podcast = podcastFlow.first()?.podcast ?: return@launch
+        val podcast = podcastFlow.first() ?: return@launch
         if (includeEpisodeTitle) {
-            podcastsDao.updateEpisodeTitle(
-                podcast.feedUri,
-                includePodcastTitle = podcast.includePodcastTitle,
-                includeEpisodeNumber = podcast.includeEpisodeNumber,
+            updatePodcastNameConfig(
+                podcast,
+                includePodcastTitle = podcast.podcast.includePodcastTitle,
+                includeEpisodeNumber = podcast.podcast.includeEpisodeNumber,
                 includeEpisodeTitle = true
             )
         } else {
-            podcastsDao.updateEpisodeTitle(
-                podcast.feedUri,
+            updatePodcastNameConfig(
+                podcast,
                 includePodcastTitle = true,
                 includeEpisodeNumber = true,
                 includeEpisodeTitle = false
@@ -268,26 +274,20 @@ class PodcastEditViewModel(
         publicationDate = LocalDate.ofInstant(publicationTime, ZoneId.systemDefault())
     )
 
-    // TODO: wrap in a use-case?
     private suspend fun fetchAndParse(uri: String): Feed =
-        when (val download = podcastFeedDownload(uri)) {
-            is PodcastFeedDownload.Result.Success -> {
-                try {
-                    // TODO: some validity checks?
-                    Feed.Parsed(rssParser.parse(download.body))
-                } catch (parseException: RssParsingException) {
-                    Timber.w(parseException, "Error parsing $uri")
-                    Feed.Error(R.string.podcast_feed_error_parse)
-                }
-            }
-            is PodcastFeedDownload.Result.Error -> {
+        when (val download = downloadPodcastFeed(uri)) {
+            is DownloadPodcastFeed.Result.Success ->
+                Feed.Parsed(download.feed)
+            is DownloadPodcastFeed.Result.ParseError ->
+                Feed.Error(R.string.podcast_feed_error_parse)
+            is DownloadPodcastFeed.Result.Error -> {
                 val errorRes = when(download.httpCode) {
                     404 -> R.string.podcast_feed_error_doesnt_exist
                     else -> R.string.podcast_feed_error_download
                 }
                 Feed.Error(errorRes)
             }
-            is PodcastFeedDownload.Result.IncorrectAddress ->
+            is DownloadPodcastFeed.Result.IncorrectAddress ->
                 Feed.Error(R.string.podcast_feed_error_doesnt_exist)
         }
 }

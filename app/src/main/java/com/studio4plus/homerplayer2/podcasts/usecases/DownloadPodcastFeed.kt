@@ -22,8 +22,11 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.podcasts
+package com.studio4plus.homerplayer2.podcasts.usecases
 
+import com.prof18.rssparser.RssParser
+import com.prof18.rssparser.exception.RssParsingException
+import com.prof18.rssparser.model.RssChannel
 import com.studio4plus.homerplayer2.base.DispatcherProvider
 import com.studio4plus.homerplayer2.net.executeAwait
 import kotlinx.coroutines.runInterruptible
@@ -35,12 +38,14 @@ import timber.log.Timber
 import java.net.UnknownHostException
 
 @Factory
-class PodcastFeedDownload(
+class DownloadPodcastFeed(
     private val dispatcherProvider: DispatcherProvider,
-    private val okHttpClient: OkHttpClient
+    private val okHttpClient: OkHttpClient,
+    private val rssParser: RssParser,
 ) {
     sealed interface Result {
-        data class Success(val body: String) : Result
+        data class Success(val feed: RssChannel) : Result
+        object ParseError : Result
         data class Error(val httpCode: Int) : Result
         object IncorrectAddress : Result
     }
@@ -52,14 +57,12 @@ class PodcastFeedDownload(
             val response = okHttpClient.newCall(request).executeAwait()
             Timber.i("$url response: ${response.code}: ${response.message.take(200)}")
             return if (response.isSuccessful) {
-                runInterruptible(dispatcherProvider.Io) {
-                    val body = response.body
-                    if (body != null) {
-                        Result.Success(body.string())
-                    } else {
-                        Timber.w("Empty body")
-                        Result.Error(204) // No content
-                    }
+                val body = runInterruptible(dispatcherProvider.Io) { response.body }
+                if (body != null) {
+                    parse(body.string(), url)
+                } else {
+                    Timber.w("Empty body")
+                    Result.Error(204) // No content
                 }
             } else {
                 Result.Error(response.code)
@@ -67,6 +70,14 @@ class PodcastFeedDownload(
         } catch (e: UnknownHostException) {
             return Result.IncorrectAddress
         }
-
     }
+
+    private suspend fun parse(text: String, uri: String): Result =
+        try {
+            // TODO: some validity checks?
+            Result.Success(rssParser.parse(text))
+        } catch (parseException: RssParsingException) {
+            Timber.w(parseException, "Error parsing $uri")
+            Result.ParseError
+        }
 }

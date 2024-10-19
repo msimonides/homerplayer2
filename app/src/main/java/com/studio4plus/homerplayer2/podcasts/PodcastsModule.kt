@@ -26,6 +26,7 @@ package com.studio4plus.homerplayer2.podcasts
 
 import com.prof18.rssparser.RssParser
 import com.prof18.rssparser.RssParserBuilder
+import com.studio4plus.homerplayer2.audiobooks.AudiobooksModule
 import com.studio4plus.homerplayer2.base.BaseModule
 import com.studio4plus.homerplayer2.net.NetModule
 import com.studio4plus.homerplayer2.podcasts.data.PodcastsDao
@@ -35,7 +36,7 @@ import org.koin.core.annotation.ComponentScan
 import org.koin.core.annotation.Factory
 import org.koin.core.annotation.Module
 
-@Module(includes = [BaseModule::class, NetModule::class])
+@Module(includes = [AudiobooksModule::class, BaseModule::class, NetModule::class])
 @ComponentScan("com.studio4plus.homerplayer2.podcasts")
 class PodcastsModule {
     @Factory

@@ -22,37 +22,26 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.podcastsui
+package com.studio4plus.homerplayer2.podcasts
 
-import com.studio4plus.homerplayer2.podcasts.data.PodcastsDao
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.FlowCollector
-import kotlinx.coroutines.flow.map
+import android.content.Context
+import com.studio4plus.homerplayer2.base.DispatcherProvider
+import kotlinx.coroutines.withContext
 import org.koin.core.annotation.Factory
-import java.time.LocalDate
-import java.time.ZoneId
+import java.io.File
 
 @Factory
-class PodcastsViewStateFlow(
-    podcastsDao: PodcastsDao
-) : Flow<List<PodcastItemViewState>> {
-
-    private val podcasts = podcastsDao.observePodcasts()
-        .map { podcasts ->
-            podcasts.map { (podcast, episodes) ->
-                PodcastItemViewState(
-                    feedUri = podcast.feedUri,
-                    displayName = podcast.title,
-                    latestEpisodeDate = episodes
-                        .map { it.publicationTime }
-                        .sortedByDescending { it }
-                        .firstOrNull()
-                        ?.let { LocalDate.ofInstant(it, ZoneId.systemDefault()) }
-                )
+class PodcastsFileStorage(
+    private val appContext: Context,
+    private val dispatcherProvider: DispatcherProvider
+) {
+    suspend fun getPodcastFile(fileId: String): File =
+        withContext(dispatcherProvider.Io) {
+            val folder = folder().also {
+                it.mkdir()
             }
+            File(folder, fileId)
         }
 
-    override suspend fun collect(collector: FlowCollector<List<PodcastItemViewState>>) {
-        podcasts.collect(collector)
-    }
+    fun folder() = File(appContext.filesDir, "podcasts")
 }

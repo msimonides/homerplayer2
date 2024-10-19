@@ -47,10 +47,16 @@ class FileDownloader(
         Timber.i("Start download: $url to ${file.absolutePath}")
 
         val range = if (append) rangeBytesForFile(file, url) else null
+        if (range?.isFinished == true) {
+            Timber.i("File already fully downloaded")
+            return
+        }
+
         val requestBuilder = Request.Builder().url(url)
         if (range != null) {
-            Timber.i("Download range: $range")
-            requestBuilder.addHeader("range", range)
+            val rangeHeader = "bytes: ${range.downloadedBytes}-${range.totalBytes}"
+            Timber.i("Download range: $rangeHeader")
+            requestBuilder.addHeader("range", rangeHeader)
         }
         val call = okHttpClient.newCall(requestBuilder.build())
         val response = call.executeAwait()
@@ -71,19 +77,22 @@ class FileDownloader(
         }
     }
 
-    private suspend fun rangeBytesForFile(file: File, url: String): String? {
+    private suspend fun rangeBytesForFile(file: File, url: String): DownloadRange? {
         val fileExists = withContext(dispatcherProvider.Io) { file.exists() }
         if (!fileExists) return null
 
         val request = Request.Builder().method("HEAD", null).url(url).build()
         val response = okHttpClient.newCall(request).executeAwait()
         val acceptRanges = response.headers["accept-ranges"]?.lowercase()
-        val contentLength = response.headers["content-length"]
-        return if (acceptRanges == "bytes") {
+        val contentLength = response.headers["content-length"]?.toLong()
+        return if (acceptRanges == "bytes" && contentLength != null) {
             val downloadedBytes = withContext(dispatcherProvider.Io) { file.length() }
-            "bytes: $downloadedBytes-$contentLength"
+            DownloadRange(downloadedBytes, contentLength)
         } else {
             null
         }
+    }
+    private data class DownloadRange(val downloadedBytes: Long, val totalBytes: Long) {
+        val isFinished = downloadedBytes == totalBytes
     }
 }

@@ -30,6 +30,7 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import java.time.Instant
+import java.util.UUID
 
 @Entity(
     tableName = "podcast_episodes",
@@ -41,7 +42,7 @@ import java.time.Instant
             onDelete = ForeignKey.CASCADE,
         )
     ],
-    indices = [ Index("feed_uri") ]
+    indices = [ Index("feed_uri"), Index("file_id") ]
 )
 data class PodcastEpisode(
     @PrimaryKey
@@ -54,4 +55,6 @@ data class PodcastEpisode(
     val feedUri: String,
     @ColumnInfo(name = "is_downloaded")
     val isDownloaded: Boolean,
+    @ColumnInfo(name = "file_id")
+    val fileId: String, // A safe and unique name for the episode's file.
 )

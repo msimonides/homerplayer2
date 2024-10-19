@@ -100,6 +100,7 @@ dependencies {
     implementation libs.androidx.media3.session
     implementation libs.androidx.navigation.compose
     implementation libs.androidx.room.ktx
+    implementation libs.androidx.workmanager.ktx
     implementation libs.compose.ui.ui
     implementation libs.compose.ui.tooling.preview
     implementation libs.compose.material.icons.extended
