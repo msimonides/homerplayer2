@@ -83,7 +83,7 @@ fun OpenAudiobooksTreeScreenWrapper(
         Sentry.captureException(e)
     }
 
-    val openAudiobooksTreeAction = {
+    val openAudiobooksTreeAction: () -> Unit = {
         runCatching { openAudiobooksTree.launch(null) }
             .onFailure(::onOpenAudiobooksTreeError)
     }
