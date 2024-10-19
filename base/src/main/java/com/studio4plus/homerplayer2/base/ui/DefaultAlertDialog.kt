@@ -24,20 +24,32 @@
 
 package com.studio4plus.homerplayer2.base.ui
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DefaultAlertDialog(
+private fun BasicDefaultAlertDialog(
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
     usePlatformDefaultWidth: Boolean = true,
@@ -54,4 +66,65 @@ fun DefaultAlertDialog(
             content = content
         )
     }
+}
+
+@Composable
+fun DefaultAlertDialog(
+    onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier,
+    title: String? = null,
+    buttons: (@Composable RowScope.() -> Unit)? = null,
+    usePlatformDefaultWidth: Boolean = true,
+    content: @Composable ColumnScope.(Dp) -> Unit,
+) {
+    BasicDefaultAlertDialog(
+        onDismissRequest = onDismissRequest,
+        usePlatformDefaultWidth = usePlatformDefaultWidth,
+        modifier = modifier,
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(vertical = 24.dp)
+        ) {
+            if (title != null) {
+                Text(
+                    title,
+                    style = MaterialTheme.typography.headlineSmall,
+                    modifier = Modifier.padding(start = 24.dp, end = 24.dp)
+                )
+            }
+            Column(
+                modifier = Modifier
+                    .padding(top = 16.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                content(24.dp)
+            }
+            if (buttons != null) {
+                Row(
+                    horizontalArrangement = Arrangement.End,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp),
+                    content = buttons
+                )
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewDialogWithTitleAndButtons() {
+    DefaultAlertDialog(
+        title = null,
+        buttons = {
+            TextButton(onClick = {}) { Text("Cancel") }
+            TextButton(onClick = {}) { Text("Ok") }
+        },
+        content = { horizontalPadding ->
+            Text( "Some message", modifier = Modifier.padding(horizontal = horizontalPadding))
+        },
+        onDismissRequest = {}
+    )
 }

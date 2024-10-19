@@ -64,10 +64,10 @@ fun HideSettingsButtonConfirmationDialog(
         onDismissRequest = onDismissRequest,
         modifier = modifier,
         usePlatformDefaultWidth = false
-    ) {
+    ) { horizontalPadding ->
         HideSettingsButtonConfirmation(
             onConfirm = onConfirm,
-            modifier = Modifier.padding(24.dp)
+            modifier = Modifier.padding(horizontal = horizontalPadding)
         )
     }
 }

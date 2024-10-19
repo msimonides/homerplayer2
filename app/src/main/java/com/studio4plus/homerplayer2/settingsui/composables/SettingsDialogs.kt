@@ -25,62 +25,15 @@
 package com.studio4plus.homerplayer2.settingsui.composables
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.studio4plus.homerplayer2.base.ui.DefaultAlertDialog
-
-@Composable
-fun SettingsDialog(
-    title: String,
-    onDismissRequest: () -> Unit,
-    modifier: Modifier = Modifier,
-    buttons: (@Composable RowScope.() -> Unit)? = null,
-    content: @Composable ColumnScope.(Dp) -> Unit,
-) {
-    DefaultAlertDialog(
-        onDismissRequest = onDismissRequest,
-        modifier = modifier
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(vertical = 24.dp)
-        ) {
-            Text(
-                title,
-                style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier.padding(bottom = 16.dp, start = 24.dp, end = 24.dp)
-            )
-            Column(
-                modifier = Modifier.verticalScroll(rememberScrollState())
-            ) {
-                content(24.dp)
-            }
-            if (buttons != null) {
-                Row(
-                    horizontalArrangement = Arrangement.End,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 24.dp),
-                    content = buttons
-                )
-            }
-        }
-    }
-}
 
 @Composable
 fun <T> SelectFromRadioListDialog(
@@ -93,7 +46,7 @@ fun <T> SelectFromRadioListDialog(
     modifier: Modifier = Modifier,
     buttons: (@Composable RowScope.() -> Unit)? = null,
 ) {
-    SettingsDialog(
+    DefaultAlertDialog(
         title = title,
         onDismissRequest = onDismissRequest,
         modifier = modifier,
@@ -124,7 +77,7 @@ fun <T> SelectFromListDialog(
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    SettingsDialog(
+    DefaultAlertDialog(
         title = title,
         onDismissRequest = onDismissRequest,
         modifier = modifier,
