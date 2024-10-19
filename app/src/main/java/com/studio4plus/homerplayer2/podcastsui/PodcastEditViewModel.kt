@@ -188,11 +188,6 @@ class PodcastEditViewModel(
         podcastsDao.updatePodcastEpisodeCount(podcast.feedUri, newCount)
     }
 
-    fun onPodcastTitleOverrideChanged(newTitle: String) = viewModelScope.launch {
-        val podcast = podcastFlow.first()?.podcast ?: return@launch
-        podcastsDao.updatePodcastTitleOverride(podcast.feedUri, newTitle.takeIf { it.isNotBlank() })
-    }
-
     fun onEpisodeTitleIncludePodcastTitle(includePodcastTitle: Boolean) = viewModelScope.launch {
         val podcast = podcastFlow.first() ?: return@launch
         if (includePodcastTitle) {
