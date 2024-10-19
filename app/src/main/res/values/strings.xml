@@ -26,6 +26,8 @@
     <string name="content_add_folder_button">Add folder…</string>
     <string name="content_add_folder_error_exists">This folder has already been added</string>
     <string name="content_add_podcast_button">Add podcast…</string>
+    <string name="content_dialog_remove_message">Are you sure?</string>
+    <string name="content_dialog_remove_button_remove">Remove</string>
     <string name="content_download_samples_button">Download samples</string>
     <string name="content_samples_download_error">Samples download failed. Check your network and try again.</string>
     <string name="content_samples_install_error">Samples installation failed. %1$s</string>

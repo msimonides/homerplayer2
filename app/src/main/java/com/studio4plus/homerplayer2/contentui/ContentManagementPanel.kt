@@ -32,13 +32,19 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -90,6 +96,8 @@ fun ContentManagementPanel(
                 }
             }
         }
+        var removeDialogAction by remember { mutableStateOf<(() -> Unit)?>(null) }
+
         val insetsPadding = PaddingValues(
             bottom = windowInsets.asPaddingValues().calculateBottomPadding()
         )
@@ -104,7 +112,10 @@ fun ContentManagementPanel(
                     state.folders,
                     key = AudiobookFolderViewState::uri,
                     itemContent = { item ->
-                        AudiobookFolderRow(folder = item, onRemoveClicked = { onRemoveFolder(item) })
+                        AudiobookFolderRow(
+                            folder = item,
+                            onRemoveClicked = { removeDialogAction = { onRemoveFolder(item) } }
+                        )
                     }
                 )
             }
@@ -119,12 +130,42 @@ fun ContentManagementPanel(
                             item,
                             dateFormatter,
                             onEditClicked = onEditPodcast,
-                            onRemoveClicked = { onRemovePodcast(item) },
+                            onRemoveClicked = { removeDialogAction = { onRemovePodcast(item) } },
                         )
                     }
                 )
             }
         }
+        if (removeDialogAction != null) {
+            ConfirmRemoveDialog(
+                onRemove = { removeDialogAction?.invoke() },
+                onDismiss = { removeDialogAction = null })
+        }
+    }
+}
+
+@Composable
+private fun ConfirmRemoveDialog(
+    onRemove: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    DefaultAlertDialog(
+        onDismissRequest = onDismiss,
+        buttons = {
+            TextButton(onDismiss) { Text(stringResource(R.string.generic_dialog_cancel)) }
+            val removeAndDismiss = {
+                onRemove()
+                onDismiss()
+            }
+            TextButton(removeAndDismiss) {
+                Text(stringResource(R.string.content_dialog_remove_button_remove))
+            }
+        }
+    ) { horizontalPadding ->
+        Text(
+            stringResource(R.string.content_dialog_remove_message),
+            modifier = Modifier.padding(horizontal = horizontalPadding)
+        )
     }
 }
 
