@@ -60,8 +60,8 @@ class PodcastTaskWorkManager(
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
         val workRequest = PeriodicWorkRequestBuilder<PodcastsRefreshWork>(
-            repeatInterval = 12, repeatIntervalTimeUnit = TimeUnit.HOURS,
-            flexTimeInterval = 3, flexTimeIntervalUnit = TimeUnit.HOURS
+            repeatInterval = 8, repeatIntervalTimeUnit = TimeUnit.HOURS,
+            flexTimeInterval = 4, flexTimeIntervalUnit = TimeUnit.HOURS
         ).setConstraints(constraints).build()
 
         WorkManager.getInstance(appContext)
