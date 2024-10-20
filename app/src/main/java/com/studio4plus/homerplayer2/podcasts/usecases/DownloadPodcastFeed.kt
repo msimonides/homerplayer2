@@ -35,7 +35,9 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.koin.core.annotation.Factory
 import timber.log.Timber
+import java.io.IOException
 import java.net.UnknownHostException
+import javax.net.ssl.SSLException
 
 @Factory
 class DownloadPodcastFeed(
@@ -47,11 +49,13 @@ class DownloadPodcastFeed(
         data class Success(val feed: RssChannel) : Result
         object ParseError : Result
         data class Error(val httpCode: Int) : Result
-        object IncorrectAddress : Result
+        object UnknownAddress : Result
+        object SslError : Result
+        object IoError : Result
     }
 
     suspend operator fun invoke(url: String): Result {
-        val httpUrl = url.toHttpUrlOrNull() ?: return Result.IncorrectAddress
+        val httpUrl = url.toHttpUrlOrNull() ?: return Result.UnknownAddress
         try {
             val request = Request.Builder().url(httpUrl).build()
             val response = okHttpClient.newCall(request).executeAwait()
@@ -68,7 +72,13 @@ class DownloadPodcastFeed(
                 Result.Error(response.code)
             }
         } catch (e: UnknownHostException) {
-            return Result.IncorrectAddress
+            return Result.UnknownAddress
+        } catch (e: SSLException) {
+            Timber.w(e, "Error fetching RSS")
+            return Result.SslError
+        } catch (e: IOException) {
+            Timber.i(e, "Error fetching RSS")
+            return Result.IoError
         }
     }
 
@@ -76,8 +86,12 @@ class DownloadPodcastFeed(
         try {
             // TODO: some validity checks?
             Result.Success(rssParser.parse(text))
+        } catch (illegalArgument: IllegalArgumentException) {
+            // RssParser throws IllegalArgumentException when input is not a valid XML.
+            Timber.i(illegalArgument, "Not valid XML $uri: ${text.take(100)}")
+            Result.ParseError
         } catch (parseException: RssParsingException) {
-            Timber.w(parseException, "Error parsing $uri")
+            Timber.w(parseException, "Error parsing $uri: ${text.take(100)}")
             Result.ParseError
         }
 }
