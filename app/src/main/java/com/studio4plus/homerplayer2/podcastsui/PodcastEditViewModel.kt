@@ -39,6 +39,7 @@ import com.studio4plus.homerplayer2.podcasts.data.PodcastEpisode
 import com.studio4plus.homerplayer2.podcasts.data.PodcastWithEpisodes
 import com.studio4plus.homerplayer2.podcasts.data.PodcastsDao
 import com.studio4plus.homerplayer2.podcasts.usecases.UpdatePodcastNameConfig
+import com.studio4plus.homerplayer2.podcastsui.PodcastEditViewModel.Feed
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -282,7 +283,13 @@ class PodcastEditViewModel(
                 }
                 Feed.Error(errorRes)
             }
-            is DownloadPodcastFeed.Result.IncorrectAddress ->
+            DownloadPodcastFeed.Result.UnknownAddress ->
                 Feed.Error(R.string.podcast_feed_error_doesnt_exist)
+
+            DownloadPodcastFeed.Result.SslError ->
+                Feed.Error(R.string.podcast_feed_error_ssl_error)
+
+            DownloadPodcastFeed.Result.IoError ->
+                Feed.Error(R.string.podcast_feed_error_download)
         }
 }

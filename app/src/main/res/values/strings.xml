@@ -69,8 +69,9 @@
     <string name="playback_volume_down_button_description">Volume Down</string>
 
     <string name="podcast_accessibility_action_edit">Edit</string>
-    <string name="podcast_feed_error_doesnt_exist">Incorrect URL</string>
-    <string name="podcast_feed_error_download">Unable to download</string>
+    <string name="podcast_feed_error_doesnt_exist">Unknown or incorrect URL</string>
+    <string name="podcast_feed_error_ssl_error">SSL certificate error</string>
+    <string name="podcast_feed_error_download">Error downloading podcast feed</string>
     <string name="podcast_feed_error_parse">Unable to process podcast data</string>
     <string name="podcast_info_no_episodes_found">Podcast has no episodes</string>
     <string name="podcast_info_latest_episode_date">Latest: %1$s</string>
