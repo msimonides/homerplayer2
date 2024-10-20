@@ -35,5 +35,5 @@ import org.koin.core.annotation.Single
 class NetModule {
 
     @Single
-    fun okHttpClient(): OkHttpClient = OkHttpClient()
+    fun okHttpClient(): OkHttpClient = OkHttp.createOkHttpClient()
 }
