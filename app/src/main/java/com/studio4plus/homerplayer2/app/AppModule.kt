@@ -55,7 +55,6 @@ import com.studio4plus.homerplayer2.utils.Clock
 import com.studio4plus.homerplayer2.utils.DefaultClock
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.serialization.json.Json
-import okhttp3.OkHttpClient
 import org.koin.core.annotation.ComponentScan
 import org.koin.core.annotation.Factory
 import org.koin.core.annotation.Module
