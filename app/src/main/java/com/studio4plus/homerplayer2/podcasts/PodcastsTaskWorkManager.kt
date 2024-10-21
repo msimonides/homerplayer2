@@ -46,7 +46,8 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.util.concurrent.TimeUnit
 
-private const val REFRESH_WORK_ID = "podcasts refresh"
+private const val REFRESH_PERIODIC_WORK_ID = "podcasts periodic refresh"
+private const val REFRESH_NOW_WORK_ID = "podcasts refresh once"
 
 @Factory
 class PodcastTaskWorkManager(
@@ -65,17 +66,17 @@ class PodcastTaskWorkManager(
         ).setConstraints(constraints).build()
 
         WorkManager.getInstance(appContext)
-            .enqueueUniquePeriodicWork(REFRESH_WORK_ID, ExistingPeriodicWorkPolicy.KEEP, workRequest)
+            .enqueueUniquePeriodicWork(REFRESH_PERIODIC_WORK_ID, ExistingPeriodicWorkPolicy.KEEP, workRequest)
     }
 
     override fun disablePeriodicUpdate() {
-        WorkManager.getInstance(appContext).cancelUniqueWork(REFRESH_WORK_ID)
+        WorkManager.getInstance(appContext).cancelUniqueWork(REFRESH_PERIODIC_WORK_ID)
     }
 
     override fun runUpdate() {
         val workRequest = OneTimeWorkRequestBuilder<PodcastsRefreshWork>().build()
         WorkManager.getInstance(appContext)
-            .enqueueUniqueWork(REFRESH_WORK_ID, ExistingWorkPolicy.REPLACE, workRequest)
+            .enqueueUniqueWork(REFRESH_NOW_WORK_ID, ExistingWorkPolicy.REPLACE, workRequest)
     }
 }
 
