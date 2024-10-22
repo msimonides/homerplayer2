@@ -25,6 +25,7 @@
 package com.studio4plus.homerplayer2.app
 
 import android.content.Context
+import android.net.wifi.WifiManager
 import android.os.PowerManager
 import android.os.PowerManager.WakeLock
 import androidx.core.content.getSystemService
@@ -112,6 +113,9 @@ class AppModule {
         Room.databaseBuilder(appContext, AppDatabase::class.java, "app_database")
             .addMigrations(AppDatabase.MIGRATION_2_3)
             .build()
+
+    @Factory
+    fun wifiManager(appContext: Context): WifiManager = appContext.getSystemService()!!
 
     @Factory
     fun partialWakeLock(appContext: Context): WakeLock {

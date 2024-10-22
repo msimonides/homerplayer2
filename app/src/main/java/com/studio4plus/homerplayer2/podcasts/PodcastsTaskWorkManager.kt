@@ -25,6 +25,8 @@
 package com.studio4plus.homerplayer2.podcasts
 
 import android.content.Context
+import android.net.wifi.WifiManager
+import android.os.Build
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.ExistingPeriodicWorkPolicy
@@ -87,13 +89,24 @@ class PodcastsRefreshWork(
 
     private val feedDownload: DownloadPodcastFeed by inject()
     private val feedUpdater: UpdatePodcastFromFeed by inject()
+    private val deleteStalePodcastFiles: DeleteStalePodcastFiles by inject()
     private val episodeDownloader: DownloadPendingPodcastEpisodes by inject()
     private val podcastsDao: PodcastsDao by inject()
-    private val deleteStalePodcastFiles: DeleteStalePodcastFiles by inject()
+    private val wifiManager: WifiManager by inject()
 
     override suspend fun doWork(): Result {
-        deleteStalePodcastFiles()
+        val wifiLock = createWifiLock()
+        return try {
+            wifiLock.acquire()
+            deleteStalePodcastFiles()
 
+            updateAndDownloadPodcasts()
+        } finally {
+            wifiLock.release()
+        }
+    }
+
+    private suspend fun updateAndDownloadPodcasts(): Result {
         val podcasts = podcastsDao.getPodcasts()
         var isSuccess = true
         podcasts.forEach { podcast ->
@@ -112,6 +125,16 @@ class PodcastsRefreshWork(
 
         isSuccess = isSuccess && downloadedAll
         return if (isSuccess) Result.success() else Result.failure()
+    }
+
+    private fun createWifiLock(): WifiManager.WifiLock {
+        val tag = "podcast refresh"
+        // Don't care about low latency, just keep the WiFi on until everything is downloaded.
+        return if (Build.VERSION.SDK_INT < 29) {
+            wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL, tag)
+        } else {
+            wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL_LOW_LATENCY, tag)
+        }
     }
 
     companion object {
