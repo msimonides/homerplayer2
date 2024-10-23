@@ -172,7 +172,7 @@ private fun ConfirmDropPrivilegeDialog(
 ) {
     DefaultAlertDialog(
         onDismissRequest = onDismissRequest,
-            ) {
+    ) {
         Column(
             modifier = modifier
                 .padding(24.dp),
