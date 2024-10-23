@@ -36,6 +36,7 @@ import com.studio4plus.homerplayer2.podcasts.data.Podcast
 import com.studio4plus.homerplayer2.podcasts.data.PodcastEpisode
 import com.studio4plus.homerplayer2.podcasts.data.PodcastsDao
 import org.koin.core.annotation.Single
+import timber.log.Timber
 import java.io.File
 import java.io.IOException
 
@@ -60,6 +61,8 @@ class DownloadPendingPodcastEpisodes(
                     if (podcast != null) {
                         addAudiobook(podcast, episode, file)
                         podcastsDao.updateIsDownloaded(episode.uri)
+                    } else {
+                        Timber.w("No podcast found for uri: ${episode.feedUri}")
                     }
                 }
             } catch (e: IOException) {
@@ -76,5 +79,6 @@ class DownloadPendingPodcastEpisodes(
             Audiobook(bookId, displayName = displayName, rootFolderUri = Uri.parse(podcast.feedUri))
         val audiobookFile = AudiobookFile(bookId = bookId, uri = Uri.fromFile(file))
         audiobooksDao.insertAudiobook(audiobook, listOf(audiobookFile))
+        Timber.i("Added episode ${episode.uri} to audiobooks '$displayName'")
     }
 }

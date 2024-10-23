@@ -61,7 +61,7 @@ class FileDownloader(
         val call = okHttpClient.newCall(requestBuilder.build())
         val response = call.executeAwait()
         val body = response.body
-        Timber.i("Response: ${response.code}: ${response.message.take(200)}")
+        Timber.i("Response: ${response.code} ${response.message.take(200)}")
         runInterruptible(dispatcherProvider.Io) {
             val isSuccess = response.code == 200 || response.code == 206
             val isPartialResponse = response.code == 206
@@ -69,6 +69,7 @@ class FileDownloader(
                 file.sink(append = isPartialResponse)
                     .buffer()
                     .use { sink -> sink.writeAll(body.source()) }
+                Timber.i("Finished download of $url")
             } else {
                 val beginningOfResponse = body?.source()?.use { it.readUtf8(1000) }
                 Timber.w("Response: $beginningOfResponse")
