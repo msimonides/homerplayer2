@@ -19,8 +19,8 @@ android {
         applicationId "com.studio4plus.homerplayer2"
         minSdk libs.versions.android.minSdk.get().toInteger()
         targetSdk 34
-        versionCode 9
-        versionName "1.0.7"
+        versionCode 10
+        versionName "1.0.8"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         testOptions {
