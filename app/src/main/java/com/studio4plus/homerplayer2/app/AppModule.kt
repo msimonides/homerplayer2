@@ -50,7 +50,6 @@ import com.studio4plus.homerplayer2.samplebooks.SamplesDownloader
 import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
 import com.studio4plus.homerplayer2.settingsui.SettingsUiModule
 import com.studio4plus.homerplayer2.utils.Clock
-import com.studio4plus.homerplayer2.utils.DefaultClock
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.serialization.json.Json
 import org.koin.core.annotation.ComponentScan

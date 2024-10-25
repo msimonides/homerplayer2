@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Marcin Simonides
+ * Copyright (c) 2024 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,12 +22,14 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.utils
+package com.studio4plus.homerplayer2.app
 
 import android.os.SystemClock
+import com.studio4plus.homerplayer2.utils.Clock
 import org.koin.core.annotation.Factory
 
-interface Clock {
-    fun elapsedRealTime(): Long
-    fun wallTime(): Long
+@Factory
+class DefaultClock : Clock {
+    override fun elapsedRealTime(): Long = SystemClock.elapsedRealtime()
+    override fun wallTime(): Long = System.currentTimeMillis()
 }
