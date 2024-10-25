@@ -22,14 +22,37 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.settings.ui
+package com.studio4plus.homerplayer2.settingsui
 
 import androidx.datastore.core.DataStore
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
+import com.studio4plus.homerplayer2.settingsdata.UiSettings
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import org.koin.android.annotation.KoinViewModel
+import org.koin.core.annotation.Named
 
-fun <T> CoroutineScope.launchUpdate(store: DataStore<T>, update: (T) -> T) {
-    launch {
-        store.updateData(update)
+@KoinViewModel
+class SettingsTtsViewModel(
+    private val mainScope: CoroutineScope,
+    @Named(SettingsDataModule.UI) private val settings: DataStore<UiSettings>
+) : ViewModel() {
+
+    data class ViewState(
+        val readBookTitlesEnabled: Boolean
+    )
+
+    val viewState = settings.data.map { uiSettings ->
+        ViewState(
+            readBookTitlesEnabled = uiSettings.readBookTitles
+        )
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
+
+    fun setReadBookTitles(enable: Boolean) {
+        mainScope.launchUpdate(settings) { it.copy(readBookTitles = enable) }
     }
 }

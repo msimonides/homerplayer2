@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.settings.ui
+package com.studio4plus.homerplayer2.settingsui.usecases
 
 import androidx.annotation.OptIn
 import androidx.media3.common.util.UnstableApi
@@ -30,7 +30,6 @@ import androidx.media3.exoplayer.ExoPlayer
 import com.studio4plus.homerplayer2.exoplayer.ExoplayerModule
 import com.studio4plus.homerplayer2.player.usecases.GetBookMediaItemsWithStartPosition
 import com.studio4plus.homerplayer2.player.usecases.GetSelectedBook
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import org.koin.core.annotation.Factory
 import org.koin.core.annotation.Named

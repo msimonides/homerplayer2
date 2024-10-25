@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.settings.ui
+package com.studio4plus.homerplayer2.settingsui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -43,7 +43,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 import com.studio4plus.homerplayer2.fullkioskmode.IsFullKioskEnabled
-import com.studio4plus.homerplayer2.settingsdata.FullKioskModeSetting
+import com.studio4plus.homerplayer2.settingsui.composables.SelectFromListDialog
+import com.studio4plus.homerplayer2.settingsui.composables.SettingItem
+import com.studio4plus.homerplayer2.settingsui.composables.SettingSwitch
 import org.koin.androidx.compose.koinViewModel
 import java.time.format.DateTimeFormatter
 
@@ -81,7 +83,7 @@ fun SettingsLockdown(
     Column(
         modifier = Modifier.verticalScroll(rememberScrollState())
     ) {
-        val settingItemModifier = Modifier.defaultSettingsItem()
+        val settingItemModifier = Modifier.Companion.defaultSettingsItem()
         Text(
             stringResource(R.string.settings_ui_lockdown_settings_description),
             modifier = Modifier
@@ -167,17 +169,19 @@ private fun KioskModeSelectionDialog(
 
     SelectFromListDialog(
         title = stringResource(R.string.settings_ui_lockdown_kiosk_mode_dialog_title),
-        values =  listOf(
+        values = listOf(
             SettingsLockdownViewModel.FullKioskModeSetValue.Enable,
             SettingsLockdownViewModel.FullKioskModeSetValue.Disable,
             SettingsLockdownViewModel.FullKioskModeSetValue.DisableTemporarily
         ),
         produceLabel = @Composable { value ->
-            val stringRes = when(value) {
+            val stringRes = when (value) {
                 SettingsLockdownViewModel.FullKioskModeSetValue.Enable ->
                     R.string.settings_ui_lockdown_kiosk_mode_dialog_enable
+
                 SettingsLockdownViewModel.FullKioskModeSetValue.Disable ->
                     R.string.settings_ui_lockdown_kiosk_mode_dialog_disable
+
                 SettingsLockdownViewModel.FullKioskModeSetValue.DisableTemporarily ->
                     R.string.settings_ui_lockdown_kiosk_mode_dialog_disable_for_10_minutes
             }

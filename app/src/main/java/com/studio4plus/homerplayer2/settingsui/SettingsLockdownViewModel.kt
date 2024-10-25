@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.settings.ui
+package com.studio4plus.homerplayer2.settingsui
 
 import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel

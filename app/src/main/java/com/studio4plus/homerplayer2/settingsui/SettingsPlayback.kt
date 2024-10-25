@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.settings.ui
+package com.studio4plus.homerplayer2.settingsui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.rememberScrollState
@@ -43,6 +43,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
+import com.studio4plus.homerplayer2.settingsui.composables.SelectFromRadioListDialog
+import com.studio4plus.homerplayer2.settingsui.composables.SettingItem
 import org.koin.androidx.compose.koinViewModel
 import java.util.concurrent.TimeUnit
 
@@ -76,7 +78,7 @@ private fun SettingsPlayback(
     modifier: Modifier = Modifier,
 ) {
     var showUiModeDialog by rememberSaveable { mutableStateOf<SettingsDialogType?>(null) }
-    val settingItemModifier = Modifier.defaultSettingsItem()
+    val settingItemModifier = Modifier.Companion.defaultSettingsItem()
     Column(
         modifier = modifier.verticalScroll(rememberScrollState())
     ) {

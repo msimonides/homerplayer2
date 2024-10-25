@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Marcin Simonides
+ * Copyright (c) 2024 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,25 +22,23 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.settings
+package com.studio4plus.homerplayer2.settingsui
 
-import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFoldersUiModule
-import com.studio4plus.homerplayer2.contentui.ContentUiModule
-import com.studio4plus.homerplayer2.fullkioskmode.FullKioskModeModule
-import com.studio4plus.homerplayer2.logging.LoggingModule
-import com.studio4plus.homerplayer2.player.PlayerModule
-import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
-import org.koin.core.annotation.ComponentScan
-import org.koin.core.annotation.Module
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
+import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 
-@Module(
-    includes = [
-        ContentUiModule::class,
-        FullKioskModeModule::class,
-        LoggingModule::class,
-        PlayerModule::class,
-        SettingsDataModule::class
-    ]
-)
-@ComponentScan("com.studio4plus.homerplayer2.settings")
-class SettingsModule
+@Composable
+fun SettingsLicenses(modifier: Modifier = Modifier) {
+    LibrariesContainer(modifier = modifier)
+}
+
+@Preview
+@Composable
+private fun PreviewSettingsLicenses() {
+    HomerPlayer2Theme {
+        SettingsLicenses()
+    }
+}

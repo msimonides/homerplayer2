@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Marcin Simonides
+ * Copyright (c) 2024 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,9 +22,8 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.settings.ui
+package com.studio4plus.homerplayer2.settingsui
 
-import android.content.Intent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -41,6 +40,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.settingsdata.UiThemeMode
+import com.studio4plus.homerplayer2.settingsui.composables.SelectFromRadioListDialog
+import com.studio4plus.homerplayer2.settingsui.composables.SettingItem
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -85,7 +86,7 @@ private fun SettingsMain(
         Column(
             modifier = Modifier.verticalScroll(rememberScrollState())
         ) {
-            val settingItemModifier = Modifier.defaultSettingsItem()
+            val settingItemModifier = Modifier.Companion.defaultSettingsItem()
             SettingItem(
                 label = stringResource(R.string.settings_ui_player_ui_item),
                 onClick = navigatePlayerUiSettings,
@@ -102,7 +103,8 @@ private fun SettingsMain(
             }
             SettingItem(
                 label = stringResource(R.string.settings_ui_content_item),
-                summary = viewState.audiobookFolders ?: stringResource(R.string.settings_ui_content_summary_empty),
+                summary = viewState.audiobookFolders
+                    ?: stringResource(R.string.settings_ui_content_summary_empty),
                 onClick = navigateFolders,
                 modifier = settingItemModifier
             )

@@ -25,8 +25,6 @@
 package com.studio4plus.homerplayer2.app.ui
 
 import android.content.Context
-import android.os.Build
-import android.os.Vibrator
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -48,7 +46,7 @@ import com.studio4plus.homerplayer2.base.ui.VibratorProvider
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.onboarding.onboardingGraph
 import com.studio4plus.homerplayer2.player.ui.PlayerRoute
-import com.studio4plus.homerplayer2.settings.ui.SettingsScreen
+import com.studio4plus.homerplayer2.settingsui.SettingsScreen
 import org.koin.androidx.compose.koinViewModel
 
 @Composable

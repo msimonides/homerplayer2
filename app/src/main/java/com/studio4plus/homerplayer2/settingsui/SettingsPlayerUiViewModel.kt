@@ -22,67 +22,70 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.settings.ui
+package com.studio4plus.homerplayer2.settingsui
 
 import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.studio4plus.homerplayer2.base.ui.VibratorProvider
 import com.studio4plus.homerplayer2.settingsdata.PlaybackSettings
+import com.studio4plus.homerplayer2.settingsdata.PlayerUiSettings
 import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
+import com.studio4plus.homerplayer2.settingsdata.UiSettings
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
 import org.koin.core.annotation.Named
-import kotlin.time.Duration.Companion.seconds
 
 @KoinViewModel
-class SettingsPlaybackViewModel(
+class SettingsPlayerUiViewModel(
     private val mainScope: CoroutineScope,
     @Named(SettingsDataModule.PLAYBACK) private val playbackSettingsStore: DataStore<PlaybackSettings>,
-    private val playAudioSample: PlayAudioSample,
+    @Named(SettingsDataModule.UI) private val uiSettingsStore: DataStore<UiSettings>,
+    private val vibratorProvider: VibratorProvider,
 ) : ViewModel() {
-
-    private var playSampleJob: Job? = null
-
     data class ViewState(
-        val rewindOnResumeSeconds: Int,
-        val sleepTimerSeconds: Int,
-        val playbackSpeed: Float,
+        val flipToStop: Boolean,
+        val hapticFeedback: Boolean?,
+        val playerUiSettings: PlayerUiSettings,
     )
 
-    val viewState = playbackSettingsStore.data.map { playbackSettings ->
+    val viewState = combine(
+        playbackSettingsStore.data,
+        uiSettingsStore.data
+    ) { playbackSettings, uiSettings ->
         ViewState(
-            rewindOnResumeSeconds = playbackSettings.rewindOnResumeSeconds,
-            sleepTimerSeconds = playbackSettings.sleepTimerSeconds,
-            playbackSpeed = playbackSettings.playbackSpeed
+            flipToStop = playbackSettings.flipToStop,
+            hapticFeedback = uiSettings.enableHapticFeedback.takeIf { hapticFeedbackAvailable() },
+            playerUiSettings = uiSettings.playerUiSettings,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
-    override fun onCleared() {
-        super.onCleared()
-        playAudioSample.shutdown()
+    fun setFlipToStop(enabled: Boolean) {
+        mainScope.launchUpdate(playbackSettingsStore) { it.copy(flipToStop = enabled) }
     }
 
-    fun setPlaybackSpeed(speed: Float) {
-        mainScope.launchUpdate(playbackSettingsStore) { it.copy(playbackSpeed = speed) }
+    fun setHapticFeedback(isEnabled: Boolean) {
+        mainScope.launchUpdate(uiSettingsStore) { it.copy(enableHapticFeedback = isEnabled) }
     }
 
-    fun playSample(speed: Float) {
-        playSampleJob?.cancel()
-        playSampleJob = viewModelScope.launch {
-            playAudioSample(speed, 3.seconds)
-        }
+    fun setShowVolumeControls(enabled: Boolean) {
+        updatePlayerUiSettings { it.copy(showVolumeControls = enabled) }
     }
 
-    fun setRewindOnResumeSeconds(seconds: Int) {
-        mainScope.launchUpdate(playbackSettingsStore) { it.copy(rewindOnResumeSeconds = seconds) }
+    fun setShowFfRewindControls(enabled: Boolean) {
+        updatePlayerUiSettings { it.copy(showFfRewindControls = enabled) }
     }
 
-    fun setSleepTimerSeconds(seconds: Int) {
-        mainScope.launchUpdate(playbackSettingsStore) { it.copy(sleepTimerSeconds = seconds) }
+    fun setShowSeekControls(enabled: Boolean) {
+        updatePlayerUiSettings { it.copy(showSeekControls = enabled) }
     }
+
+    private fun updatePlayerUiSettings(transform: (PlayerUiSettings) -> PlayerUiSettings) {
+        mainScope.launchUpdate(uiSettingsStore) { it.copy(playerUiSettings = transform(it.playerUiSettings)) }
+    }
+
+    private fun hapticFeedbackAvailable() = vibratorProvider.isAvailable
 }

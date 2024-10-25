@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.settings.ui
+package com.studio4plus.homerplayer2.settingsui
 
 import android.content.Intent
 import androidx.compose.foundation.layout.Column
@@ -37,6 +37,7 @@ import com.studio4plus.homerplayer2.BuildConfig
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.base.Constants
 import com.studio4plus.homerplayer2.logging.PrepareIntentForLogSharing
+import com.studio4plus.homerplayer2.settingsui.composables.SettingItem
 import com.studio4plus.homerplayer2.utils.openWebUrl
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
@@ -67,7 +68,7 @@ private fun SettingsAbout(
     Column(
         modifier = Modifier.verticalScroll(rememberScrollState())
     ) {
-        val settingItemModifier = Modifier.defaultSettingsItem()
+        val settingItemModifier = Modifier.Companion.defaultSettingsItem()
         SettingItem(
             label = stringResource(id = R.string.settings_ui_share_diagnostic_log_title),
             summary = stringResource(id = R.string.settings_ui_share_diagnostic_log_summary),

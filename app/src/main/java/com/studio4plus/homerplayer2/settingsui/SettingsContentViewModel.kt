@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.settings.ui
+package com.studio4plus.homerplayer2.settingsui
 
 import androidx.lifecycle.viewModelScope
 import com.studio4plus.homerplayer2.audiobookfolders.AudiobookFolderManager

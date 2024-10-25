@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2024 Marcin Simonides
+ * Copyright (c) 2023 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,23 +22,38 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.settings.ui
+package com.studio4plus.homerplayer2.settingsui.composables
 
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
-import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 
 @Composable
-fun SettingsLicenses(modifier: Modifier = Modifier) {
-    LibrariesContainer(modifier = modifier)
-}
-
-@Preview
-@Composable
-private fun PreviewSettingsLicenses() {
-    HomerPlayer2Theme {
-        SettingsLicenses()
+fun RadioWithLabel(
+    label: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        Modifier.selectable(
+            selected = selected,
+            role = Role.RadioButton,
+            onClick = onClick
+        ).then(modifier),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(label, modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.width(HomerTheme.dimensions.labelSpacing))
+        RadioButton(selected = selected, onClick = null, modifier = Modifier.clearAndSetSemantics {})
     }
 }
