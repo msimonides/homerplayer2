@@ -30,8 +30,10 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.toggleable
@@ -140,14 +142,17 @@ fun OnboardingSpeechScreen(
                 onNext = navigateNext,
                 secondaryLabel = R.string.onboarding_step_skip,
                 onSecondary = navigateSkip,
-                modifier = Modifier.padding(OnboardingNavigationButtonsDefaults.paddingValues),
+                modifier = Modifier
+                    .padding(OnboardingNavigationButtonsDefaults.paddingValues)
+                    .navigationBarsPadding(),
             )
         },
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     ) { paddingValues ->
         ScreenContent(
             modifier = Modifier
                 .padding(paddingValues)
+                .consumeWindowInsets(paddingValues)
                 .padding(HomerTheme.dimensions.screenContentPadding),
             showTtsSettings = speechTestViewState.showTtsSettings,
             readBookTitlesEnabled = viewState.readBookTitlesEnabled,

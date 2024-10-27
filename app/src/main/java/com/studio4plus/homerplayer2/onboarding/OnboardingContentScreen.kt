@@ -25,6 +25,8 @@
 package com.studio4plus.homerplayer2.onboarding
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -109,14 +111,17 @@ fun OnboardingContentScreen(
                 onNext = navigateNext,
                 secondaryLabel = R.string.onboarding_step_back,
                 onSecondary = navigateBack,
-                modifier = Modifier.padding(OnboardingNavigationButtonsDefaults.paddingValues),
+                modifier = Modifier
+                    .padding(OnboardingNavigationButtonsDefaults.paddingValues)
+                    .navigationBarsPadding(),
             )
         },
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     ) { paddingValues ->
         ScreenContent(
             modifier = Modifier
                 .padding(paddingValues)
+                .consumeWindowInsets(paddingValues)
                 .padding(HomerTheme.dimensions.screenContentPadding),
             viewState.panelState,
             addFolder,

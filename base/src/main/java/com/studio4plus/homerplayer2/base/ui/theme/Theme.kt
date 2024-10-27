@@ -146,22 +146,6 @@ fun HomerPlayer2Theme(
     val homerColorScheme = if (darkTheme) ExtendedDarkColors else ExtendedLightColors
     val dimensions = if (largeScreen) LargeScreenDimensions else RegularDimensions
 
-    val view = LocalView.current
-    if (!view.isInEditMode && setWindowColors) {
-        SideEffect {
-            val window = (view.context.getActivity()).window
-            val insetsControllerCompat = WindowInsetsControllerCompat(window, view)
-            val backgroundColorArgb = materialColorScheme.background.toArgb()
-            window.statusBarColor = backgroundColorArgb
-            insetsControllerCompat.isAppearanceLightStatusBars = !darkTheme
-
-            if (Build.VERSION.SDK_INT >= 26) {
-                window.navigationBarColor = backgroundColorArgb
-                insetsControllerCompat.isAppearanceLightNavigationBars = !darkTheme
-            }
-        }
-    }
-
     CompositionLocalProvider(
         LocalExtendedColors provides homerColorScheme,
         LocalDimensions provides dimensions

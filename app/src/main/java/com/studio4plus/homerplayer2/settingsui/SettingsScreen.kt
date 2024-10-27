@@ -29,6 +29,7 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -88,7 +89,9 @@ fun SettingsScreen(navigateBack: () -> Unit) {
         SettingsNavHost(
             snackbarHostState = snackbarHostState,
             closeSettings = navigateBack,
-            modifier = Modifier.padding(paddingValues),
+            modifier = Modifier
+                .padding(paddingValues)
+                .consumeWindowInsets(paddingValues),
             navController = navController,
         )
     }

@@ -27,6 +27,7 @@ import android.app.ActivityManager
 import android.content.Context
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -50,6 +51,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         // TODO: show splash screen until state is Ready.
 
+        enableEdgeToEdge()
         setupLockTask()
 
         setContent {
