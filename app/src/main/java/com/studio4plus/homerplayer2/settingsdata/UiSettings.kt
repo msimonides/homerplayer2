@@ -24,7 +24,6 @@
 
 package com.studio4plus.homerplayer2.settingsdata
 
-import androidx.datastore.core.DataMigration
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -38,10 +37,23 @@ object FullKioskModeSetting {
 }
 
 @Serializable
+data class PlayerLayoutMargins(
+    val horizontal: Float,
+    val bottom: Float,
+)
+
+@Serializable
+data class PlayerLayoutSettings(
+    val landscapeMargins: PlayerLayoutMargins = PlayerLayoutMargins(0f, 0f),
+    val portraitMargins: PlayerLayoutMargins = PlayerLayoutMargins(0f, 0f),
+)
+
+@Serializable
 data class PlayerUiSettings(
     val showVolumeControls: Boolean = true,
     val showFfRewindControls: Boolean = true,
     val showSeekControls: Boolean = true,
+    val layout: PlayerLayoutSettings = PlayerLayoutSettings()
 ) {
     val showAnyControls = showVolumeControls || showFfRewindControls || showSeekControls
 }

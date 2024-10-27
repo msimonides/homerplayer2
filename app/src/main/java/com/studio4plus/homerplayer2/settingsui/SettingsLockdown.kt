@@ -59,12 +59,14 @@ private enum class SettingsLockdownDialogType {
 fun SettingsLockdownRoute(
     viewModel: SettingsLockdownViewModel = koinViewModel(),
     navigateKioskModeSettings: () -> Unit,
+    navigateLayoutSettings: () -> Unit,
     closeSettings: () -> Unit,
 ) {
     SettingsLockdown(
         viewState = viewModel.viewState.collectAsStateWithLifecycle(null).value,
         onSetFullKioskMode = viewModel::setFullKioskMode,
         onOpenKioskModeSetup = navigateKioskModeSettings,
+        onOpenLayoutSettings = navigateLayoutSettings,
         onSetHideSettingsButton = viewModel::setHideSettingsButton,
         onSetShowSettingsButton = viewModel::setShowBatteryIndicator,
         closeSettings = closeSettings
@@ -76,6 +78,7 @@ fun SettingsLockdown(
     viewState : SettingsLockdownViewModel.ViewState?,
     onSetFullKioskMode: (setting: SettingsLockdownViewModel.FullKioskModeSetValue) -> Unit,
     onOpenKioskModeSetup: () -> Unit,
+    onOpenLayoutSettings: () -> Unit,
     onSetHideSettingsButton: (hide: Boolean) -> Unit,
     onSetShowSettingsButton: (show: Boolean) -> Unit,
     closeSettings: () -> Unit,
@@ -104,6 +107,11 @@ fun SettingsLockdown(
                 summary = viewState.fullKioskMode.toSummary(),
                 onClick = kioskModeAction,
                 modifier = settingItemModifier
+            )
+            SettingItem(
+                label = stringResource(R.string.settings_ui_layout_settings_item),
+                onClick = onOpenLayoutSettings,
+                modifier = settingItemModifier,
             )
             SettingSwitch(
                 label = stringResource(R.string.settings_ui_lockdown_hide_settings_button_item),

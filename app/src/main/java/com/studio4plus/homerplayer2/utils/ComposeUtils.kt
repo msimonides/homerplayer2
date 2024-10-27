@@ -25,6 +25,10 @@
 package com.studio4plus.homerplayer2.utils
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.PointerInputChange
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.max
@@ -42,3 +46,16 @@ fun max(a: PaddingValues, b: PaddingValues): PaddingValues = object : PaddingVal
     override fun calculateTopPadding(): Dp =
         max(a.calculateTopPadding(), b.calculateTopPadding())
 }
+
+fun Modifier.blockTouchEvents() = pointerInput("block events") {
+    awaitPointerEventScope {
+        while (true) {
+            awaitPointerEvent(PointerEventPass.Initial)
+                .changes
+                .forEach(PointerInputChange::consume)
+        }
+    }
+}
+
+fun Modifier.optional(include: Boolean, modifier: () -> Modifier): Modifier =
+    if (include) this.then(modifier()) else this

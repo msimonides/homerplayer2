@@ -31,6 +31,7 @@
 
     <string name="generic_dialog_confirm">OK</string>
     <string name="generic_dialog_cancel">Cancel</string>
+    <string name="generic_dialog_save">Save</string>
     <string name="generic_navigate_back">Back</string>
     <!-- Displayed below button_setup_instructions_website
      Tells the user they can open the given website address in a browser, e.g. on their laptop.
@@ -69,6 +70,8 @@
     <string name="settings_ui_content_title">Audiobooks folders</string>
     <string name="settings_ui_content_summary_empty">(no folders selected)</string>
     <string name="settings_ui_haptic_feedback_label">Haptic feedback</string>
+    <string name="settings_ui_layout_settings_item">Screen margins…</string>
+    <string name="settings_ui_layout_dialog_message">Drag the edges to adjust screen margins. Rotate screen to adjust the other orientation.</string>
     <string name="settings_ui_lockdown_settings_item">Lockdown settings…</string>
     <string name="settings_ui_lockdown_settings_title">Lockdown settings</string>
     <string name="settings_ui_lockdown_settings_description">Lock down the app to make a device only for playing audiobooks.</string>

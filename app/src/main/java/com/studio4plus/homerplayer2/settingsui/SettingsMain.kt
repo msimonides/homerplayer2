@@ -48,9 +48,9 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun SettingsMainRoute(
     navigateFolders: () -> Unit,
+    navigateLockdownSettings: () -> Unit,
     navigatePlaybackSettings: () -> Unit,
     navigatePlayerUiSettings: () -> Unit,
-    navigateLockdownSettings: () -> Unit,
     navigateTtsSettings: () -> Unit,
     navigateAbout: () -> Unit,
     viewModel: SettingsMainViewModel = koinViewModel()
@@ -59,9 +59,9 @@ fun SettingsMainRoute(
         viewModel.viewState.collectAsStateWithLifecycle().value,
         onSetUiMode = viewModel::setUiMode,
         navigateFolders = navigateFolders,
+        navigateLockdownSettings = navigateLockdownSettings,
         navigatePlaybackSettings = navigatePlaybackSettings,
         navigatePlayerUiSettings = navigatePlayerUiSettings,
-        navigateLockdownSettings = navigateLockdownSettings,
         navigateTtsSettings = navigateTtsSettings,
         navigateAbout = navigateAbout,
     )
@@ -76,9 +76,9 @@ private fun SettingsMain(
     viewState: SettingsMainViewModel.ViewState?,
     onSetUiMode: (UiThemeMode) -> Unit,
     navigateFolders: () -> Unit,
+    navigateLockdownSettings: () -> Unit,
     navigatePlaybackSettings: () -> Unit,
     navigatePlayerUiSettings: () -> Unit,
-    navigateLockdownSettings: () -> Unit,
     navigateTtsSettings: () -> Unit,
     navigateAbout: () -> Unit,
 ) {

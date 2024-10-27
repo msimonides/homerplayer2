@@ -29,6 +29,7 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -37,8 +38,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.systemBarsIgnoringVisibility
 import androidx.compose.foundation.layout.union
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -73,17 +74,22 @@ fun Modifier.defaultSettingsItem() = this
     .padding(horizontal = HomerTheme.dimensions.screenContentPadding, vertical = 8.dp)
     .heightIn(min = HomerTheme.dimensions.settingsRowMinHeight)
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun SettingsScreen(navigateBack: () -> Unit) {
+fun SettingsScreen(
+    navigateBack: () -> Unit,
+    navigateLayoutSettings: () -> Unit,
+) {
     val navController = rememberNavController()
     val currentBackStackEntryState = navController.currentBackStackEntryAsState()
     val currentBackStackEntry = currentBackStackEntryState.value
     val title = currentBackStackEntry?.destination?.label?.toString()
     val snackbarHostState = remember { SnackbarHostState() }
     // Bottom insets are being handled in scroll containers on each settings screen.
-    val insets = WindowInsets.systemBars.union(WindowInsets.displayCutout).only(
-        WindowInsetsSides.Horizontal + WindowInsetsSides.Top
-    )
+    val insets =
+        WindowInsets.systemBarsIgnoringVisibility
+            .union(WindowInsets.displayCutout)
+            .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top)
     Scaffold(
         topBar = {
             SettingsTopBar(
@@ -101,6 +107,7 @@ fun SettingsScreen(navigateBack: () -> Unit) {
         SettingsNavHost(
             snackbarHostState = snackbarHostState,
             closeSettings = navigateBack,
+            navigateLayoutSettings = navigateLayoutSettings,
             modifier = Modifier
                 .padding(paddingValues)
                 .consumeWindowInsets(paddingValues),
@@ -152,6 +159,7 @@ private fun SettingsTopBar(
 @Composable
 private fun SettingsNavHost(
     closeSettings: () -> Unit,
+    navigateLayoutSettings: () -> Unit,
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
@@ -177,9 +185,9 @@ private fun SettingsNavHost(
         composable("main", label = mainTitle) {
             SettingsMainRoute(
                 navigateFolders = { navController.navigate("content") },
+                navigateLockdownSettings = { navController.navigate("lockdown_settings") },
                 navigatePlaybackSettings = { navController.navigate("playback_settings") },
                 navigatePlayerUiSettings = { navController.navigate("player_ui_settings") },
-                navigateLockdownSettings = { navController.navigate("lockdown_settings") },
                 navigateTtsSettings = { navController.navigate("tts_settings") },
                 navigateAbout = { navController.navigate("about") }
             )
@@ -201,6 +209,7 @@ private fun SettingsNavHost(
         composable("lockdown_settings", label = lockdownTitle) {
             SettingsLockdownRoute(
                 navigateKioskModeSettings = { navController.navigate("kiosk_setup") },
+                navigateLayoutSettings = navigateLayoutSettings,
                 closeSettings = closeSettings
             )
         }
@@ -220,7 +229,7 @@ private fun SettingsNavHost(
 @Composable
 fun SettingsScreenPreview() {
     HomerPlayer2Theme {
-        SettingsScreen({})
+        SettingsScreen({}, {})
     }
     HomerTheme
 }

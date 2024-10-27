@@ -25,6 +25,7 @@
 package com.studio4plus.homerplayer2.player.ui
 
 import android.content.res.Configuration
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -46,6 +47,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -56,8 +58,10 @@ import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 import com.studio4plus.homerplayer2.battery.BatteryIcon
 import com.studio4plus.homerplayer2.battery.BatteryState
 import com.studio4plus.homerplayer2.fullkioskmode.statusBarsFixedPadding
+import com.studio4plus.homerplayer2.settingsdata.PlayerLayoutSettings
 import com.studio4plus.homerplayer2.settingsdata.PlayerUiSettings
 import com.studio4plus.homerplayer2.utils.max
+import com.studio4plus.homerplayer2.utils.optional
 import kotlinx.coroutines.flow.SharedFlow
 import org.koin.androidx.compose.koinViewModel
 
@@ -122,13 +126,17 @@ private fun PlayerScreen(
     onOpenSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(
+    val isLandscape =
+        LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+    PaddedPlayerBox(
+        layoutSettings = playerUiSettings.layout,
+        isLandscape = isLandscape,
         modifier = modifier
             .statusBarsFixedPadding()
+            .optional(playerUiSettings.layout.hasMargins(isLandscape)) { Modifier.background(Color.Black) }
             .navigationBarsPadding()
+
     ) {
-        val isLandscape =
-            LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
         when (booksState) {
             is PlayerViewModel.BooksState.Books -> {
                 BooksPager(
@@ -210,6 +218,11 @@ private fun TopControlsRow(
             }
         }
     }
+}
+
+private fun PlayerLayoutSettings.hasMargins(isLandscape: Boolean) = when {
+    isLandscape -> landscapeMargins.bottom > 0f || landscapeMargins.horizontal > 0f
+    else -> portraitMargins.bottom > 0f || portraitMargins.horizontal > 0f
 }
 
 @Preview

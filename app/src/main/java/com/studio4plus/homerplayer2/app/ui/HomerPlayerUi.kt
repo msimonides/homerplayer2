@@ -46,6 +46,7 @@ import com.studio4plus.homerplayer2.base.ui.VibratorProvider
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.onboarding.onboardingGraph
 import com.studio4plus.homerplayer2.player.ui.PlayerRoute
+import com.studio4plus.homerplayer2.settingsui.SettingsLayoutRoute
 import com.studio4plus.homerplayer2.settingsui.SettingsScreen
 import org.koin.androidx.compose.koinViewModel
 
@@ -86,7 +87,15 @@ private fun MainNavHost(
             PlayerRoute(onOpenSettings = { navController.navigate("settings") })
         }
         composable("settings") {
-            SettingsScreen(navigateBack = { navController.popBackStack("player", inclusive = false) })
+            SettingsScreen(
+                navigateBack = { navController.popBackStack("player", inclusive = false) },
+                navigateLayoutSettings = { navController.navigate("layout_settings") }
+            )
+        }
+        composable("layout_settings") {
+            SettingsLayoutRoute(
+                navigateBack = { navController.popBackStack("settings", inclusive = false) }
+            )
         }
     }
 }
