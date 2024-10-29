@@ -39,6 +39,7 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -57,11 +58,13 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastForEachIndexed
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studio4plus.homerplayer2.base.ui.DefaultAlertDialog
 import com.studio4plus.homerplayer2.base.ui.SectionTitle
 import com.studio4plus.homerplayer2.base.ui.SmallCircularProgressIndicator
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
+import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 import org.koin.androidx.compose.koinViewModel
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -138,7 +141,7 @@ private fun PodcastEdit(
     ) {
         val rowModifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = HomerTheme.dimensions.screenContentPadding)
         val podcast = viewState.podcast
         Text(podcast.title, style = MaterialTheme.typography.headlineMedium, modifier = rowModifier)
 
@@ -173,8 +176,11 @@ private fun PodcastEdit(
 
         SectionTitle("Episodes", modifier = rowModifier)
         val dateFormatter = remember { DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM) }
-        viewState.episodes.forEach {
-            EpisodeRow(it, dateFormatter, modifier = rowModifier.animateContentSize().padding(vertical = 8.dp))
+        viewState.episodes.fastForEachIndexed { index, item ->
+            EpisodeRow(item, dateFormatter, modifier = rowModifier.animateContentSize().padding(vertical = 8.dp))
+            if (index < viewState.episodes.size - 1) {
+                HorizontalDivider(modifier = rowModifier)
+            }
         }
     }
 }
