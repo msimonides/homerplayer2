@@ -118,7 +118,7 @@ class DeviceMotionDetector(
         fun removeOld(timestampNs: Long) {
             var oldest = events.firstOrNull()
             while (oldest != null && oldest.timestampNs < timestampNs) {
-                val removed = events.removeFirst()
+                val removed = events.removeAt(0)
                 onRemove(removed)
                 oldest = events.firstOrNull()
             }
