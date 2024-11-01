@@ -26,6 +26,8 @@ package com.studio4plus.homerplayer2.settingsui
 
 import android.content.Intent
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
@@ -36,6 +38,7 @@ import androidx.compose.ui.res.stringResource
 import com.studio4plus.homerplayer2.BuildConfig
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.base.Constants
+import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 import com.studio4plus.homerplayer2.logging.PrepareIntentForLogSharing
 import com.studio4plus.homerplayer2.settingsui.composables.SettingItem
 import com.studio4plus.homerplayer2.utils.openWebUrl
@@ -66,7 +69,10 @@ private fun SettingsAbout(
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     Column(
-        modifier = Modifier.verticalScroll(rememberScrollState())
+        modifier = Modifier
+            .verticalScroll(rememberScrollState())
+            .navigationBarsPadding()
+            .padding(bottom = HomerTheme.dimensions.screenContentPadding)
     ) {
         val settingItemModifier = Modifier.Companion.defaultSettingsItem()
         SettingItem(

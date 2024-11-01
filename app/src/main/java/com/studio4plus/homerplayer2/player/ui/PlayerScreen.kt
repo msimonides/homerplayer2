@@ -27,14 +27,18 @@ package com.studio4plus.homerplayer2.player.ui
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeContent
-import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
@@ -50,6 +54,7 @@ import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 import com.studio4plus.homerplayer2.battery.BatteryIcon
 import com.studio4plus.homerplayer2.battery.BatteryState
 import com.studio4plus.homerplayer2.settingsdata.PlayerUiSettings
+import com.studio4plus.homerplayer2.utils.max
 import kotlinx.coroutines.flow.SharedFlow
 import org.koin.androidx.compose.koinViewModel
 
@@ -117,7 +122,9 @@ private fun PlayerScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .safeDrawingPadding()
+            .statusBarsPadding()
+            .navigationBarsPadding()
+
     ) {
         val isLandscape =
             LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -137,9 +144,11 @@ private fun PlayerScreen(
         }
 
         val includeSettingsButton = booksState is PlayerViewModel.BooksState.Books
-        val controlsPadding = with(HomerTheme.dimensions) {
+        val controlsHorizontalPadding = with(HomerTheme.dimensions) {
             (screenContentPadding - (mainScreenButtonSize - mainScreenIconSize) / 2).coerceAtLeast(0.dp)
         }
+        val controlsPadding = PaddingValues(horizontal = controlsHorizontalPadding)
+        val cutoutPadding = WindowInsets.displayCutout.asPaddingValues()
         TopControlsRow(
             batteryState,
             includeSettingsButton,
@@ -147,7 +156,7 @@ private fun PlayerScreen(
             onOpenSettings,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = controlsPadding)
+                .padding(max(controlsPadding, cutoutPadding))
         )
         val volumeChangePositioning = if (isLandscape) {
             Modifier

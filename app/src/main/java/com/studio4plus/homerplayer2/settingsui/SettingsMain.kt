@@ -25,6 +25,7 @@
 package com.studio4plus.homerplayer2.settingsui
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
@@ -84,7 +85,9 @@ private fun SettingsMain(
     if (viewState != null) {
         var showUiModeDialog by rememberSaveable { mutableStateOf<SettingsMainDialogType?>(null) }
         Column(
-            modifier = Modifier.verticalScroll(rememberScrollState())
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+                .navigationBarsPadding()
         ) {
             val settingItemModifier = Modifier.Companion.defaultSettingsItem()
             SettingItem(

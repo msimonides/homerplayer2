@@ -74,7 +74,6 @@ fun AudiobookFolderRow(
                 customActions = accessibilityActions
             }
             .heightIn(min = 56.dp)
-            .padding(vertical = 8.dp)
     ) {
         Surface(
             color = MaterialTheme.colorScheme.primary,

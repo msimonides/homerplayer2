@@ -24,6 +24,8 @@
 
 package com.studio4plus.homerplayer2.settingsui
 
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -63,6 +65,7 @@ fun SettingsContentRoute(
             onRemoveFolder = viewModel::removeFolder,
             onDownloadSamples = viewModel::startSamplesInstall,
             modifier = modifier.padding(horizontal = HomerTheme.dimensions.screenContentPadding),
+            windowInsets = WindowInsets.navigationBars
         )
     }
 }

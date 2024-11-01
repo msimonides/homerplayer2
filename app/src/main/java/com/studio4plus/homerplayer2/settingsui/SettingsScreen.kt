@@ -29,11 +29,17 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.consumeWindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.union
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -74,6 +80,10 @@ fun SettingsScreen(navigateBack: () -> Unit) {
     val currentBackStackEntry = currentBackStackEntryState.value
     val title = currentBackStackEntry?.destination?.label?.toString()
     val snackbarHostState = remember { SnackbarHostState() }
+    // Bottom insets are being handled in scroll containers on each settings screen.
+    val insets = WindowInsets.systemBars.union(WindowInsets.displayCutout).only(
+        WindowInsetsSides.Horizontal + WindowInsetsSides.Top
+    )
     Scaffold(
         topBar = {
             SettingsTopBar(
@@ -81,10 +91,12 @@ fun SettingsScreen(navigateBack: () -> Unit) {
                 onBack = {
                     val navigated = navController.popBackStack()
                     if (!navigated) navigateBack()
-                }
+                },
+                windowInsets = insets,
             )
         },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        contentWindowInsets = insets,
     ) { paddingValues ->
         SettingsNavHost(
             snackbarHostState = snackbarHostState,
@@ -99,7 +111,12 @@ fun SettingsScreen(navigateBack: () -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SettingsTopBar(toolbarTitle: String?, onBack: () -> Unit) {
+private fun SettingsTopBar(
+    toolbarTitle: String?,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier,
+    windowInsets: WindowInsets = TopAppBarDefaults.windowInsets,
+) {
     val animatedTitle: @Composable (title: String) -> Unit =  { title ->
         AnimatedContent(
             targetState = title,
@@ -127,6 +144,8 @@ private fun SettingsTopBar(toolbarTitle: String?, onBack: () -> Unit) {
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.background
         ),
+        windowInsets = windowInsets,
+        modifier = modifier,
     )
 }
 
@@ -147,9 +166,7 @@ private fun SettingsNavHost(
     val playerUiTitle = stringResource(id = R.string.settings_ui_player_ui_title)
     val ttsTitle = stringResource(id = R.string.settings_ui_tts_settings_title)
     NavHost(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(bottom = HomerTheme.dimensions.screenContentPadding),
+        modifier = modifier,
         navController = navController,
         startDestination = "main",
         enterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start) },

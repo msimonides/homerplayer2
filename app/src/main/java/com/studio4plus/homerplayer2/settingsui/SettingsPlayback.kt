@@ -25,6 +25,7 @@
 package com.studio4plus.homerplayer2.settingsui
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
@@ -81,6 +82,7 @@ private fun SettingsPlayback(
     val settingItemModifier = Modifier.Companion.defaultSettingsItem()
     Column(
         modifier = modifier.verticalScroll(rememberScrollState())
+            .navigationBarsPadding()
     ) {
         SettingItem(
             label = stringResource(id = R.string.settings_ui_playback_rewind_on_resume_label),

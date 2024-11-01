@@ -26,7 +26,13 @@ package com.studio4plus.homerplayer2.contentui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
@@ -51,10 +57,12 @@ fun ContentManagementPanel(
     onRemoveFolder: (FolderItem) -> Unit,
     onDownloadSamples: () -> Unit,
     modifier: Modifier = Modifier,
+    windowInsets: WindowInsets = WindowInsets(0, 0, 0, 0),
 ) {
     Column(
         modifier = modifier
     ) {
+        Spacer(modifier = Modifier.windowInsetsTopHeight(windowInsets))
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
@@ -70,7 +78,14 @@ fun ContentManagementPanel(
                 }
             }
         }
-        LazyColumn {
+        val insetsPadding = PaddingValues(
+            bottom = windowInsets.asPaddingValues().calculateBottomPadding()
+        )
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = insetsPadding,
+            modifier = Modifier.consumeWindowInsets(insetsPadding)
+        ) {
             items(
                 state.folders,
                 key = FolderItem::uri,
