@@ -30,15 +30,17 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
@@ -53,6 +55,7 @@ import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 import com.studio4plus.homerplayer2.battery.BatteryIcon
 import com.studio4plus.homerplayer2.battery.BatteryState
+import com.studio4plus.homerplayer2.fullkioskmode.statusBarsFixedPadding
 import com.studio4plus.homerplayer2.settingsdata.PlayerUiSettings
 import com.studio4plus.homerplayer2.utils.max
 import kotlinx.coroutines.flow.SharedFlow
@@ -100,7 +103,7 @@ fun PlayerRoute(
             playerUiSettings,
             viewModel::onPageChanged,
             onOpenSettings,
-            modifier
+            modifier.fillMaxSize()
         )
     } else {
         Box(Modifier.fillMaxSize())
@@ -121,10 +124,8 @@ private fun PlayerScreen(
 ) {
     Box(
         modifier = modifier
-            .fillMaxSize()
-            .statusBarsPadding()
+            .statusBarsFixedPadding()
             .navigationBarsPadding()
-
     ) {
         val isLandscape =
             LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -148,7 +149,7 @@ private fun PlayerScreen(
             (screenContentPadding - (mainScreenButtonSize - mainScreenIconSize) / 2).coerceAtLeast(0.dp)
         }
         val controlsPadding = PaddingValues(horizontal = controlsHorizontalPadding)
-        val cutoutPadding = WindowInsets.displayCutout.asPaddingValues()
+        val cutoutPadding = WindowInsets.displayCutout.only(WindowInsetsSides.Horizontal).asPaddingValues()
         TopControlsRow(
             batteryState,
             includeSettingsButton,
@@ -156,6 +157,7 @@ private fun PlayerScreen(
             onOpenSettings,
             modifier = Modifier
                 .fillMaxWidth()
+                .windowInsetsPadding(WindowInsets.displayCutout.only(WindowInsetsSides.Top))
                 .padding(max(controlsPadding, cutoutPadding))
         )
         val volumeChangePositioning = if (isLandscape) {

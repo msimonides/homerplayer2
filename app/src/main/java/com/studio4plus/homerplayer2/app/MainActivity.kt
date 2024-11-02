@@ -29,12 +29,15 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.studio4plus.homerplayer2.app.ui.HomerPLayerUi
+import com.studio4plus.homerplayer2.fullkioskmode.LocalLockTaskEnabled
 import io.sentry.Sentry
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -55,7 +58,10 @@ class MainActivity : AppCompatActivity() {
         setupLockTask()
 
         setContent {
-            HomerPLayerUi()
+            val lockTaskEnabled = activityViewModel.lockTask.collectAsStateWithLifecycle().value
+            CompositionLocalProvider(LocalLockTaskEnabled provides lockTaskEnabled) {
+                HomerPLayerUi()
+            }
         }
     }
 

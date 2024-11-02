@@ -139,7 +139,6 @@ private val LargeScreenDimensions = Dimensions(
 fun HomerPlayer2Theme(
     darkTheme: Boolean = isNightMode(),
     largeScreen: Boolean = isLargeScreen(),
-    setWindowColors: Boolean = true,
     content: @Composable () -> Unit
 ) {
     val materialColorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
