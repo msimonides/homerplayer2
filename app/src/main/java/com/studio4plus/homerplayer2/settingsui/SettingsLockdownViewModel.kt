@@ -29,6 +29,7 @@ import androidx.lifecycle.ViewModel
 import com.studio4plus.homerplayer2.fullkioskmode.IsFullKioskAvailable
 import com.studio4plus.homerplayer2.fullkioskmode.IsFullKioskEnabled
 import com.studio4plus.homerplayer2.settingsdata.FullKioskModeSetting
+import com.studio4plus.homerplayer2.settingsdata.ScreenOrientation
 import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
 import com.studio4plus.homerplayer2.settingsdata.UiSettings
 import com.studio4plus.homerplayer2.utils.Clock
@@ -57,6 +58,7 @@ class SettingsLockdownViewModel(
         val fullKioskMode: IsFullKioskEnabled.Value,
         val fullKioskModeAvailable: Boolean,
         val hideSettingsButton: Boolean,
+        val screenOrientation: ScreenOrientation,
         val showBattery: Boolean,
     )
 
@@ -68,6 +70,7 @@ class SettingsLockdownViewModel(
             fullKioskMode = fullKioskModeValue,
             fullKioskModeAvailable = isFullKioskAvailable(),
             hideSettingsButton = uiSettings.hideSettingsButton,
+            screenOrientation = uiSettings.screenOrientation,
             showBattery = uiSettings.showBatteryIndicator,
         )
     }
@@ -86,6 +89,10 @@ class SettingsLockdownViewModel(
 
     fun setHideSettingsButton(isHidden: Boolean) {
         mainScope.launchUpdate(uiSettingsStore) { it.copy(hideSettingsButton = isHidden) }
+    }
+
+    fun setScreenOrientation(newValue: ScreenOrientation) {
+        mainScope.launchUpdate(uiSettingsStore) { it.copy(screenOrientation = newValue) }
     }
 
     fun setShowBatteryIndicator(isShown: Boolean) {

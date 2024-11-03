@@ -100,6 +100,12 @@
     <string name="settings_ui_mode_dark">Dark</string>
     <string name="settings_ui_mode_light">Light</string>
     <string name="settings_ui_mode_system">System</string>
+    <string name="settings_ui_orientation_item">Orientation</string>
+    <string name="settings_ui_orientation_auto">Auto</string>
+    <string name="settings_ui_orientation_portrait">Portrait</string>
+    <string name="settings_ui_orientation_landscape_auto">Landscape auto</string>
+    <string name="settings_ui_orientation_landscape_locked">Landscape locked</string>
+    <string name="settings_ui_orientation_landscape_locked_reverse">Landscape locked (reverse)</string>
     <string name="settings_ui_playback_flip_to_stop_item">Flip to stop</string>
     <string name="settings_ui_playback_flip_to_stop_summary">Put device screen down to stop playback</string>
     <string name="settings_ui_playback_play_speed_title">Playback speed</string>

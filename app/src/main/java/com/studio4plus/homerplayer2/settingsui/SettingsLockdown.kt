@@ -24,6 +24,7 @@
 
 package com.studio4plus.homerplayer2.settingsui
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -44,7 +45,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 import com.studio4plus.homerplayer2.fullkioskmode.IsFullKioskEnabled
+import com.studio4plus.homerplayer2.settingsdata.ScreenOrientation
 import com.studio4plus.homerplayer2.settingsui.composables.SelectFromListDialog
+import com.studio4plus.homerplayer2.settingsui.composables.SelectFromRadioListDialog
 import com.studio4plus.homerplayer2.settingsui.composables.SettingItem
 import com.studio4plus.homerplayer2.settingsui.composables.SettingSwitch
 import org.koin.androidx.compose.koinViewModel
@@ -52,7 +55,7 @@ import java.time.format.DateTimeFormatter
 
 
 private enum class SettingsLockdownDialogType {
-    ChangeKioskMode, HideSettingsConfirmation
+    ChangeKioskMode, HideSettingsConfirmation, ScreenOrientation
 }
 
 @Composable
@@ -68,7 +71,8 @@ fun SettingsLockdownRoute(
         onOpenKioskModeSetup = navigateKioskModeSettings,
         onOpenLayoutSettings = navigateLayoutSettings,
         onSetHideSettingsButton = viewModel::setHideSettingsButton,
-        onSetShowSettingsButton = viewModel::setShowBatteryIndicator,
+        onSetScreenOrientation = viewModel::setScreenOrientation,
+        onSetShowBatteryIndicator = viewModel::setShowBatteryIndicator,
         closeSettings = closeSettings
     )
 }
@@ -80,7 +84,8 @@ fun SettingsLockdown(
     onOpenKioskModeSetup: () -> Unit,
     onOpenLayoutSettings: () -> Unit,
     onSetHideSettingsButton: (hide: Boolean) -> Unit,
-    onSetShowSettingsButton: (show: Boolean) -> Unit,
+    onSetScreenOrientation: (newValue: ScreenOrientation) -> Unit,
+    onSetShowBatteryIndicator: (show: Boolean) -> Unit,
     closeSettings: () -> Unit,
 ) {
     var showUiModeDialog by rememberSaveable { mutableStateOf<SettingsLockdownDialogType?>(null) }
@@ -113,6 +118,12 @@ fun SettingsLockdown(
                 onClick = onOpenLayoutSettings,
                 modifier = settingItemModifier,
             )
+            SettingItem(
+                label = stringResource(R.string.settings_ui_orientation_item),
+                summary = stringResource(viewState.screenOrientation.labelRes()),
+                onClick = { showUiModeDialog = SettingsLockdownDialogType.ScreenOrientation },
+                modifier = settingItemModifier,
+            )
             SettingSwitch(
                 label = stringResource(R.string.settings_ui_lockdown_hide_settings_button_item),
                 value = viewState.hideSettingsButton,
@@ -128,7 +139,7 @@ fun SettingsLockdown(
             SettingSwitch(
                 label = stringResource(R.string.settings_ui_lockdown_show_battery),
                 value = viewState.showBattery,
-                onChange = onSetShowSettingsButton,
+                onChange = onSetShowBatteryIndicator,
                 modifier = settingItemModifier,
             )
 
@@ -144,6 +155,11 @@ fun SettingsLockdown(
                         dismissAction()
                         closeSettings()
                     },
+                    onDismissRequest = dismissAction
+                )
+                SettingsLockdownDialogType.ScreenOrientation -> ScreenOrientationDialog(
+                    value = viewState.screenOrientation,
+                    onValueChange = onSetScreenOrientation,
                     onDismissRequest = dismissAction
                 )
                 null -> Unit
@@ -202,4 +218,30 @@ private fun KioskModeSelectionDialog(
         onDismissRequest = onDismissRequest,
         modifier = modifier
     )
+}
+
+@Composable
+private fun ScreenOrientationDialog(
+    value: ScreenOrientation,
+    onValueChange: (ScreenOrientation) -> Unit,
+    onDismissRequest: () -> Unit,
+) {
+    SelectFromRadioListDialog(
+        selectedValue = value,
+        values = listOf(ScreenOrientation.AUTO, ScreenOrientation.PORTRAIT, ScreenOrientation.LANDSCAPE_AUTO,
+            ScreenOrientation.LANDSCAPE, ScreenOrientation.LANDSCAPE_REVERSE),
+        produceLabel = { stringResource(id = it.labelRes()) },
+        title = stringResource(R.string.settings_ui_orientation_item),
+        onValueChange = onValueChange,
+        onDismissRequest = onDismissRequest,
+    )
+}
+
+@StringRes
+private fun ScreenOrientation.labelRes(): Int = when(this) {
+    ScreenOrientation.AUTO -> R.string.settings_ui_orientation_auto
+    ScreenOrientation.PORTRAIT -> R.string.settings_ui_orientation_portrait
+    ScreenOrientation.LANDSCAPE_AUTO -> R.string.settings_ui_orientation_landscape_auto
+    ScreenOrientation.LANDSCAPE -> R.string.settings_ui_orientation_landscape_locked
+    ScreenOrientation.LANDSCAPE_REVERSE -> R.string.settings_ui_orientation_landscape_locked_reverse
 }

@@ -24,13 +24,19 @@
 
 package com.studio4plus.homerplayer2.app
 
+import android.content.pm.ActivityInfo
 import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.studio4plus.homerplayer2.audiobookfolders.AudiobooksUpdater
 import com.studio4plus.homerplayer2.fullkioskmode.IsFullKioskEnabled
+import com.studio4plus.homerplayer2.settingsdata.ScreenOrientation
+import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
+import com.studio4plus.homerplayer2.settingsdata.UiSettings
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import org.koin.android.annotation.KoinViewModel
 import org.koin.core.annotation.Named
@@ -40,6 +46,7 @@ class MainActivityViewModel(
     @Named(DATASTORE_APP_STATE) appState: DataStore<StoredAppState>,
     isFullKioskEnabled: IsFullKioskEnabled,
     private val audiobooksUpdater: AudiobooksUpdater,
+    @Named(SettingsDataModule.UI) uiSettingsStore: DataStore<UiSettings>,
 ) : ViewModel() {
     val viewState = appState.data.map {
         MainActivityViewState.Ready(!it.onboardingCompleted)
@@ -48,6 +55,16 @@ class MainActivityViewModel(
     val lockTask = isFullKioskEnabled()
         .map { it.isEnabledNow }
         .stateIn(viewModelScope, SharingStarted.Eagerly, false)
+
+    val screenOverloads = uiSettingsStore.data.map {
+        when(it.screenOrientation) {
+            ScreenOrientation.AUTO -> ActivityInfo.SCREEN_ORIENTATION_USER
+            ScreenOrientation.PORTRAIT -> ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+            ScreenOrientation.LANDSCAPE_AUTO -> ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+            ScreenOrientation.LANDSCAPE -> ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+            ScreenOrientation.LANDSCAPE_REVERSE -> ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
+        }
+    }.shareIn(viewModelScope, SharingStarted.Lazily, replay = 1)
 
     fun onResume() {
         audiobooksUpdater.trigger()

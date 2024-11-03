@@ -31,6 +31,11 @@ enum class UiThemeMode {
     SYSTEM, LIGHT, DARK
 }
 
+@Serializable
+enum class ScreenOrientation {
+    AUTO, PORTRAIT, LANDSCAPE_AUTO, LANDSCAPE, LANDSCAPE_REVERSE
+}
+
 object FullKioskModeSetting {
     const val ENABLED = 0L
     const val DISABLED = Long.MAX_VALUE
@@ -67,6 +72,7 @@ data class UiSettings(
     val hideSettingsButton: Boolean = false,
     val playerUiSettings: PlayerUiSettings = PlayerUiSettings(),
     val readBookTitles: Boolean = false,
+    val screenOrientation: ScreenOrientation = ScreenOrientation.AUTO,
     val showBatteryIndicator: Boolean = false,
     val uiThemeMode: UiThemeMode = UiThemeMode.SYSTEM,
 ) {

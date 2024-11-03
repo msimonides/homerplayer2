@@ -42,6 +42,7 @@ import io.sentry.Sentry
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.transformLatest
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
@@ -56,6 +57,7 @@ class MainActivity : AppCompatActivity() {
 
         enableEdgeToEdge()
         setupLockTask()
+        setupOrientationChange()
 
         setContent {
             val lockTaskEnabled = activityViewModel.lockTask.collectAsStateWithLifecycle().value
@@ -68,6 +70,15 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         activityViewModel.onResume()
+    }
+
+    private fun setupOrientationChange() {
+        activityViewModel.screenOverloads
+            .flowWithLifecycle(lifecycle, Lifecycle.State.RESUMED)
+            .onEach { orientation ->
+                requestedOrientation = orientation
+            }
+            .launchIn(lifecycleScope)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
