@@ -240,9 +240,7 @@ private fun SettingsNavHost(
             label = podcastTitle,
             arguments = listOf(navArgument(PodcastEditNav.FeedUriKey) { NavType.StringType })
         ) { backStackEntry ->
-            PodcastEditRoute(
-                navigateBack = { navController.popBackStack() }
-            )
+            PodcastEditRoute()
         }
         composable("tts_settings", label = ttsTitle) {
             SettingsTtsRoute(snackbarHostState)

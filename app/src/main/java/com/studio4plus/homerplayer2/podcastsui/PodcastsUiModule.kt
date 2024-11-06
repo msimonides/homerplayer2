@@ -24,9 +24,24 @@
 
 package com.studio4plus.homerplayer2.podcastsui
 
+import android.content.Context
+import com.mr3y.podcastindex.ktor3.PodcastIndexClient
+import com.studio4plus.homerplayer2.BuildConfig
+import com.studio4plus.homerplayer2.R
 import org.koin.core.annotation.ComponentScan
+import org.koin.core.annotation.Factory
 import org.koin.core.annotation.Module
 
 @Module
 @ComponentScan("com.studio4plus.homerplayer2.podcastsui")
-class PodcastsUiModule
+class PodcastsUiModule {
+
+    // TODO: use my own okhttp instance for Android 6 and 7.
+    @Factory
+    fun providePodcastIndexClient(appContext: Context) =
+        PodcastIndexClient(
+            appContext.getString(R.string.podcastindex_key),
+            appContext.getString(R.string.podcastindex_secret),
+            "HomerPlayer2/${BuildConfig.VERSION_NAME}"
+        )
+}

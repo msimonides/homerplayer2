@@ -44,6 +44,7 @@ data class Dimensions(
     val labelSpacing: Dp,
     val mainScreenButtonSize: Dp,
     val mainScreenIconSize: Dp,
+    val podcastSearchImageSize: Dp,
     val progressIndicatorWidth: Dp,
     val screenContentPadding: Dp,
     val settingsRowMinHeight: Dp
@@ -111,6 +112,7 @@ private val LocalDimensions = staticCompositionLocalOf {
         labelSpacing = Dp.Unspecified,
         mainScreenButtonSize = Dp.Unspecified,
         mainScreenIconSize = Dp.Unspecified,
+        podcastSearchImageSize = Dp.Unspecified,
         progressIndicatorWidth = Dp.Unspecified,
         screenContentPadding = Dp.Unspecified,
         settingsRowMinHeight = Dp.Unspecified
@@ -121,6 +123,7 @@ private val RegularDimensions = Dimensions(
     labelSpacing = 16.dp,
     mainScreenButtonSize = 48.dp,
     mainScreenIconSize = 32.dp,
+    podcastSearchImageSize = 96.dp,
     progressIndicatorWidth = 8.dp,
     screenContentPadding = 16.dp,
     settingsRowMinHeight = 48.dp,
@@ -130,6 +133,7 @@ private val LargeScreenDimensions = Dimensions(
     labelSpacing = 16.dp,
     mainScreenButtonSize = 80.dp,
     mainScreenIconSize = 64.dp,
+    podcastSearchImageSize = 128.dp,
     progressIndicatorWidth = 16.dp,
     screenContentPadding = 24.dp,
     settingsRowMinHeight = 48.dp,

@@ -26,16 +26,25 @@ package com.studio4plus.homerplayer2.podcastsui
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.toggleable
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
@@ -49,20 +58,31 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil3.compose.AsyncImage
+import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.base.ui.DefaultAlertDialog
 import com.studio4plus.homerplayer2.base.ui.SectionTitle
-import com.studio4plus.homerplayer2.base.ui.SmallCircularProgressIndicator
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 import org.koin.androidx.compose.koinViewModel
@@ -73,32 +93,38 @@ import kotlin.math.roundToInt
 @Composable
 fun PodcastEditRoute(
     viewModel: PodcastEditViewModel = koinViewModel(),
-    navigateBack: () -> Unit
 ) {
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
+    val addDialogState = viewModel.addPodcastDialog.collectAsStateWithLifecycle(null).value
     PodcastEdit(
         viewState = viewState,
-        onPodcastUriChange = viewModel::onPodcastUriChange,
-        onAddPodcast = viewModel::onAddNewPodcast,
+        onSearchPhraseChanged = viewModel::onSearchPhraseChange,
+        onSelectSearchResult = viewModel::onSelectPodcastResult,
         onEpisodeCountChanged = viewModel::onEpisodeCountChanged,
         onEpisodeTitleIncludePodcastTitle = viewModel::onEpisodeTitleIncludePodcastTitle,
         onEpisodeTitleIncludeNumber = viewModel::onEpisodeTitleIncludeNumber,
         onEpisodeTitleIncludeEpisodeTitle = viewModel::onEpisodeTitleIncludeEpisodeTitle,
-        onBack = navigateBack,
         modifier = Modifier.fillMaxSize()
     )
+
+    if (addDialogState != null) {
+        AddPodcastDialog(
+            state = addDialogState,
+            onAddPodcast = viewModel::onAddNewPodcast,
+            onCancel = viewModel::onUnselectPodcastResult
+        )
+    }
 }
 
 @Composable
 fun PodcastEdit(
     viewState: PodcastEditViewModel.ViewState,
-    onPodcastUriChange: (String) -> Unit,
-    onAddPodcast: () -> Unit,
+    onSearchPhraseChanged: (String) -> Unit,
+    onSelectSearchResult: (PodcastSearchResult) -> Unit,
     onEpisodeCountChanged: (Int) -> Unit,
     onEpisodeTitleIncludePodcastTitle: (Boolean) -> Unit,
     onEpisodeTitleIncludeNumber: (Boolean) -> Unit,
     onEpisodeTitleIncludeEpisodeTitle: (Boolean) -> Unit,
-    onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (viewState) {
@@ -106,11 +132,10 @@ fun PodcastEdit(
         is PodcastEditViewModel.ViewState.NewPodcast ->
             Box(modifier) {
                 if (viewState is PodcastEditViewModel.ViewState.NewPodcast) {
-                    AddNewPodcastDialog(
+                    SearchNewPodcast(
                         viewState,
-                        onUriChange = onPodcastUriChange,
-                        onAccept = onAddPodcast,
-                        onDismissDialog = onBack
+                        onSearchPhraseChange = onSearchPhraseChanged,
+                        onSelectSearchResult = onSelectSearchResult,
                     )
                 }
             }
@@ -123,6 +148,133 @@ fun PodcastEdit(
                 onEpisodeTitleIncludeEpisodeTitle = onEpisodeTitleIncludeEpisodeTitle,
                 modifier = modifier
             )
+    }
+}
+
+@Composable
+private fun SearchNewPodcast(
+    viewState: PodcastEditViewModel.ViewState.NewPodcast,
+    onSearchPhraseChange: (String) -> Unit,
+    onSelectSearchResult: (PodcastSearchResult) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val (focusRequester) = FocusRequester.createRefs()
+    LaunchedEffect(true) {
+        focusRequester.requestFocus()
+    }
+    Column(
+        modifier = modifier
+            .imePadding(),
+    ) {
+        var searchPhrase by rememberSaveable { mutableStateOf<String>("") }
+        OutlinedTextField(
+            value = searchPhrase,
+            onValueChange = { searchPhrase = it },
+            singleLine = true,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = HomerTheme.dimensions.screenContentPadding)
+                .focusRequester(focusRequester),
+            label = { Text(stringResource(R.string.podcast_search_label)) },
+            placeholder = { Text(stringResource(R.string.podcast_search_hint)) },
+            keyboardActions = KeyboardActions { onSearchPhraseChange(searchPhrase) },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+            trailingIcon = {
+                ClearValueIconButton(
+                    onClick = {
+                        searchPhrase = ""
+                        onSearchPhraseChange("")
+                    },
+                    enabled = searchPhrase.isNotEmpty(),
+                    contentDescription = stringResource(R.string.generic_text_field_clear_content_description)
+                )
+            }
+        )
+        when {
+            viewState.results.isNotEmpty() ->
+                LazyColumn(
+                    contentPadding = PaddingValues(bottom = HomerTheme.dimensions.screenContentPadding)
+                ) {
+                    items(viewState.results, key = { it.feedUri }) {
+                        PodcastSearchResultItem(
+                            it,
+                            modifier = Modifier
+                                .clickable { onSelectSearchResult(it) }
+                                .fillMaxWidth()
+                                .padding(
+                                    horizontal = HomerTheme.dimensions.screenContentPadding,
+                                    vertical = 16.dp
+                                ),
+                        )
+                    }
+                }
+        }
+    }
+}
+
+@Composable
+private fun PodcastSearchResultItem(
+    item: PodcastSearchResult,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = modifier,
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.Bottom,
+        ) {
+            if (item.artworkUri.isNotBlank()) {
+                AsyncImage(
+                    model = item.artworkUri,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .clip(MaterialTheme.shapes.medium)
+                        .border(
+                            Dp.Hairline,
+                            color = MaterialTheme.colorScheme.onBackground,
+                            shape = MaterialTheme.shapes.medium
+                        )
+                        .size(HomerTheme.dimensions.podcastSearchImageSize)
+                )
+            }
+            Column {
+                Text(item.title, style = MaterialTheme.typography.titleLarge, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                if (item.author.isNotBlank()) {
+                    Text(item.author)
+                }
+            }
+        }
+        if (item.description.isNotBlank()) {
+            Text(item.description)
+        }
+    }
+}
+
+@Composable
+private fun AddPodcastDialog(
+    state: PodcastEditViewModel.AddPodcastDialogState,
+    onAddPodcast: () -> Unit,
+    onCancel: () -> Unit,
+) {
+    DefaultAlertDialog(
+        onDismissRequest = onCancel,
+        buttons = {
+            TextButton(onClick = onCancel) {
+                Text(stringResource(R.string.generic_dialog_cancel))
+            }
+            TextButton(onClick = onAddPodcast, enabled = state.canAdd) {
+                Text(stringResource(R.string.podcast_add_dialog_add_button))
+            }
+        }
+    ) { horizontalPadding ->
+        val text = when {
+            state.isLoading -> R.string.podcast_add_dialog_loading
+            state.errorRes != null -> state.errorRes
+            else -> R.string.podcast_add_dialog_ready
+        }
+        Text(stringResource(text), modifier = Modifier.padding(horizontal = horizontalPadding))
     }
 }
 
@@ -177,7 +329,9 @@ private fun PodcastEdit(
         SectionTitle("Episodes", modifier = rowModifier)
         val dateFormatter = remember { DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM) }
         viewState.episodes.fastForEachIndexed { index, item ->
-            EpisodeRow(item, dateFormatter, modifier = rowModifier.animateContentSize().padding(vertical = 8.dp))
+            EpisodeRow(item, dateFormatter, modifier = rowModifier
+                .animateContentSize()
+                .padding(vertical = 8.dp))
             if (index < viewState.episodes.size - 1) {
                 HorizontalDivider(modifier = rowModifier)
             }
@@ -277,71 +431,22 @@ private fun EpisodeRow(
     }
 }
 
-@Composable
-private fun AddNewPodcastDialog(
-    viewState: PodcastEditViewModel.ViewState.NewPodcast,
-    onUriChange: (String) -> Unit,
-    onAccept: () -> Unit,
-    onDismissDialog: () -> Unit,
-) {
-    // TODO: consider a full-size content
-    DefaultAlertDialog(
-        onDismissDialog
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(vertical = 24.dp, horizontal = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            OutlinedTextField(
-                value = viewState.uri,
-                onValueChange = onUriChange,
-                modifier = Modifier.fillMaxWidth(),
-                label = { Text("Podcast URL") },
-                placeholder = { Text("RSS or Atom URL")}
-            )
-            if (viewState.isLoading) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    SmallCircularProgressIndicator()
-                    Text("Loading...")
-                }
-            } else {
-                val message = viewState.podcastTitle ?: viewState.errorRes?.let { stringResource(it) }
-                if (message != null) {
-                    Text(message)
-                }
-            }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp),
-                horizontalArrangement = Arrangement.End
-            ) {
-                TextButton(onClick = onDismissDialog) {
-                    Text("Cancel")
-                }
-                TextButton(onClick = onAccept, enabled = viewState.isValid) {
-                    Text("Add podcast")
-                }
-            }
-        }
-    }
-}
-
 @Preview
 @Composable
 private fun PreviewNewPodcastDialog() {
     HomerPlayer2Theme {
         val viewState = PodcastEditViewModel.ViewState.NewPodcast(
-            uri = "",
-            isLoading = true,
-            isValid = false,
-            podcastTitle = null,
+            results = listOf(
+                PodcastSearchResult(
+                    "",
+                    "My podcast",
+                    "Podcast author",
+                    "Most interesting podcast in the world",
+                    ""
+                )
+            ),
             errorRes = null,
         )
-        PodcastEdit(viewState, {}, {}, {}, {}, {}, {}, {})
+        PodcastEdit(viewState, {}, {}, {}, {}, {}, {})
     }
 }

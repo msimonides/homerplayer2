@@ -63,6 +63,7 @@ class DownloadPodcastFeed(
             return if (response.isSuccessful) {
                 val body = runInterruptible(dispatcherProvider.Io) { response.body }
                 if (body != null) {
+                    // TODO: validate that there's at least title and one existing episode.
                     parse(body.string(), url)
                 } else {
                     Timber.w("Empty body")
