@@ -30,12 +30,13 @@ import com.studio4plus.homerplayer2.settingsdata.FullKioskModeSetting
 import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
 import com.studio4plus.homerplayer2.settingsdata.UiSettings
 import com.studio4plus.homerplayer2.utils.Clock
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.transformLatest
 import org.koin.core.annotation.Factory
 import org.koin.core.annotation.Named
 import java.time.Instant
@@ -58,10 +59,13 @@ class IsFullKioskEnabled(
         .map { it.fullKioskModeEnableTimestamp }
         .distinctUntilChanged()
 
-    private val triggerFlow = combineTransform(
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val triggerFlow = combine(
         isInForeground(),
         settingsEnableTimestamp
     ) { inForeground, enableTimestamp ->
+        Pair(inForeground, enableTimestamp)
+    }.transformLatest { (inForeground, enableTimestamp) ->
         emit(clock.wallTime())
         val timeToEnableMs = enableTimestamp - clock.wallTime()
         if (inForeground && timeToEnableMs > 0 && enableTimestamp != FullKioskModeSetting.DISABLED) {
