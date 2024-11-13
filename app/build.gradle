@@ -113,6 +113,7 @@ dependencies {
     implementation libs.koin.annotations
     implementation libs.kotlinx.coroutines.android
     implementation libs.kotlinx.serialization.json
+    implementation libs.ktor.okhttp // For configuring podcastindex.
     implementation libs.okhttp
     implementation libs.okhttp.tls
     implementation libs.podcastindex
@@ -120,7 +121,6 @@ dependencies {
     implementation libs.sentry.android
     implementation libs.timber
     implementation libs.treessence
-
 
     testImplementation libs.androidx.test.corektx
     testImplementation libs.junit

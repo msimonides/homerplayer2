@@ -28,6 +28,8 @@ import android.content.Context
 import com.mr3y.podcastindex.ktor3.PodcastIndexClient
 import com.studio4plus.homerplayer2.BuildConfig
 import com.studio4plus.homerplayer2.R
+import io.ktor.client.engine.okhttp.OkHttp
+import okhttp3.OkHttpClient
 import org.koin.core.annotation.ComponentScan
 import org.koin.core.annotation.Factory
 import org.koin.core.annotation.Module
@@ -36,12 +38,15 @@ import org.koin.core.annotation.Module
 @ComponentScan("com.studio4plus.homerplayer2.podcastsui")
 class PodcastsUiModule {
 
-    // TODO: use my own okhttp instance for Android 6 and 7.
     @Factory
-    fun providePodcastIndexClient(appContext: Context) =
+    fun providePodcastIndexClient(appContext: Context, okHttpClient: OkHttpClient) =
         PodcastIndexClient(
             appContext.getString(R.string.podcastindex_key),
             appContext.getString(R.string.podcastindex_secret),
             "HomerPlayer2/${BuildConfig.VERSION_NAME}"
-        )
+        ) {
+            httpClient(OkHttp) {
+                engine { preconfigured = okHttpClient }
+            }
+        }
 }
