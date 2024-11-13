@@ -25,17 +25,26 @@
 package com.studio4plus.homerplayer2.app
 
 import android.app.Application
+import coil3.ImageLoader
+import coil3.PlatformContext
+import coil3.SingletonImageLoader
+import coil3.memory.MemoryCache
+import coil3.network.okhttp.OkHttpNetworkFetcherFactory
+import coil3.request.CachePolicy
 import com.studio4plus.homerplayer2.BuildConfig
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.logging.FileLoggerTreeProvider
 import io.sentry.android.core.SentryAndroid
+import okhttp3.OkHttpClient
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import org.koin.ksp.generated.module
 import timber.log.Timber
 
-class HomerPlayerApp : Application() {
+class HomerPlayerApp : Application(), SingletonImageLoader.Factory {
+
+    private val okHttpClient by inject<OkHttpClient>()
 
     override fun onCreate() {
         super.onCreate()
@@ -55,6 +64,23 @@ class HomerPlayerApp : Application() {
         val appIsInForeground: AppIsInForeground by inject()
         registerActivityLifecycleCallbacks(appIsInForeground)
     }
+
+    override fun newImageLoader(context: PlatformContext): ImageLoader =
+        ImageLoader.Builder(context)
+            .components {
+                add(
+                    OkHttpNetworkFetcherFactory(
+                        callFactory = { okHttpClient }
+                    )
+                )
+            }
+            .memoryCache {
+                MemoryCache.Builder()
+                    .maxSizeBytes(8 * 1024 * 1024)
+                    .build()
+            }
+            .diskCachePolicy(CachePolicy.DISABLED) // It's only for podcast search.
+            .build()
 
     // Try to share Sentry configuration between app and kiosksetup.
     private fun initCrashReporting() {
