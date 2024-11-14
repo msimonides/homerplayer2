@@ -31,14 +31,17 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -126,6 +129,7 @@ fun PodcastEdit(
     onEpisodeTitleIncludeNumber: (Boolean) -> Unit,
     onEpisodeTitleIncludeEpisodeTitle: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
+    windowInsets: WindowInsets = WindowInsets.navigationBars,
 ) {
     when (viewState) {
         is PodcastEditViewModel.ViewState.Loading,
@@ -136,6 +140,7 @@ fun PodcastEdit(
                         viewState,
                         onSearchPhraseChange = onSearchPhraseChanged,
                         onSelectSearchResult = onSelectSearchResult,
+                        windowInsets = windowInsets,
                     )
                 }
             }
@@ -146,6 +151,7 @@ fun PodcastEdit(
                 onEpisodeTitleIncludePodcastTitle = onEpisodeTitleIncludePodcastTitle,
                 onEpisodeTitleIncludeNumber = onEpisodeTitleIncludeNumber,
                 onEpisodeTitleIncludeEpisodeTitle = onEpisodeTitleIncludeEpisodeTitle,
+                windowInsets = windowInsets,
                 modifier = modifier
             )
     }
@@ -156,6 +162,7 @@ private fun SearchNewPodcast(
     viewState: PodcastEditViewModel.ViewState.NewPodcast,
     onSearchPhraseChange: (String) -> Unit,
     onSelectSearchResult: (PodcastSearchResult) -> Unit,
+    windowInsets: WindowInsets,
     modifier: Modifier = Modifier,
 ) {
     val (focusRequester) = FocusRequester.createRefs()
@@ -192,9 +199,7 @@ private fun SearchNewPodcast(
         )
         when {
             viewState.results.isNotEmpty() ->
-                LazyColumn(
-                    contentPadding = PaddingValues(bottom = HomerTheme.dimensions.screenContentPadding)
-                ) {
+                LazyColumn {
                     items(viewState.results, key = { it.feedUri }) {
                         PodcastSearchResultItem(
                             it,
@@ -206,6 +211,9 @@ private fun SearchNewPodcast(
                                     vertical = 16.dp
                                 ),
                         )
+                    }
+                    item {
+                        Spacer(Modifier.windowInsetsBottomHeight(windowInsets))
                     }
                 }
         }
@@ -285,6 +293,7 @@ private fun PodcastEdit(
     onEpisodeTitleIncludePodcastTitle: (Boolean) -> Unit,
     onEpisodeTitleIncludeNumber: (Boolean) -> Unit,
     onEpisodeTitleIncludeEpisodeTitle: (Boolean) -> Unit,
+    windowInsets: WindowInsets,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -329,13 +338,23 @@ private fun PodcastEdit(
         SectionTitle("Episodes", modifier = rowModifier)
         val dateFormatter = remember { DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM) }
         viewState.episodes.fastForEachIndexed { index, item ->
-            EpisodeRow(item, dateFormatter, modifier = rowModifier
-                .animateContentSize()
-                .padding(vertical = 8.dp))
+            EpisodeRow(
+                item,
+                dateFormatter,
+                modifier = rowModifier
+                    .animateContentSize()
+                    .padding(vertical = 8.dp)
+            )
             if (index < viewState.episodes.size - 1) {
                 HorizontalDivider(modifier = rowModifier)
             }
         }
+
+        Spacer(
+            Modifier
+                .windowInsetsBottomHeight(windowInsets)
+                .padding(bottom = HomerTheme.dimensions.screenContentPadding)
+        )
     }
 }
 
