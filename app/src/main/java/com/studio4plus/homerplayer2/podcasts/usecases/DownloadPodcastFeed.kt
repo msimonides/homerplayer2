@@ -63,7 +63,6 @@ class DownloadPodcastFeed(
             return if (response.isSuccessful) {
                 val body = runInterruptible(dispatcherProvider.Io) { response.body }
                 if (body != null) {
-                    // TODO: validate that there's at least title and one existing episode.
                     parse(body.string(), url)
                 } else {
                     Timber.w("Empty body")
@@ -85,8 +84,13 @@ class DownloadPodcastFeed(
 
     private suspend fun parse(text: String, uri: String): Result =
         try {
-            // TODO: some validity checks?
-            Result.Success(rssParser.parse(text))
+            val feed = rssParser.parse(text)
+            if (feed.title.isNullOrBlank() || feed.items.isNotEmpty()) {
+                Timber.w("Error validating $uri: no title or no episodes")
+                Result.ParseError
+            } else {
+                Result.Success(feed)
+            }
         } catch (illegalArgument: IllegalArgumentException) {
             // RssParser throws IllegalArgumentException when input is not a valid XML.
             Timber.i(illegalArgument, "Not valid XML $uri: ${text.take(100)}")
