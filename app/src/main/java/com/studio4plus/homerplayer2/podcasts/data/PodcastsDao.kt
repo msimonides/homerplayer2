@@ -26,6 +26,7 @@ package com.studio4plus.homerplayer2.podcasts.data
 
 import androidx.room.Dao
 import androidx.room.Embedded
+import androidx.room.Ignore
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -42,12 +43,17 @@ data class PodcastWithEpisodes(
         parentColumn = "feed_uri",
         entityColumn = "feed_uri",
     )
-    val episodes: List<PodcastEpisode>
-)
+    val episodesUnordered: List<PodcastEpisode>
+) {
+    // @Relation doesn't provide ordering, sort explicitly. The number of episodes is less than ten.
+    @Ignore
+    val episodes = episodesUnordered.sortedBy { it.number }
+}
 
 @Dao
 abstract class PodcastsDao {
     @Query("""SELECT * FROM podcasts ORDER BY title ASC""")
+    @Transaction
     abstract fun observePodcasts(): Flow<List<PodcastWithEpisodes>>
 
     @Query("""SELECT * FROM podcasts ORDER BY title ASC""")
@@ -57,6 +63,7 @@ abstract class PodcastsDao {
     abstract fun observeHasAnyPodcast(): Flow<Boolean>
 
     @Query("""SELECT * FROM podcasts WHERE feed_uri = :feedUri""")
+    @Transaction
     abstract fun observePodcast(feedUri: String): Flow<PodcastWithEpisodes?>
 
     @Query("""SELECT * FROM podcasts WHERE feed_uri = :feedUri""")
