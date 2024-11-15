@@ -40,6 +40,8 @@ import com.studio4plus.homerplayer2.podcasts.usecases.PodcastEpisodeName
 import com.studio4plus.homerplayer2.podcasts.usecases.UpdatePodcastFromFeed
 import com.studio4plus.homerplayer2.podcasts.usecases.UpdatePodcastNameConfig
 import com.studio4plus.homerplayer2.podcastsui.PodcastEditViewModel.Feed
+import com.studio4plus.homerplayer2.podcastsui.usecases.PodcastSearchResult
+import com.studio4plus.homerplayer2.podcastsui.usecases.SearchPodcasts
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -66,7 +68,7 @@ import kotlin.collections.map
 class PodcastEditViewModel(
     private val savedStateHandle: SavedStateHandle,
     private val downloadPodcastFeed: DownloadPodcastFeed,
-    private val podcastSearch: PodcastSearch,
+    private val searchPodcasts: SearchPodcasts,
     private val updatePodcastFromFeed: UpdatePodcastFromFeed,
     private val podcastsDao: PodcastsDao,
     private val podcastEpisodeName: PodcastEpisodeName,
@@ -81,10 +83,16 @@ class PodcastEditViewModel(
 
     sealed interface ViewState {
         object Loading : ViewState
-        data class NewPodcast(
+
+        sealed interface Search : ViewState
+        data class SearchResults(
             val results: List<PodcastSearchResult>,
-            val errorRes: Int? = null,
-        ) : ViewState
+        ) : Search
+
+        sealed interface SearchError : Search
+        object SearchRateLimited : SearchError
+        object SearchFatalError : SearchError
+
         data class Podcast(
             val podcast: com.studio4plus.homerplayer2.podcasts.data.Podcast,
             val episodes: List<EpisodeViewState>
@@ -149,7 +157,7 @@ class PodcastEditViewModel(
         }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(),
-            if (isNewPodcast) ViewState.NewPodcast(results = emptyList()) else ViewState.Loading
+            if (isNewPodcast) ViewState.SearchResults(results = emptyList()) else ViewState.Loading
         )
 
     val addPodcastDialog: Flow<AddPodcastDialogState?> = combine(
@@ -191,13 +199,16 @@ class PodcastEditViewModel(
     }
 
     private fun searchFlow(phrase: String) = flow {
-        emit(ViewState.NewPodcast(results = emptyList()))
-        // TODO: sanitize length in podcastSearch?
-        val search = podcastSearch(phrase.trim())
-        if (search is PodcastSearch.Result.Success) {
-            emit(ViewState.NewPodcast(results = search.results))
+        emit(ViewState.SearchResults(results = emptyList()))
+        if (phrase.isNotBlank()) {
+            val search = searchPodcasts(phrase.trim())
+            val newState = when (search) {
+                is SearchPodcasts.Result.Success -> ViewState.SearchResults(results = search.results)
+                SearchPodcasts.Result.RateLimitError -> ViewState.SearchRateLimited
+                SearchPodcasts.Result.RequestError -> ViewState.SearchFatalError
+            }
+            emit(newState)
         }
-        // TODO: error
     }
 
     fun onSelectPodcastResult(podcast: PodcastSearchResult) {

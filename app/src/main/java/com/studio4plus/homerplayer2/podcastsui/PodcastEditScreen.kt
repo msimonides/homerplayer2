@@ -40,6 +40,7 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.lazy.LazyColumn
@@ -88,6 +89,7 @@ import com.studio4plus.homerplayer2.base.ui.DefaultAlertDialog
 import com.studio4plus.homerplayer2.base.ui.SectionTitle
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
+import com.studio4plus.homerplayer2.podcastsui.usecases.PodcastSearchResult
 import org.koin.androidx.compose.koinViewModel
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -133,9 +135,9 @@ fun PodcastEdit(
 ) {
     when (viewState) {
         is PodcastEditViewModel.ViewState.Loading,
-        is PodcastEditViewModel.ViewState.NewPodcast ->
+        is PodcastEditViewModel.ViewState.Search ->
             Box(modifier) {
-                if (viewState is PodcastEditViewModel.ViewState.NewPodcast) {
+                if (viewState is PodcastEditViewModel.ViewState.Search) {
                     SearchNewPodcast(
                         viewState,
                         onSearchPhraseChange = onSearchPhraseChanged,
@@ -159,7 +161,7 @@ fun PodcastEdit(
 
 @Composable
 private fun SearchNewPodcast(
-    viewState: PodcastEditViewModel.ViewState.NewPodcast,
+    viewState: PodcastEditViewModel.ViewState.Search,
     onSearchPhraseChange: (String) -> Unit,
     onSelectSearchResult: (PodcastSearchResult) -> Unit,
     windowInsets: WindowInsets,
@@ -197,8 +199,8 @@ private fun SearchNewPodcast(
                 )
             }
         )
-        when {
-            viewState.results.isNotEmpty() ->
+        when (viewState) {
+            is PodcastEditViewModel.ViewState.SearchResults ->
                 LazyColumn {
                     items(viewState.results, key = { it.feedUri }) {
                         PodcastSearchResultItem(
@@ -216,6 +218,50 @@ private fun SearchNewPodcast(
                         Spacer(Modifier.windowInsetsBottomHeight(windowInsets))
                     }
                 }
+
+            is PodcastEditViewModel.ViewState.SearchError ->
+                PodcastSearchError(
+                    viewState,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = HomerTheme.dimensions.screenContentPadding)
+                        .padding(top = 24.dp)
+                )
+        }
+    }
+}
+
+@Composable
+private fun PodcastSearchError(
+    error: PodcastEditViewModel.ViewState.SearchError,
+    modifier: Modifier = Modifier
+) {
+    val title: Int
+    val message: Int
+    when (error) {
+        PodcastEditViewModel.ViewState.SearchRateLimited -> {
+            title = R.string.podcast_search_ratelimit_title
+            message = R.string.podcast_search_ratelimit_message
+        }
+        PodcastEditViewModel.ViewState.SearchFatalError -> {
+            title = R.string.podcast_search_error_title
+            message = R.string.podcast_search_error_message
+        }
+    }
+    Box(
+        modifier = modifier
+    ) {
+        Column(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .width(600.dp)
+        ) {
+            Text(
+                stringResource(title),
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+            Text(stringResource(message))
         }
     }
 }
@@ -454,7 +500,7 @@ private fun EpisodeRow(
 @Composable
 private fun PreviewNewPodcastDialog() {
     HomerPlayer2Theme {
-        val viewState = PodcastEditViewModel.ViewState.NewPodcast(
+        val viewState = PodcastEditViewModel.ViewState.SearchResults(
             results = listOf(
                 PodcastSearchResult(
                     "",
@@ -464,7 +510,6 @@ private fun PreviewNewPodcastDialog() {
                     ""
                 )
             ),
-            errorRes = null,
         )
         PodcastEdit(viewState, {}, {}, {}, {}, {}, {})
     }

@@ -22,10 +22,11 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.podcastsui
+package com.studio4plus.homerplayer2.podcastsui.usecases
 
 import com.mr3y.podcastindex.PodcastIndexClient
 import com.mr3y.podcastindex.model.RateLimitExceededException
+import io.sentry.Sentry
 import org.koin.core.annotation.Factory
 import timber.log.Timber
 import java.util.concurrent.CancellationException
@@ -39,7 +40,7 @@ data class PodcastSearchResult(
 )
 
 @Factory
-class PodcastSearch(
+class SearchPodcasts (
     private val podcastIndex: PodcastIndexClient
 ) {
     sealed interface Result {
@@ -66,10 +67,10 @@ class PodcastSearch(
         } catch (e: CancellationException) {
             throw e
         } catch (e: RateLimitExceededException) {
-            // TODO: report to sentry. With some rate-limits?
+            Sentry.captureException(e)
             Result.RateLimitError
         } catch (e: Exception) {
-            // TODO: report to sentry. With some rate-limits?
+            Sentry.captureException(e)
             Timber.e(e, "search request error")
             Result.RequestError
         }

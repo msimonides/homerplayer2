@@ -84,6 +84,10 @@
     <string name="podcast_episode_name_title_number">%1$s %2$d</string>
     <string name="podcast_search_label">Podcast search</string>
     <string name="podcast_search_hint">Podcast title</string>
+    <string name="podcast_search_error_title">Error</string>
+    <string name="podcast_search_error_message">Unable to fetch search results</string>
+    <string name="podcast_search_ratelimit_title">Service busy</string>
+    <string name="podcast_search_ratelimit_message">The podcast search service is temporarily unavailable. Please try again later.</string>
 
     <string name="settings_ui_settings_title">Settings</string>
     <string name="settings_ui_about_item">About the app…</string>
