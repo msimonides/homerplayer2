@@ -44,6 +44,7 @@ import com.studio4plus.homerplayer2.podcastsui.usecases.PodcastSearchResult
 import com.studio4plus.homerplayer2.podcastsui.usecases.SearchPodcasts
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -114,10 +115,10 @@ class PodcastEditViewModel(
         data class Error(@StringRes val message: Int) : Feed
     }
 
+    private val searchTrigger = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
     private var searchPhrase: String
         get() = savedStateHandle["searchPhrase"] ?: ""
         set(value) { savedStateHandle["searchPhrase"] = value }
-    private val searchPhraseFlow = savedStateHandle.getStateFlow("searchPhrase", "")
 
     private var podcastUri: String
         get() = savedStateHandle[PodcastEditNav.FeedUriKey] ?: ""
@@ -153,7 +154,7 @@ class PodcastEditViewModel(
                         )
                     }
                 isNewPodcast ->
-                    searchPhraseFlow.flatMapLatest(::searchFlow)
+                    searchTrigger.flatMapLatest(::searchFlow)
                 else ->
                     flowOf(ViewState.Loading)
             }
@@ -195,6 +196,7 @@ class PodcastEditViewModel(
         ) { podcast, feed ->
             updatePodcastFromFeed(podcast.podcast, feed)
         }.launchIn(viewModelScope)
+        searchTrigger.tryEmit(Unit)
     }
 
     override fun onCleared() {
@@ -205,18 +207,26 @@ class PodcastEditViewModel(
 
     fun onSearchPhraseChange(phrase: String) {
         searchPhrase = phrase
+        searchTrigger.tryEmit(Unit) // Trigger search even if the phrase hasn't changed.
     }
 
-    private fun searchFlow(phrase: String) = flow {
+    private fun searchFlow(ignored: Unit) = flow {
         emit(ViewState.SearchResults(results = emptyList()))
-        if (phrase.isNotBlank()) {
-            val search = searchPodcasts(phrase.trim())
-            val newState = when (search) {
-                is SearchPodcasts.Result.Success -> ViewState.SearchResults(results = search.results)
-                SearchPodcasts.Result.RateLimitError -> ViewState.SearchRateLimited
-                SearchPodcasts.Result.RequestError -> ViewState.SearchFatalError
+        val phrase = searchPhrase
+        when {
+            phrase.isBlank() -> Unit
+            phrase.startsWith("https://") && phrase.length > 10 -> {
+                podcastUri = phrase
             }
-            emit(newState)
+            else -> {
+                val search = searchPodcasts(phrase.trim())
+                val newState = when (search) {
+                    is SearchPodcasts.Result.Success -> ViewState.SearchResults(results = search.results)
+                    SearchPodcasts.Result.RateLimitError -> ViewState.SearchRateLimited
+                    SearchPodcasts.Result.RequestError -> ViewState.SearchFatalError
+                }
+                emit(newState)
+            }
         }
     }
 

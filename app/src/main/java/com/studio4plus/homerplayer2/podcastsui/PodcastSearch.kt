@@ -66,6 +66,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastForEachIndexed
 import coil3.compose.AsyncImage
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
@@ -112,9 +113,9 @@ fun PodcastSearch(
                 )
             }
         )
-        when (viewState) {
-            is PodcastEditViewModel.ViewState.SearchResults ->
-                LazyColumn {
+        LazyColumn {
+            when (viewState) {
+                is PodcastEditViewModel.ViewState.SearchResults ->
                     items(viewState.results, key = { it.feedUri }) {
                         PodcastSearchResultItem(
                             it,
@@ -127,19 +128,22 @@ fun PodcastSearch(
                                 ),
                         )
                     }
-                    item {
-                        Spacer(Modifier.windowInsetsBottomHeight(windowInsets))
-                    }
-                }
 
-            is PodcastEditViewModel.ViewState.SearchError ->
-                PodcastSearchError(
-                    viewState,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = HomerTheme.dimensions.screenContentPadding)
-                        .padding(top = 24.dp)
-                )
+                is PodcastEditViewModel.ViewState.SearchError ->
+                    item {
+                        PodcastSearchError(
+                            viewState,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = HomerTheme.dimensions.screenContentPadding)
+                                .padding(top = 24.dp)
+                        )
+                    }
+            }
+
+            item {
+                Spacer(Modifier.windowInsetsBottomHeight(windowInsets))
+            }
         }
     }
 }
@@ -175,6 +179,34 @@ private fun PodcastSearchError(
                 modifier = Modifier.padding(bottom = 8.dp)
             )
             Text(stringResource(message))
+            PodcastRssUrlInstructions(
+                modifier = Modifier.padding(top = 32.dp)
+            )
+        }
+    }
+}
+
+@Composable
+private fun PodcastRssUrlInstructions(
+    modifier: Modifier
+) {
+    Column(modifier = modifier) {
+        Text(
+            stringResource(R.string.podcast_url_instructions_preface),
+            modifier = Modifier.padding(bottom = 24.dp)
+        )
+        listOf(
+            R.string.podcast_url_instructions_step1,
+            R.string.podcast_url_instructions_step2,
+            R.string.podcast_url_instructions_step3,
+            R.string.podcast_url_instructions_step4,
+        ).fastForEachIndexed { index, textRes ->
+            Row(
+                modifier = Modifier.padding(bottom = 8.dp)
+            ) {
+                Text((index + 1).toString() + ". ")
+                Text(stringResource(textRes))
+            }
         }
     }
 }
