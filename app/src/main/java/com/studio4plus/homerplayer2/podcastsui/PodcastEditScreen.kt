@@ -33,6 +33,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
@@ -40,6 +41,7 @@ import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
@@ -51,21 +53,30 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.base.ui.DefaultAlertDialog
 import com.studio4plus.homerplayer2.base.ui.SectionTitle
+import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
+import com.studio4plus.homerplayer2.podcasts.MAX_PODCAST_EPISODE_COUNT
 import com.studio4plus.homerplayer2.podcastsui.usecases.PodcastSearchResult
 import org.koin.androidx.compose.koinViewModel
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import kotlin.math.roundToInt
+
+@Composable
+private fun rememberDateFormatter() =
+    remember(LocalConfiguration.current) { DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM) }
 
 @Composable
 fun PodcastEditRoute(
@@ -88,7 +99,8 @@ fun PodcastEditRoute(
         AddPodcastDialog(
             state = addDialogState,
             onAddPodcast = viewModel::onAddNewPodcast,
-            onCancel = viewModel::onUnselectPodcastResult
+            onCancel = viewModel::onUnselectPodcastResult,
+            dateFormatter = rememberDateFormatter()
         )
     }
 }
@@ -181,11 +193,11 @@ private fun PodcastEdit(
         )
 
         SectionTitle("Episodes", modifier = rowModifier)
-        val dateFormatter = remember { DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM) }
         viewState.episodes.fastForEachIndexed { index, item ->
             EpisodeRow(
-                item,
-                dateFormatter,
+                title = item.displayName,
+                publicationDate = item.publicationDate,
+                dateFormatter = rememberDateFormatter(),
                 modifier = rowModifier
                     .animateContentSize()
                     .padding(vertical = 8.dp)
@@ -235,7 +247,7 @@ private fun EpisodeCountPicker(
     onValueChanged: (value: Int) -> Unit,
     modifier: Modifier = Modifier,
     min: Int = 1,
-    max: Int = 5,
+    max: Int = MAX_PODCAST_EPISODE_COUNT,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -261,18 +273,21 @@ private fun EpisodeCountPicker(
 
 @Composable
 private fun EpisodeRow(
-    episode: PodcastEditViewModel.EpisodeViewState,
+    title: String,
+    publicationDate: LocalDate?,
     dateFormatter: DateTimeFormatter, // TODO: consider passing the formatter as composition local.
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
     ) {
-        Text(episode.displayName, style = MaterialTheme.typography.bodyLarge)
+        Text(title, style = MaterialTheme.typography.bodyLarge)
         Text(
-            episode.publicationDate?.format(dateFormatter) ?: "",
+            publicationDate?.format(dateFormatter) ?: "",
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant)
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(top = 4.dp)
+        )
     }
 }
 
@@ -281,6 +296,7 @@ private fun AddPodcastDialog(
     state: PodcastEditViewModel.AddPodcastDialogState,
     onAddPodcast: () -> Unit,
     onCancel: () -> Unit,
+    dateFormatter: DateTimeFormatter,
 ) {
     DefaultAlertDialog(
         onDismissRequest = onCancel,
@@ -288,16 +304,61 @@ private fun AddPodcastDialog(
             TextButton(onClick = onCancel) {
                 Text(stringResource(R.string.generic_dialog_cancel))
             }
-            TextButton(onClick = onAddPodcast, enabled = state.canAdd) {
+            TextButton(
+                onClick = onAddPodcast,
+                enabled = state is PodcastEditViewModel.AddPodcastDialogState.Success
+            ) {
                 Text(stringResource(R.string.podcast_add_dialog_add_button))
             }
         }
     ) { horizontalPadding ->
-        val text = when {
-            state.isLoading -> R.string.podcast_add_dialog_loading
-            state.errorRes != null -> state.errorRes
-            else -> R.string.podcast_add_dialog_ready
+        Box(
+            modifier = Modifier
+                .padding(horizontal = horizontalPadding)
+                .heightIn(min = 160.dp)
+                .fillMaxWidth()
+        ) {
+            when (state) {
+                is PodcastEditViewModel.AddPodcastDialogState.Loading ->
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+
+                is PodcastEditViewModel.AddPodcastDialogState.Error ->
+                    Text(stringResource(state.errorRes))
+
+                is PodcastEditViewModel.AddPodcastDialogState.Success -> {
+                    Column {
+                        Text(
+                            state.title,
+                            style = MaterialTheme.typography.headlineSmall,
+                        )
+                        if (state.latestEpisodeTitle != null) {
+                            SectionTitle(stringResource(R.string.podcast_add_dialog_latest_episode))
+                            EpisodeRow(
+                                state.latestEpisodeTitle,
+                                state.latestEpisodeDate,
+                                dateFormatter
+                            )
+                        }
+                    }
+                }
+            }
         }
-        Text(stringResource(text), modifier = Modifier.padding(horizontal = horizontalPadding))
+
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewAddPodcastDialog() {
+    HomerPlayer2Theme {
+        AddPodcastDialog(
+            PodcastEditViewModel.AddPodcastDialogState.Success(
+                title = "Podcast title",
+                latestEpisodeTitle = "Episode 10",
+                latestEpisodeDate = null,
+            ),
+            {}, {},
+            remember { DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM) }
+        )
     }
 }

@@ -24,32 +24,19 @@
 
 package com.studio4plus.homerplayer2.podcasts.usecases
 
-import com.prof18.rssparser.model.RssChannel
 import com.studio4plus.homerplayer2.podcasts.data.Podcast
 import com.studio4plus.homerplayer2.podcasts.data.PodcastEpisode
 import org.koin.core.annotation.Factory
-import java.time.Instant
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
 import java.util.UUID
 
 @Factory
 class UpdatePodcastFromFeed(
     private val updatePodcastEpisodes: UpdatePodcastEpisodes,
 ) {
-
     // TODO: unit tests
-    suspend operator fun invoke(podcast: Podcast, feed: RssChannel): Boolean {
-        val latestEpisodes = feed.items
-            .mapNotNull {
-                when {
-                    it.audio != null -> Pair(it, it.pubDate?.parseRssDate())
-                    else -> null
-                }
-            }
-            .sortedByDescending { it.second }
-            .take(podcast.downloadEpisodeCount)
-        val totalCount = feed.items.size
+    suspend operator fun invoke(podcast: Podcast, feed: PodcastFeed): Boolean {
+        val latestEpisodes = feed.latestEpisodes.take(podcast.downloadEpisodeCount)
+        val totalCount = feed.rss.items.size
         val episodes = latestEpisodes.mapIndexed { index, (episode, pubTime) ->
             val uri = requireNotNull(episode.audio) // Filtered above
             PodcastEpisode(
@@ -62,12 +49,7 @@ class UpdatePodcastFromFeed(
                 fileId = UUID.nameUUIDFromBytes(uri.encodeToByteArray()).toString()
             )
         }
-        updatePodcastEpisodes(podcast, feed.title!!, episodes)
+        updatePodcastEpisodes(podcast, feed.title, episodes)
         return latestEpisodes.isNotEmpty()
     }
-
-    private fun String?.parseRssDate(): Instant? =
-        this?.let {
-            ZonedDateTime.parse(this, DateTimeFormatter.RFC_1123_DATE_TIME).toInstant()
-        }
 }

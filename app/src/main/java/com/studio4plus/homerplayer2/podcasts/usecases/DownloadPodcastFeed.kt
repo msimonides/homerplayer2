@@ -27,8 +27,10 @@ package com.studio4plus.homerplayer2.podcasts.usecases
 import com.prof18.rssparser.RssParser
 import com.prof18.rssparser.exception.RssParsingException
 import com.prof18.rssparser.model.RssChannel
+import com.prof18.rssparser.model.RssItem
 import com.studio4plus.homerplayer2.base.DispatcherProvider
 import com.studio4plus.homerplayer2.net.executeAwait
+import com.studio4plus.homerplayer2.podcasts.MAX_PODCAST_EPISODE_COUNT
 import kotlinx.coroutines.runInterruptible
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.OkHttpClient
@@ -37,7 +39,21 @@ import org.koin.core.annotation.Factory
 import timber.log.Timber
 import java.io.IOException
 import java.net.UnknownHostException
+import java.time.Instant
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import javax.net.ssl.SSLException
+
+data class PodcastFeedEpisode(
+    val rssItem: RssItem,
+    val publicationTime: Instant?
+)
+
+data class PodcastFeed(
+    val rss: RssChannel,
+    val title: String,
+    val latestEpisodes: List<PodcastFeedEpisode> // Ordered newest to oldest.
+)
 
 @Factory
 class DownloadPodcastFeed(
@@ -45,8 +61,9 @@ class DownloadPodcastFeed(
     private val okHttpClient: OkHttpClient,
     private val rssParser: RssParser,
 ) {
+
     sealed interface Result {
-        data class Success(val feed: RssChannel) : Result
+        data class Success(val feed: PodcastFeed) : Result
         object ParseError : Result
         data class Error(val httpCode: Int) : Result
         object UnknownAddress : Result
@@ -85,11 +102,20 @@ class DownloadPodcastFeed(
     private suspend fun parse(text: String, uri: String): Result =
         try {
             val feed = rssParser.parse(text)
-            if (feed.title.isNullOrBlank() || feed.items.isNotEmpty()) {
+            if (feed.title.isNullOrBlank() || feed.items.isEmpty()) {
                 Timber.w("Error validating $uri: no title or no episodes")
                 Result.ParseError
             } else {
-                Result.Success(feed)
+                val latestEpisodes = feed.items
+                    .mapNotNull {
+                        when {
+                            it.audio != null -> PodcastFeedEpisode(it, it.pubDate?.parseRssDate())
+                            else -> null
+                        }
+                    }
+                    .sortedByDescending { it.publicationTime }
+                    .take(MAX_PODCAST_EPISODE_COUNT)
+                Result.Success(PodcastFeed(feed, requireNotNull(feed.title), latestEpisodes))
             }
         } catch (illegalArgument: IllegalArgumentException) {
             // RssParser throws IllegalArgumentException when input is not a valid XML.
@@ -98,5 +124,10 @@ class DownloadPodcastFeed(
         } catch (parseException: RssParsingException) {
             Timber.w(parseException, "Error parsing $uri: ${text.take(100)}")
             Result.ParseError
+        }
+
+    private fun String?.parseRssDate(): Instant? =
+        this?.let {
+            ZonedDateTime.parse(this, DateTimeFormatter.RFC_1123_DATE_TIME).toInstant()
         }
 }

@@ -70,8 +70,7 @@
     <string name="playback_volume_down_button_description">Volume Down</string>
 
     <string name="podcast_accessibility_action_edit">Edit</string>
-    <string name="podcast_add_dialog_loading">Loading podcast feed…</string>
-    <string name="podcast_add_dialog_ready">Podcast loaded</string>
+    <string name="podcast_add_dialog_latest_episode">Latest episode:</string>
     <string name="podcast_add_dialog_add_button">Add podcast</string>
     <string name="podcast_feed_error_doesnt_exist">Unknown or incorrect URL</string>
     <string name="podcast_feed_error_ssl_error">SSL certificate error</string>

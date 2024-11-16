@@ -28,7 +28,6 @@ import androidx.annotation.StringRes
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.prof18.rssparser.model.RssChannel
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.podcasts.PodcastsTaskScheduler
 import com.studio4plus.homerplayer2.podcasts.data.Podcast
@@ -37,6 +36,7 @@ import com.studio4plus.homerplayer2.podcasts.data.PodcastWithEpisodes
 import com.studio4plus.homerplayer2.podcasts.data.PodcastsDao
 import com.studio4plus.homerplayer2.podcasts.usecases.DownloadPodcastFeed
 import com.studio4plus.homerplayer2.podcasts.usecases.PodcastEpisodeName
+import com.studio4plus.homerplayer2.podcasts.usecases.PodcastFeed
 import com.studio4plus.homerplayer2.podcasts.usecases.UpdatePodcastFromFeed
 import com.studio4plus.homerplayer2.podcasts.usecases.UpdatePodcastNameConfig
 import com.studio4plus.homerplayer2.podcastsui.PodcastEditViewModel.Feed
@@ -99,15 +99,18 @@ class PodcastEditViewModel(
         ) : ViewState
     }
 
-    data class AddPodcastDialogState(
-        val isLoading: Boolean,
-        @StringRes val errorRes: Int?,
-    ) {
-        val canAdd = !isLoading && errorRes == null
+    sealed interface AddPodcastDialogState {
+        object Loading : AddPodcastDialogState
+        data class Error(@StringRes val errorRes: Int) : AddPodcastDialogState
+        data class Success(
+            val title: String,
+            val latestEpisodeTitle: String?,
+            val latestEpisodeDate: LocalDate?,
+        ) : AddPodcastDialogState
     }
 
     private sealed interface Feed {
-        data class Parsed(val channel: RssChannel) : Feed
+        data class Parsed(val feed: PodcastFeed) : Feed
         data class Error(@StringRes val message: Int) : Feed
     }
 
@@ -130,7 +133,7 @@ class PodcastEditViewModel(
         else
             null
     }.stateIn(viewModelScope, SharingStarted.Eagerly, null)
-    private val podcastParsedFeedFlow = podcastFeedFlow.filterIsInstance<Feed.Parsed>().map { it.channel }
+    private val podcastParsedFeedFlow = podcastFeedFlow.filterIsInstance<Feed.Parsed>().map { it.feed }
 
     private val podcastFlow: Flow<PodcastWithEpisodes?> = podcastUriFlow.flatMapLatest {
         podcastsDao.observePodcast(it)
@@ -169,12 +172,18 @@ class PodcastEditViewModel(
             null
         } else {
             when (feedResult) {
-                null -> AddPodcastDialogState(isLoading = true, errorRes = null)
-                is Feed.Parsed -> AddPodcastDialogState(isLoading = false, errorRes = null)
-                is Feed.Error -> AddPodcastDialogState(
-                    isLoading = false,
-                    errorRes = feedResult.message
-                )
+                null -> AddPodcastDialogState.Loading
+                is Feed.Parsed -> {
+                    val latestEpisode = feedResult.feed.latestEpisodes.firstOrNull()
+                    AddPodcastDialogState.Success(
+                        feedResult.feed.title,
+                        latestEpisode?.rssItem?.title,
+                        latestEpisode?.publicationTime?.let {
+                            LocalDate.ofInstant(it, ZoneId.systemDefault())
+                        }
+                    )
+                }
+                is Feed.Error -> AddPodcastDialogState.Error(feedResult.message)
             }
         }
     }
@@ -221,12 +230,12 @@ class PodcastEditViewModel(
 
     fun onAddNewPodcast() {
         viewModelScope.launch {
-            val channel = podcastParsedFeedFlow.first()
+            val feed = podcastParsedFeedFlow.first()
             check(podcastUri.isNotEmpty())
 
             val newPodcast = Podcast(
                 feedUri = podcastUri,
-                title = requireNotNull(channel.title),
+                title = feed.title,
                 titleOverride = null,
                 includeEpisodeNumber = true,
                 includePodcastTitle = true,
@@ -298,25 +307,6 @@ class PodcastEditViewModel(
                 includeEpisodeTitle = false
             )
         }
-    }
-
-    private fun newPodcastFlow(searchPhrase: String): Flow<ViewState> = flow {
-/*        emit(ViewState.NewPodcast(uri = uri, isLoading = false, isValid = false))
-        if (uri.length <= "https://".length)
-            return@flow
-
-        delay(1000) // Debounce
-        emit(ViewState.NewPodcast(uri = uri, isLoading = true, isValid = false))
-        podcastFeedFlow.value = null
-        val feed = fetchAndParse(uri)
-        podcastFeedFlow.value = feed
-        val newState = when(feed) {
-            is Feed.Parsed ->
-                ViewState.NewPodcast(uri = uri, isLoading = false, isValid = true, podcastTitle = feed.channel.title)
-            is Feed.Error ->
-                ViewState.NewPodcast(uri = uri, isLoading = false, isValid = false, errorRes = feed.message)
-        }
-        emit(newState) */
     }
 
     private fun PodcastEpisode.toViewState(podcast: Podcast) = EpisodeViewState(
