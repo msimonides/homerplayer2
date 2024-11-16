@@ -34,8 +34,9 @@ import androidx.room.Relation
 import androidx.room.Transaction
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
+import java.util.Objects
 
-data class PodcastWithEpisodes(
+class PodcastWithEpisodes(
     @Embedded
     val podcast: Podcast,
     @Relation(
@@ -43,11 +44,24 @@ data class PodcastWithEpisodes(
         parentColumn = "feed_uri",
         entityColumn = "feed_uri",
     )
-    val episodesUnordered: List<PodcastEpisode>
+    private val episodesUnordered: List<PodcastEpisode>
 ) {
     // @Relation doesn't provide ordering, sort explicitly. The number of episodes is less than ten.
     @Ignore
-    val episodes = episodesUnordered.sortedBy { it.number }
+    val episodes = episodesUnordered.sortedByDescending { it.number }
+
+    // Don't use data class to use component2 for the ordered episodes
+    operator fun component1(): Podcast = podcast
+    operator fun component2(): List<PodcastEpisode> = episodes
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is PodcastWithEpisodes) return false
+        return podcast == other.podcast && episodes == other.episodes
+    }
+
+    override fun hashCode(): Int =
+        Objects.hash(podcast, episodes)
 }
 
 @Dao
