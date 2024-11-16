@@ -44,6 +44,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -60,8 +61,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -115,18 +118,56 @@ fun PodcastSearch(
         )
         LazyColumn {
             when (viewState) {
-                is PodcastEditViewModel.ViewState.SearchResults ->
-                    items(viewState.results, key = { it.feedUri }) {
-                        PodcastSearchResultItem(
-                            it,
+                PodcastEditViewModel.ViewState.Search.Blank -> Unit
+
+                PodcastEditViewModel.ViewState.Search.Loading ->
+                    item {
+                        Box(
                             modifier = Modifier
-                                .clickable { onSelectSearchResult(it) }
                                 .fillMaxWidth()
-                                .padding(
-                                    horizontal = HomerTheme.dimensions.screenContentPadding,
-                                    vertical = 16.dp
-                                ),
-                        )
+                                .padding(vertical = 48.dp)
+                        ) {
+                            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                        }
+                    }
+
+                is PodcastEditViewModel.ViewState.Search.Results ->
+                    if (viewState.results.isEmpty()) {
+                        item {
+                            PodcastSearchNoResults(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = HomerTheme.dimensions.screenContentPadding),
+                            )
+                        }
+                    } else {
+                        items(viewState.results, key = { it.feedUri }) {
+                            PodcastSearchResultItem(
+                                it,
+                                modifier = Modifier
+                                    .clickable { onSelectSearchResult(it) }
+                                    .fillMaxWidth()
+                                    .padding(
+                                        horizontal = HomerTheme.dimensions.screenContentPadding,
+                                        vertical = 16.dp
+                                    ),
+                            )
+                        }
+                        if (viewState.moreResultsAvailable) {
+                            item(key = "more results available") {
+                                val string = with(viewState.results) {
+                                    pluralStringResource(R.plurals.podcast_search_first_results, size, size)
+                                }
+                                Text(
+                                    string,
+                                    color = MaterialTheme.colorScheme.secondary,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(HomerTheme.dimensions.screenContentPadding)
+                                )
+                            }
+                        }
                     }
 
                 is PodcastEditViewModel.ViewState.SearchError ->
@@ -145,6 +186,25 @@ fun PodcastSearch(
                 Spacer(Modifier.windowInsetsBottomHeight(windowInsets))
             }
         }
+    }
+}
+
+@Composable
+private fun PodcastSearchNoResults(
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+    ) {
+        Text(
+            stringResource(R.string.podcast_search_no_results),
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(vertical = 32.dp)
+        )
+        PodcastRssUrlInstructions()
     }
 }
 
@@ -188,7 +248,7 @@ private fun PodcastSearchError(
 
 @Composable
 private fun PodcastRssUrlInstructions(
-    modifier: Modifier
+    modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
         Text(
@@ -274,7 +334,7 @@ private fun ClearValueIconButton(
 @Composable
 private fun PreviewPodcastSearch() {
     HomerPlayer2Theme {
-        val viewState = PodcastEditViewModel.ViewState.SearchResults(
+        val viewState = PodcastEditViewModel.ViewState.Search.Results(
             results = listOf(
                 PodcastSearchResult(
                     "",
@@ -282,8 +342,21 @@ private fun PreviewPodcastSearch() {
                     "Podcast author",
                     "Most interesting podcast in the world",
                     ""
-                )
+                ),
             ),
+            moreResultsAvailable = true,
+        )
+        PodcastSearch(viewState, {}, {})
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewPodcastSearchNoResults() {
+    HomerPlayer2Theme {
+        val viewState = PodcastEditViewModel.ViewState.Search.Results(
+            results = emptyList(),
+            moreResultsAvailable = false,
         )
         PodcastSearch(viewState, {}, {})
     }

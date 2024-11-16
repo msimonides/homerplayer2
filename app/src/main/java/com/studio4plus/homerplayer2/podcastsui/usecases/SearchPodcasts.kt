@@ -26,6 +26,7 @@ package com.studio4plus.homerplayer2.podcastsui.usecases
 
 import com.mr3y.podcastindex.PodcastIndexClient
 import com.mr3y.podcastindex.model.RateLimitExceededException
+import com.studio4plus.homerplayer2.podcastsui.PODCAST_SEARCH_MAX_RESULTS
 import io.sentry.Sentry
 import org.koin.core.annotation.Factory
 import timber.log.Timber
@@ -51,7 +52,10 @@ class SearchPodcasts (
 
     suspend operator fun invoke(searchTerm: String): Result =
         try {
-            val results = podcastIndex.search.forPodcastsByTerm(searchTerm, limit = 10)
+            val results = podcastIndex.search.forPodcastsByTerm(
+                searchTerm,
+                limit = PODCAST_SEARCH_MAX_RESULTS
+            )
             val searchResults = results.feeds
                 .filter { it.dead == 0 }
                 .map {

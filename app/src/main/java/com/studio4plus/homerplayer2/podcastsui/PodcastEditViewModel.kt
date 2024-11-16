@@ -85,10 +85,14 @@ class PodcastEditViewModel(
     sealed interface ViewState {
         object Loading : ViewState
 
-        sealed interface Search : ViewState
-        data class SearchResults(
-            val results: List<PodcastSearchResult>,
-        ) : Search
+        sealed interface Search : ViewState {
+            object Blank : Search
+            object Loading : Search
+            data class Results(
+                val results: List<PodcastSearchResult>,
+                val moreResultsAvailable: Boolean
+            ) : Search
+        }
 
         sealed interface SearchError : Search
         object SearchRateLimited : SearchError
@@ -161,7 +165,7 @@ class PodcastEditViewModel(
         }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(),
-            if (isNewPodcast) ViewState.SearchResults(results = emptyList()) else ViewState.Loading
+            if (isNewPodcast) ViewState.Search.Blank else ViewState.Loading
         )
 
     val addPodcastDialog: Flow<AddPodcastDialogState?> = combine(
@@ -211,17 +215,23 @@ class PodcastEditViewModel(
     }
 
     private fun searchFlow(ignored: Unit) = flow {
-        emit(ViewState.SearchResults(results = emptyList()))
+        emit(ViewState.Search.Loading)
         val phrase = searchPhrase
         when {
-            phrase.isBlank() -> Unit
+            phrase.isBlank() -> emit(ViewState.Search.Blank)
             phrase.startsWith("https://") && phrase.length > 10 -> {
                 podcastUri = phrase
             }
             else -> {
                 val search = searchPodcasts(phrase.trim())
                 val newState = when (search) {
-                    is SearchPodcasts.Result.Success -> ViewState.SearchResults(results = search.results)
+                    is SearchPodcasts.Result.Success ->
+                        ViewState.Search.Results(
+                            results = search.results,
+                            // We don't know if more results are available, but if max number is
+                            // returned there's a chance there are.
+                            moreResultsAvailable = search.results.size == PODCAST_SEARCH_MAX_RESULTS
+                        )
                     SearchPodcasts.Result.RateLimitError -> ViewState.SearchRateLimited
                     SearchPodcasts.Result.RequestError -> ViewState.SearchFatalError
                 }
