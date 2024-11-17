@@ -34,8 +34,8 @@
     <string name="content_section_title_audiobooks">Audiobooks folders</string>
     <string name="content_section_title_podcasts">Podcasts</string>
 
-    <string name="onboarding_audiobook_folders_title">Audiobooks</string>
-    <string name="onboarding_audiobook_folders_description">Please select at least one folder with your audiobooks.</string>
+    <string name="onboarding_content_title">Audiobooks and Podcasts</string>
+    <string name="onboarding_content_description">Please add at least one folder with your audiobooks or one podcast.</string>
     <string name="onboarding_podcast_title">Podcast</string>
     <string name="onboarding_speech_description">Homer Player uses text-to-speech engine to read book titles.\nPlease test that </string>
     <string name="onboarding_speech_open_settings">Open text-to-speech settings</string>
@@ -87,9 +87,18 @@
     <string name="settings_ui_settings_title">Settings</string>
     <string name="settings_ui_about_item">About the app…</string>
     <string name="settings_ui_about_title">About Homer Player 2</string>
-    <string name="settings_ui_content_item">Audiobooks folders…</string>
-    <string name="settings_ui_content_title">Audiobooks folders</string>
-    <string name="settings_ui_content_summary_empty">(no folders selected)</string>
+    <string name="settings_ui_content_item">Audiobooks and podcasts…</string>
+    <string name="settings_ui_content_title">Audiobooks and podcasts</string>
+    <string name="settings_ui_content_summary">%1$s and %2$s</string>
+    <plurals name="settings_ui_content_summary_audiobook_folders">
+        <item quantity="one">%1$d audiobooks folder</item>
+        <item quantity="other">%1$d audiobooks folders</item>
+    </plurals>
+    <plurals name="settings_ui_content_summary_pocasts">
+        <item quantity="one">%1$d podcast</item>
+        <item quantity="other">%1$d podcasts</item>
+    </plurals>
+    <string name="settings_ui_content_summary_empty">(no content selected)</string>
     <string name="settings_ui_haptic_feedback_label">Haptic feedback</string>
     <string name="settings_ui_layout_settings_item">Screen margins…</string>
     <string name="settings_ui_layout_dialog_message">Drag the edges to adjust screen margins. Rotate screen to adjust the other orientation.</string>

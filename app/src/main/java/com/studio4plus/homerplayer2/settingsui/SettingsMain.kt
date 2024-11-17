@@ -35,6 +35,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -43,6 +44,7 @@ import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.settingsdata.UiThemeMode
 import com.studio4plus.homerplayer2.settingsui.composables.SelectFromRadioListDialog
 import com.studio4plus.homerplayer2.settingsui.composables.SettingItem
+import com.studio4plus.homerplayer2.settingsui.usecases.ContentDescriptionFlow
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -106,8 +108,7 @@ private fun SettingsMain(
             }
             SettingItem(
                 label = stringResource(R.string.settings_ui_content_item),
-                summary = viewState.audiobookFolders
-                    ?: stringResource(R.string.settings_ui_content_summary_empty),
+                summary = viewState.content.summary(),
                 onClick = navigateFolders,
                 modifier = settingItemModifier
             )
@@ -177,12 +178,28 @@ private fun UiThemeMode.labelRes() = when(this) {
     UiThemeMode.DARK -> R.string.settings_ui_mode_dark
 }
 
+@Composable
+private fun ContentDescriptionFlow.Content.summary(): String {
+    val audiobooksString = pluralStringResource(
+        R.plurals.settings_ui_content_summary_audiobook_folders,
+        audiobookFolders,
+        audiobookFolders
+    )
+    val podcastsString = pluralStringResource(R.plurals.settings_ui_content_summary_pocasts, podcasts, podcasts)
+    return when {
+        audiobookFolders == 0 && podcasts == 0 -> stringResource(R.string.settings_ui_content_summary_empty)
+        audiobookFolders == 0 -> podcastsString
+        podcasts == 0 -> audiobooksString
+        else -> stringResource(R.string.settings_ui_content_summary, audiobooksString, podcastsString)
+    }
+}
+
 @Preview
 @Composable
 private fun PreviewSettingsMain() {
     HomerPlayer2Theme {
         val viewState = SettingsMainViewModel.ViewState(
-            audiobookFolders = "AudioBooks, Samples",
+            content = ContentDescriptionFlow.Content(audiobookFolders = 2, podcasts = 1),
             rateAppIntent = null,
             ttsEnabled = true,
             uiMode = UiThemeMode.SYSTEM,

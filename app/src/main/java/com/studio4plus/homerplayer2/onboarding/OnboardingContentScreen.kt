@@ -40,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFolderViewState
@@ -156,10 +157,13 @@ private fun ScreenContent(
 ) {
     Column(modifier = modifier) {
         Text(
-            text = stringResource(id = R.string.onboarding_audiobook_folders_title),
+            text = stringResource(id = R.string.onboarding_content_title),
             style = MaterialTheme.typography.headlineMedium
         )
-        Text(text = stringResource(id = R.string.onboarding_audiobook_folders_description))
+        Text(
+            text = stringResource(id = R.string.onboarding_content_description),
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
 
         ContentManagementPanel(
             state = panelState,

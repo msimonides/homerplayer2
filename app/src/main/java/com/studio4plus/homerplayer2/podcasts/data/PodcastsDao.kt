@@ -76,6 +76,9 @@ abstract class PodcastsDao {
     @Query("""SELECT EXISTS (SELECT * FROM podcasts)""")
     abstract fun observeHasAnyPodcast(): Flow<Boolean>
 
+    @Query("""SELECT COUNT(*) FROM podcasts""")
+    abstract fun observeCount(): Flow<Int>
+
     @Query("""SELECT * FROM podcasts WHERE feed_uri = :feedUri""")
     @Transaction
     abstract fun observePodcast(feedUri: String): Flow<PodcastWithEpisodes?>

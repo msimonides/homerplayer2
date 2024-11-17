@@ -31,11 +31,10 @@ import android.net.Uri
 import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFolderNamesFlow
-import com.studio4plus.homerplayer2.audiobookfoldersui.joinToEllipsizedString
 import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
 import com.studio4plus.homerplayer2.settingsdata.UiSettings
 import com.studio4plus.homerplayer2.settingsdata.UiThemeMode
+import com.studio4plus.homerplayer2.settingsui.usecases.ContentDescriptionFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -48,12 +47,12 @@ import org.koin.core.annotation.Named
 class SettingsMainViewModel(
     private val appContext: Context,
     private val mainScope: CoroutineScope,
-    audiobookFolderNamesFlow: AudiobookFolderNamesFlow,
+    contentDescription: ContentDescriptionFlow,
     @Named(SettingsDataModule.UI) private val uiSettingsStore: DataStore<UiSettings>
 ) : ViewModel() {
 
     class ViewState(
-        val audiobookFolders: String?,
+        val content: ContentDescriptionFlow.Content,
         val rateAppIntent: Intent?,
         val ttsEnabled: Boolean,
         val uiMode: UiThemeMode,
@@ -65,12 +64,12 @@ class SettingsMainViewModel(
     }
 
     val viewState = combine(
-        audiobookFolderNamesFlow,
+        contentDescription,
         uiSettingsStore.data,
         rateAppIntent,
-    ) { folderNames, uiSettings, rateAppIntent ->
+    ) { contentCount, uiSettings, rateAppIntent ->
         ViewState(
-            audiobookFolders = folderNames.takeIf { it.isNotEmpty() }?.joinToEllipsizedString(),
+            content = contentCount,
             rateAppIntent = rateAppIntent,
             ttsEnabled = uiSettings.readBookTitles,
             uiMode = uiSettings.uiThemeMode,

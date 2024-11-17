@@ -22,28 +22,36 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.audiobookfoldersui
+package com.studio4plus.homerplayer2.settingsui.usecases
 
 import com.studio4plus.homerplayer2.audiobookfolders.AudiobookFoldersDao
-import com.studio4plus.homerplayer2.base.DispatcherProvider
+import com.studio4plus.homerplayer2.audiobooks.AudiobooksDao
+import com.studio4plus.homerplayer2.podcasts.data.PodcastsDao
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import org.koin.core.annotation.Factory
 
 @Factory
-class AudiobookFolderNamesFlow(
-    dispatcherProvider: DispatcherProvider,
+class ContentDescriptionFlow(
     audiobookFoldersDao: AudiobookFoldersDao,
-    audiobooksFolderName: AudiobooksFolderName,
-): Flow<List<String>> {
+    podcastsDao: PodcastsDao
+) : Flow<ContentDescriptionFlow.Content> {
 
-    private val foldersFlow =  audiobookFoldersDao.getAll().map { folders ->
-        folders.mapNotNull { folder -> audiobooksFolderName(folder) }
-    }.flowOn(dispatcherProvider.Io)
+    data class Content(
+        val audiobookFolders: Int,
+        val podcasts: Int
+    )
 
-    override suspend fun collect(collector: FlowCollector<List<String>>) {
-        foldersFlow.collect(collector)
+    private val flow = combine(
+        audiobookFoldersDao.getAll().map { it.size },
+        podcastsDao.observeCount()
+    ) { audiobookFoldersCount, podcastsCount ->
+        Content(audiobookFoldersCount, podcastsCount)
+    }
+
+    override suspend fun collect(collector: FlowCollector<Content>) {
+        flow.collect(collector)
     }
 }
