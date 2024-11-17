@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.base.ui.DefaultAlertDialog
 import io.sentry.Sentry
+import com.studio4plus.homerplayer2.base.R as BaseR
 
 @Composable
 private fun OpenDocumentTreeFailedDialog(
@@ -60,7 +61,7 @@ private fun OpenDocumentTreeFailedDialog(
                 onClick = onDismissRequest,
                 modifier = Modifier.padding(top = 16.dp).align(Alignment.End)
             ) {
-                Text(stringResource(id = R.string.generic_dialog_confirm))
+                Text(stringResource(id = BaseR.string.generic_dialog_confirm))
             }
         }
     }

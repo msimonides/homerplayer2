@@ -54,6 +54,7 @@ import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.base.Constants
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
+import com.studio4plus.homerplayer2.base.R as BaseR
 
 @Composable
 fun SettingsKioskModeSetupRoute() = SettingsKioskModeSetup()
@@ -86,7 +87,7 @@ fun SettingsKioskModeSetup() {
             Text(stringResource(R.string.settings_ui_kiosk_mode_setup_open_instructions))
         }
         Text(
-            stringResource(R.string.generic_website_alternative, Constants.UrlKioskSetupInstructions),
+            stringResource(BaseR.string.generic_website_alternative, Constants.UrlKioskSetupInstructions),
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
             modifier = Modifier

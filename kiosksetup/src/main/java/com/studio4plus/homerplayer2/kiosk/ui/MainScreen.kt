@@ -134,7 +134,7 @@ fun MainScreen(
         }
         if (viewState.mainActionWebsiteUrl != null) {
             Text(
-                stringResource(R.string.instructions_website_alternative, viewState.mainActionWebsiteUrl),
+                stringResource(BaseR.string.generic_website_alternative, viewState.mainActionWebsiteUrl),
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,
                 modifier = textRowModifier.padding(top = 8.dp)

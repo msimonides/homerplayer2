@@ -48,6 +48,7 @@ import com.studio4plus.homerplayer2.settingsui.composables.SelectFromRadioListDi
 import com.studio4plus.homerplayer2.settingsui.composables.SettingItem
 import org.koin.androidx.compose.koinViewModel
 import java.util.concurrent.TimeUnit
+import com.studio4plus.homerplayer2.base.R as BaseR
 
 @Composable
 fun SettingsPlaybackRoute(
@@ -203,7 +204,7 @@ private fun SelectPlaybackSpeedDialog(
         onDismissRequest = onDismissRequest
     ) {
         TextButton(onClick = onDismissRequest) {
-            Text(stringResource(R.string.generic_dialog_cancel))
+            Text(stringResource(BaseR.string.generic_dialog_cancel))
         }
         TextButton(
             onClick = {
@@ -211,7 +212,7 @@ private fun SelectPlaybackSpeedDialog(
                 onDismissRequest()
             }
         ) {
-            Text(stringResource(R.string.generic_dialog_confirm))
+            Text(stringResource(BaseR.string.generic_dialog_confirm))
         }
     }
 }

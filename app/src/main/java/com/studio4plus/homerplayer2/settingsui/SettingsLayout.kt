@@ -77,6 +77,7 @@ import com.studio4plus.homerplayer2.settingsui.composables.LayoutSizeDragHandle
 import com.studio4plus.homerplayer2.settingsui.composables.rememberLayoutSizeDragHandleState
 import com.studio4plus.homerplayer2.utils.blockTouchEvents
 import org.koin.androidx.compose.koinViewModel
+import com.studio4plus.homerplayer2.base.R as BaseR
 
 @Composable
 fun SettingsLayoutRoute(
@@ -234,13 +235,13 @@ private fun Overlay(
                     onClick = onSave,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(stringResource(R.string.generic_dialog_save))
+                    Text(stringResource(BaseR.string.generic_dialog_save))
                 }
                 OutlinedButton(
                     onClick = onCancel,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(stringResource(R.string.generic_dialog_cancel))
+                    Text(stringResource(BaseR.string.generic_dialog_cancel))
                 }
             }
         }

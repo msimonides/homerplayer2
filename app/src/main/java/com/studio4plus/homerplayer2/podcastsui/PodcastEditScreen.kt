@@ -66,6 +66,7 @@ import com.studio4plus.homerplayer2.base.ui.DefaultAlertDialog
 import com.studio4plus.homerplayer2.base.ui.SectionTitle
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
+import com.studio4plus.homerplayer2.base.R as BaseR
 import com.studio4plus.homerplayer2.podcasts.MAX_PODCAST_EPISODE_COUNT
 import com.studio4plus.homerplayer2.podcastsui.usecases.PodcastSearchResult
 import org.koin.androidx.compose.koinViewModel
@@ -81,6 +82,7 @@ private fun rememberDateFormatter() =
 @Composable
 fun PodcastEditRoute(
     viewModel: PodcastEditViewModel = koinViewModel(),
+    modifier: Modifier = Modifier,
 ) {
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
     val addDialogState = viewModel.addPodcastDialog.collectAsStateWithLifecycle(null).value
@@ -92,7 +94,7 @@ fun PodcastEditRoute(
         onEpisodeTitleIncludePodcastTitle = viewModel::onEpisodeTitleIncludePodcastTitle,
         onEpisodeTitleIncludeNumber = viewModel::onEpisodeTitleIncludeNumber,
         onEpisodeTitleIncludeEpisodeTitle = viewModel::onEpisodeTitleIncludeEpisodeTitle,
-        modifier = Modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize()
     )
 
     if (addDialogState != null) {
@@ -302,7 +304,7 @@ private fun AddPodcastDialog(
         onDismissRequest = onCancel,
         buttons = {
             TextButton(onClick = onCancel) {
-                Text(stringResource(R.string.generic_dialog_cancel))
+                Text(stringResource(BaseR.string.generic_dialog_cancel))
             }
             TextButton(
                 onClick = onAddPodcast,

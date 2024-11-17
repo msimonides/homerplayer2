@@ -26,8 +26,12 @@ package com.studio4plus.homerplayer2.onboarding
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import androidx.navigation.navArgument
+import com.studio4plus.homerplayer2.podcastsui.PodcastEditNav
+import java.net.URLEncoder
 
 fun NavGraphBuilder.onboardingGraph(navController: NavController, destinationRoute: String) {
     navigation("onboarding/tts", "onboarding") {
@@ -36,11 +40,24 @@ fun NavGraphBuilder.onboardingGraph(navController: NavController, destinationRou
         }
         composable("onboarding/folders") {
             OnboardingContentRoute(
+                navigateAddPodcast = { navController.navigate("onboarding/podcast/") },
+                navigateEditPodcast = { feedUri ->
+                    val argument = URLEncoder.encode(feedUri)
+                    navController.navigate("onboarding/podcast/$argument")
+                },
                 navigateNext = {
                     navController.navigate(destinationRoute) {
                         popUpTo("onboarding/tts") { inclusive = true }
                     }
                 },
+                navigateBack = { navController.popBackStack() }
+            )
+        }
+        composable(
+            "onboarding/podcast/{${PodcastEditNav.FeedUriKey}}",
+            arguments = listOf(navArgument(PodcastEditNav.FeedUriKey) { NavType.StringType })
+        ) {
+            OnboardingAddPodcastRoute(
                 navigateBack = { navController.popBackStack() }
             )
         }

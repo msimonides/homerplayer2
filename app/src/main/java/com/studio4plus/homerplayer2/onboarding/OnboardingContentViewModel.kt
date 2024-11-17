@@ -52,7 +52,7 @@ class OnboardingContentViewModel(
     )
 
     val viewState = contentPanelViewStateFlow
-        .map { ViewState(it, it.folders.isNotEmpty()) }
+        .map { ViewState(it, it.folders.isNotEmpty() || it.podcasts.isNotEmpty()) }
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000),

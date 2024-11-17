@@ -14,14 +14,4 @@
     <string name="drop_privilege_confirm_message">This action cannot be easily undone.\nReturn the device to regular use, it will no longer be possible to use full kiosk mode in Homer Player.\n\nUse Factory Reset instead of (or in addition to) using this function.</string>
     <string name="drop_privilege_confirm_confirm_button">Remove privilege</string>
     <string name="drop_privilege_confirm_cancel_button">Cancel</string>
-
-    <!-- Displayed below button_setup_instructions_website
-         Tells the user they can open the given website address in a browser, e.g. on their laptop.
-         Parameters:
-         %1$s - address of the instructions web page
-
-         Example:
-         or go to:\nhttps://homerplayer.app/setup
-      -->
-    <string name="instructions_website_alternative">or go to:\n%1$s</string>
 </resources>

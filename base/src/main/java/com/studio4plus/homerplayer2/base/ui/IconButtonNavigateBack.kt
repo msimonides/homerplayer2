@@ -22,24 +22,29 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.kiosk.ui
+package com.studio4plus.homerplayer2.base.ui
 
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
+import androidx.compose.ui.res.stringResource
+import com.studio4plus.homerplayer2.base.R
 
 @Composable
-fun KioskSetupUi() {
-    HomerPlayer2Theme {
-        // A surface container using the 'background' color from the theme
-        Surface(
-            color = MaterialTheme.colorScheme.background,
-            modifier = Modifier.navigationBarsPadding()
-        ) {
-            MainScreenRoute()
-        }
+fun IconButtonNavigateBack(
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    IconButton(
+        onClick = onBack,
+        modifier = modifier,
+    ) {
+        Icon(
+            Icons.AutoMirrored.Filled.ArrowBack,
+            contentDescription = stringResource(R.string.generic_navigate_back),
+        )
     }
 }

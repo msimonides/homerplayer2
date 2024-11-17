@@ -75,6 +75,7 @@ import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 import com.studio4plus.homerplayer2.podcastsui.usecases.PodcastSearchResult
+import com.studio4plus.homerplayer2.base.R as BaseR
 
 @Composable
 fun PodcastSearch(
@@ -112,7 +113,7 @@ fun PodcastSearch(
                         onSearchPhraseChange("")
                     },
                     enabled = searchPhrase.isNotEmpty(),
-                    contentDescription = stringResource(R.string.generic_text_field_clear_content_description)
+                    contentDescription = stringResource(BaseR.string.generic_text_field_clear_content_description)
                 )
             }
         )

@@ -34,23 +34,9 @@
     <string name="content_section_title_audiobooks">Audiobooks folders</string>
     <string name="content_section_title_podcasts">Podcasts</string>
 
-    <string name="generic_dialog_confirm">OK</string>
-    <string name="generic_dialog_cancel">Cancel</string>
-    <string name="generic_dialog_save">Save</string>
-    <string name="generic_navigate_back">Back</string>
-    <string name="generic_text_field_clear_content_description">Clear</string>
-    <!-- Displayed below button_setup_instructions_website
-     Tells the user they can open the given website address in a browser, e.g. on their laptop.
-     Parameters:
-     %1$s - address of the instructions web page
-
-     Example:
-     or go to:\nhttps://homerplayer.app/setup
-  -->
-    <string name="generic_website_alternative">or go to:\n%1$s</string>
-
     <string name="onboarding_audiobook_folders_title">Audiobooks</string>
     <string name="onboarding_audiobook_folders_description">Please select at least one folder with your audiobooks.</string>
+    <string name="onboarding_podcast_title">Podcast</string>
     <string name="onboarding_speech_description">Homer Player uses text-to-speech engine to read book titles.\nPlease test that </string>
     <string name="onboarding_speech_open_settings">Open text-to-speech settings</string>
     <string name="onboarding_speech_tts_checkbox_label">Speak book titles</string>

@@ -26,6 +26,8 @@ package com.studio4plus.homerplayer2.contentui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -59,7 +61,9 @@ import com.studio4plus.homerplayer2.podcastsui.PodcastItemViewState
 import com.studio4plus.homerplayer2.samplebooks.SamplesInstallState
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import com.studio4plus.homerplayer2.base.R as BaseR
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ContentManagementPanel(
     state: ContentPanelViewState,
@@ -76,7 +80,7 @@ fun ContentManagementPanel(
         modifier = modifier
     ) {
         Spacer(modifier = Modifier.windowInsetsTopHeight(windowInsets))
-        Row(
+        FlowRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Button(onClick = onAddFolder) {
@@ -152,7 +156,7 @@ private fun ConfirmRemoveDialog(
     DefaultAlertDialog(
         onDismissRequest = onDismiss,
         buttons = {
-            TextButton(onDismiss) { Text(stringResource(R.string.generic_dialog_cancel)) }
+            TextButton(onDismiss) { Text(stringResource(BaseR.string.generic_dialog_cancel)) }
             val removeAndDismiss = {
                 onRemove()
                 onDismiss()
