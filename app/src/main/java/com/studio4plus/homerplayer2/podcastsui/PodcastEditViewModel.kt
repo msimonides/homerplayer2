@@ -100,7 +100,8 @@ class PodcastEditViewModel(
 
         data class Podcast(
             val podcast: com.studio4plus.homerplayer2.podcasts.data.Podcast,
-            val episodes: List<EpisodeViewState>
+            val episodes: List<EpisodeViewState>,
+            val showDownloadInfo: Boolean,
         ) : ViewState
     }
 
@@ -155,6 +156,7 @@ class PodcastEditViewModel(
                         ViewState.Podcast(
                             podcast = podcast,
                             episodes = episodes.map { it.toViewState(podcast) },
+                            showDownloadInfo = episodes.any { !it.isDownloaded },
                         )
                     }
                 isNewPodcast ->

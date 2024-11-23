@@ -63,10 +63,10 @@ import androidx.compose.ui.util.fastForEachIndexed
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.base.ui.DefaultAlertDialog
+import com.studio4plus.homerplayer2.base.ui.InfoCard
 import com.studio4plus.homerplayer2.base.ui.SectionTitle
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
-import com.studio4plus.homerplayer2.base.R as BaseR
 import com.studio4plus.homerplayer2.podcasts.MAX_PODCAST_EPISODE_COUNT
 import com.studio4plus.homerplayer2.podcastsui.usecases.PodcastSearchResult
 import org.koin.androidx.compose.koinViewModel
@@ -74,6 +74,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import kotlin.math.roundToInt
+import com.studio4plus.homerplayer2.base.R as BaseR
 
 @Composable
 private fun rememberDateFormatter() =
@@ -195,6 +196,10 @@ private fun PodcastEdit(
         )
 
         SectionTitle("Episodes", modifier = rowModifier)
+        AnimatedVisibility(viewState.showDownloadInfo) {
+            InfoCard(stringResource(R.string.podcast_download_info), modifier = rowModifier)
+        }
+
         viewState.episodes.fastForEachIndexed { index, item ->
             EpisodeRow(
                 title = item.displayName,
