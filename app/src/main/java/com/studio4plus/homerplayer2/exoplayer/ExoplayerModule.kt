@@ -28,6 +28,7 @@ import android.content.Context
 import androidx.annotation.OptIn
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
+import androidx.media3.common.TrackSelectionParameters.AudioOffloadPreferences
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.RenderersFactory
@@ -47,11 +48,24 @@ class ExoplayerModule {
         val audioAttributes = AudioAttributes.Builder()
             .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
             .build()
-        return commonBuilder(appContext)
+        val player = commonBuilder(appContext)
             .setSeekForwardIncrementMs(10_000)
             .setSeekBackIncrementMs(30_000)
             .setAudioAttributes(audioAttributes, true)
             .build()
+        val audioOffloadPreferences =
+            AudioOffloadPreferences.Builder()
+                .setAudioOffloadMode(AudioOffloadPreferences.AUDIO_OFFLOAD_MODE_ENABLED)
+                .setIsGaplessSupportRequired(true)
+                .setIsSpeedChangeSupportRequired(true)
+                .build()
+        val trackSelectionParameters =  player.trackSelectionParameters
+            .buildUpon()
+            .setAudioOffloadPreferences(audioOffloadPreferences)
+            .build()
+        return player.apply {
+            this.trackSelectionParameters = trackSelectionParameters
+        }
     }
 
     @Factory
@@ -61,8 +75,7 @@ class ExoplayerModule {
 
     @OptIn(UnstableApi::class)
     private fun commonBuilder(appContext: Context): ExoPlayer.Builder {
-        // TODO: enable audio offload.
-        //  consider: ConstantBitrateSeekingEnabled
+        // TODO: consider: ConstantBitrateSeekingEnabled
         val audioRenderersFactory = RenderersFactory { eventHandler, _, audioRendererEventListener, _, _ ->
             arrayOf(
                 MediaCodecAudioRenderer(
