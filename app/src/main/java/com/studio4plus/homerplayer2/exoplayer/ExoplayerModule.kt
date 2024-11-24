@@ -54,7 +54,7 @@ class ExoplayerModule {
     @Factory
     @Named(UTILITY)
     @OptIn(UnstableApi::class)
-    fun exoplayerUtility(appContext: Context): ExoPlayer = commonBuilder(appContext).build()
+    fun exoplayerUtility(appContext: Context): Lazy<ExoPlayer> = lazy { commonBuilder(appContext).build() }
 
     private fun commonBuilder(appContext: Context): ExoPlayer.Builder =
         // TODO: remove non-audio renderers, enable audio offload.

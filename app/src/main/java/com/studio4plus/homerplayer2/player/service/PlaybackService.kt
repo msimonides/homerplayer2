@@ -25,7 +25,6 @@
 package com.studio4plus.homerplayer2.player.service
 
 import androidx.datastore.core.DataStore
-import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
@@ -33,11 +32,9 @@ import com.studio4plus.homerplayer2.exoplayer.ExoplayerModule
 import com.studio4plus.homerplayer2.settingsdata.PlaybackSettings
 import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -48,7 +45,6 @@ import org.koin.core.qualifier.named
 class PlaybackService : MediaSessionService() {
 
     private val exoPlayer: ExoPlayer by inject(named(ExoplayerModule.PLAYBACK))
-    private val deviceMotionDetector: DeviceMotionDetector by inject()
     private val mainScope: CoroutineScope by inject()
     private var mediaSession: MediaSession? = null
     private val playbackSettings: DataStore<PlaybackSettings> by inject(named(SettingsDataModule.PLAYBACK))

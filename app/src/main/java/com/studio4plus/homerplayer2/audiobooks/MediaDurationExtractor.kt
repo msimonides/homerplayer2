@@ -31,8 +31,10 @@ import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import com.studio4plus.homerplayer2.exoplayer.ExoplayerModule
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import org.koin.core.annotation.Named
 import org.koin.core.annotation.Single
 import kotlin.coroutines.resume
@@ -41,18 +43,23 @@ import kotlin.coroutines.suspendCoroutine
 @Single(createdAtStart = true)
 class MediaDurationExtractor(
     mainScope: CoroutineScope,
-    @Named(ExoplayerModule.UTILITY) exoPlayer: ExoPlayer,
+    @Named(ExoplayerModule.UTILITY) lazyExoPlayer: Lazy<ExoPlayer>,
     audiobooksDao: AudiobooksDao
 ) {
+    private val exoPlayer by lazyExoPlayer
+
     init {
-        exoPlayer.playWhenReady = false
-        audiobooksDao.getFilesWithoutDuration(10).onEach { files ->
-            val durations = files.map { exoPlayer.extractDuration(it.uri) }
-            if (durations.isNotEmpty()) {
-                exoPlayer.clearMediaItems()
-                audiobooksDao.insertAudiobookFileDurations(durations)
-            }
-        }.launchIn(mainScope)
+        mainScope.launch {
+            delay(5_000) // Don't block app startup.
+            exoPlayer.playWhenReady = false
+            audiobooksDao.getFilesWithoutDuration(10).onEach { files ->
+                val durations = files.map { exoPlayer.extractDuration(it.uri) }
+                if (durations.isNotEmpty()) {
+                    exoPlayer.clearMediaItems()
+                    audiobooksDao.insertAudiobookFileDurations(durations)
+                }
+            }.launchIn(mainScope)
+        }
     }
 
     private suspend fun ExoPlayer.extractDuration(uri: Uri): AudiobookFileDuration =
