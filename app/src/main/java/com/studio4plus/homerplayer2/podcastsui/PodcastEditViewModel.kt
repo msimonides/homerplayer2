@@ -25,6 +25,7 @@
 package com.studio4plus.homerplayer2.podcastsui
 
 import androidx.annotation.StringRes
+import androidx.datastore.core.DataStore
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -40,8 +41,13 @@ import com.studio4plus.homerplayer2.podcasts.usecases.PodcastFeed
 import com.studio4plus.homerplayer2.podcasts.usecases.UpdatePodcastFromFeed
 import com.studio4plus.homerplayer2.podcasts.usecases.UpdatePodcastNameConfig
 import com.studio4plus.homerplayer2.podcastsui.PodcastEditViewModel.Feed
+import com.studio4plus.homerplayer2.podcastsui.usecases.CurrentNetworkType
 import com.studio4plus.homerplayer2.podcastsui.usecases.PodcastSearchResult
 import com.studio4plus.homerplayer2.podcastsui.usecases.SearchPodcasts
+import com.studio4plus.homerplayer2.settingsdata.NetworkSettings
+import com.studio4plus.homerplayer2.settingsdata.NetworkType
+import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
+import com.studio4plus.homerplayer2.settingsui.launchUpdate
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -60,6 +66,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
+import org.koin.core.annotation.Named
 import java.time.LocalDate
 import java.time.ZoneId
 import kotlin.collections.map
@@ -75,12 +82,18 @@ class PodcastEditViewModel(
     private val podcastEpisodeName: PodcastEpisodeName,
     private val podcastTaskScheduler: PodcastsTaskScheduler,
     private val updatePodcastNameConfig: UpdatePodcastNameConfig,
+    @Named(SettingsDataModule.NETWORK) private val networkSettingsStore: DataStore<NetworkSettings>,
+    private val currentNetworkType: CurrentNetworkType,
 ) : ViewModel() {
 
     data class EpisodeViewState(
         val displayName: String,
         val publicationDate: LocalDate?
     )
+
+    enum class DownloadInfo {
+        PodcastDownloadInBackground, PodcastDownloadUnmeteredNetwork
+    }
 
     sealed interface ViewState {
         object Loading : ViewState
@@ -101,7 +114,8 @@ class PodcastEditViewModel(
         data class Podcast(
             val podcast: com.studio4plus.homerplayer2.podcasts.data.Podcast,
             val episodes: List<EpisodeViewState>,
-            val showDownloadInfo: Boolean,
+            val showDownloadInfo: DownloadInfo?,
+            val podcastsDownloadNetworkType: NetworkType,
         ) : ViewState
     }
 
@@ -145,20 +159,36 @@ class PodcastEditViewModel(
         podcastsDao.observePodcast(it)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
+    private val podcastDownloadsNetwork = networkSettingsStore.data
+        .map { it.podcastsDownloadNetworkType }
+        .distinctUntilChanged()
+        .stateIn(viewModelScope, SharingStarted.Eagerly, NetworkType.Unmetered)
+
     @OptIn(ExperimentalCoroutinesApi::class)
     val viewState: StateFlow<ViewState> = podcastFlow
         .map { it != null }
         .distinctUntilChanged()
         .flatMapLatest { hasPodcast ->
             when {
-                hasPodcast -> podcastFlow.filterNotNull() // TODO: do something about all these filterNotNulls
-                    .map { (podcast, episodes) ->
-                        ViewState.Podcast(
-                            podcast = podcast,
-                            episodes = episodes.map { it.toViewState(podcast) },
-                            showDownloadInfo = episodes.any { !it.isDownloaded },
-                        )
+                hasPodcast -> combine(
+                    podcastFlow.filterNotNull(), // TODO: do something about all these filterNotNulls
+                    podcastDownloadsNetwork,
+                    currentNetworkType.networkType
+                ) { (podcast, episodes), downloadNetworkType, currentNetworkType ->
+                    val hasEpisodesPendingDownload = episodes.any { !it.isDownloaded }
+                    val dialogInfo = when {
+                        !hasEpisodesPendingDownload -> null
+                        downloadNetworkType == NetworkType.Unmetered && currentNetworkType == NetworkType.Any ->
+                            DownloadInfo.PodcastDownloadUnmeteredNetwork
+                        else -> DownloadInfo.PodcastDownloadInBackground
                     }
+                    ViewState.Podcast(
+                        podcast = podcast,
+                        episodes = episodes.map { it.toViewState(podcast) },
+                        showDownloadInfo = dialogInfo,
+                        podcastsDownloadNetworkType = downloadNetworkType,
+                    )
+                }
                 isNewPodcast ->
                     searchTrigger.flatMapLatest(::searchFlow)
                 else ->
@@ -208,7 +238,7 @@ class PodcastEditViewModel(
     override fun onCleared() {
         super.onCleared()
         // TODO: a bit hacky.
-        podcastTaskScheduler.runUpdate()
+        podcastTaskScheduler.runUpdate(podcastDownloadsNetwork.value)
     }
 
     fun onSearchPhraseChange(phrase: String) {
@@ -266,6 +296,12 @@ class PodcastEditViewModel(
             )
 
             podcastsDao.upsert(newPodcast)
+        }
+    }
+
+    fun onPodcastsDownloadNetworkSelected(networkType: NetworkType) {
+        viewModelScope.launchUpdate(networkSettingsStore) {
+            it.copy(podcastsDownloadNetworkType = networkType )
         }
     }
 

@@ -22,32 +22,15 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.podcasts
+package com.studio4plus.homerplayer2.settingsdata
 
-import com.prof18.rssparser.RssParser
-import com.prof18.rssparser.RssParserBuilder
-import com.studio4plus.homerplayer2.audiobooks.AudiobooksModule
-import com.studio4plus.homerplayer2.base.BaseModule
-import com.studio4plus.homerplayer2.net.NetModule
-import com.studio4plus.homerplayer2.podcasts.data.PodcastsDao
-import com.studio4plus.homerplayer2.podcasts.data.PodcastsDatabase
-import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
-import okhttp3.OkHttpClient
-import org.koin.core.annotation.ComponentScan
-import org.koin.core.annotation.Factory
-import org.koin.core.annotation.Module
+import kotlinx.serialization.Serializable
 
-@Module(
-    includes = [
-        AudiobooksModule::class, BaseModule::class, NetModule::class, SettingsDataModule::class
-    ]
-)
-@ComponentScan("com.studio4plus.homerplayer2.podcasts")
-class PodcastsModule {
-    @Factory
-    fun provideRssParser(okHttpClient: OkHttpClient): RssParser =
-        RssParserBuilder(callFactory = okHttpClient).build()
-
-    @Factory
-    fun providePodcastsDao(db: PodcastsDatabase): PodcastsDao = db.podcastsDao()
+enum class NetworkType {
+    Any, Unmetered
 }
+
+@Serializable
+data class NetworkSettings(
+    val podcastsDownloadNetworkType: NetworkType = NetworkType.Unmetered
+)

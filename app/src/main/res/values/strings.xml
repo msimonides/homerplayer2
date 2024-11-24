@@ -58,7 +58,9 @@
     <string name="podcast_accessibility_action_edit">Edit</string>
     <string name="podcast_add_dialog_latest_episode">Latest episode:</string>
     <string name="podcast_add_dialog_add_button">Add podcast</string>
-    <string name="podcast_download_info">Podcast episodes will show up among audiobooks once they are fully downloaded.\nThis may take several minutes.</string>
+    <string name="podcast_download_info_in_background">Podcast episodes will show up among audiobooks once they are fully downloaded.\nThis may take several minutes.</string>
+    <string name="podcast_download_info_unmetered_network">Podcasts are configured to download only on WiFi networks.</string>
+    <string name="podcast_download_info_change_network_settings">Change</string>
     <string name="podcast_feed_error_doesnt_exist">Unknown or incorrect URL</string>
     <string name="podcast_feed_error_ssl_error">SSL certificate error</string>
     <string name="podcast_feed_error_download">Error downloading podcast feed</string>
@@ -131,6 +133,15 @@
     <string name="settings_ui_mode_dark">Dark</string>
     <string name="settings_ui_mode_light">Light</string>
     <string name="settings_ui_mode_system">System</string>
+    <string name="settings_ui_network_item">Network and downloads…</string>
+    <string name="settings_ui_network_title">Network and downloads</string>
+    <string name="settings_ui_network_podcasts_download_network_item">Podcasts download network</string>
+    <string name="settings_ui_network_podcasts_download_network_dialog_title">Podcasts download</string>
+    <string name="settings_ui_network_podcasts_download_network_dialog_message">Homer automatically downloads all podcast episodes to guarantee uninterrupted playback.\nThis may use hundreds of megabytes of data per week.</string>
+    <string name="settings_ui_network_podcasts_download_network_type_any">Mobile and WiFi</string>
+    <string name="settings_ui_network_podcasts_download_network_type_any_description">May incur additional data cost or deplete data limit</string>
+    <string name="settings_ui_network_podcasts_download_network_type_unmetered">WiFi only</string>
+    <string name="settings_ui_network_podcasts_download_network_type_unmetered_description">Only unmetered networks</string>
     <string name="settings_ui_orientation_item">Orientation</string>
     <string name="settings_ui_orientation_auto">Auto</string>
     <string name="settings_ui_orientation_portrait">Portrait</string>

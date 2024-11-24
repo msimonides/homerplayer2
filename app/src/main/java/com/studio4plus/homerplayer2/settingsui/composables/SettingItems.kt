@@ -31,8 +31,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -69,6 +71,30 @@ fun SettingSwitch(
             Text(label, modifier = Modifier.weight(1f))
             Spacer(modifier = Modifier.width(HomerTheme.dimensions.labelSpacing))
             Switch(checked = value, onCheckedChange = null, modifier = Modifier.clearAndSetSemantics {})
+        }
+    }
+}
+
+@Composable
+fun SettingRadio(
+    label: String,
+    selected: Boolean,
+    onSelected: () -> Unit,
+    modifier: Modifier = Modifier,
+    summary: String? = null,
+) {
+    SettingRow(
+        modifier = Modifier
+            .selectable(selected = selected, onClick = onSelected, role = Role.RadioButton)
+            .then(modifier),
+        summary = summary
+    ) {
+        Row (
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(label, modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.width(HomerTheme.dimensions.labelSpacing))
+            RadioButton(selected = selected, onClick = null, modifier = Modifier.clearAndSetSemantics {})
         }
     }
 }

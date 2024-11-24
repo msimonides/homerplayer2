@@ -24,7 +24,10 @@
 
 package com.studio4plus.homerplayer2.base.ui
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -43,7 +46,8 @@ import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 @Composable
 fun InfoCard(
     text: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    button: (@Composable ColumnScope.() -> Unit)? = null,
 ) {
     Surface(
         color = MaterialTheme.colorScheme.secondaryContainer,
@@ -51,7 +55,7 @@ fun InfoCard(
         modifier = modifier
     ) {
         Row(
-            modifier = Modifier.padding(8.dp),
+            modifier = Modifier.padding(12.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.Top
         ) {
@@ -59,7 +63,15 @@ fun InfoCard(
                 Icons.Outlined.Info,
                 contentDescription = null,
             )
-            Text(text)
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.animateContentSize()
+            ) {
+                Text(text)
+                if (button != null) {
+                    button()
+                }
+            }
         }
 
     }

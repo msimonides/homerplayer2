@@ -18,7 +18,7 @@ media3 = '1.4.1'
 okhttp = '4.12.0'
 room = '2.6.1'
 sentry-android = '7.15.0'
-workmanager = '2.9.1'
+workmanager = '2.10.0'
 
 [libraries]
 
@@ -60,6 +60,7 @@ koin-annotations = { module = 'io.insert-koin:koin-annotations', version.ref = '
 koin-compiler = { module = 'io.insert-koin:koin-ksp-compiler', version.ref = 'koin-annotation' }
 
 kotlinx-coroutines-android = { module = 'org.jetbrains.kotlinx:kotlinx-coroutines-android', version.ref = 'kotlinx-coroutines' }
+kotlinx-coroutines-guava = { module = 'org.jetbrains.kotlinx:kotlinx-coroutines-guava', version.ref = 'kotlinx-coroutines' }
 kotlinx-coroutines-test = { module = 'org.jetbrains.kotlinx:kotlinx-coroutines-test', version.ref = 'kotlinx-coroutines' }
 
 kotlinx-serialization-json = { module = 'org.jetbrains.kotlinx:kotlinx-serialization-json', version = '1.7.3' }

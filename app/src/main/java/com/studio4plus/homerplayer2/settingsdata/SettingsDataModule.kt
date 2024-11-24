@@ -30,6 +30,7 @@ import com.studio4plus.homerplayer2.base.DispatcherProvider
 import com.studio4plus.homerplayer2.loccalstorage.LOCAL_STORAGE_JSON
 import com.studio4plus.homerplayer2.loccalstorage.LocalStorageModule
 import com.studio4plus.homerplayer2.loccalstorage.createDataStore
+import com.studio4plus.homerplayer2.net.NetModule
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.serialization.json.Json
 import org.koin.core.annotation.ComponentScan
@@ -42,21 +43,21 @@ import org.koin.core.annotation.Single
 class SettingsDataModule {
 
     @Single
-    @Named(UI)
-    fun uiSettingsDatastore(
+    @Named(NETWORK)
+    fun networkSettingsDatastore(
         appContext: Context,
         mainScope: CoroutineScope,
         dispatcherProvider: DispatcherProvider,
         @Named(LOCAL_STORAGE_JSON) json: Json
-    ): DataStore<UiSettings> =
+    ): DataStore<NetworkSettings> =
         createDataStore(
             appContext,
             mainScope,
             dispatcherProvider,
             json,
-            UI,
-            UiSettings(),
-            UiSettings.serializer()
+            NETWORK,
+            NetworkSettings(),
+            NetworkSettings.serializer()
         )
 
     @Single
@@ -77,7 +78,26 @@ class SettingsDataModule {
             PlaybackSettings.serializer()
         )
 
+    @Single
+    @Named(UI)
+    fun uiSettingsDatastore(
+        appContext: Context,
+        mainScope: CoroutineScope,
+        dispatcherProvider: DispatcherProvider,
+        @Named(LOCAL_STORAGE_JSON) json: Json
+    ): DataStore<UiSettings> =
+        createDataStore(
+            appContext,
+            mainScope,
+            dispatcherProvider,
+            json,
+            UI,
+            UiSettings(),
+            UiSettings.serializer()
+        )
+
     companion object {
+        const val NETWORK = "networkSettings"
         const val PLAYBACK = "playbackSettings"
         const val UI = "uiSettings"
     }

@@ -51,6 +51,7 @@ import org.koin.androidx.compose.koinViewModel
 fun SettingsMainRoute(
     navigateFolders: () -> Unit,
     navigateLockdownSettings: () -> Unit,
+    navigateNetworkSettings: () -> Unit,
     navigatePlaybackSettings: () -> Unit,
     navigatePlayerUiSettings: () -> Unit,
     navigateTtsSettings: () -> Unit,
@@ -62,6 +63,7 @@ fun SettingsMainRoute(
         onSetUiMode = viewModel::setUiMode,
         navigateFolders = navigateFolders,
         navigateLockdownSettings = navigateLockdownSettings,
+        navigateNetworkSettings = navigateNetworkSettings,
         navigatePlaybackSettings = navigatePlaybackSettings,
         navigatePlayerUiSettings = navigatePlayerUiSettings,
         navigateTtsSettings = navigateTtsSettings,
@@ -79,6 +81,7 @@ private fun SettingsMain(
     onSetUiMode: (UiThemeMode) -> Unit,
     navigateFolders: () -> Unit,
     navigateLockdownSettings: () -> Unit,
+    navigateNetworkSettings: () -> Unit,
     navigatePlaybackSettings: () -> Unit,
     navigatePlayerUiSettings: () -> Unit,
     navigateTtsSettings: () -> Unit,
@@ -110,6 +113,11 @@ private fun SettingsMain(
                 label = stringResource(R.string.settings_ui_content_item),
                 summary = viewState.content.summary(),
                 onClick = navigateFolders,
+                modifier = settingItemModifier
+            )
+            SettingItem(
+                label = stringResource(R.string.settings_ui_network_item),
+                onClick = navigateNetworkSettings,
                 modifier = settingItemModifier
             )
             SettingItem(
@@ -204,6 +212,6 @@ private fun PreviewSettingsMain() {
             ttsEnabled = true,
             uiMode = UiThemeMode.SYSTEM,
         )
-        SettingsMain(viewState, {}, {}, {}, {}, {}, {}, {})
+        SettingsMain(viewState, {}, {}, {}, {}, {}, {}, {}, {})
     }
 }

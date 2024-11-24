@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -44,6 +45,8 @@ fun <T> SelectFromRadioListDialog(
     onValueChange: (T) -> Unit,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
+    description: String? = null,
+    produceSummary: (@Composable (T) -> String)? = null,
     buttons: (@Composable RowScope.() -> Unit)? = null,
 ) {
     DefaultAlertDialog(
@@ -52,11 +55,21 @@ fun <T> SelectFromRadioListDialog(
         modifier = modifier,
         buttons = buttons,
     ) { horizontalPadding ->
+        if (description != null) {
+            Text(
+                description,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(bottom = 16.dp, start = horizontalPadding, end = horizontalPadding)
+            )
+        }
+
         values.map { value ->
-            RadioWithLabel(
+            SettingRadio(
                 label = produceLabel(value),
+                summary = produceSummary?.invoke(value),
                 selected = value == selectedValue,
-                onClick = {
+                onSelected = {
                     onValueChange(value)
                     if (buttons == null) onDismissRequest()
                 },

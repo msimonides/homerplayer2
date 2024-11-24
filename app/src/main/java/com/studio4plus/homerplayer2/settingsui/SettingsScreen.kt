@@ -164,6 +164,7 @@ private fun SettingsNavHost(
     val kioskSetupTitle = stringResource(id = R.string.settings_ui_kiosk_mode_setup_title)
     val lockdownTitle = stringResource(id = R.string.settings_ui_lockdown_settings_title)
     val licensesTitle = stringResource(id = R.string.settings_ui_licenses_title)
+    val networkSettingsTitle = stringResource(id = R.string.settings_ui_network_title)
     val playbackTitle = stringResource(id = R.string.settings_ui_playback_settings_title)
     val playerUiTitle = stringResource(id = R.string.settings_ui_player_ui_title)
     val podcastTitle = stringResource(id = R.string.settings_ui_podcast_title)
@@ -181,6 +182,7 @@ private fun SettingsNavHost(
             SettingsMainRoute(
                 navigateFolders = { navController.navigate("content") },
                 navigateLockdownSettings = { navController.navigate("lockdown_settings") },
+                navigateNetworkSettings = { navController.navigate("network_settings") },
                 navigatePlaybackSettings = { navController.navigate("playback_settings") },
                 navigatePlayerUiSettings = { navController.navigate("player_ui_settings") },
                 navigateTtsSettings = { navController.navigate("tts_settings") },
@@ -214,6 +216,9 @@ private fun SettingsNavHost(
                 navigateLayoutSettings = navigateLayoutSettings,
                 closeSettings = closeSettings
             )
+        }
+        composable("network_settings", label = networkSettingsTitle) {
+            SettingsNetworkRoute()
         }
         composable("playback_settings", label = playbackTitle) {
             SettingsPlaybackRoute()

@@ -28,6 +28,7 @@ import android.app.admin.DevicePolicyManager
 import android.content.ContentResolver
 import android.content.Context
 import android.media.AudioManager
+import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Vibrator
 import kotlinx.coroutines.CoroutineScope
@@ -44,6 +45,10 @@ class BaseModule {
 
     @Factory
     fun contentResolver(appContext: Context): ContentResolver = appContext.contentResolver
+
+    @Factory
+    fun connectivityManager(appContext: Context): ConnectivityManager =
+        appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
     @Factory
     fun devicePolicyManager(appContext: Context): DevicePolicyManager =

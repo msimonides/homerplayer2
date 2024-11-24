@@ -31,16 +31,21 @@ import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.ExistingWorkPolicy
-import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.PeriodicWorkRequest
 import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkInfo
 import androidx.work.WorkManager
+import androidx.work.WorkRequest
 import androidx.work.WorkerParameters
 import com.studio4plus.homerplayer2.podcasts.data.PodcastsDao
 import com.studio4plus.homerplayer2.podcasts.usecases.DeleteStalePodcastFiles
 import com.studio4plus.homerplayer2.podcasts.usecases.DownloadPendingPodcastEpisodes
 import com.studio4plus.homerplayer2.podcasts.usecases.DownloadPodcastFeed
 import com.studio4plus.homerplayer2.podcasts.usecases.UpdatePodcastFromFeed
+import com.studio4plus.homerplayer2.settingsdata.NetworkType
+import kotlinx.coroutines.guava.await
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.koin.core.annotation.Factory
@@ -56,30 +61,91 @@ class PodcastTaskWorkManager(
     private val appContext: Context
 ) : PodcastsTaskScheduler {
 
-    override fun enablePeriodicUpdate() {
-        val constraints = Constraints.Builder()
-            .setRequiresBatteryNotLow(true)
-            .setRequiresStorageNotLow(true)
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
-        val workRequest = PeriodicWorkRequestBuilder<PodcastsRefreshWork>(
-            repeatInterval = 8, repeatIntervalTimeUnit = TimeUnit.HOURS,
-            flexTimeInterval = 4, flexTimeIntervalUnit = TimeUnit.HOURS
-        ).setConstraints(constraints).build()
-
+    override suspend fun enablePeriodicUpdate(networkType: NetworkType) {
         WorkManager.getInstance(appContext)
-            .enqueueUniquePeriodicWork(REFRESH_PERIODIC_WORK_ID, ExistingPeriodicWorkPolicy.KEEP, workRequest)
+            .enqueueUniquePeriodicWork(
+                REFRESH_PERIODIC_WORK_ID,
+                ExistingPeriodicWorkPolicy.KEEP,
+                periodicWorkRequestBuilder(networkType).build()
+            )
     }
 
     override fun disablePeriodicUpdate() {
         WorkManager.getInstance(appContext).cancelUniqueWork(REFRESH_PERIODIC_WORK_ID)
     }
 
-    override fun runUpdate() {
-        val workRequest = OneTimeWorkRequestBuilder<PodcastsRefreshWork>().build()
+    override suspend fun updateNetworkType(networkType: NetworkType) {
+        val workManager = WorkManager.getInstance(appContext)
+
+        // Once Worker updates are fixed to cancel running work when updated constraints are not
+        // satisfied this code should no longer be needed
+        // https://issuetracker.google.com/issues/380600742
+        suspend fun <B : WorkRequest.Builder<B, *>> updateWorkerConstraints(
+            workInfo: WorkInfo?,
+            workRequestFactory: () -> WorkRequest.Builder<B, *>,
+            cancelAndEnqueue: (WorkRequest) -> Unit,
+        ) {
+            if (workInfo != null) {
+                val workRequest = workRequestFactory().setId(workInfo.id).build()
+                val updateResult = workManager.updateWork(workRequest).await()
+                val oldNetworkType = workInfo.constraints.requiredNetworkType
+                val needsAbort = updateResult == WorkManager.UpdateResult.APPLIED_FOR_NEXT_RUN
+                        && networkType == NetworkType.Unmetered
+                        && oldNetworkType != networkType.toWorkRequest()
+                if (needsAbort) {
+                    cancelAndEnqueue(workRequest)
+                }
+            }
+        }
+
+        updateWorkerConstraints(
+            workManager.getFirstWorkInfo(REFRESH_PERIODIC_WORK_ID),
+            workRequestFactory = { periodicWorkRequestBuilder(networkType) },
+            cancelAndEnqueue = { workRequest ->
+                workManager.enqueueUniquePeriodicWork(
+                    REFRESH_PERIODIC_WORK_ID,
+                    ExistingPeriodicWorkPolicy.REPLACE,
+                    workRequest as PeriodicWorkRequest
+                )
+            }
+        )
+
+        updateWorkerConstraints(
+            workManager.getFirstWorkInfo(REFRESH_NOW_WORK_ID),
+            workRequestFactory = { oneTimeWorkRequestBuilder(networkType) },
+            cancelAndEnqueue = { runUpdate(networkType) }
+        )
+    }
+
+    override fun runUpdate(networkType: NetworkType) {
+        val workRequest = oneTimeWorkRequestBuilder(networkType).build()
         WorkManager.getInstance(appContext)
             .enqueueUniqueWork(REFRESH_NOW_WORK_ID, ExistingWorkPolicy.REPLACE, workRequest)
     }
+
+    private fun periodicWorkRequestBuilder(networkType: NetworkType): PeriodicWorkRequest.Builder {
+        val constraints = Constraints.Builder()
+            .setRequiresBatteryNotLow(true)
+            .setRequiresStorageNotLow(true)
+            .setRequiredNetworkType(networkType.toWorkRequest())
+            .build()
+        return PeriodicWorkRequestBuilder<PodcastsRefreshWork>(
+            repeatInterval = 8, repeatIntervalTimeUnit = TimeUnit.HOURS,
+            flexTimeInterval = 4, flexTimeIntervalUnit = TimeUnit.HOURS
+        ).setConstraints(constraints)
+
+    }
+
+    private fun oneTimeWorkRequestBuilder(networkType: NetworkType): OneTimeWorkRequest.Builder {
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(networkType.toWorkRequest())
+            .build()
+        return OneTimeWorkRequestBuilder<PodcastsRefreshWork>()
+            .setConstraints(constraints)
+    }
+
+    private suspend fun WorkManager.getFirstWorkInfo(uniqueName: String): WorkInfo? =
+        getWorkInfosForUniqueWork(uniqueName).await().firstOrNull()
 }
 
 class PodcastsRefreshWork(
@@ -140,4 +206,9 @@ class PodcastsRefreshWork(
     companion object {
         private val episodeDownloaderLock = Mutex()
     }
+}
+
+private fun NetworkType.toWorkRequest() = when(this) {
+    NetworkType.Any -> androidx.work.NetworkType.CONNECTED
+    NetworkType.Unmetered -> androidx.work.NetworkType.UNMETERED
 }

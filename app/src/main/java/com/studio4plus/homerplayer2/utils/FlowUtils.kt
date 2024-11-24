@@ -37,3 +37,9 @@ fun tickerFlow(delayMs: Long) = flow {
         delay(delayMs)
     }
 }
+
+fun <T, R> StateFlow<T>.syncMap(transform: (T) -> R): StateFlow<R> {
+    val resultFlow = MutableStateFlow<R>(transform(value))
+    this.onEach { resultFlow.value = transform(value) }
+    return resultFlow
+}

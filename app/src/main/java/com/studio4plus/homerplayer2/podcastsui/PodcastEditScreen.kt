@@ -28,6 +28,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -44,13 +45,17 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -69,6 +74,8 @@ import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 import com.studio4plus.homerplayer2.podcasts.MAX_PODCAST_EPISODE_COUNT
 import com.studio4plus.homerplayer2.podcastsui.usecases.PodcastSearchResult
+import com.studio4plus.homerplayer2.settingsdata.NetworkType
+import com.studio4plus.homerplayer2.settingsui.SelectPodcastsDownloadNetworkTypeDialog
 import org.koin.androidx.compose.koinViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -95,6 +102,7 @@ fun PodcastEditRoute(
         onEpisodeTitleIncludePodcastTitle = viewModel::onEpisodeTitleIncludePodcastTitle,
         onEpisodeTitleIncludeNumber = viewModel::onEpisodeTitleIncludeNumber,
         onEpisodeTitleIncludeEpisodeTitle = viewModel::onEpisodeTitleIncludeEpisodeTitle,
+        onPodcastsDownloadNetworkSelected = viewModel::onPodcastsDownloadNetworkSelected,
         modifier = modifier.fillMaxSize()
     )
 
@@ -117,6 +125,7 @@ fun PodcastEdit(
     onEpisodeTitleIncludePodcastTitle: (Boolean) -> Unit,
     onEpisodeTitleIncludeNumber: (Boolean) -> Unit,
     onEpisodeTitleIncludeEpisodeTitle: (Boolean) -> Unit,
+    onPodcastsDownloadNetworkSelected: (NetworkType) -> Unit,
     modifier: Modifier = Modifier,
     windowInsets: WindowInsets = WindowInsets.navigationBars,
 ) {
@@ -133,16 +142,18 @@ fun PodcastEdit(
                     )
                 }
             }
-        is PodcastEditViewModel.ViewState.Podcast ->
+        is PodcastEditViewModel.ViewState.Podcast -> {
             PodcastEdit(
                 viewState,
                 onEpisodeCountChanged = onEpisodeCountChanged,
                 onEpisodeTitleIncludePodcastTitle = onEpisodeTitleIncludePodcastTitle,
                 onEpisodeTitleIncludeNumber = onEpisodeTitleIncludeNumber,
                 onEpisodeTitleIncludeEpisodeTitle = onEpisodeTitleIncludeEpisodeTitle,
+                onPodcastsDownloadNetworkSelected = onPodcastsDownloadNetworkSelected,
                 windowInsets = windowInsets,
                 modifier = modifier
             )
+        }
     }
 }
 
@@ -153,9 +164,11 @@ private fun PodcastEdit(
     onEpisodeTitleIncludePodcastTitle: (Boolean) -> Unit,
     onEpisodeTitleIncludeNumber: (Boolean) -> Unit,
     onEpisodeTitleIncludeEpisodeTitle: (Boolean) -> Unit,
+    onPodcastsDownloadNetworkSelected: (NetworkType) -> Unit,
     windowInsets: WindowInsets,
     modifier: Modifier = Modifier
 ) {
+    var showNetworkTypeDialog by rememberSaveable { mutableStateOf(false) }
     Column(
         modifier = modifier
             .verticalScroll(rememberScrollState())
@@ -196,8 +209,31 @@ private fun PodcastEdit(
         )
 
         SectionTitle("Episodes", modifier = rowModifier)
-        AnimatedVisibility(viewState.showDownloadInfo) {
-            InfoCard(stringResource(R.string.podcast_download_info), modifier = rowModifier)
+        val showDownloadInfo = viewState.showDownloadInfo
+        AnimatedVisibility(showDownloadInfo != null) {
+            val messageRes = when (showDownloadInfo) {
+                PodcastEditViewModel.DownloadInfo.PodcastDownloadInBackground ->
+                    R.string.podcast_download_info_in_background
+                PodcastEditViewModel.DownloadInfo.PodcastDownloadUnmeteredNetwork ->
+                    R.string.podcast_download_info_unmetered_network
+                null -> null // This lambda is executed even for showDownloadInfo == null 🤯
+            }
+            val button: (@Composable ColumnScope.() -> Unit)? =
+                if (showDownloadInfo == PodcastEditViewModel.DownloadInfo.PodcastDownloadUnmeteredNetwork) {
+                    {
+                        OutlinedButton(
+                            onClick = { showNetworkTypeDialog = true },
+                            modifier = Modifier.align(Alignment.End)
+                        ) {
+                            Text(stringResource(R.string.podcast_download_info_change_network_settings))
+                        }
+                    }
+                } else {
+                    null
+                }
+            if (messageRes != null) {
+                InfoCard(stringResource(messageRes), modifier = rowModifier, button = button)
+            }
         }
 
         viewState.episodes.fastForEachIndexed { index, item ->
@@ -218,6 +254,14 @@ private fun PodcastEdit(
             Modifier
                 .windowInsetsBottomHeight(windowInsets)
                 .padding(bottom = HomerTheme.dimensions.screenContentPadding)
+        )
+    }
+
+    if (showNetworkTypeDialog) {
+        SelectPodcastsDownloadNetworkTypeDialog(
+            value = viewState.podcastsDownloadNetworkType,
+            onPodcastsDownloadNetworkSelected = onPodcastsDownloadNetworkSelected,
+            onDismissRequest = { showNetworkTypeDialog = false }
         )
     }
 }

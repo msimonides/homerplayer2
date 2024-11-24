@@ -66,7 +66,7 @@ fun SettingsPlaybackRoute(
     }
 }
 
-private enum class SettingsDialogType {
+private enum class SettingsPlaybackDialogType {
     PlaybackRewindOnResume, PlaybackSpeed, SleepTimer
 }
 
@@ -79,8 +79,8 @@ private fun SettingsPlayback(
     onSetSleepTimerSeconds: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var showUiModeDialog by rememberSaveable { mutableStateOf<SettingsDialogType?>(null) }
-    val settingItemModifier = Modifier.Companion.defaultSettingsItem()
+    var showDialog by rememberSaveable { mutableStateOf<SettingsPlaybackDialogType?>(null) }
+    val settingItemModifier = Modifier.defaultSettingsItem()
     Column(
         modifier = modifier.verticalScroll(rememberScrollState())
             .navigationBarsPadding()
@@ -88,37 +88,37 @@ private fun SettingsPlayback(
         SettingItem(
             label = stringResource(id = R.string.settings_ui_playback_rewind_on_resume_label),
             summary = rewindOnResumeSettingString(seconds = viewState.rewindOnResumeSeconds),
-            onClick = { showUiModeDialog = SettingsDialogType.PlaybackRewindOnResume },
+            onClick = { showDialog = SettingsPlaybackDialogType.PlaybackRewindOnResume },
             modifier = settingItemModifier
         )
         SettingItem(
             label = stringResource(id = R.string.settings_ui_playback_sleep_timer_label),
             summary = sleepTimerSettingString(seconds = viewState.sleepTimerSeconds),
-            onClick = { showUiModeDialog = SettingsDialogType.SleepTimer },
+            onClick = { showDialog = SettingsPlaybackDialogType.SleepTimer },
             modifier = settingItemModifier
         )
         SettingItem(
             label = stringResource(id = R.string.settings_ui_playback_play_speed_title),
             summary = speedSettingString(viewState.playbackSpeed),
-            onClick = { showUiModeDialog = SettingsDialogType.PlaybackSpeed },
+            onClick = { showDialog = SettingsPlaybackDialogType.PlaybackSpeed },
             modifier = settingItemModifier
         )
     }
 
-    val dismissAction = { showUiModeDialog = null }
-    when (showUiModeDialog) {
-        SettingsDialogType.PlaybackRewindOnResume -> SelectRewindOnResumeDialog(
+    val dismissAction = { showDialog = null }
+    when (showDialog) {
+        SettingsPlaybackDialogType.PlaybackRewindOnResume -> SelectRewindOnResumeDialog(
             value = viewState.rewindOnResumeSeconds,
             onValueChange = onSetRewindOnResumeSeconds,
             onDismissRequest = dismissAction,
         )
-        SettingsDialogType.PlaybackSpeed -> SelectPlaybackSpeedDialog(
+        SettingsPlaybackDialogType.PlaybackSpeed -> SelectPlaybackSpeedDialog(
             value = viewState.playbackSpeed,
             onPlaySample = onPlaySpeedSample,
             onConfirm = onSetPlaybackSpeed,
             onDismissRequest = dismissAction
         )
-        SettingsDialogType.SleepTimer -> SelectSleepTimerDialog(
+        SettingsPlaybackDialogType.SleepTimer -> SelectSleepTimerDialog(
             value = viewState.sleepTimerSeconds,
             onValueChange = onSetSleepTimerSeconds,
             onDismissRequest = dismissAction,
