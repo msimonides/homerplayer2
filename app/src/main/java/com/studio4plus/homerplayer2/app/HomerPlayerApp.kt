@@ -25,6 +25,7 @@
 package com.studio4plus.homerplayer2.app
 
 import android.app.Application
+import androidx.work.Configuration
 import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
@@ -42,7 +43,7 @@ import org.koin.core.context.startKoin
 import org.koin.ksp.generated.module
 import timber.log.Timber
 
-class HomerPlayerApp : Application(), SingletonImageLoader.Factory {
+class HomerPlayerApp : Application(), SingletonImageLoader.Factory, Configuration.Provider {
 
     private val okHttpClient by inject<OkHttpClient>()
 
@@ -81,6 +82,9 @@ class HomerPlayerApp : Application(), SingletonImageLoader.Factory {
             }
             .diskCachePolicy(CachePolicy.DISABLED) // It's only for podcast search.
             .build()
+
+    override val workManagerConfiguration: Configuration
+        get() = Configuration.Builder().build()
 
     // Try to share Sentry configuration between app and kiosksetup.
     private fun initCrashReporting() {

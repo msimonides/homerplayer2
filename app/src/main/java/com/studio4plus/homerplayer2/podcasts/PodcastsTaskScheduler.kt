@@ -30,6 +30,7 @@ import com.studio4plus.homerplayer2.settingsdata.NetworkSettings
 import com.studio4plus.homerplayer2.settingsdata.NetworkType
 import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -37,6 +38,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.launch
 import org.koin.core.annotation.Named
 import org.koin.core.annotation.Single
 
@@ -55,24 +57,26 @@ class PodcastRefreshScheduler(
     scheduler: PodcastsTaskScheduler,
 ) {
     init {
-        // TODO: open for some future app start optimizations
-        val networkTypeFlow = networkSettingsStore.data.map { it.podcastsDownloadNetworkType }
-            .distinctUntilChanged()
-            .shareIn(mainScope, SharingStarted.WhileSubscribed(), replay = 1)
-        combine(
-            podcastsDao.observeHasAnyPodcast(),
-            networkTypeFlow,
-        ) { hasPodcasts, networkType -> Pair(hasPodcasts, networkType) }
-            .distinctUntilChanged()
-            .onEach { (hasPodcasts, networkType) ->
-                when (hasPodcasts) {
-                    true -> scheduler.enablePeriodicUpdate(networkType)
-                    false -> scheduler.disablePeriodicUpdate()
-                }
-            }.launchIn(mainScope)
+        mainScope.launch {
+            delay(3_000) // Don't block app startup.
+            val networkTypeFlow = networkSettingsStore.data.map { it.podcastsDownloadNetworkType }
+                .distinctUntilChanged()
+                .shareIn(mainScope, SharingStarted.WhileSubscribed(), replay = 1)
+            combine(
+                podcastsDao.observeHasAnyPodcast(),
+                networkTypeFlow,
+            ) { hasPodcasts, networkType -> Pair(hasPodcasts, networkType) }
+                .distinctUntilChanged()
+                .onEach { (hasPodcasts, networkType) ->
+                    when (hasPodcasts) {
+                        true -> scheduler.enablePeriodicUpdate(networkType)
+                        false -> scheduler.disablePeriodicUpdate()
+                    }
+                }.launchIn(mainScope)
 
-        networkTypeFlow
-            .onEach { scheduler.updateNetworkType(it) }
-            .launchIn(mainScope)
+            networkTypeFlow
+                .onEach { scheduler.updateNetworkType(it) }
+                .launchIn(mainScope)
+        }
     }
 }
