@@ -30,6 +30,9 @@ import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.RenderersFactory
+import androidx.media3.exoplayer.audio.MediaCodecAudioRenderer
+import androidx.media3.exoplayer.mediacodec.MediaCodecSelector
 import org.koin.core.annotation.Factory
 import org.koin.core.annotation.Module
 import org.koin.core.annotation.Named
@@ -56,10 +59,22 @@ class ExoplayerModule {
     @OptIn(UnstableApi::class)
     fun exoplayerUtility(appContext: Context): Lazy<ExoPlayer> = lazy { commonBuilder(appContext).build() }
 
-    private fun commonBuilder(appContext: Context): ExoPlayer.Builder =
-        // TODO: remove non-audio renderers, enable audio offload.
+    @OptIn(UnstableApi::class)
+    private fun commonBuilder(appContext: Context): ExoPlayer.Builder {
+        // TODO: enable audio offload.
         //  consider: ConstantBitrateSeekingEnabled
-        ExoPlayer.Builder(appContext)
+        val audioRenderersFactory = RenderersFactory { eventHandler, _, audioRendererEventListener, _, _ ->
+            arrayOf(
+                MediaCodecAudioRenderer(
+                    appContext,
+                    MediaCodecSelector.DEFAULT,
+                    eventHandler,
+                    audioRendererEventListener
+                )
+            )
+        }
+        return ExoPlayer.Builder(appContext, audioRenderersFactory)
+    }
 
     companion object {
         const val PLAYBACK = "playback"
