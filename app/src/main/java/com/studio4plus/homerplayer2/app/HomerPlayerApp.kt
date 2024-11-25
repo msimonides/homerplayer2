@@ -25,6 +25,7 @@
 package com.studio4plus.homerplayer2.app
 
 import android.app.Application
+import android.os.Build
 import androidx.work.Configuration
 import coil3.ImageLoader
 import coil3.PlatformContext
@@ -91,7 +92,7 @@ class HomerPlayerApp : Application(), SingletonImageLoader.Factory, Configuratio
         if (!BuildConfig.DEBUG) {
             SentryAndroid.init(this) { options ->
                 options.dsn = getString(R.string.sentry_dsn)
-                options.isAnrEnabled = false
+                options.isAnrEnabled = Build.VERSION.SDK_INT >= 30
                 options.isEnableAppLifecycleBreadcrumbs = true
                 options.isEnableAppComponentBreadcrumbs = true
 
