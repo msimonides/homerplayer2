@@ -44,6 +44,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Image
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -54,6 +55,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -61,6 +63,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -75,6 +80,7 @@ import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 import com.studio4plus.homerplayer2.podcastsui.usecases.PodcastSearchResult
+import com.studio4plus.homerplayer2.utils.forwardingPainter
 import com.studio4plus.homerplayer2.base.R as BaseR
 
 @Composable
@@ -286,9 +292,18 @@ private fun PodcastSearchResultItem(
             verticalAlignment = Alignment.Bottom,
         ) {
             if (item.artworkUri.isNotBlank()) {
+                val errorImageTint = MaterialTheme.colorScheme.onSurface
+                val errorImageVectorPainter = rememberVectorPainter(Icons.Default.Image)
+                val errorImage = remember(errorImageTint, errorImageVectorPainter) {
+                    forwardingPainter(
+                        errorImageVectorPainter,
+                        colorFilter = ColorFilter.tint(errorImageTint),
+                    )
+                }
                 AsyncImage(
                     model = item.artworkUri,
                     contentDescription = null,
+                    error = errorImage,
                     modifier = Modifier
                         .clip(MaterialTheme.shapes.medium)
                         .border(
