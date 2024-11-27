@@ -55,6 +55,11 @@
     <string name="playback_volume_up_button_description">Volume Up</string>
     <string name="playback_volume_down_button_description">Volume Down</string>
 
+    <string name="player_no_books_title">No audiobooks yet</string>
+    <string name="player_no_books_message">Open settings and add a folder with audiobooks or some podcasts</string>
+    <string name="player_no_books_podcasts_title">Podcasts downloading</string>
+    <string name="player_no_books_podcasts_message">Podcast episodes will show up as soon as they are fully downloaded. This may take a few minutes.</string>
+
     <string name="podcast_accessibility_action_edit">Edit</string>
     <string name="podcast_add_dialog_latest_episode">Latest episode:</string>
     <string name="podcast_add_dialog_add_button">Add podcast</string>

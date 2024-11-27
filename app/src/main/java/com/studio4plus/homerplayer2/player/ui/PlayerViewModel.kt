@@ -37,15 +37,18 @@ import com.studio4plus.homerplayer2.player.Audiobook
 import com.studio4plus.homerplayer2.player.AudiobookFile
 import com.studio4plus.homerplayer2.player.PlaybackUiStateRepository
 import com.studio4plus.homerplayer2.player.toAudiobook
+import com.studio4plus.homerplayer2.podcasts.data.PodcastsDao
 import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
 import com.studio4plus.homerplayer2.settingsdata.UiSettings
 import com.studio4plus.homerplayer2.speech.Speaker
+import com.studio4plus.homerplayer2.utils.combineTransformLatest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
@@ -63,6 +66,7 @@ import org.koin.core.annotation.Named
 class PlayerViewModel(
     private val playbackState: PlaybackState,
     audiobooksDao: AudiobooksDao,
+    podcastsDao: PodcastsDao,
     @Named(SettingsDataModule.UI) uiSettingsStore: DataStore<UiSettings>,
     private val playbackUiStateRepository: PlaybackUiStateRepository,
     private val audioManager: AudioManager,
@@ -84,6 +88,8 @@ class PlayerViewModel(
 
     sealed interface BooksState {
         object Initializing : BooksState
+        object NoContent : BooksState
+        object NoBooksPendingPodcasts : BooksState
         data class Books(
             val books: List<UiAudiobook>,
             val selectedIndex: Int,
@@ -103,14 +109,35 @@ class PlayerViewModel(
     private val playbackStateFlow = playbackState.state
         .stateIn(viewModelScope, SharingStarted.Eagerly, PlaybackState.MediaState.Initializing)
 
-    val booksState: StateFlow<BooksState> = combine(
+    val booksState: StateFlow<BooksState> = combineTransformLatest(
         allUiBooks,
         playbackStateFlow
     ) { booksState, mediaState ->
         when (mediaState) {
             is PlaybackState.MediaState.Initializing -> BooksState.Initializing
-            is PlaybackState.MediaState.Ready ->
-                BooksState.Books(booksState.bookStates, booksState.selectedIndex, isPlaying = false)
+            is PlaybackState.MediaState.Ready -> when {
+                booksState.books.isEmpty() -> {
+                    emit(BooksState.Initializing)
+                    emitAll(
+                        podcastsDao.hasAnyPodcastEpisode().map { hasAnyPodcasts ->
+                            if (hasAnyPodcasts) {
+                                BooksState.NoBooksPendingPodcasts
+                            } else {
+                                BooksState.NoContent
+                            }
+                        }
+                    )
+                }
+
+                else -> emit(
+                    BooksState.Books(
+                        booksState.bookStates,
+                        booksState.selectedIndex,
+                        isPlaying = false
+                    )
+                )
+            }
+
             is PlaybackState.MediaState.Playing -> {
                 // TODO: refactor
                 // Store the matching file to get its Uri instead of parsing it from string.
@@ -131,7 +158,7 @@ class PlayerViewModel(
                 } else {
                     booksState.bookStates
                 }
-                BooksState.Books(b, booksState.selectedIndex, isPlaying = true)
+                emit(BooksState.Books(b, booksState.selectedIndex, isPlaying = true))
             }
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), BooksState.Initializing)

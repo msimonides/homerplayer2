@@ -137,11 +137,12 @@ private fun PlayerScreen(
             .navigationBarsPadding()
 
     ) {
+        val contentModifier = Modifier.fillMaxSize()
         when (booksState) {
             is PlayerViewModel.BooksState.Books -> {
                 BooksPager(
                     landscape = isLandscape,
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = contentModifier,
                     itemPadding = HomerTheme.dimensions.screenContentPadding,
                     state = booksState,
                     playerActions = playerActions,
@@ -149,10 +150,21 @@ private fun PlayerScreen(
                     onPageChanged = onPageChanged,
                 )
             }
+
+            PlayerViewModel.BooksState.NoBooksPendingPodcasts ->
+                PlayerScreenNoContentPendingPodcasts(
+                    contentModifier.padding(HomerTheme.dimensions.screenContentPadding)
+                )
+
+            PlayerViewModel.BooksState.NoContent ->
+                PlayerScreenNoContent(
+                    contentModifier.padding(HomerTheme.dimensions.screenContentPadding)
+                )
+
             is PlayerViewModel.BooksState.Initializing -> Unit
         }
 
-        val includeSettingsButton = booksState is PlayerViewModel.BooksState.Books
+        val includeSettingsButton = booksState !is PlayerViewModel.BooksState.Initializing
         val controlsHorizontalPadding = with(HomerTheme.dimensions) {
             (screenContentPadding - (mainScreenButtonSize - mainScreenIconSize) / 2).coerceAtLeast(0.dp)
         }

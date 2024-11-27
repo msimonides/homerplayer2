@@ -89,6 +89,9 @@ abstract class PodcastsDao {
     @Query("""SELECT EXISTS (SELECT * FROM podcast_episodes WHERE file_id = :fileId)""")
     abstract fun hasEpisodeForFile(fileId: String): Boolean
 
+    @Query("""SELECT EXISTS (SELECT * FROM podcast_episodes)""")
+    abstract fun hasAnyPodcastEpisode(): Flow<Boolean>
+
     @Upsert
     abstract suspend fun upsert(podcast: Podcast)
 
