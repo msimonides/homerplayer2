@@ -78,9 +78,9 @@ class DownloadPodcastFeed(
             val response = okHttpClient.newCall(request).executeAwait()
             Timber.i("$url response: ${response.code}: ${response.message.take(200)}")
             return if (response.isSuccessful) {
-                val body = runInterruptible(dispatcherProvider.Io) { response.body }
+                val body = runInterruptible(dispatcherProvider.Io) { response.body?.string() }
                 if (body != null) {
-                    parse(body.string(), url)
+                    parse(body, url)
                 } else {
                     Timber.w("Empty body")
                     Result.Error(204) // No content
