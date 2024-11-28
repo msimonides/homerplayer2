@@ -71,6 +71,8 @@ import java.time.LocalDate
 import java.time.ZoneId
 import kotlin.collections.map
 
+private const val DEFAULT_EPISODE_COUNT = 2
+
 @OptIn(ExperimentalCoroutinesApi::class)
 @KoinViewModel
 class PodcastEditViewModel(
@@ -153,6 +155,7 @@ class PodcastEditViewModel(
         else
             null
     }.stateIn(viewModelScope, SharingStarted.Eagerly, null)
+
     private val podcastParsedFeedFlow = podcastFeedFlow.filterIsInstance<Feed.Parsed>().map { it.feed }
 
     private val podcastFlow: Flow<PodcastWithEpisodes?> = podcastUriFlow.flatMapLatest {
@@ -171,7 +174,7 @@ class PodcastEditViewModel(
         .flatMapLatest { hasPodcast ->
             when {
                 hasPodcast -> combine(
-                    podcastFlow.filterNotNull(), // TODO: do something about all these filterNotNulls
+                    podcastFlow.filterNotNull(),
                     podcastDownloadsNetwork,
                     currentNetworkType.networkType
                 ) { (podcast, episodes), downloadNetworkType, currentNetworkType ->
@@ -237,7 +240,6 @@ class PodcastEditViewModel(
 
     override fun onCleared() {
         super.onCleared()
-        // TODO: a bit hacky.
         podcastTaskScheduler.runUpdate(podcastDownloadsNetwork.value)
     }
 
@@ -292,7 +294,7 @@ class PodcastEditViewModel(
                 includeEpisodeNumber = true,
                 includePodcastTitle = true,
                 includeEpisodeTitle = true,
-                downloadEpisodeCount = 2 // TODO: constant for the default
+                downloadEpisodeCount = DEFAULT_EPISODE_COUNT,
             )
 
             podcastsDao.upsert(newPodcast)
