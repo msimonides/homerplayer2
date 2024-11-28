@@ -51,7 +51,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.studio4plus.homerplayer2.FeatureFlags
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFolderViewState
 import com.studio4plus.homerplayer2.base.ui.DefaultAlertDialog
@@ -86,10 +85,8 @@ fun ContentManagementPanel(
             Button(onClick = onAddFolder) {
                 Text(stringResource(id = R.string.content_add_folder_button))
             }
-            if (FeatureFlags.Podcasts) {
-                Button(onClick = onAddPodcast) {
-                    Text(stringResource(id = R.string.content_add_podcast_button))
-                }
+            Button(onClick = onAddPodcast) {
+                Text(stringResource(id = R.string.content_add_podcast_button))
             }
             if (state.samplesInstallState != null) {
                 OutlinedButton(
