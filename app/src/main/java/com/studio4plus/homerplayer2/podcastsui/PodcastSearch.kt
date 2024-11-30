@@ -242,8 +242,11 @@ private fun PodcastSearchError(
         ) {
             Text(
                 stringResource(title),
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(bottom = 8.dp)
+                style = MaterialTheme.typography.titleLarge,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .padding(bottom = 8.dp)
+                    .fillMaxWidth()
             )
             Text(stringResource(message))
             PodcastRssUrlInstructions(
@@ -374,6 +377,15 @@ private fun PreviewPodcastSearchNoResults() {
             results = emptyList(),
             moreResultsAvailable = false,
         )
+        PodcastSearch(viewState, {}, {})
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewPodcastSearchError() {
+    HomerPlayer2Theme {
+        val viewState = PodcastEditViewModel.ViewState.SearchRateLimited
         PodcastSearch(viewState, {}, {})
     }
 }

@@ -35,6 +35,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.base.ui.IconButtonNavigateBack
 import com.studio4plus.homerplayer2.podcastsui.PodcastEditRoute
@@ -47,7 +48,9 @@ fun OnboardingAddPodcastRoute(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.onboarding_podcast_title)) },
+                title = {
+                    Text(stringResource(R.string.onboarding_podcast_title), maxLines = 1, overflow = TextOverflow.Ellipsis)
+                },
                 navigationIcon = {
                     IconButtonNavigateBack(onBack = navigateBack)
                 },
