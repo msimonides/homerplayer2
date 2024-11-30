@@ -39,6 +39,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -55,6 +56,8 @@ import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 import kotlinx.coroutines.delay
+import kotlin.math.ceil
+import kotlin.math.floor
 import kotlin.math.roundToInt
 
 private val LevelIcons = arrayOf(
@@ -68,7 +71,8 @@ private val LevelIcons = arrayOf(
     Icons.Default.BatteryFull
 )
 
-private val LowBatteryThreshold = 1f / LevelIcons.size * 2
+private val LowBatteryThreshold = 1f / LevelIcons.size * 3
+private val VeryLowBatteryThreshold = 1f / LevelIcons.size * 2
 private val CriticalBatteryThreshold = 1f / LevelIcons.size
 
 @Composable
@@ -98,6 +102,7 @@ private fun DischargingBatteryIcon(
     modifier: Modifier = Modifier
 ) {
     val color = when {
+        level < VeryLowBatteryThreshold -> HomerTheme.colors.batteryCritical
         level < LowBatteryThreshold -> HomerTheme.colors.batteryLow
         else -> HomerTheme.colors.batteryRegular
     }
@@ -119,8 +124,8 @@ private fun ChargingBatteryIcon(
     modifier: Modifier = Modifier
 ) {
     val fullIndex = LevelIcons.size - 1
-    val steps = ((1f - level) * fullIndex).roundToInt()
-    var iconIndex by remember { mutableStateOf(fullIndex - steps) }
+    val steps = ((1f - level) * fullIndex).ceilToInt()
+    var iconIndex by remember(steps) { mutableIntStateOf(fullIndex - steps) }
     LaunchedEffect(steps) {
         while(true) {
             delay(500)
@@ -137,24 +142,7 @@ private fun ChargingBatteryIcon(
 }
 
 private fun levelToIcon(level: Float): ImageVector =
-    LevelIcons[((LevelIcons.size - 1) * level).roundToInt()]
-
-@Preview
-@Composable
-fun BatteryPreview() {
-    HomerPlayer2Theme {
-        Row {
-            BatteryIcon(
-                BatteryState.Discharging(0.7f),
-                modifier = Modifier.size(32.dp)
-            )
-            BatteryIcon(
-                BatteryState.Charging(0.78f),
-                modifier = Modifier.size(32.dp)
-            )
-        }
-    }
-}
+    LevelIcons[(LevelIcons.size * level).floorToInt().coerceAtMost(LevelIcons.size - 1)]
 
 fun Modifier.blink(delayMs: Long): Modifier = composed {
     var isVisible by remember { mutableStateOf(true) }
@@ -165,4 +153,24 @@ fun Modifier.blink(delayMs: Long): Modifier = composed {
         }
     }
     graphicsLayer { alpha = if (isVisible) 1f else 0f }
+}
+
+private fun Float.floorToInt() = floor(this).toInt()
+private fun Float.ceilToInt() = ceil(this).toInt()
+
+@Preview
+@Composable
+fun BatteryPreview() {
+    HomerPlayer2Theme {
+        Row {
+            BatteryIcon(
+                BatteryState.Discharging(0.36f),
+                modifier = Modifier.size(32.dp)
+            )
+            BatteryIcon(
+                BatteryState.Charging(0.95f),
+                modifier = Modifier.size(32.dp)
+            )
+        }
+    }
 }

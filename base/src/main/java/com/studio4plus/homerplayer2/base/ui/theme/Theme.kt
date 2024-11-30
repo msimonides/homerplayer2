@@ -3,7 +3,6 @@ package com.studio4plus.homerplayer2.base.ui.theme
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
-import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -16,16 +15,12 @@ import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.core.view.WindowInsetsControllerCompat
 import java.lang.IllegalStateException
 
 @Immutable
@@ -36,7 +31,8 @@ data class ExtendedColors(
     val controlFast: Color,
     val controlSeek: Color,
     val batteryRegular: Color,
-    val batteryLow: Color
+    val batteryLow: Color,
+    val batteryCritical: Color
 )
 
 @Immutable
@@ -58,12 +54,16 @@ private val LocalExtendedColors = staticCompositionLocalOf {
         controlFast = Color.Unspecified,
         controlSeek = Color.Unspecified,
         batteryRegular = Color.Unspecified,
-        batteryLow = Color.Unspecified
+        batteryLow = Color.Unspecified,
+        batteryCritical = Color.Unspecified
     )
 }
 
 private val HomerGreen = Color(0xff23a45d)
 private val RedStop = Color(0xffc31e1e)
+
+private val YellowDarkMode = Color(0xffeeff00)
+private val YellowLightMode = Color(0xffc1b61a)
 
 private val DarkColorScheme = darkColorScheme(
     primary = HomerGreen,
@@ -106,11 +106,12 @@ private val DarkColorScheme = darkColorScheme(
 private val ExtendedDarkColors = ExtendedColors(
     controlPlay = HomerGreen,
     controlStop = RedStop,
-    controlVolume = Color(0xffeeff00),
+    controlVolume = YellowDarkMode,
     controlFast = Color(0xff447df8),
     controlSeek = Color(0xffffffff),
     batteryRegular = HomerGreen,
-    batteryLow = RedStop,
+    batteryLow = YellowDarkMode,
+    batteryCritical = RedStop,
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -154,11 +155,12 @@ private val LightColorScheme = lightColorScheme(
 private val ExtendedLightColors = ExtendedColors(
     controlPlay = HomerGreen,
     controlStop = RedStop,
-    controlVolume = Color(0xffc1b61a),
+    controlVolume = YellowLightMode,
     controlFast = Color(0xff3566d0),
     controlSeek = Color(0xff000000),
     batteryRegular = HomerGreen,
-    batteryLow = RedStop,
+    batteryLow = YellowLightMode,
+    batteryCritical = RedStop,
 )
 
 private val LocalDimensions = staticCompositionLocalOf {
