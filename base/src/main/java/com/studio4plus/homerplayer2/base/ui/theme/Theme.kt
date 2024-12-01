@@ -1,27 +1,16 @@
 package com.studio4plus.homerplayer2.base.ui.theme
 
-import android.app.Activity
-import android.content.Context
-import android.content.ContextWrapper
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
-import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
-import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
-import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
-import java.lang.IllegalStateException
 
 @Immutable
 data class ExtendedColors(
@@ -33,17 +22,6 @@ data class ExtendedColors(
     val batteryRegular: Color,
     val batteryLow: Color,
     val batteryCritical: Color
-)
-
-@Immutable
-data class Dimensions(
-    val labelSpacing: Dp,
-    val mainScreenButtonSize: Dp,
-    val mainScreenIconSize: Dp,
-    val podcastSearchImageSize: Dp,
-    val progressIndicatorWidth: Dp,
-    val screenContentPadding: Dp,
-    val settingsRowMinHeight: Dp
 )
 
 private val LocalExtendedColors = staticCompositionLocalOf {
@@ -163,47 +141,15 @@ private val ExtendedLightColors = ExtendedColors(
     batteryCritical = RedStop,
 )
 
-private val LocalDimensions = staticCompositionLocalOf {
-    Dimensions(
-        labelSpacing = Dp.Unspecified,
-        mainScreenButtonSize = Dp.Unspecified,
-        mainScreenIconSize = Dp.Unspecified,
-        podcastSearchImageSize = Dp.Unspecified,
-        progressIndicatorWidth = Dp.Unspecified,
-        screenContentPadding = Dp.Unspecified,
-        settingsRowMinHeight = Dp.Unspecified
-    )
-}
-
-private val RegularDimensions = Dimensions(
-    labelSpacing = 16.dp,
-    mainScreenButtonSize = 48.dp,
-    mainScreenIconSize = 32.dp,
-    podcastSearchImageSize = 96.dp,
-    progressIndicatorWidth = 8.dp,
-    screenContentPadding = 16.dp,
-    settingsRowMinHeight = 48.dp,
-)
-
-private val LargeScreenDimensions = Dimensions(
-    labelSpacing = 16.dp,
-    mainScreenButtonSize = 80.dp,
-    mainScreenIconSize = 64.dp,
-    podcastSearchImageSize = 128.dp,
-    progressIndicatorWidth = 16.dp,
-    screenContentPadding = 24.dp,
-    settingsRowMinHeight = 48.dp,
-)
-
 @Composable
 fun HomerPlayer2Theme(
     darkTheme: Boolean = isNightMode(),
-    largeScreen: Boolean = isLargeScreen(),
+    screenWidth: Dp = windowWidth(),
     content: @Composable () -> Unit
 ) {
     val materialColorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
     val homerColorScheme = if (darkTheme) ExtendedDarkColors else ExtendedLightColors
-    val dimensions = if (largeScreen) LargeScreenDimensions else RegularDimensions
+    val dimensions = screenDimensions(screenWidth)
 
     CompositionLocalProvider(
         LocalExtendedColors provides homerColorScheme,
@@ -224,18 +170,6 @@ private fun isNightMode() = when (AppCompatDelegate.getDefaultNightMode()) {
     else -> isSystemInDarkTheme()
 }
 
-@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
-@Composable
-private fun isLargeScreen() =
-    if (LocalInspectionMode.current) {
-        true
-    } else {
-        calculateWindowSizeClass(LocalContext.current.getActivity()).let { windowSizeClass ->
-            windowSizeClass.heightSizeClass == WindowHeightSizeClass.Expanded ||
-                    windowSizeClass.widthSizeClass == WindowWidthSizeClass.Expanded
-        }
-    }
-
 object HomerTheme {
     val colors: ExtendedColors
         @Composable
@@ -245,9 +179,3 @@ object HomerTheme {
         get() = LocalDimensions.current
 }
 
-private fun Context.getActivity(): Activity =
-    when (this) {
-        is Activity -> this
-        is ContextWrapper -> baseContext.getActivity()
-        else -> throw IllegalStateException()
-    }

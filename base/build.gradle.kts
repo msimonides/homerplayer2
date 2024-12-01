@@ -78,8 +78,8 @@ dependencies {
     ksp(libs.koin.compiler)
 
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.window)
     implementation(libs.compose.material3)
-    implementation(libs.compose.material3.windowsize)
     implementation(libs.compose.ui.ui)
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.koin.android)

@@ -24,12 +24,10 @@
 
 package com.studio4plus.homerplayer2.kiosk.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -45,18 +43,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.paint
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.studio4plus.homerplayer2.base.ui.AppIconTopBar
 import com.studio4plus.homerplayer2.base.ui.DefaultAlertDialog
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
@@ -89,73 +83,65 @@ fun MainScreen(
             .verticalScroll(rememberScrollState())
             .padding(bottom = HomerTheme.dimensions.screenContentPadding)
     ) {
-        Image(
-            painterResource(BaseR.drawable.app_icon_setup_foreground),
-            contentDescription = null,
-            contentScale = ContentScale.FillHeight,
+        AppIconTopBar(BaseR.drawable.app_icon_setup_foreground)
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .clip(RectangleShape)
-                .paint(
-                    painterResource(BaseR.drawable.app_icon_background),
-                    contentScale = ContentScale.Crop,
-                )
-                .height(256.dp)
-                .fillMaxWidth()
-        )
-        val rowModifier = Modifier
-            .padding(horizontal = HomerTheme.dimensions.screenContentPadding)
-        val textRowModifier = rowModifier.fillMaxWidth()
-
-        Text(
-            stringResource(R.string.app_name),
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
-            modifier = rowModifier.padding(top = 24.dp, bottom = 16.dp)
-        )
-        Text(
-            stringResource(viewState.statusTitle),
-            style = MaterialTheme.typography.titleMedium,
-            modifier = textRowModifier.padding(bottom = 4.dp)
-        )
-        Text(
-            stringResource(viewState.statusDescription),
-            modifier = textRowModifier
-        )
-
-        val context = LocalContext.current
-        Button(
-            onClick = { context.startActivity(viewState.mainActionIntent) },
-            modifier = rowModifier.padding(top = 24.dp)
+                .padding(horizontal = HomerTheme.dimensions.totalScreenContentPadding)
         ) {
+            val textRowModifier = Modifier.fillMaxWidth()
+
             Text(
-                stringResource(id = viewState.mainActionLabel)
-            )
-        }
-        if (viewState.mainActionWebsiteUrl != null) {
-            Text(
-                stringResource(BaseR.string.generic_website_alternative, viewState.mainActionWebsiteUrl),
-                style = MaterialTheme.typography.bodyMedium,
+                stringResource(R.string.app_name),
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
-                modifier = textRowModifier.padding(top = 8.dp)
+                modifier = Modifier.padding(top = 24.dp, bottom = 16.dp)
             )
-        }
-        Spacer(modifier = Modifier
-            .weight(1f)
-            .heightIn(min = 32.dp))
-        if (viewState.dropPrivilegeEnabled) {
-            var confirmationDialog by rememberSaveable() { mutableStateOf(false) }
-            TextButton(
-                onClick = { confirmationDialog = true },
-                modifier = rowModifier
+            Text(
+                stringResource(viewState.statusTitle),
+                style = MaterialTheme.typography.titleMedium,
+                modifier = textRowModifier.padding(bottom = 4.dp)
+            )
+            Text(
+                stringResource(viewState.statusDescription),
+                modifier = textRowModifier
+            )
+
+            val context = LocalContext.current
+            Button(
+                onClick = { context.startActivity(viewState.mainActionIntent) },
+                modifier = Modifier.padding(top = 24.dp)
             ) {
-                Text("Drop device owner privilege")
-            }
-            if (confirmationDialog) {
-                ConfirmDropPrivilegeDialog(
-                    onConfirm = dropDeviceOwnerPrivilege,
-                    onDismissRequest = { confirmationDialog = false }
+                Text(
+                    stringResource(id = viewState.mainActionLabel)
                 )
+            }
+            if (viewState.mainActionWebsiteUrl != null) {
+                Text(
+                    stringResource(BaseR.string.generic_website_alternative, viewState.mainActionWebsiteUrl),
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Center,
+                    modifier = textRowModifier.padding(top = 8.dp)
+                )
+            }
+            Spacer(modifier = Modifier
+                .weight(1f)
+                .heightIn(min = 32.dp))
+            if (viewState.dropPrivilegeEnabled) {
+                var confirmationDialog by rememberSaveable() { mutableStateOf(false) }
+                TextButton(
+                    onClick = { confirmationDialog = true },
+                ) {
+                    Text("Drop device owner privilege")
+                }
+                if (confirmationDialog) {
+                    ConfirmDropPrivilegeDialog(
+                        onConfirm = dropDeviceOwnerPrivilege,
+                        onDismissRequest = { confirmationDialog = false }
+                    )
+                }
             }
         }
     }

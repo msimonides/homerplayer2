@@ -40,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studio4plus.homerplayer2.R
@@ -85,7 +86,7 @@ private fun SettingsPlayerUi(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         HomerPlayer2Theme(
-            largeScreen = false
+            screenWidth = Dp.Unspecified,
         ) {
             BookPage(
                 landscape = isLandscape,
