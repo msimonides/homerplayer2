@@ -28,17 +28,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -62,7 +59,6 @@ fun OnboardingContentRoute(
     navigateAddPodcast: () -> Unit,
     navigateEditPodcast: (feedUri: String) -> Unit,
     navigateNext: () -> Unit,
-    navigateBack: () -> Unit,
     viewModel: OnboardingContentViewModel = koinViewModel()
 ) {
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
@@ -80,11 +76,7 @@ fun OnboardingContentRoute(
             viewState = viewState,
             snackbarHostState = snackbarHostState,
             modifier = modifier,
-            navigateNext = {
-                viewModel.onFinished()
-                navigateNext()
-            },
-            navigateBack = navigateBack,
+            navigateNext = navigateNext,
             addFolder = {
                 viewModel.clearErrorSnack()
                 openAudiobooksTree()
@@ -103,7 +95,6 @@ fun OnboardingContentScreen(
     viewState: OnboardingContentViewModel.ViewState,
     snackbarHostState: SnackbarHostState,
     navigateNext: () -> Unit,
-    navigateBack: () -> Unit,
     addFolder: () -> Unit,
     removeFolder: (AudiobookFolderViewState) -> Unit,
     addPodcast: () -> Unit,
@@ -117,10 +108,8 @@ fun OnboardingContentScreen(
         bottomBar = {
             OnboardingNavigationButtons(
                 nextEnabled = viewState.canProceed,
-                nextLabel = R.string.onboarding_step_done,
+                nextLabel = R.string.onboarding_step_next,
                 onNext = navigateNext,
-                secondaryLabel = R.string.onboarding_step_back,
-                onSecondary = navigateBack,
                 modifier = Modifier
                     .padding(OnboardingNavigationButtonsDefaults.paddingValues)
                     .navigationBarsPadding(),
@@ -132,7 +121,8 @@ fun OnboardingContentScreen(
             modifier = Modifier
                 .padding(paddingValues)
                 .consumeWindowInsets(paddingValues)
-                .padding(HomerTheme.dimensions.screenContentPadding),
+                .padding(horizontal = HomerTheme.dimensions.totalScreenContentPadding)
+                .padding(top = HomerTheme.dimensions.screenContentPadding),
             panelState = viewState.panelState,
             onAddFolder = addFolder,
             onRemoveFolder = removeFolder,
@@ -156,13 +146,10 @@ private fun ScreenContent(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
-        Text(
-            text = stringResource(id = R.string.onboarding_content_title),
-            style = MaterialTheme.typography.headlineMedium
-        )
-        Text(
-            text = stringResource(id = R.string.onboarding_content_description),
-            modifier = Modifier.padding(bottom = 8.dp)
+        OnboardingHeader(
+            titleRes = R.string.onboarding_content_title,
+            descriptionRes = R.string.onboarding_content_description,
+            modifier = Modifier.padding(bottom = 16.dp)
         )
 
         ContentManagementPanel(
@@ -185,7 +172,7 @@ private fun PreviewOnboardingAudiobookFoldersScreen1() {
             ContentPanelViewState(PreviewData.folderItems1, PreviewData.podcasts1, SamplesInstallState.Idle),
             canProceed = true
         )
-        OnboardingContentScreen(state, SnackbarHostState(), {}, {}, {}, {}, {}, {}, {}, {})
+        OnboardingContentScreen(state, SnackbarHostState(), {}, {}, {}, {}, {}, {}, {})
     }
 }
 
@@ -197,6 +184,6 @@ private fun PreviewOnboardingAudiobookFoldersScreen50() {
             ContentPanelViewState(PreviewData.folderItems50, emptyList(), SamplesInstallState.Idle),
             canProceed = true
         )
-        OnboardingContentScreen(state, SnackbarHostState(), {}, {}, {}, {}, {}, {}, {}, {})
+        OnboardingContentScreen(state, SnackbarHostState(), {}, {}, {}, {}, {}, {}, {})
     }
 }

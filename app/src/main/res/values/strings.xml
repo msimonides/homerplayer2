@@ -37,11 +37,11 @@
     <string name="onboarding_content_title">Audiobooks and Podcasts</string>
     <string name="onboarding_content_description">Please add at least one folder with your audiobooks or one podcast.</string>
     <string name="onboarding_podcast_title">Podcast</string>
-    <string name="onboarding_speech_description">Homer Player uses text-to-speech engine to read book titles.\nPlease test that </string>
+    <string name="onboarding_speech_title">Speak book titles</string>
+    <string name="onboarding_speech_description">Homer Player uses text-to-speech engine to read book titles.\nYou can now test it and adjust configuration settings.</string>
     <string name="onboarding_speech_open_settings">Open text-to-speech settings</string>
     <string name="onboarding_speech_tts_checkbox_label">Speak book titles</string>
     <string name="onboarding_speech_tts_checkbox_note">Disable if already using a screen reader</string>
-    <string name="onboarding_step_back">Back</string>
     <string name="onboarding_step_done">Done</string>
     <string name="onboarding_step_next">Next</string>
     <string name="onboarding_step_skip">Skip</string>

@@ -27,19 +27,37 @@ package com.studio4plus.homerplayer2.onboarding
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 
 object OnboardingNavigationButtonsDefaults {
     val paddingValues: PaddingValues
         @Composable
         get() = with(HomerTheme.dimensions) {
-            PaddingValues(start = screenContentPadding, end = screenContentPadding, bottom = screenContentPadding)
+            PaddingValues(start = totalScreenContentPadding, end = totalScreenContentPadding, bottom = screenContentPadding)
         }
+}
+
+@Composable
+fun OnboardingHeader(
+    @StringRes titleRes: Int,
+    @StringRes descriptionRes: Int,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier) {
+        Text(
+            text = stringResource(titleRes),
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+        Text(text = stringResource(descriptionRes))
+    }
 }
 
 @Composable
@@ -48,12 +66,14 @@ fun OnboardingNavigationButtons(
     nextEnabled: Boolean,
     @StringRes nextLabel: Int,
     onNext: () -> Unit,
-    @StringRes secondaryLabel: Int,
-    onSecondary: () -> Unit,
+    @StringRes secondaryLabel: Int? = null,
+    onSecondary: (() -> Unit)? = null,
 ) {
     Row(modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-        TextButton(onClick = onSecondary) {
-            Text(text = stringResource(id = secondaryLabel))
+        if (onSecondary != null && secondaryLabel != null) {
+            TextButton(onClick = onSecondary) {
+                Text(text = stringResource(id = secondaryLabel))
+            }
         }
         Spacer(modifier = Modifier.width(HomerTheme.dimensions.labelSpacing))
         Button(onClick = onNext, enabled = nextEnabled) {

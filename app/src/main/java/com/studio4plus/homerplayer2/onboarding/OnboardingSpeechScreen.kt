@@ -27,35 +27,30 @@ package com.studio4plus.homerplayer2.onboarding
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -63,6 +58,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.base.ui.SmallCircularProgressIndicator
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
+import com.studio4plus.homerplayer2.settingsui.composables.SettingSwitch
 import com.studio4plus.homerplayer2.speech.LaunchErrorSnackDisplay
 import com.studio4plus.homerplayer2.speech.SpeechTestViewModel
 import com.studio4plus.homerplayer2.speech.TtsCheckContract
@@ -100,16 +96,20 @@ fun OnboardingSpeechRoute(
 
     LaunchErrorSnackDisplay(speechTestViewModel.errorEvent, snackbarHostState)
 
+    val navigateNextAndFinish = {
+        viewModel.onFinished()
+        navigateNext()
+    }
     val navigateNextAndConfirm = {
         viewModel.confirmTtsChoice()
-        navigateNext()
+        navigateNextAndFinish()
     }
     OnboardingSpeechScreen(
         viewState = viewState,
         speechTestViewState = speechTestViewState,
         snackbarHostState = snackbarHostState,
         navigateNext = navigateNextAndConfirm,
-        navigateSkip = navigateNext,
+        navigateSkip = navigateNextAndFinish,
         onSayTestPhrase = {
             speechTestViewModel.onTtsCheckStarted()
             ttsCheckLauncher.launch(Unit)
@@ -138,7 +138,7 @@ fun OnboardingSpeechScreen(
         bottomBar = {
             OnboardingNavigationButtons(
                 nextEnabled = canProceed,
-                nextLabel = R.string.onboarding_step_next,
+                nextLabel = R.string.onboarding_step_done,
                 onNext = navigateNext,
                 secondaryLabel = R.string.onboarding_step_skip,
                 onSecondary = navigateSkip,
@@ -151,9 +151,11 @@ fun OnboardingSpeechScreen(
     ) { paddingValues ->
         ScreenContent(
             modifier = Modifier
+                .fillMaxSize()
                 .padding(paddingValues)
                 .consumeWindowInsets(paddingValues)
-                .padding(HomerTheme.dimensions.screenContentPadding),
+                .padding(horizontal = HomerTheme.dimensions.screenContentExtraPadding)
+                .padding(top = HomerTheme.dimensions.screenContentPadding),
             showTtsSettings = speechTestViewState.showTtsSettings,
             readBookTitlesEnabled = viewState.readBookTitlesEnabled,
             speechInProgress = speechTestViewState.isSpeaking,
@@ -177,33 +179,29 @@ private fun ScreenContent(
     onOpenTtsSettings: () -> Unit,
 ) {
     Column(modifier = modifier) {
-        Text(text = stringResource(id = R.string.onboarding_speech_description))
+        OnboardingHeader(
+            titleRes = R.string.onboarding_speech_title,
+            descriptionRes = R.string.onboarding_speech_description,
+            modifier = Modifier
+                .padding(bottom = 16.dp)
+                .padding(horizontal = HomerTheme.dimensions.screenContentPadding)
+        )
+
+        SettingSwitch(
+            label = stringResource(R.string.settings_ui_tts_read_book_titles),
+            value = readBookTitlesEnabled,
+            onChange = { onTtsToggled() },
+            modifier = Modifier
+                .padding(vertical = 8.dp, horizontal = HomerTheme.dimensions.screenContentPadding)
+        )
+
+        Spacer(Modifier.height(16.dp))
 
         Column(
             modifier = Modifier
                 .align(CenterHorizontally)
                 .width(IntrinsicSize.Max),
         ) {
-            Spacer(Modifier.height(24.dp))
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.toggleable(
-                    value = readBookTitlesEnabled,
-                    role = Role.Switch,
-                    onValueChange = { onTtsToggled() }
-                )
-            ) {
-                Switch(readBookTitlesEnabled, onCheckedChange = null)
-                Column(modifier = Modifier.padding(8.dp)) {
-                    Text(text = stringResource(id = R.string.onboarding_speech_tts_checkbox_label))
-                    Text(
-                        style = MaterialTheme.typography.labelSmall,
-                        text = stringResource(id = R.string.onboarding_speech_tts_checkbox_note)
-                    )
-                }
-            }
-            Spacer(Modifier.height(16.dp))
-
             ButtonWithLoadingState(
                 onClick = onSayTestPhrase,
                 modifier = Modifier.fillMaxWidth(),

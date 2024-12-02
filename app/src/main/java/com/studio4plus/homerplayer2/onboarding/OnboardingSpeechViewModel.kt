@@ -54,4 +54,8 @@ class OnboardingSpeechViewModel(
     fun confirmTtsChoice() {
         onboardingDelegate.onReadBookTitlesSet(currentState.value.readBookTitlesEnabled)
     }
+
+    fun onFinished() {
+        onboardingDelegate.onOnboardingFinished()
+    }
 }

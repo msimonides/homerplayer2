@@ -44,7 +44,6 @@ class OnboardingContentViewModel(
     audiobookFolderManager: AudiobookFolderManager,
     deletePodcast: DeletePodcast,
     samplesInstaller: SamplesInstallController,
-    private val onboardingDelegate: OnboardingDelegate,
 ) : ContentPanelViewModel(mainScope, audiobookFolderManager, deletePodcast, samplesInstaller) {
     data class ViewState(
         val panelState: ContentPanelViewState,
@@ -58,8 +57,4 @@ class OnboardingContentViewModel(
             SharingStarted.WhileSubscribed(5000),
             ViewState(ContentPanelViewState(emptyList(), emptyList(), null), false)
         )
-
-    fun onFinished() {
-        onboardingDelegate.onOnboardingFinished()
-    }
 }

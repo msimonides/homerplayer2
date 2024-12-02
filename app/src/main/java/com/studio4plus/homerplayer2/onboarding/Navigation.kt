@@ -34,10 +34,7 @@ import com.studio4plus.homerplayer2.podcastsui.PodcastEditNav
 import java.net.URLEncoder
 
 fun NavGraphBuilder.onboardingGraph(navController: NavController, destinationRoute: String) {
-    navigation("onboarding/tts", "onboarding") {
-        composable("onboarding/tts") {
-            OnboardingSpeechRoute(navigateNext = { navController.navigate("onboarding/folders") })
-        }
+    navigation("onboarding/folders", "onboarding") {
         composable("onboarding/folders") {
             OnboardingContentRoute(
                 navigateAddPodcast = { navController.navigate("onboarding/podcast/") },
@@ -45,12 +42,16 @@ fun NavGraphBuilder.onboardingGraph(navController: NavController, destinationRou
                     val argument = URLEncoder.encode(feedUri)
                     navController.navigate("onboarding/podcast/$argument")
                 },
+                navigateNext = { navController.navigate("onboarding/tts") }
+            )
+        }
+        composable("onboarding/tts") {
+            OnboardingSpeechRoute(
                 navigateNext = {
                     navController.navigate(destinationRoute) {
-                        popUpTo("onboarding/tts") { inclusive = true }
+                        popUpTo("onboarding/folders") { inclusive = true }
                     }
-                },
-                navigateBack = { navController.popBackStack() }
+                }
             )
         }
         composable(
