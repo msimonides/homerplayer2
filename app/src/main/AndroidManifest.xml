@@ -29,7 +29,8 @@
             android:name=".app.MainActivity"
             android:windowSoftInputMode="adjustResize"
             android:exported="true"
-            android:theme="@style/Theme.HomerPlayer2">
+            android:theme="@style/Theme.HomerPlayer2"
+            android:configChanges="orientation|screenLayout|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
