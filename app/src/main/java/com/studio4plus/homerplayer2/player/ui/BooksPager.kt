@@ -131,7 +131,7 @@ fun DefaultPreview() {
                 selectedIndex = 1,
                 isPlaying = false,
             ),
-            itemPadding = HomerTheme.dimensions.screenContentPadding,
+            itemPadding = HomerTheme.dimensions.screenHorizPadding,
             landscape = false,
             playerActions = PlayerActions.EMPTY,
             playerUiSettings = PlayerUiSettings(true, true, true),

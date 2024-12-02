@@ -72,7 +72,7 @@ private fun SettingsAbout(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
             .navigationBarsPadding()
-            .padding(bottom = HomerTheme.dimensions.screenContentPadding)
+            .padding(bottom = HomerTheme.dimensions.screenVertPadding)
     ) {
         val settingItemModifier = Modifier.Companion.defaultSettingsItem()
         SettingItem(

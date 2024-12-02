@@ -102,7 +102,7 @@ private fun SettingsPlayerUi(
                     .border(1.dp, MaterialTheme.colorScheme.onSurface, MaterialTheme.shapes.medium)
                     .padding(8.dp)
             )
-            Spacer(Modifier.height(HomerTheme.dimensions.screenContentPadding))
+            Spacer(Modifier.height(HomerTheme.dimensions.screenVertPadding))
         }
         Column(
             modifier = Modifier

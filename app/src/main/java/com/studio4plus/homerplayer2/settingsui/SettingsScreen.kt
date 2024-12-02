@@ -73,7 +73,7 @@ import java.net.URLEncoder
 @Composable
 fun Modifier.defaultSettingsItem() = this
     .fillMaxWidth()
-    .padding(horizontal = HomerTheme.dimensions.screenContentPadding, vertical = 8.dp)
+    .padding(horizontal = HomerTheme.dimensions.screenHorizPadding, vertical = 8.dp)
     .heightIn(min = HomerTheme.dimensions.settingsRowMinHeight)
 
 @OptIn(ExperimentalLayoutApi::class)

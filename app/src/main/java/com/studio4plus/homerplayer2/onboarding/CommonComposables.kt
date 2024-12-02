@@ -40,7 +40,7 @@ object OnboardingNavigationButtonsDefaults {
     val paddingValues: PaddingValues
         @Composable
         get() = with(HomerTheme.dimensions) {
-            PaddingValues(start = totalScreenContentPadding, end = totalScreenContentPadding, bottom = screenContentPadding)
+            PaddingValues(start = screenHorizTotalPadding, end = screenHorizTotalPadding, bottom = screenVertPadding)
         }
 }
 

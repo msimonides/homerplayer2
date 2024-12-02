@@ -98,7 +98,7 @@ fun SettingsLockdown(
         Text(
             stringResource(R.string.settings_ui_lockdown_settings_description),
             modifier = Modifier
-                .padding(horizontal = HomerTheme.dimensions.screenContentPadding)
+                .padding(horizontal = HomerTheme.dimensions.screenHorizPadding)
                 .padding(bottom = 8.dp)
         )
         if (viewState != null) {

@@ -47,11 +47,12 @@ data class Dimensions(
     val mainScreenIconSize: Dp,
     val podcastSearchImageSize: Dp,
     val progressIndicatorWidth: Dp,
-    val screenContentPadding: Dp,
-    val screenContentExtraPadding: Dp, // Used for max width on large screens.
+    val screenHorizPadding: Dp,
+    val screenHorizExtraPadding: Dp, // Used for max width on large screens.
+    val screenVertPadding: Dp,
     val settingsRowMinHeight: Dp
 ) {
-    val totalScreenContentPadding = screenContentPadding + screenContentExtraPadding
+    val screenHorizTotalPadding = screenHorizPadding + screenHorizExtraPadding
 }
 
 internal val LocalDimensions = staticCompositionLocalOf {
@@ -61,21 +62,21 @@ internal val LocalDimensions = staticCompositionLocalOf {
         mainScreenIconSize = Dp.Unspecified,
         podcastSearchImageSize = Dp.Unspecified,
         progressIndicatorWidth = Dp.Unspecified,
-        screenContentPadding = Dp.Unspecified,
-        screenContentExtraPadding = Dp.Unspecified,
+        screenHorizPadding = Dp.Unspecified,
+        screenHorizExtraPadding = Dp.Unspecified,
+        screenVertPadding = Dp.Unspecified,
         settingsRowMinHeight = Dp.Unspecified,
     )
 }
 
+private val MaxMainContentWidth = 800.dp
+
 internal fun screenDimensions(windowWidth: Dp) =
-    if (windowWidth.isSpecified && windowWidth >= 800.dp) {
+    if (windowWidth.isSpecified && windowWidth >= MaxMainContentWidth) {
         largeScreenDimensions(windowWidth)
     } else {
         regularScreenDimensions(windowWidth)
     }
-
-
-private val MaxMainContentWidth = 800.dp
 
 private fun largeScreenDimensions(windowWidth: Dp): Dimensions {
     val screenContentPadding = 24.dp
@@ -87,8 +88,9 @@ private fun largeScreenDimensions(windowWidth: Dp): Dimensions {
         mainScreenIconSize = 64.dp,
         podcastSearchImageSize = 128.dp,
         progressIndicatorWidth = 16.dp,
-        screenContentPadding = 24.dp,
-        screenContentExtraPadding = screenContentExtraPadding,
+        screenHorizPadding = 24.dp,
+        screenHorizExtraPadding = screenContentExtraPadding,
+        screenVertPadding = 16.dp,
         settingsRowMinHeight = 48.dp,
     )
 }
@@ -100,8 +102,9 @@ private fun regularScreenDimensions(windowWidth: Dp) = Dimensions(
     mainScreenIconSize = 32.dp,
     podcastSearchImageSize = 96.dp,
     progressIndicatorWidth = 8.dp,
-    screenContentPadding = 16.dp,
-    screenContentExtraPadding = 0.dp,
+    screenHorizPadding = 16.dp,
+    screenHorizExtraPadding = 0.dp,
+    screenVertPadding = 16.dp,
     settingsRowMinHeight = 48.dp,
 )
 

@@ -150,7 +150,10 @@ fun SettingsLayout(
                 modifier = Modifier
                     .statusBarsFixedPadding()
                     .navigationBarsPadding()
-                    .padding(HomerTheme.dimensions.screenContentPadding)
+                    .padding(
+                        horizontal = HomerTheme.dimensions.screenHorizPadding,
+                        vertical = HomerTheme.dimensions.screenVertPadding,
+                    )
                     .blockTouchEvents()
             )
 

@@ -121,8 +121,8 @@ fun OnboardingContentScreen(
             modifier = Modifier
                 .padding(paddingValues)
                 .consumeWindowInsets(paddingValues)
-                .padding(horizontal = HomerTheme.dimensions.totalScreenContentPadding)
-                .padding(top = HomerTheme.dimensions.screenContentPadding),
+                .padding(horizontal = HomerTheme.dimensions.screenHorizTotalPadding)
+                .padding(top = HomerTheme.dimensions.screenVertPadding),
             panelState = viewState.panelState,
             onAddFolder = addFolder,
             onRemoveFolder = removeFolder,

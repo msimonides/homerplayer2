@@ -81,14 +81,14 @@ fun MainScreen(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(bottom = HomerTheme.dimensions.screenContentPadding)
+            .padding(bottom = HomerTheme.dimensions.screenVertPadding)
     ) {
         AppIconTopBar(BaseR.drawable.app_icon_setup_foreground)
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .padding(horizontal = HomerTheme.dimensions.totalScreenContentPadding)
+                .padding(horizontal = HomerTheme.dimensions.screenHorizTotalPadding)
         ) {
             val textRowModifier = Modifier.fillMaxWidth()
 

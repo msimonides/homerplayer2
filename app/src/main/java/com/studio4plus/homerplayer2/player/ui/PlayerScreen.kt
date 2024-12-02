@@ -143,7 +143,7 @@ private fun PlayerScreen(
                 BooksPager(
                     landscape = isLandscape,
                     modifier = contentModifier,
-                    itemPadding = HomerTheme.dimensions.screenContentPadding,
+                    itemPadding = HomerTheme.dimensions.screenHorizPadding,
                     state = booksState,
                     playerActions = playerActions,
                     playerUiSettings = playerUiSettings,
@@ -153,12 +153,18 @@ private fun PlayerScreen(
 
             PlayerViewModel.BooksState.NoBooksPendingPodcasts ->
                 PlayerScreenNoContentPendingPodcasts(
-                    contentModifier.padding(HomerTheme.dimensions.screenContentPadding)
+                    contentModifier.padding(
+                        horizontal = HomerTheme.dimensions.screenHorizPadding,
+                        vertical = HomerTheme.dimensions.screenVertPadding
+                    )
                 )
 
             PlayerViewModel.BooksState.NoContent ->
                 PlayerScreenNoContent(
-                    contentModifier.padding(HomerTheme.dimensions.screenContentPadding)
+                    contentModifier.padding(
+                        horizontal = HomerTheme.dimensions.screenHorizPadding,
+                        vertical = HomerTheme.dimensions.screenVertPadding
+                    )
                 )
 
             is PlayerViewModel.BooksState.Initializing -> Unit
@@ -166,7 +172,7 @@ private fun PlayerScreen(
 
         val includeSettingsButton = booksState !is PlayerViewModel.BooksState.Initializing
         val controlsHorizontalPadding = with(HomerTheme.dimensions) {
-            (screenContentPadding - (mainScreenButtonSize - mainScreenIconSize) / 2).coerceAtLeast(0.dp)
+            (screenHorizPadding - (mainScreenButtonSize - mainScreenIconSize) / 2).coerceAtLeast(0.dp)
         }
         val controlsPadding = PaddingValues(horizontal = controlsHorizontalPadding)
         val cutoutPadding = WindowInsets.displayCutout.only(WindowInsetsSides.Horizontal).asPaddingValues()

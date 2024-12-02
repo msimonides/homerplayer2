@@ -65,7 +65,7 @@ fun SettingsKioskModeSetup() {
         modifier = Modifier
             .fillMaxWidth()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = HomerTheme.dimensions.screenContentPadding)
+            .padding(horizontal = HomerTheme.dimensions.screenHorizPadding)
             .navigationBarsPadding()
     ) {
         val context = LocalContext.current

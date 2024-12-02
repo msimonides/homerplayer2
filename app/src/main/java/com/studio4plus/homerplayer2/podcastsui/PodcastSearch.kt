@@ -64,7 +64,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -106,7 +105,7 @@ fun PodcastSearch(
             singleLine = true,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = HomerTheme.dimensions.screenContentPadding)
+                .padding(horizontal = HomerTheme.dimensions.screenHorizPadding)
                 .focusRequester(focusRequester),
             label = { Text(stringResource(R.string.podcast_search_label)) },
             placeholder = { Text(stringResource(R.string.podcast_search_hint)) },
@@ -144,7 +143,7 @@ fun PodcastSearch(
                             PodcastSearchNoResults(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(horizontal = HomerTheme.dimensions.screenContentPadding),
+                                    .padding(horizontal = HomerTheme.dimensions.screenHorizPadding),
                             )
                         }
                     } else {
@@ -155,7 +154,7 @@ fun PodcastSearch(
                                     .clickable { onSelectSearchResult(it) }
                                     .fillMaxWidth()
                                     .padding(
-                                        horizontal = HomerTheme.dimensions.screenContentPadding,
+                                        horizontal = HomerTheme.dimensions.screenHorizPadding,
                                         vertical = 16.dp
                                     ),
                             )
@@ -171,7 +170,10 @@ fun PodcastSearch(
                                     textAlign = TextAlign.Center,
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(HomerTheme.dimensions.screenContentPadding)
+                                        .padding(
+                                            horizontal = HomerTheme.dimensions.screenHorizPadding,
+                                            vertical = HomerTheme.dimensions.screenVertPadding,
+                                        )
                                 )
                             }
                         }
@@ -183,7 +185,7 @@ fun PodcastSearch(
                             viewState,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = HomerTheme.dimensions.screenContentPadding)
+                                .padding(horizontal = HomerTheme.dimensions.screenHorizPadding)
                                 .padding(top = 24.dp)
                         )
                     }

@@ -175,7 +175,7 @@ private fun PodcastEdit(
     ) {
         val rowModifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = HomerTheme.dimensions.screenContentPadding)
+            .padding(horizontal = HomerTheme.dimensions.screenHorizPadding)
         val podcast = viewState.podcast
         Text(podcast.title, style = MaterialTheme.typography.headlineMedium, modifier = rowModifier)
 
@@ -253,7 +253,7 @@ private fun PodcastEdit(
         Spacer(
             Modifier
                 .windowInsetsBottomHeight(windowInsets)
-                .padding(bottom = HomerTheme.dimensions.screenContentPadding)
+                .padding(bottom = HomerTheme.dimensions.screenVertPadding)
         )
     }
 

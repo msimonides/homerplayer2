@@ -154,8 +154,8 @@ fun OnboardingSpeechScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
                 .consumeWindowInsets(paddingValues)
-                .padding(horizontal = HomerTheme.dimensions.screenContentExtraPadding)
-                .padding(top = HomerTheme.dimensions.screenContentPadding),
+                .padding(horizontal = HomerTheme.dimensions.screenHorizExtraPadding)
+                .padding(top = HomerTheme.dimensions.screenVertPadding),
             showTtsSettings = speechTestViewState.showTtsSettings,
             readBookTitlesEnabled = viewState.readBookTitlesEnabled,
             speechInProgress = speechTestViewState.isSpeaking,
@@ -184,7 +184,7 @@ private fun ScreenContent(
             descriptionRes = R.string.onboarding_speech_description,
             modifier = Modifier
                 .padding(bottom = 16.dp)
-                .padding(horizontal = HomerTheme.dimensions.screenContentPadding)
+                .padding(horizontal = HomerTheme.dimensions.screenHorizPadding)
         )
 
         SettingSwitch(
@@ -192,7 +192,7 @@ private fun ScreenContent(
             value = readBookTitlesEnabled,
             onChange = { onTtsToggled() },
             modifier = Modifier
-                .padding(vertical = 8.dp, horizontal = HomerTheme.dimensions.screenContentPadding)
+                .padding(vertical = 8.dp, horizontal = HomerTheme.dimensions.screenHorizPadding)
         )
 
         Spacer(Modifier.height(16.dp))
