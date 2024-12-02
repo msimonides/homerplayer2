@@ -45,12 +45,14 @@ import com.studio4plus.homerplayer2.podcasts.usecases.DownloadPendingPodcastEpis
 import com.studio4plus.homerplayer2.podcasts.usecases.DownloadPodcastFeed
 import com.studio4plus.homerplayer2.podcasts.usecases.UpdatePodcastFromFeed
 import com.studio4plus.homerplayer2.settingsdata.NetworkType
+import io.sentry.Sentry
 import kotlinx.coroutines.guava.await
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.koin.core.annotation.Factory
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 private const val REFRESH_PERIODIC_WORK_ID = "podcasts periodic refresh"
@@ -161,24 +163,33 @@ class PodcastsRefreshWork(
     private val wifiManager: WifiManager by inject()
 
     override suspend fun doWork(): Result {
+        Timber.i("Starting podcasts update...")
         val wifiLock = createWifiLock()
         return try {
             wifiLock.acquire()
             deleteStalePodcastFiles()
 
-            updateAndDownloadPodcasts()
+            val result = updateAndDownloadPodcasts()
+            Timber.i("Podcast update result: $result")
+            result
+        } catch (e: Throwable) {
+            Timber.w(e, "Error while updating podcasts")
+            Sentry.captureException(e)
+            Result.failure()
         } finally {
             wifiLock.release()
+            Timber.i("Podcasts update finished")
         }
     }
 
     private suspend fun updateAndDownloadPodcasts(): Result {
         val podcasts = podcastsDao.getPodcasts()
         var isSuccess = true
+        Timber.i("Updating ${podcasts.size} feeds")
         podcasts.forEach { podcast ->
             val download = feedDownload(podcast.feedUri)
             if (download is DownloadPodcastFeed.Result.Success) {
-                feedUpdater(podcast, download.feed)
+                isSuccess = feedUpdater(podcast, download.feed) && isSuccess
             } else {
                 isSuccess = false
             }
