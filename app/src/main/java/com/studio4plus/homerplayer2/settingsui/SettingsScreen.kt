@@ -112,7 +112,8 @@ fun SettingsScreen(
             navigateLayoutSettings = navigateLayoutSettings,
             modifier = Modifier
                 .padding(paddingValues)
-                .consumeWindowInsets(paddingValues),
+                .consumeWindowInsets(paddingValues)
+                .padding(horizontal = HomerTheme.dimensions.screenHorizExtraPadding),
             navController = navController,
         )
     }
@@ -174,10 +175,10 @@ private fun SettingsNavHost(
         modifier = modifier,
         navController = navController,
         startDestination = "main",
-        enterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start) },
-        exitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Start) },
-        popEnterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.End) },
-        popExitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.End) },
+        enterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start) + fadeIn() },
+        exitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Start) + fadeOut() },
+        popEnterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.End) + fadeIn() },
+        popExitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.End) + fadeOut() },
     ) {
         composable("main", label = mainTitle) {
             SettingsMainRoute(

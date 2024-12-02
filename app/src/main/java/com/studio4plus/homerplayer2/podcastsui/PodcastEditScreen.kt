@@ -307,7 +307,7 @@ private fun EpisodeCountPicker(
         Text(
             label,
             modifier = Modifier
-                .weight(1f)
+                .weight(2f)
                 .padding(end = 8.dp)
         )
         Slider(
@@ -316,7 +316,7 @@ private fun EpisodeCountPicker(
             steps = max - min - 1, // Steps doesn't count the start and end.
             valueRange = min.toFloat()..max.toFloat(),
             modifier = Modifier
-                .weight(0.5f)
+                .weight(1f)
                 .widthIn(min = 64.dp)
         )
     }

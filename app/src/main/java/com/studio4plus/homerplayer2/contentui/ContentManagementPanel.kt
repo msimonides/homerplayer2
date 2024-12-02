@@ -50,6 +50,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFolderViewState
@@ -73,6 +74,7 @@ fun ContentManagementPanel(
     onRemovePodcast: (PodcastItemViewState) -> Unit,
     onDownloadSamples: () -> Unit,
     modifier: Modifier = Modifier,
+    horizontalPadding: Dp = 0.dp,
     windowInsets: WindowInsets = WindowInsets(0, 0, 0, 0),
 ) {
     Column(
@@ -80,7 +82,8 @@ fun ContentManagementPanel(
     ) {
         Spacer(modifier = Modifier.windowInsetsTopHeight(windowInsets))
         FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.padding(horizontal = horizontalPadding)
         ) {
             Button(onClick = onAddFolder) {
                 Text(stringResource(id = R.string.content_add_folder_button))
@@ -107,21 +110,33 @@ fun ContentManagementPanel(
             contentPadding = insetsPadding,
             modifier = Modifier.consumeWindowInsets(insetsPadding)
         ) {
+            val horizontalPaddingModifier = Modifier.padding(horizontal = horizontalPadding)
             if (state.folders.isNotEmpty()) {
-                item { SectionTitle(R.string.content_section_title_audiobooks ) }
+                item {
+                    SectionTitle(
+                        R.string.content_section_title_audiobooks,
+                        modifier = horizontalPaddingModifier
+                    )
+                }
                 items(
                     state.folders,
                     key = AudiobookFolderViewState::uri,
                     itemContent = { item ->
                         AudiobookFolderRow(
                             folder = item,
-                            onRemoveClicked = { removeDialogAction = { onRemoveFolder(item) } }
+                            onRemoveClicked = { removeDialogAction = { onRemoveFolder(item) } },
+                            modifier = horizontalPaddingModifier
                         )
                     }
                 )
             }
             if (state.podcasts.isNotEmpty()) {
-                item { SectionTitle(R.string.content_section_title_podcasts) }
+                item {
+                    SectionTitle(
+                        R.string.content_section_title_podcasts,
+                        modifier = horizontalPaddingModifier
+                    )
+                }
                 val dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
                 items(
                     state.podcasts,
@@ -132,6 +147,7 @@ fun ContentManagementPanel(
                             dateFormatter,
                             onEditClicked = onEditPodcast,
                             onRemoveClicked = { removeDialogAction = { onRemovePodcast(item) } },
+                            modifier = horizontalPaddingModifier
                         )
                     }
                 )

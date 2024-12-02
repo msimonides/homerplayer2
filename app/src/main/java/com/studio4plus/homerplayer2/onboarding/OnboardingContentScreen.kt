@@ -121,7 +121,7 @@ fun OnboardingContentScreen(
             modifier = Modifier
                 .padding(paddingValues)
                 .consumeWindowInsets(paddingValues)
-                .padding(horizontal = HomerTheme.dimensions.screenHorizTotalPadding)
+                .padding(horizontal = HomerTheme.dimensions.screenHorizExtraPadding)
                 .padding(top = HomerTheme.dimensions.screenVertPadding),
             panelState = viewState.panelState,
             onAddFolder = addFolder,
@@ -149,7 +149,9 @@ private fun ScreenContent(
         OnboardingHeader(
             titleRes = R.string.onboarding_content_title,
             descriptionRes = R.string.onboarding_content_description,
-            modifier = Modifier.padding(bottom = 16.dp)
+            modifier = Modifier
+                .padding(horizontal = HomerTheme.dimensions.screenHorizPadding)
+                .padding(bottom = 16.dp)
         )
 
         ContentManagementPanel(
@@ -160,6 +162,7 @@ private fun ScreenContent(
             onEditPodcast = onEditPodcast,
             onRemovePodcast = onRemovePodcast,
             onDownloadSamples = onDownloadSamples,
+            horizontalPadding = HomerTheme.dimensions.screenHorizPadding,
         )
     }
 }

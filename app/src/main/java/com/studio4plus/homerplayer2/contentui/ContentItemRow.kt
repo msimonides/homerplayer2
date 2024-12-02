@@ -96,11 +96,12 @@ fun PodcastRow(
         subLabelContentDescription = null,
         circleContent = { PodcastBadgeContent() },
         onRemoveClicked = onRemoveClicked,
-        modifier = modifier
+        modifier = Modifier
             .clickable(
                 onClick = { onEditClicked(item.feedUri) },
                 onClickLabel = stringResource(R.string.podcast_accessibility_action_edit)
-            ),
+            )
+            .then(modifier),
     )
 }
 
