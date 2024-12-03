@@ -33,6 +33,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -191,13 +192,16 @@ private fun PlayerScreen(
                 .fillMaxHeight()
                 .fillMaxWidth(0.5f)
                 .align(Alignment.CenterEnd)
-                .padding(end = 24.dp, top = 24.dp, bottom = 24.dp)
+                .padding(start = 24.dp, end = 24.dp, top = 24.dp, bottom = 32.dp)
+                .aspectRatio(1f, matchHeightConstraintsFirst = false)
+
         } else {
             Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(0.5f)
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 24.dp, start = 24.dp, end = 24.dp)
+                .padding(start = 24.dp, end = 24.dp, top = 24.dp, bottom = 32.dp)
+                .aspectRatio(1f, matchHeightConstraintsFirst = true)
         }
         VolumeChangeIndicator(
             volumeChangeEvent = volumeChangeEvent,
