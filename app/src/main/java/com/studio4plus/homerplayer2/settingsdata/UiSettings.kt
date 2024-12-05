@@ -70,6 +70,7 @@ data class UiSettings(
     val enableHapticFeedback: Boolean = false,
     val fullKioskModeEnableTimestamp: Long = migrate(fullKioskMode) ?: FullKioskModeSetting.DISABLED,
     val hideSettingsButton: Boolean = false,
+    val homeComponentAlwaysEnabled: Boolean = false,
     val playerUiSettings: PlayerUiSettings = PlayerUiSettings(),
     val readBookTitles: Boolean = false,
     val screenOrientation: ScreenOrientation = ScreenOrientation.AUTO,

@@ -58,6 +58,7 @@ class SettingsLockdownViewModel(
         val fullKioskMode: IsFullKioskEnabled.Value,
         val fullKioskModeAvailable: Boolean,
         val hideSettingsButton: Boolean,
+        val homeComponentAlwaysEnabled: Boolean,
         val screenOrientation: ScreenOrientation,
         val showBattery: Boolean,
     )
@@ -70,13 +71,14 @@ class SettingsLockdownViewModel(
             fullKioskMode = fullKioskModeValue,
             fullKioskModeAvailable = isFullKioskAvailable(),
             hideSettingsButton = uiSettings.hideSettingsButton,
+            homeComponentAlwaysEnabled = uiSettings.homeComponentAlwaysEnabled,
             screenOrientation = uiSettings.screenOrientation,
             showBattery = uiSettings.showBatteryIndicator,
         )
     }
 
     fun setFullKioskMode(value: FullKioskModeSetValue) {
-        mainScope.launchUpdate(uiSettingsStore) {
+        update {
             val enableTimestamp = when (value) {
                 FullKioskModeSetValue.Enable -> FullKioskModeSetting.ENABLED
                 FullKioskModeSetValue.Disable -> FullKioskModeSetting.DISABLED
@@ -88,14 +90,22 @@ class SettingsLockdownViewModel(
     }
 
     fun setHideSettingsButton(isHidden: Boolean) {
-        mainScope.launchUpdate(uiSettingsStore) { it.copy(hideSettingsButton = isHidden) }
+        update { it.copy(hideSettingsButton = isHidden) }
+    }
+
+    fun setHomeComponentAlwaysEnabled(alwaysEnabled: Boolean) {
+        update { it.copy(homeComponentAlwaysEnabled = alwaysEnabled) }
     }
 
     fun setScreenOrientation(newValue: ScreenOrientation) {
-        mainScope.launchUpdate(uiSettingsStore) { it.copy(screenOrientation = newValue) }
+        update { it.copy(screenOrientation = newValue) }
     }
 
     fun setShowBatteryIndicator(isShown: Boolean) {
-        mainScope.launchUpdate(uiSettingsStore) { it.copy(showBatteryIndicator = isShown) }
+        update { it.copy(showBatteryIndicator = isShown) }
+    }
+
+    private fun update(transform: (UiSettings) -> UiSettings) {
+        mainScope.launchUpdate(uiSettingsStore, transform)
     }
 }

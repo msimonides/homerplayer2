@@ -117,6 +117,11 @@
     <string name="settings_ui_lockdown_hide_settings_dialog_title">Press both buttons to open settings</string>
     <string name="settings_ui_lockdown_hide_settings_dialog_description">Hide settings button to prevent the user from accidentally opening the settings screen.\nPlease test to enable.</string>
     <string name="settings_ui_lockdown_hide_settings_dialog_confirm_button">Hide settings button</string>
+    <string name="settings_ui_lockdown_home_component_item">Become a "Home screen" app</string>
+    <string name="settings_ui_lockdown_home_component_kiosk_only">When kiosk mode enabled</string>
+    <string name="settings_ui_lockdown_home_component_kiosk_only_description">Default. You can easily use all apps when kiosk is disabled.</string>
+    <string name="settings_ui_lockdown_home_component_always">Always</string>
+    <string name="settings_ui_lockdown_home_component_always_description">Allows setting Homer as the default home app. Can be more robust if the application gets occasionally stopped and leaves kiosk mode.</string>
     <string name="settings_ui_lockdown_kiosk_mode_item">Kiosk mode…</string>
     <string name="settings_ui_lockdown_kiosk_mode_setting_enabled">Enabled</string>
     <string name="settings_ui_lockdown_kiosk_mode_setting_disabled">Disabled</string>
@@ -178,6 +183,7 @@
     <string name="settings_ui_podcast_title">Podcast</string>
     <string name="settings_ui_privacy_policy_item">Privacy policy…</string>
     <string name="settings_ui_rate_app_item">Rate the application…</string>
+    <string name="settings_ui_section_advanced">Advanced</string>
     <string name="settings_ui_share_diagnostic_log_title">Share diagnostic log</string>
     <string name="settings_ui_share_diagnostic_log_summary">Send diagnostic log to developer to report an issue</string>
     <string name="settings_ui_tts_settings_item">Text-to-speech…</string>

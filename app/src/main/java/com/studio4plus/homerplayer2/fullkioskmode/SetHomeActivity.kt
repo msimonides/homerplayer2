@@ -24,23 +24,43 @@
 
 package com.studio4plus.homerplayer2.fullkioskmode
 
+import androidx.datastore.core.DataStore
+import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
+import com.studio4plus.homerplayer2.settingsdata.UiSettings
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import org.koin.core.annotation.Named
 import org.koin.core.annotation.Single
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @Single(createdAtStart = true)
 class SetHomeActivity(
     mainScope: CoroutineScope,
     homeComponent: HomeComponent,
     isFullKioskEnabled: IsFullKioskEnabled,
+    @Named(SettingsDataModule.UI) uiSettings: DataStore<UiSettings>
 ) {
+    private val homeActivityAlwaysEnabled = uiSettings.data
+        .map { it.homeComponentAlwaysEnabled }
+        .distinctUntilChanged()
+
     init {
-        isFullKioskEnabled()
-            .map { it.isEnabledNow }
-            .distinctUntilChanged()
+        homeActivityAlwaysEnabled
+            .flatMapLatest { alwaysEnabled ->
+                if (alwaysEnabled) {
+                    flowOf(true)
+                } else {
+                    isFullKioskEnabled()
+                        .map { it.isEnabledNow }
+                        .distinctUntilChanged()
+                }
+            }
             .onEach { enable -> homeComponent.setEnabled(enable) }
             .launchIn(mainScope)
     }

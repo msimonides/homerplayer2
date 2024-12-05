@@ -44,6 +44,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studio4plus.homerplayer2.R
+import com.studio4plus.homerplayer2.base.ui.SectionTitle
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 import com.studio4plus.homerplayer2.fullkioskmode.IsFullKioskEnabled
@@ -57,7 +58,7 @@ import java.time.format.DateTimeFormatter
 
 
 private enum class SettingsLockdownDialogType {
-    ChangeKioskMode, HideSettingsConfirmation, ScreenOrientation
+    ChangeKioskMode, HideSettingsConfirmation, HomeComponentMode, ScreenOrientation
 }
 
 @Composable
@@ -73,6 +74,7 @@ fun SettingsLockdownRoute(
         onOpenKioskModeSetup = navigateKioskModeSettings,
         onOpenLayoutSettings = navigateLayoutSettings,
         onSetHideSettingsButton = viewModel::setHideSettingsButton,
+        onSetHomeComponentAlwaysEnabled = viewModel::setHomeComponentAlwaysEnabled,
         onSetScreenOrientation = viewModel::setScreenOrientation,
         onSetShowBatteryIndicator = viewModel::setShowBatteryIndicator,
         closeSettings = closeSettings
@@ -86,6 +88,7 @@ fun SettingsLockdown(
     onOpenKioskModeSetup: () -> Unit,
     onOpenLayoutSettings: () -> Unit,
     onSetHideSettingsButton: (hide: Boolean) -> Unit,
+    onSetHomeComponentAlwaysEnabled: (alwaysEnabled: Boolean) -> Unit,
     onSetScreenOrientation: (newValue: ScreenOrientation) -> Unit,
     onSetShowBatteryIndicator: (show: Boolean) -> Unit,
     closeSettings: () -> Unit,
@@ -145,6 +148,17 @@ fun SettingsLockdown(
                 modifier = settingItemModifier
             )
 
+            SectionTitle(
+                R.string.settings_ui_section_advanced,
+                Modifier.padding(horizontal = HomerTheme.dimensions.screenHorizPadding)
+            )
+            SettingItem(
+                label = stringResource(R.string.settings_ui_lockdown_home_component_item),
+                summary = homeComponentAlwaysEnabledLabel(viewState.homeComponentAlwaysEnabled),
+                onClick = { showUiModeDialog = SettingsLockdownDialogType.HomeComponentMode },
+                modifier = settingItemModifier
+            )
+
             val dismissAction = { showUiModeDialog = null }
             when (showUiModeDialog) {
                 SettingsLockdownDialogType.ChangeKioskMode -> KioskModeSelectionDialog(
@@ -159,6 +173,11 @@ fun SettingsLockdown(
                     },
                     onDismissRequest = dismissAction
                 )
+                SettingsLockdownDialogType.HomeComponentMode -> HomeComponentModeDialog(
+                    value = viewState.homeComponentAlwaysEnabled,
+                    onValueChange = onSetHomeComponentAlwaysEnabled,
+                    onDismissRequest = dismissAction
+                )
                 SettingsLockdownDialogType.ScreenOrientation -> ScreenOrientationDialog(
                     value = viewState.screenOrientation,
                     onValueChange = onSetScreenOrientation,
@@ -171,23 +190,29 @@ fun SettingsLockdown(
 }
 
 @Composable
-fun IsFullKioskEnabled.Value.toSummary(): String {
-    val locale = LocalConfiguration.current.locale
-    val timeFormatter = remember(locale) { DateTimeFormatter.ofPattern("HH:mm", locale) }
-    return when (this) {
-        IsFullKioskEnabled.Enabled ->
-            stringResource(R.string.settings_ui_lockdown_kiosk_mode_setting_enabled)
-
-        IsFullKioskEnabled.Disabled ->
-            stringResource(R.string.settings_ui_lockdown_kiosk_mode_setting_disabled)
-
-        is IsFullKioskEnabled.DisabledUntil ->
+private fun HomeComponentModeDialog(
+    value: Boolean,
+    onValueChange: (Boolean) -> Unit,
+    onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    SelectFromRadioListDialog(
+        title = stringResource(R.string.settings_ui_lockdown_home_component_item),
+        selectedValue = value,
+        values = listOf(false, true),
+        produceLabel = @Composable { homeComponentAlwaysEnabledLabel(it) },
+        produceSummary = @Composable {
             stringResource(
-                R.string.settings_ui_lockdown_kiosk_mode_setting_disabled_until,
-                timeFormatter.format(enableTime)
+                if (it) R.string.settings_ui_lockdown_home_component_always_description
+                else R.string.settings_ui_lockdown_home_component_kiosk_only_description
             )
-    }
+        },
+        onValueChange = onValueChange,
+        onDismissRequest = onDismissRequest,
+        modifier = modifier,
+    )
 }
+
 
 @Composable
 private fun KioskModeSelectionDialog(
@@ -195,7 +220,6 @@ private fun KioskModeSelectionDialog(
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-
     SelectFromListDialog(
         title = stringResource(R.string.settings_ui_lockdown_kiosk_mode_dialog_title),
         values = listOf(
@@ -220,6 +244,32 @@ private fun KioskModeSelectionDialog(
         onDismissRequest = onDismissRequest,
         modifier = modifier
     )
+}
+
+@Composable
+private fun homeComponentAlwaysEnabledLabel(alwaysEnabled: Boolean): String =
+    stringResource(
+        if (alwaysEnabled) R.string.settings_ui_lockdown_home_component_always
+        else R.string.settings_ui_lockdown_home_component_kiosk_only
+    )
+
+@Composable
+private fun IsFullKioskEnabled.Value.toSummary(): String {
+    val locale = LocalConfiguration.current.locale
+    val timeFormatter = remember(locale) { DateTimeFormatter.ofPattern("HH:mm", locale) }
+    return when (this) {
+        IsFullKioskEnabled.Enabled ->
+            stringResource(R.string.settings_ui_lockdown_kiosk_mode_setting_enabled)
+
+        IsFullKioskEnabled.Disabled ->
+            stringResource(R.string.settings_ui_lockdown_kiosk_mode_setting_disabled)
+
+        is IsFullKioskEnabled.DisabledUntil ->
+            stringResource(
+                R.string.settings_ui_lockdown_kiosk_mode_setting_disabled_until,
+                timeFormatter.format(enableTime)
+            )
+    }
 }
 
 @Composable
@@ -256,12 +306,13 @@ private fun SettingsLockdownPreview() {
             fullKioskMode = IsFullKioskEnabled.Disabled,
             fullKioskModeAvailable = true,
             hideSettingsButton = false,
+            homeComponentAlwaysEnabled = false,
             screenOrientation = ScreenOrientation.AUTO,
             showBattery = true
         )
         SettingsLockdown(
             viewState,
-            {}, {}, {}, {}, {}, {}, {}
+            {}, {}, {}, {}, {}, {}, {}, {}
         )
     }
 }
