@@ -40,9 +40,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studio4plus.homerplayer2.R
+import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 import com.studio4plus.homerplayer2.fullkioskmode.IsFullKioskEnabled
 import com.studio4plus.homerplayer2.settingsdata.ScreenOrientation
@@ -114,14 +116,20 @@ fun SettingsLockdown(
                 modifier = settingItemModifier
             )
             SettingItem(
+                label = stringResource(R.string.settings_ui_orientation_item),
+                summary = stringResource(viewState.screenOrientation.labelRes()),
+                onClick = { showUiModeDialog = SettingsLockdownDialogType.ScreenOrientation },
+                modifier = settingItemModifier,
+            )
+            SettingItem(
                 label = stringResource(R.string.settings_ui_layout_settings_item),
                 onClick = onOpenLayoutSettings,
                 modifier = settingItemModifier,
             )
-            SettingItem(
-                label = stringResource(R.string.settings_ui_orientation_item),
-                summary = stringResource(viewState.screenOrientation.labelRes()),
-                onClick = { showUiModeDialog = SettingsLockdownDialogType.ScreenOrientation },
+            SettingSwitch(
+                label = stringResource(R.string.settings_ui_lockdown_show_battery),
+                value = viewState.showBattery,
+                onChange = onSetShowBatteryIndicator,
                 modifier = settingItemModifier,
             )
             SettingSwitch(
@@ -135,12 +143,6 @@ fun SettingsLockdown(
                     }
                 },
                 modifier = settingItemModifier
-            )
-            SettingSwitch(
-                label = stringResource(R.string.settings_ui_lockdown_show_battery),
-                value = viewState.showBattery,
-                onChange = onSetShowBatteryIndicator,
-                modifier = settingItemModifier,
             )
 
             val dismissAction = { showUiModeDialog = null }
@@ -245,3 +247,22 @@ private fun ScreenOrientation.labelRes(): Int = when(this) {
     ScreenOrientation.LANDSCAPE -> R.string.settings_ui_orientation_landscape_locked
     ScreenOrientation.LANDSCAPE_REVERSE -> R.string.settings_ui_orientation_landscape_locked_reverse
 }
+
+@Preview
+@Composable
+private fun SettingsLockdownPreview() {
+    HomerPlayer2Theme {
+        val viewState = SettingsLockdownViewModel.ViewState(
+            fullKioskMode = IsFullKioskEnabled.Disabled,
+            fullKioskModeAvailable = true,
+            hideSettingsButton = false,
+            screenOrientation = ScreenOrientation.AUTO,
+            showBattery = true
+        )
+        SettingsLockdown(
+            viewState,
+            {}, {}, {}, {}, {}, {}, {}
+        )
+    }
+}
+
