@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.toComposeRect
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
@@ -109,7 +110,15 @@ private fun regularScreenDimensions(windowWidth: Dp) = Dimensions(
 )
 
 @Composable
-internal fun windowWidth(): Dp {
+internal fun windowWidth(): Dp =
+    if (LocalInspectionMode.current) {
+        LocalConfiguration.current.screenWidthDp.dp
+    } else {
+        androidWindowWidth()
+    }
+
+@Composable
+internal fun androidWindowWidth(): Dp {
     // Based on calculateWindowSizeClass from material3.windowsizeclass
     // Observe view configuration changes and recalculate the size class on each change. We can't
     // use Activity#onConfigurationChanged as this will sometimes fail to be called on different
