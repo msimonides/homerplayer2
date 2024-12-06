@@ -33,6 +33,7 @@ import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
 import com.studio4plus.homerplayer2.settingsdata.UiSettings
 import com.studio4plus.homerplayer2.settingsdata.UiThemeMode
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -47,7 +48,7 @@ class SetUiMode(
 ) {
     private val uiModeFlow = uiSettings.data.map {
         it.uiThemeMode
-    }
+    }.distinctUntilChanged()
 
     init {
         uiModeFlow
