@@ -220,6 +220,10 @@ class PlayerViewModel(
     fun onPageChanged(bookIndex: Int) {
         viewModelScope.launch {
             val book = allUiBooks.first().books.getOrNull(bookIndex)
+            val lastSelectedBookId = playbackUiStateRepository.lastSelectedBookId().first()
+            // Index can change yet stay on the same book if content changes.
+            if (book?.id == lastSelectedBookId) return@launch
+
             speaker.stop()
             if (book != null) {
                 if (uiSettings.first().readBookTitles && !isPlaying()) {

@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 import com.studio4plus.homerplayer2.settingsdata.PlayerUiSettings
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -70,6 +71,9 @@ fun BooksPager(
         }
     }
     LaunchedEffect(pagerState, state.selectedIndex) {
+        // Wait for things to settle, when content changes there will be multiple state updates
+        // (because pager has its state in the UI).
+        delay(500)
         // scrollToPage breaks the next tap gesture (user needs to tap twice to trigger buttons)
         // Avoid unnecessary calls to minimize the issue. TODO: report to Google.
         val currentSelectedIndex = getBookIndex(pagerState.currentPage)
@@ -83,8 +87,13 @@ fun BooksPager(
         userScrollEnabled = !state.isPlaying,
         modifier = Modifier.semantics {
             collectionInfo = bookCollectionInfo
+        },
+        key = { index ->
+            val bookIndex = getBookIndex(index)
+            val book = books[bookIndex]
+            val wrapNumber = (index - zeroPage).floorDiv(books.size)
+            "${book.id}_$wrapNumber"
         }
-    // TODO: set key
     ) { pageIndex ->
         val bookIndex = getBookIndex(pageIndex)
         val book = books[bookIndex]
