@@ -27,8 +27,6 @@ package com.studio4plus.homerplayer2.audiobooks
 import android.net.Uri
 import androidx.room.Dao
 import androidx.room.Embedded
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Relation
 import androidx.room.Transaction
@@ -61,8 +59,14 @@ abstract class AudiobooksDao {
               LIMIT :maxCount""")
     abstract fun getFilesWithoutDuration(maxCount: Int): Flow<List<AudiobookFile>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract suspend fun insertAudiobookFileDurations(durations: List<AudiobookFileDuration>)
+    @Transaction
+    open suspend fun insertAudiobookFileDurations(durations: List<AudiobookFileDuration>) {
+        // Check that the files for which duration is being added still exist.
+        // It's possible for the user to remove folders that are being scanned.
+        val files = getAudiobookFiles(durations.map { it.uri })
+        val validDurations = durations.filter { it -> files.any { file -> file.uri == it.uri } }
+        insertAudiobookFileDurationsRaw(validDurations)
+    }
 
     @Transaction
     open suspend fun replaceBooksFromFolders(
@@ -118,6 +122,12 @@ abstract class AudiobooksDao {
 
     @Upsert
     protected abstract suspend fun insertAudiobookFiles(audiobookFiles: List<AudiobookFile>)
+
+    @Query("SELECT * FROM audiobook_files WHERE uri IN (:uris)")
+    protected abstract suspend fun getAudiobookFiles(uris: List<Uri>): List<AudiobookFile>
+
+    @Upsert
+    protected abstract suspend fun insertAudiobookFileDurationsRaw(durations: List<AudiobookFileDuration>)
 
     @Query("DELETE FROM audiobooks WHERE id = :id")
     protected abstract suspend fun deleteAudiobookById(id: String)
