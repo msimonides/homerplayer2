@@ -53,6 +53,7 @@ import org.koin.core.annotation.Factory
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import timber.log.Timber
+import java.util.concurrent.CancellationException
 import java.util.concurrent.TimeUnit
 
 private const val REFRESH_PERIODIC_WORK_ID = "podcasts periodic refresh"
@@ -173,6 +174,7 @@ class PodcastsRefreshWork(
             Timber.i("Podcast update result: $result")
             result
         } catch (e: Throwable) {
+            if (e is CancellationException) throw e
             Timber.w(e, "Error while updating podcasts")
             Sentry.captureException(e)
             Result.failure()
