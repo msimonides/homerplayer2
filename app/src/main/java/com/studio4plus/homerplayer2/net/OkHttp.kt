@@ -25,14 +25,17 @@
 package com.studio4plus.homerplayer2.net
 
 import android.os.Build
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.Response
 import okhttp3.tls.HandshakeCertificates
 import java.io.ByteArrayInputStream
 import java.security.cert.CertificateFactory
 import java.security.cert.X509Certificate
 
 object OkHttp {
-    fun createOkHttpClient(): OkHttpClient =
+    fun createOkHttpClient(): OkHttpClient {
+        val builder = OkHttpClient.Builder()
         if (Build.VERSION.SDK_INT < 26) {
             val certFactory = CertificateFactory.getInstance("X.509")
             val isrgRootX1Cert = certFactory.generateCertificate(
@@ -44,15 +47,26 @@ object OkHttp {
                 .addTrustedCertificate(isrgRootX1Cert)
                 .build()
 
-            OkHttpClient.Builder()
-                .sslSocketFactory(
-                    handshakeCertificates.sslSocketFactory(),
-                    handshakeCertificates.trustManager
-                )
-                .build()
-        } else {
-            OkHttpClient()
+            builder.sslSocketFactory(
+                handshakeCertificates.sslSocketFactory(),
+                handshakeCertificates.trustManager
+            )
         }
+        return builder
+            .addInterceptor(UserAgentInterceptor())
+            .build()
+    }
+}
+
+private class UserAgentInterceptor : Interceptor {
+    override fun intercept(chain: Interceptor.Chain): Response {
+        val request = chain.request()
+            .newBuilder()
+            // Some services filter okhttp User-Agent (fixes some Cloudflare-hosted podcast images).
+            .addHeader("User-Agent", "Mozilla/5.0")
+            .build()
+        return chain.proceed(request)
+    }
 }
 
 private val IsrgRootX1 = """

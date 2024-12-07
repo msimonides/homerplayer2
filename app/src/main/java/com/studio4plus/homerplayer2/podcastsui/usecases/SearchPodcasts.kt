@@ -64,7 +64,7 @@ class SearchPodcasts (
                         title = it.title,
                         author = it.author,
                         description = it.description,
-                        artworkUri = it.image,
+                        artworkUri = it.image.toHttps(),
                     )
                 }
             Result.Success(searchResults)
@@ -78,4 +78,10 @@ class SearchPodcasts (
             Timber.e(e, "search request error")
             Result.RequestError
         }
+}
+
+private fun String.toHttps() = when {
+    lowercase().startsWith("https://") -> this
+    lowercase().startsWith("http://") -> "https://" + substringAfter("://")
+    else -> this
 }
