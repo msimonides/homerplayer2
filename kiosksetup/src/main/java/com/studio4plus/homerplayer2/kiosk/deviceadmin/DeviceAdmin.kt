@@ -30,6 +30,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.UserManager
 import com.studio4plus.homerplayer2.base.Constants
 import org.koin.core.annotation.Factory
 import org.koin.core.component.KoinComponent
@@ -107,6 +108,18 @@ class DeviceAdminReceiver : android.app.admin.DeviceAdminReceiver(), KoinCompone
     override fun onDisabled(context: Context, intent: Intent) {
         deviceAdmin.onBeforeDisabled()
         super.onDisabled(context, intent)
+    }
+
+    override fun onLockTaskModeEntering(context: Context, intent: Intent, pkg: String) {
+        super.onLockTaskModeEntering(context, intent, pkg)
+        val dpm = context.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
+        dpm.addUserRestriction(component(context), UserManager.DISALLOW_CREATE_WINDOWS)
+    }
+
+    override fun onLockTaskModeExiting(context: Context, intent: Intent) {
+        super.onLockTaskModeExiting(context, intent)
+        val dpm = context.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
+        dpm.clearUserRestriction(component(context), UserManager.DISALLOW_CREATE_WINDOWS)
     }
 
     companion object {
