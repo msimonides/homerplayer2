@@ -73,6 +73,7 @@ fun <T> SelectFromRadioListDialog(
                     onValueChange(value)
                     if (buttons == null) onDismissRequest()
                 },
+                icon = null,
                 modifier = Modifier
                     .heightIn(min = 48.dp)
                     .padding(vertical = 8.dp, horizontal = horizontalPadding)

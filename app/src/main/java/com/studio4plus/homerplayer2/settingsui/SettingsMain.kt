@@ -28,6 +28,17 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CellWifi
+import androidx.compose.material.icons.filled.Contrast
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.LibraryMusic
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.LockOpen
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.RateReview
+import androidx.compose.material.icons.filled.RecordVoiceOver
+import androidx.compose.material.icons.filled.Tune
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -98,48 +109,56 @@ private fun SettingsMain(
             SettingItem(
                 label = stringResource(R.string.settings_ui_player_ui_item),
                 onClick = navigatePlayerUiSettings,
+                icon = Icons.Default.Tune,
                 modifier = settingItemModifier,
             )
             SettingItem(
                 label = stringResource(R.string.settings_ui_playback_settings_item),
                 onClick = navigatePlaybackSettings,
+                icon = Icons.Default.PlayArrow,
                 modifier = settingItemModifier,
+            )
+            SettingItem(
+                label = stringResource(R.string.settings_ui_content_item),
+                summary = viewState.content.summary(),
+                onClick = navigateFolders,
+                icon = Icons.Default.LibraryMusic,
+                modifier = settingItemModifier
+            )
+            SettingItem(
+                label = stringResource(R.string.settings_ui_network_item),
+                onClick = navigateNetworkSettings,
+                icon = Icons.Default.CellWifi,
+                modifier = settingItemModifier
             )
             val ttsSummaryRes = when {
                 viewState.ttsEnabled ->  R.string.settings_ui_tts_settings_enabled
                 else -> R.string.settings_ui_tts_settings_disabled
             }
             SettingItem(
-                label = stringResource(R.string.settings_ui_content_item),
-                summary = viewState.content.summary(),
-                onClick = navigateFolders,
-                modifier = settingItemModifier
-            )
-            SettingItem(
-                label = stringResource(R.string.settings_ui_network_item),
-                onClick = navigateNetworkSettings,
-                modifier = settingItemModifier
-            )
-            SettingItem(
                 label = stringResource(R.string.settings_ui_tts_settings_item),
                 summary = stringResource(ttsSummaryRes),
                 onClick = navigateTtsSettings,
+                icon = Icons.Default.RecordVoiceOver,
                 modifier = settingItemModifier,
             )
             SettingItem(
                 label = stringResource(R.string.settings_ui_mode_label),
                 summary = stringResource(viewState.uiMode.labelRes()),
                 onClick = { showUiModeDialog = SettingsMainDialogType.UiMode },
+                icon = Icons.Default.Contrast,
                 modifier = settingItemModifier
             )
             SettingItem(
                 label = stringResource(R.string.settings_ui_lockdown_settings_item),
                 onClick = navigateLockdownSettings,
+                icon = Icons.Default.LockOpen,
                 modifier = settingItemModifier,
             )
             SettingItem(
                 label = stringResource(R.string.settings_ui_about_item),
                 onClick = navigateAbout,
+                icon = Icons.Default.Info,
                 modifier = settingItemModifier
             )
             if (viewState.rateAppIntent != null) {
@@ -147,6 +166,7 @@ private fun SettingsMain(
                 SettingItem(
                     label = stringResource(R.string.settings_ui_rate_app_item),
                     onClick = { context.startActivity(viewState.rateAppIntent) },
+                    icon = Icons.Default.RateReview,
                     modifier = settingItemModifier
                 )
             }

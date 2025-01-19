@@ -30,6 +30,12 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.TextSnippet
+import androidx.compose.material.icons.filled.Gavel
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Policy
+import androidx.compose.material.icons.filled.TextSnippet
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -84,21 +90,25 @@ private fun SettingsAbout(
                     context.startActivity(shareIntent)
                 }
             },
+            icon = Icons.AutoMirrored.Default.TextSnippet,
             modifier = settingItemModifier
         )
         SettingItem(
             label = stringResource(R.string.settings_ui_privacy_policy_item),
             onClick = navigatePrivacyPolicy,
+            icon = Icons.Default.Policy,
             modifier = settingItemModifier
         )
         SettingItem(
             label = stringResource(R.string.settings_ui_licenses_item),
             onClick = navigateLicenses,
+            icon = Icons.Default.Gavel,
             modifier = settingItemModifier
         )
         SettingItem(
             label = stringResource(R.string.settings_ui_version_item),
             summary = BuildConfig.VERSION_NAME,
+            icon = Icons.Default.Info,
             modifier = settingItemModifier
         )
     }

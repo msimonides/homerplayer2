@@ -33,6 +33,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.toggleable
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Switch
@@ -40,6 +43,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.tooling.preview.Preview
@@ -51,6 +57,19 @@ import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 fun SettingSwitch(
     label: String,
     value: Boolean,
+    icon: ImageVector,
+    onChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+    summary: String? = null,
+) {
+    SettingSwitch(label, value, rememberVectorPainter(icon), onChange, modifier, summary)
+}
+
+@Composable
+fun SettingSwitch(
+    label: String,
+    value: Boolean,
+    icon: Painter?,
     onChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     summary: String? = null,
@@ -63,6 +82,7 @@ fun SettingSwitch(
                 role = Role.Switch
             )
             .then(modifier),
+        icon = icon,
         summary = summary,
     ) {
         Row (
@@ -79,6 +99,19 @@ fun SettingSwitch(
 fun SettingRadio(
     label: String,
     selected: Boolean,
+    icon: ImageVector,
+    onSelected: () -> Unit,
+    modifier: Modifier = Modifier,
+    summary: String? = null,
+) {
+    SettingRadio(label, selected, rememberVectorPainter(icon), onSelected, modifier, summary)
+}
+
+@Composable
+fun SettingRadio(
+    label: String,
+    selected: Boolean,
+    icon: Painter?,
     onSelected: () -> Unit,
     modifier: Modifier = Modifier,
     summary: String? = null,
@@ -87,7 +120,8 @@ fun SettingRadio(
         modifier = Modifier
             .selectable(selected = selected, onClick = onSelected, role = Role.RadioButton)
             .then(modifier),
-        summary = summary
+        summary = summary,
+        icon = icon,
     ) {
         Row (
             verticalAlignment = Alignment.CenterVertically
@@ -102,8 +136,20 @@ fun SettingRadio(
 @Composable
 fun SettingItem(
     label: String,
-    onClick: (() -> Unit)? = null,
+    icon: ImageVector,
     modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null,
+    summary: String? = null,
+) {
+    SettingItem(label, rememberVectorPainter(icon), modifier, onClick, summary)
+}
+
+@Composable
+fun SettingItem(
+    label: String,
+    icon: Painter?,
+    modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null,
     summary: String? = null,
 ) {
     val click = if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier
@@ -111,6 +157,7 @@ fun SettingItem(
         modifier = Modifier
             .then(click)
             .then(modifier),
+        icon = icon,
         summary = summary,
     ) {
         Text(label, modifier = Modifier.padding(bottom = if (summary != null) 4.dp else 0.dp))
@@ -119,21 +166,30 @@ fun SettingItem(
 
 @Composable
 private fun SettingRow(
+    icon: Painter?,
     modifier: Modifier = Modifier,
     summary: String? = null,
     labelRow: @Composable () -> Unit
 ) {
-    Column(
+    Row(
         modifier = modifier,
-        verticalArrangement = Arrangement.Center
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        labelRow()
-        if (summary != null) {
-            Text(
-                summary,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+        if (icon != null) {
+            Icon(icon, contentDescription = null)
+        }
+        Column(
+            verticalArrangement = Arrangement.Center
+        ) {
+            labelRow()
+            if (summary != null) {
+                Text(
+                    summary,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
     }
 }
@@ -142,7 +198,12 @@ private fun SettingRow(
 @Composable
 private fun SettingItemPreview() {
     HomerPlayer2Theme {
-        SettingItem("Some setting", summary = "Enabled", onClick = {})
+        SettingItem(
+            "Some setting",
+            icon = Icons.Default.Settings,
+            summary = "Enabled",
+            onClick = {}
+        )
     }
 }
 
@@ -150,7 +211,13 @@ private fun SettingItemPreview() {
 @Composable
 private fun SettingSwitchWithSummaryPreview() {
     HomerPlayer2Theme {
-        SettingSwitch("Some switch", summary = "Description", value = false, onChange = {})
+        SettingSwitch(
+            "Some switch",
+            icon = Icons.Default.Settings,
+            summary = "Description",
+            value = false,
+            onChange = {}
+        )
     }
 }
 
@@ -158,6 +225,6 @@ private fun SettingSwitchWithSummaryPreview() {
 @Composable
 private fun SettingSwitchWithoutSummaryPreview() {
     HomerPlayer2Theme {
-        SettingSwitch("Some switch", value = false, onChange = {})
+        SettingSwitch("Some switch", icon = Icons.Default.Settings, value = false, onChange = {})
     }
 }

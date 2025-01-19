@@ -30,6 +30,13 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BatteryStd
+import androidx.compose.material.icons.filled.FitScreen
+import androidx.compose.material.icons.filled.LockOpen
+import androidx.compose.material.icons.filled.PhonelinkLock
+import androidx.compose.material.icons.filled.ScreenLockRotation
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -39,6 +46,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -116,23 +124,27 @@ fun SettingsLockdown(
                 label = stringResource(R.string.settings_ui_lockdown_kiosk_mode_item),
                 summary = viewState.fullKioskMode.toSummary(),
                 onClick = kioskModeAction,
+                icon = Icons.Default.LockOpen,
                 modifier = settingItemModifier
             )
             SettingItem(
                 label = stringResource(R.string.settings_ui_orientation_item),
                 summary = stringResource(viewState.screenOrientation.labelRes()),
                 onClick = { showUiModeDialog = SettingsLockdownDialogType.ScreenOrientation },
+                icon = Icons.Default.ScreenLockRotation,
                 modifier = settingItemModifier,
             )
             SettingItem(
                 label = stringResource(R.string.settings_ui_layout_settings_item),
                 onClick = onOpenLayoutSettings,
+                icon = Icons.Default.FitScreen,
                 modifier = settingItemModifier,
             )
             SettingSwitch(
                 label = stringResource(R.string.settings_ui_lockdown_show_battery),
                 value = viewState.showBattery,
                 onChange = onSetShowBatteryIndicator,
+                icon = Icons.Default.BatteryStd,
                 modifier = settingItemModifier,
             )
             SettingSwitch(
@@ -145,6 +157,7 @@ fun SettingsLockdown(
                         onSetHideSettingsButton(false)
                     }
                 },
+                icon = painterResource(R.drawable.icon_settings_strikethrough),
                 modifier = settingItemModifier
             )
 
@@ -156,6 +169,7 @@ fun SettingsLockdown(
                 label = stringResource(R.string.settings_ui_lockdown_home_component_item),
                 summary = homeComponentAlwaysEnabledLabel(viewState.homeComponentAlwaysEnabled),
                 onClick = { showUiModeDialog = SettingsLockdownDialogType.HomeComponentMode },
+                icon = Icons.Default.PhonelinkLock,
                 modifier = settingItemModifier
             )
 

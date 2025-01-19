@@ -29,6 +29,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.RecordVoiceOver
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -109,17 +113,20 @@ private fun SettingsTtsScreen(
             label = stringResource(id = R.string.settings_ui_tts_read_book_titles),
             value = settingsViewState.readBookTitlesEnabled,
             onChange = onSetReadBookTitles,
+            icon = Icons.Default.RecordVoiceOver,
             modifier = settingItemModifier,
         )
         SettingItem(
             label = stringResource(R.string.speech_play_test_phrase),
             onClick = onPlayTestPhrase,
+            icon = Icons.Default.PlayArrow,
             modifier = settingItemModifier,
         )
         if (speechTestViewState.showTtsSettings) {
             SettingItem(
                 label = stringResource(R.string.settings_ui_tts_open_settings),
                 onClick = onOpenTtsSettings,
+                icon = Icons.Default.Settings,
                 modifier = settingItemModifier,
             )
         }
