@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">Homer Player 2</string>
+    <string name="app_name" translatable="false">Homer Audio Player</string>
     <string name="app_tag" translatable="false">homerplayer2</string>
 
     <string name="audiobook_folder_add_error_dialog">Unable to open file chooser</string>
@@ -38,7 +38,7 @@
     <string name="onboarding_content_description">Please add at least one folder with your audiobooks or one podcast.</string>
     <string name="onboarding_podcast_title">Podcast</string>
     <string name="onboarding_speech_title">Speak book titles</string>
-    <string name="onboarding_speech_description">Homer Player uses text-to-speech engine to read book titles.\nYou can now test it and adjust configuration settings.</string>
+    <string name="onboarding_speech_description">Homer uses text-to-speech engine to read book titles.\nYou can now test it and adjust configuration settings.</string>
     <string name="onboarding_speech_open_settings">Open text-to-speech settings</string>
     <string name="onboarding_speech_tts_checkbox_label">Speak book titles</string>
     <string name="onboarding_speech_tts_checkbox_note">Disable if already using a screen reader</string>
@@ -90,11 +90,11 @@
     <string name="podcast_url_instructions_step1">Open a web browser.</string>
     <string name="podcast_url_instructions_step2">Open the website of the podcast.</string>
     <string name="podcast_url_instructions_step3">Find RSS icon or link, long tap for context menu and copy the address to clipboard.</string>
-    <string name="podcast_url_instructions_step4">Return to Homer Player and long tap the search field to paste the address.</string>
+    <string name="podcast_url_instructions_step4">Return to Homer and long tap the search field to paste the address.</string>
 
     <string name="settings_ui_settings_title">Settings</string>
     <string name="settings_ui_about_item">About the app…</string>
-    <string name="settings_ui_about_title">About Homer Player 2</string>
+    <string name="settings_ui_about_title">About Homer Audio Player</string>
     <string name="settings_ui_content_item">Audiobooks and podcasts…</string>
     <string name="settings_ui_content_title">Audiobooks and podcasts</string>
     <string name="settings_ui_content_summary">%1$s and %2$s</string>
@@ -131,7 +131,7 @@
     <string name="settings_ui_lockdown_kiosk_mode_dialog_disable">Disable</string>
     <string name="settings_ui_lockdown_kiosk_mode_dialog_disable_for_10_minutes">Disable for 10 minutes</string>
     <string name="settings_ui_kiosk_mode_setup_title">Kiosk mode information</string>
-    <string name="settings_ui_kiosk_mode_setup_description1">Kiosk mode locks down the device within the Homer Player application:</string>
+    <string name="settings_ui_kiosk_mode_setup_description1">Kiosk mode locks down the device within the Homer Audio Player application:</string>
     <string name="settings_ui_kiosk_mode_setup_description1_bullet1">prevents exiting the application with the "back" button,</string>
     <string name="settings_ui_kiosk_mode_setup_description1_bullet2">notifications and the top system bar are hidden.</string>
     <string name="settings_ui_kiosk_mode_setup_description2">This functionality requires a special installation procedure.</string>
