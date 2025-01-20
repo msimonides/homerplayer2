@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+    <title>
+      {% if page.meta_title %}
+        {{ page.meta_title }}
+      {% else %}
+        Homer Audio Player: {{ page.title | downcase }}
+      {% endif %}
+    </title>
+    {% if page.meta_description %}
+    <meta name="description" content="{{ page.meta_description }}">
+    {% endif %}
+    {% for css in layout.extra_css %}
+    <link rel="stylesheet" href="{{ 'assets/css/' | relative_url }}{{ css }}">
+    {% endfor %}
+    <link rel="icon" href="{{ "/favicon.ico" | prepend: site.baseurl }}" sizes="32 64 128" type="image/vnd.microsoft.icon">
+  </head>
+  <body class="container">
+    {{ content }}
+  </body>
+</html>

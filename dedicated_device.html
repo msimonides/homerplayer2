@@ -1,0 +1,126 @@
+---
+layout: page
+title: "Set up a dedicated device"
+nav_title: "Dedicated device"
+meta_title: "Homer Audio Player: dedicated device setup"
+---
+
+<link rel="preload" as="image" href="assets/img/kiosk_unlocked_framed.webp" />
+
+<style>
+.kiosk-showcase {
+    max-width: 42rem;
+    margin: 0 auto;
+}
+
+.kiosk-showcase > label {
+    margin: 1rem auto 2rem;
+}
+
+img.unlocked:has(~ label #kiosk-toggle:checked) {
+    display: none;
+}
+
+img.locked:has(~ label #kiosk-toggle:not(:checked)) {
+    display: none;
+}
+
+#kiosk_qr_code {
+    border: solid 1rem #ffffff;
+    border-radius: 2px;
+}
+</style>
+
+<div class="kiosk-showcase">
+<img src="assets/img/kiosk_unlocked_framed.webp" width="1360" height="860" class="unlocked" />
+<img src="assets/img/kiosk_locked_framed.webp" width="1360" height="860" class="locked" />
+<label><input id="kiosk-toggle" type="checkbox" role="switch" checked> Kiosk mode</label>
+</div>
+
+<p>
+Smart devices can be difficult to navigate for non-tech-savvy seniors. It's easy to get lost among
+all the apps and functions.
+</p>
+
+<p>
+Kiosk mode allows locking down the device to just Homer Audio Player. When enabled it's impossible
+to leave the player or switch to other applications and system notifications and settings are hidden.
+</p>
+
+<p>
+Combined with some other configuration (disabled lock screen, battery indicator) the smart device
+becomes a single application device. In other words a simple, dedicated audio player device.
+</p>
+
+<h3>Setup</h3>
+
+<p>
+Kiosk mode requires installing a special companion app, Homer Kiosk Setup, to manage your device.
+With the instructions below you will grant this app the power to over your device.<br>
+The management app allows Homer Audio Player lock down the screen and nothing else but you have
+to take the author's word for it.
+</p>
+
+<h4>Installation steps</h4>
+
+<p>
+<strong>The following procedure requires wiping out all data from your device. ALL DATA, ACCOUNTS
+and INSTALLED APPS will be removed.</strong> This is what you want to do for a single-app device.
+</p>
+
+<p>
+Please read the instructions to the end before starting the procedure. You will need internet access.
+</p>
+
+<small>
+<ol>
+<li>Start a factory reset of your device. This will remove all data from your device.</li>
+<li>Do not start configuring the device!</li>
+<li>After reset you are presented with a screen with language selection. Tap the screen 6 times
+    to start a special setup procedure.</li>
+<li>You should be prompted to configure WiFi. Follow the instructions to connect to the network.
+    Some additional components may be installed.</li>
+<li>A camera app for scanning QR codes will show up.</li>
+<li>Scan the QR code shown below. The QR code instructs the device to install an app "Homer Kiosk Setup"
+    with special privileges to manage your device. This procedure is typically used to install apps
+    for managing company-owned devices.</li>
+<li>Follow the on-screen instructions to finish installation.</li>
+<li>Open the apps screen and launch "Homer Kiosk Setup". It should say "Full kiosk mode is available".</li>
+<li>Install Homer Audio Player from Play Store (follow the on-screen instructions).</li>
+<li>Launch Homer Audio Player, configure it and open settings. You can now enable kiosk mode in "Lockdown
+    settings".</li>
+</ol>
+</small>
+
+<img id="kiosk_qr_code" src="assets/img/kiosk_setup_qr.png" width="360"/>
+
+<p>
+A few tips:
+</p>
+
+<ul>
+<li>you can enable and disable the kiosk mode in Homer settings,</li>
+<li>some actions may require disabling the kiosk mode, e.g.
+    <ul>
+    <li>copying files from a computer,</li>
+    <li>changing settings, e.g. disabling WiFi.</li>
+    </ul>
+    </li>
+<li>restart the device to make sure it starts Homer Audio Player automatically (this may happen if it
+    the battery discharges completety and the device turns off).</li>
+</ul>
+
+<h4>Reverting to regular device use</h4>
+
+<ol>
+<li>Disable kiosk mode in Homer Audio Player.</li>
+<li>Open settings and perform a factory reset.</li>
+<li>Follow the regular configuration steps.</li>
+</ol>
+
+<p>
+You can also use the Homer Kiosk Setup app to drop the special privilege (it can't be undone without
+repeating the setup procedure above). You can use it if there are some issues with removing the apps.
+It is best to perform a factory reset afterwards anyway to make sure the device is fully reverted to
+its original state.
+</p>

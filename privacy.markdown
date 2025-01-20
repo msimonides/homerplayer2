@@ -1,5 +1,6 @@
 ---
 layout: minimal
+meta_title: "Homer Audio Player: privacy policy"
 ---
 
 # Privacy Policy

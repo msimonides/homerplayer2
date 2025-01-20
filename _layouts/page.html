@@ -1,0 +1,42 @@
+---
+layout: base
+extra_css:
+ - page.css
+---
+<header id="logo">
+  <img src="assets/img/logo.svg"/>
+</header>
+<header id="main">
+  {% if page.title %}
+  <h1>{{ page.title }}</h1>
+  {% endif %}
+  {% if page.titleHtml %}
+  {{ page.titleHtml }}
+  {% endif %}
+</header>
+<aside id="nav">
+  <nav>
+    {% assign navigation = '/,/audiobooks.html,/podcasts.html,/dedicated_device.html' | split: ',' %}
+    <ul>
+      {% for nav_url in navigation %}
+        {% assign node_array = site.pages | where:'url',nav_url %}
+        {% assign node = node_array[0] %}
+        <li>
+          <a href="{{ nav_url }}">
+            {% if node.nav_title %}
+              {{ node.nav_title }}
+            {% else %}
+              {{ node.title }}
+            {% endif %}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+    <a id="google_play_badge" href="https://play.google.com/store/apps/details?id=com.studio4plus.homerplayer2&amp;utm_source=website&amp;pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" /></a>
+  </nav>
+</aside>
+<main>
+    {{ content }}
+<hr>
+<a href="mailto:marcin@studio4plus.com">marcin@studio4plus.com</a>
+</main>

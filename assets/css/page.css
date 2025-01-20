@@ -1,0 +1,106 @@
+body {
+    display: grid;
+    gap: 0rem 1rem;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      "logo header"
+      "nav nav"
+      "main main";
+}
+
+@media (min-width: 768px) {
+    body {
+        grid-template-columns: 12em 4fr;
+        grid-auto-rows: auto;
+        grid-template-areas:
+          "logo header"
+          "nav main";
+    }
+}
+
+header#logo {
+    grid-area: logo;
+}
+
+header#logo img {
+    display: block;
+    max-width: 100%;
+    margin: auto;
+    width: 6rem;
+    border-radius: 8px;
+}
+
+header#main {
+    grid-area: header;
+    display: flex;
+    align-items: flex-end;
+}
+
+header#main :last-child {
+    margin-bottom: 0;
+}
+
+main {
+    grid-area: main;
+}
+
+main img {
+    display: block;
+    margin: auto;
+}
+
+#nav {
+    grid-area: nav;
+    place-self: start start;
+    padding-block: calc(var(--pico-block-spacing-vertical) - var(--pico-nav-element-spacing-vertical) * .5 + 0.2rem);
+}
+
+#nav li {
+    display: inline-block;
+}
+
+@media (min-width: 768px) {
+    #nav {
+        width: 100%;
+    }
+
+    #nav li {
+        display: block;
+        text-align: center;
+    }
+}
+
+#google_play_badge {
+    margin: 1rem auto 0;
+    display: block;
+    width: 10rem;
+}
+
+.inline-icon {
+    display: inline;
+    height: 0.8lh;
+    vertical-align: text-bottom;
+}
+
+.single-picture-landscape {
+    max-width: 37rem;
+    width: 100%;
+    margin: 1rem auto;
+    display: block;
+}
+
+.screenshot-container {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 1fr 1fr;
+}
+
+@media (min-width: 1280px) {
+    .screenshot-container {
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+    }
+}
+
+.screenshot-container img {
+    width: 100%;
+}
