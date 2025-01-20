@@ -22,8 +22,8 @@ title: Homer Audio Player
 email: marcin@studio4plus.com
 description: >- # this means to ignore newlines until "baseurl:"
   Audiobook and podcast player for the elderly and visually impaired
-baseurl: "/homerplayer2"
-url: "msimonides.github.io"
+baseurl: "/"
+url: "homeraudioplayer.app"
 repository: "msimonides/homerplayer2"
 #twitter_username: jekyllrb
 #github_username:  jekyll
