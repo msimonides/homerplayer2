@@ -29,11 +29,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalViewConfiguration
+import androidx.compose.ui.platform.ViewConfiguration
 import androidx.compose.ui.semantics.CollectionInfo
 import androidx.compose.ui.semantics.collectionInfo
 import androidx.compose.ui.semantics.semantics
@@ -82,32 +85,44 @@ fun BooksPager(
         }
     }
     val bookCollectionInfo = CollectionInfo(rowCount = 1, columnCount = books.size)
-    HorizontalPager(
-        state = pagerState,
-        userScrollEnabled = !state.isPlaying,
-        modifier = Modifier.semantics {
-            collectionInfo = bookCollectionInfo
-        },
-        key = { index ->
-            val bookIndex = getBookIndex(index)
+    ProvideTouchSlop(multiplier = 4f) {
+        HorizontalPager(
+            state = pagerState,
+            userScrollEnabled = !state.isPlaying,
+            modifier = Modifier.semantics {
+                collectionInfo = bookCollectionInfo
+            },
+            key = { index ->
+                val bookIndex = getBookIndex(index)
+                val book = books[bookIndex]
+                val wrapNumber = (index - zeroPage).floorDiv(books.size)
+                "${book.id}_$wrapNumber"
+            }
+        ) { pageIndex ->
+            val bookIndex = getBookIndex(pageIndex)
             val book = books[bookIndex]
-            val wrapNumber = (index - zeroPage).floorDiv(books.size)
-            "${book.id}_$wrapNumber"
+            BookPage(
+                index = bookIndex,
+                displayName = book.displayName,
+                progress = book.progress,
+                isPlaying = state.isPlaying,
+                playerActions = playerActions,
+                playerUiSettings = playerUiSettings,
+                landscape = landscape,
+                modifier = modifier.padding(itemPadding)
+            )
         }
-    ) { pageIndex ->
-        val bookIndex = getBookIndex(pageIndex)
-        val book = books[bookIndex]
-        BookPage(
-            index = bookIndex,
-            displayName = book.displayName,
-            progress = book.progress,
-            isPlaying = state.isPlaying,
-            playerActions = playerActions,
-            playerUiSettings = playerUiSettings,
-            landscape = landscape,
-            modifier = modifier.padding(itemPadding)
-        )
     }
+}
+
+@Composable
+private fun ProvideTouchSlop(multiplier: Float, content: @Composable () -> Unit) {
+    val viewConfiguration = LocalViewConfiguration.current
+    val adjustedViewConfiguration = object : ViewConfiguration by viewConfiguration {
+        override val touchSlop: Float
+            get() = viewConfiguration.touchSlop * multiplier
+    }
+    CompositionLocalProvider(LocalViewConfiguration provides adjustedViewConfiguration, content)
 }
 
 @Composable
