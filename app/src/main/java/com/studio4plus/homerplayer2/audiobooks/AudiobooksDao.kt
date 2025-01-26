@@ -31,6 +31,7 @@ import androidx.room.Query
 import androidx.room.Relation
 import androidx.room.Transaction
 import androidx.room.Upsert
+import com.studio4plus.homerplayer2.audiobookfolders.AudiobooksFolderSettings
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -114,6 +115,12 @@ abstract class AudiobooksDao {
     @Query("SELECT * FROM audiobook_files WHERE uri = :uri")
     abstract suspend fun getAudiobookFile(uri: Uri): AudiobookFile?
 
+    @Transaction
+    open suspend fun getSettingsByFile(fileUri: Uri): AudiobooksFolderSettings? {
+        val file = getAudiobookFile(fileUri)
+        return file?.bookId?.let { getSettingsForBook(file.bookId) }
+    }
+
     @Upsert
     protected abstract suspend fun updatePlaybackState(state: AudiobookPlaybackState)
 
@@ -125,6 +132,10 @@ abstract class AudiobooksDao {
 
     @Query("SELECT * FROM audiobook_files WHERE uri IN (:uris)")
     protected abstract suspend fun getAudiobookFiles(uris: List<Uri>): List<AudiobookFile>
+
+    @Query("""SELECT s.* FROM audiobooks AS b, audiobooks_folder_settings AS s
+                         WHERE b.id = :bookId AND b.root_folder_uri = s.uri""")
+    protected abstract suspend fun getSettingsForBook(bookId: String): AudiobooksFolderSettings?
 
     @Upsert
     protected abstract suspend fun insertAudiobookFileDurationsRaw(durations: List<AudiobookFileDuration>)

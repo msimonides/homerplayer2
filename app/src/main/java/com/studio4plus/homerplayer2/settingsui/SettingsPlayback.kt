@@ -31,6 +31,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bedtime
 import androidx.compose.material.icons.filled.Replay
+import androidx.compose.material.icons.filled.RestartAlt
 import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -56,12 +57,14 @@ import com.studio4plus.homerplayer2.base.R as BaseR
 
 @Composable
 fun SettingsPlaybackRoute(
+    navigateRewindOnEndSettings: () -> Unit,
     viewModel: SettingsPlaybackViewModel = koinViewModel()
 ) {
     val viewState = viewModel.viewState.collectAsStateWithLifecycle().value
     if (viewState != null) {
         SettingsPlayback(
             viewState = viewState,
+            navigateRewindOnEndSettings = navigateRewindOnEndSettings,
             onPlaySpeedSample = viewModel::playSample,
             onSetPlaybackSpeed = viewModel::setPlaybackSpeed,
             onSetRewindOnResumeSeconds = viewModel::setRewindOnResumeSeconds,
@@ -77,6 +80,7 @@ private enum class SettingsPlaybackDialogType {
 @Composable
 private fun SettingsPlayback(
     viewState: SettingsPlaybackViewModel.ViewState,
+    navigateRewindOnEndSettings: () -> Unit,
     onPlaySpeedSample: (Float) -> Unit,
     onSetPlaybackSpeed: (Float) -> Unit,
     onSetRewindOnResumeSeconds: (Int) -> Unit,
@@ -94,6 +98,12 @@ private fun SettingsPlayback(
             summary = rewindOnResumeSettingString(seconds = viewState.rewindOnResumeSeconds),
             onClick = { showDialog = SettingsPlaybackDialogType.PlaybackRewindOnResume },
             icon = Icons.Default.Replay,
+            modifier = settingItemModifier
+        )
+        SettingItem(
+            label = stringResource(id = R.string.settings_ui_playback_rewind_on_end_item),
+            onClick = navigateRewindOnEndSettings,
+            icon = Icons.Default.RestartAlt,
             modifier = settingItemModifier
         )
         SettingItem(
@@ -245,6 +255,6 @@ private fun PreviewSettingsPlayback() {
         val state = SettingsPlaybackViewModel.ViewState(
             rewindOnResumeSeconds = 5, sleepTimerSeconds = 0, playbackSpeed = 1.5f
         )
-        SettingsPlayback(viewState = state, {}, {}, {}, {})
+        SettingsPlayback(viewState = state, {}, {}, {}, {}, {})
     }
 }

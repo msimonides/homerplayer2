@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Marcin Simonides
+ * Copyright (c) 2025 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,42 +22,28 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.audiobookfolders
+package com.studio4plus.homerplayer2.settingsui
 
-import android.net.Uri
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.PrimaryKey
+import androidx.lifecycle.ViewModel
+import com.studio4plus.homerplayer2.audiobookfolders.AudiobookFoldersDao
+import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFoldersSettingsViewState
+import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFoldersSettingsViewStateFlow
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import org.koin.android.annotation.KoinViewModel
 
-@Entity(tableName = "audiobooks_folders")
-data class AudiobooksFolder(
-    @PrimaryKey
-    val uri: Uri,
-    @ColumnInfo(defaultValue = "0")
-    val isSamplesFolder: Boolean,
-)
+@KoinViewModel
+class SettingsPlaybackRewindOnEndViewModel(
+    private val mainScope: CoroutineScope,
+    private val audiobookFoldersDao: AudiobookFoldersDao,
+    val settings: AudiobookFoldersSettingsViewStateFlow
+) : ViewModel() {
 
-@Entity(
-    tableName = "audiobooks_folder_settings",
-    foreignKeys = [
-        ForeignKey(
-            entity = AudiobooksFolder::class,
-            parentColumns = ["uri"],
-            childColumns = ["uri"],
-            onDelete = ForeignKey.CASCADE,
-            onUpdate = ForeignKey.CASCADE,
-            deferred = true
-        )
-    ]
-)
-data class AudiobooksFolderSettings(
-    @PrimaryKey
-    val uri: Uri,
-    @ColumnInfo(defaultValue = "0")
-    val rewindOnEnd: Boolean = false
-) {
-    companion object {
-        val defaults = AudiobooksFolderSettings(Uri.Builder().build())
+    fun setRewindOnEnd(item: AudiobookFoldersSettingsViewState, enabled: Boolean) {
+        mainScope.launch {
+            audiobookFoldersDao.updateFolderSettings(item.settings.uri) {
+                it.copy(rewindOnEnd = enabled)
+            }
+        }
     }
 }

@@ -32,6 +32,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.studio4plus.homerplayer2.audiobookfolders.AudiobookFoldersDatabase
 import com.studio4plus.homerplayer2.audiobookfolders.AudiobooksFolder
+import com.studio4plus.homerplayer2.audiobookfolders.AudiobooksFolderSettings
 import com.studio4plus.homerplayer2.audiobooks.Audiobook
 import com.studio4plus.homerplayer2.audiobooks.AudiobookFile
 import com.studio4plus.homerplayer2.audiobooks.AudiobookFileDuration
@@ -50,14 +51,16 @@ import com.studio4plus.homerplayer2.utils.DbTypeConverters
         AudiobookFileDuration::class,
         AudiobookPlaybackState::class,
         AudiobooksFolder::class,
+        AudiobooksFolderSettings::class,
         Podcast::class,
         PodcastEpisode::class,
     ],
     views = [ AudiobookFileWithDuration::class ],
-    version = 4,
+    version = 5,
     autoMigrations = [
         AutoMigration(1, 2),
         AutoMigration(3, 4),
+        AutoMigration(4, 5),
     ],
 )
 @TypeConverters(DbTypeConverters::class)

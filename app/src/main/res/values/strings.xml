@@ -161,6 +161,9 @@
     <string name="settings_ui_playback_flip_to_stop_item">Flip to stop</string>
     <string name="settings_ui_playback_flip_to_stop_summary">Put device screen down to stop playback</string>
     <string name="settings_ui_playback_play_speed_title">Playback speed</string>
+    <string name="settings_ui_playback_rewind_on_end_item">Rewind to beginning when finished…</string>
+    <string name="settings_ui_playback_rewind_on_end_title">Rewind to beginning when finished</string>
+    <string name="settings_ui_playback_rewind_on_end_description">When a book is played to the very end, it will automatically rewind to the beginning for another playback.\nUse for content that is played repeatedly, e.g. poetry, religious texts, music albums.</string>
     <string name="settings_ui_playback_rewind_on_resume_label">Rewind when resuming playback</string>
     <string name="settings_ui_playback_rewind_on_resume_setting_disabled">Disabled</string>
     <string name="settings_ui_playback_settings_item">Playback settings…</string>

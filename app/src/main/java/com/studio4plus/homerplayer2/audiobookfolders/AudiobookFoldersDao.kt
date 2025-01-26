@@ -28,26 +28,60 @@ import android.net.Uri
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
 
+data class AudiobookFolderWithSettings(
+    @Embedded
+    val folder: AudiobooksFolder,
+    @Relation(
+        parentColumn = "uri",
+        entityColumn = "uri"
+    )
+    private val settingsValue: AudiobooksFolderSettings?
+) {
+    @Transient
+    val settings = settingsValue ?: AudiobooksFolderSettings(uri = folder.uri)
+}
+
 @Dao
-interface AudiobookFoldersDao {
+abstract class AudiobookFoldersDao {
 
     @Query("SELECT * FROM audiobooks_folders")
-    fun getAll(): Flow<List<AudiobooksFolder>>
+    abstract fun getAll(): Flow<List<AudiobooksFolder>>
 
+    // TODO: TBH this belongs in the AudiobooksDao because it accesses both audiobooks_folders and
+    //  audiobooks data.
     @Query("""
         SELECT audiobooks_folders.uri, audiobooks.display_name
         FROM  audiobooks_folders JOIN audiobooks ON audiobooks_folders.uri = audiobooks.root_folder_uri
         ORDER BY display_name COLLATE LOCALIZED
     """)
-    fun getAllWithBookTitles(): Flow<Map<@MapColumn(columnName = "uri") Uri, List<@MapColumn(columnName="display_name") String>>>
+    abstract fun getAllWithBookTitles(): Flow<Map<@MapColumn(columnName = "uri") Uri, List<@MapColumn(columnName="display_name") String>>>
+
+    @Transaction
+    @Query("SELECT * FROM audiobooks_folders")
+    abstract fun getAllFolderWithSettings(): Flow<List<AudiobookFolderWithSettings>>
+
+    @Transaction
+    suspend open fun updateFolderSettings(
+        uri: Uri,
+        transform: (AudiobooksFolderSettings) -> AudiobooksFolderSettings
+    ) {
+        val settings = getFolderSettings(uri) ?: AudiobooksFolderSettings(uri)
+        upsertFolderSettings(transform(settings))
+    }
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(folder: AudiobooksFolder): Long
+    abstract suspend fun insert(folder: AudiobooksFolder): Long
 
     // Note: always call AudiobooksDao.deleteBooksFromFolder first!
     @Query("DELETE FROM audiobooks_folders WHERE uri = :uri")
-    suspend fun delete(uri: Uri)
+    abstract suspend fun delete(uri: Uri)
 
     @Query("SELECT uri FROM audiobooks_folders WHERE isSamplesFolder = 1")
-    suspend fun getSamplesFolderUri(): Uri?
+    abstract suspend fun getSamplesFolderUri(): Uri?
+
+    @Query("SELECT * from audiobooks_folder_settings WHERE uri = :uri")
+    protected abstract fun getFolderSettings(uri: Uri): AudiobooksFolderSettings?
+
+    @Upsert
+    protected abstract fun upsertFolderSettings(settings: AudiobooksFolderSettings)
 }

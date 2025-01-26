@@ -26,6 +26,7 @@ package com.studio4plus.homerplayer2.player.service
 
 import android.net.Uri
 import androidx.media3.common.Player
+import com.studio4plus.homerplayer2.audiobookfolders.AudiobooksFolderSettings
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksDao
 import com.studio4plus.homerplayer2.player.PlaybackUiStateRepository
 import com.studio4plus.homerplayer2.utils.tickerFlow
@@ -90,13 +91,16 @@ class PlayPositionUpdater(
 
     override fun onEvents(player: Player, events: Player.Events) {
         // onEvents is a more cumbersome API but it gets the Player.
-        if (events.contains(Player.EVENT_IS_PLAYING_CHANGED)) {
+        if (events.contains(Player.EVENT_PLAYBACK_STATE_CHANGED)) {
             if (player.isPlaying) {
                 stateFlow.value = State.Playing(player)
             } else {
                 val currentFileUri = player.currentMediaItem?.localConfiguration?.uri
                 val position = currentFileUri?.let { Position(it, player.currentPosition) }
                 stateFlow.value = State.Stopped(lastPosition = position)
+
+                // Rewinding triggers another event.
+                rewindToBeginningIfNeeded(player, currentFileUri)
             }
         }
     }
@@ -107,6 +111,20 @@ class PlayPositionUpdater(
             val currentFile = audiobooksDao.getAudiobookFile(currentFileUri)
             if (currentFile != null) {
                 playbackUiStateRepository.updateLastSelectedBookId(currentFile.bookId)
+            }
+        }
+    }
+
+    private fun rewindToBeginningIfNeeded(player: Player, currentFileUri: Uri?) {
+        if (player.playbackState == Player.STATE_ENDED && currentFileUri != null) {
+            mainScope.launch {
+                val folderSettings = audiobooksDao.getSettingsByFile(currentFileUri)
+                    ?: AudiobooksFolderSettings.defaults
+                if (folderSettings.rewindOnEnd) {
+                    player.seekTo(0, 0L)
+                    player.stop()
+                    // This will trigger another update and save the position at start.
+                }
             }
         }
     }

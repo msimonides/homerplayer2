@@ -167,6 +167,7 @@ private fun SettingsNavHost(
     val lockdownTitle = stringResource(id = R.string.settings_ui_lockdown_settings_title)
     val licensesTitle = stringResource(id = R.string.settings_ui_licenses_title)
     val networkSettingsTitle = stringResource(id = R.string.settings_ui_network_title)
+    val playbackRewindOnEnd = stringResource(id = R.string.settings_ui_playback_rewind_on_end_title)
     val playbackTitle = stringResource(id = R.string.settings_ui_playback_settings_title)
     val playerUiTitle = stringResource(id = R.string.settings_ui_player_ui_title)
     val podcastTitle = stringResource(id = R.string.settings_ui_podcast_title)
@@ -222,8 +223,13 @@ private fun SettingsNavHost(
         composable("network_settings", label = networkSettingsTitle) {
             SettingsNetworkRoute()
         }
+        composable("playback_rewind_on_end", label = playbackRewindOnEnd) {
+            SettingsPlaybackRewindOnEndRoute()
+        }
         composable("playback_settings", label = playbackTitle) {
-            SettingsPlaybackRoute()
+            SettingsPlaybackRoute(
+                navigateRewindOnEndSettings = { navController.navigate("playback_rewind_on_end") }
+            )
         }
         composable("player_ui_settings", label = playerUiTitle) {
             SettingsPlayerUiRoute()
