@@ -71,7 +71,8 @@ fun SettingsContentRoute(
             onEditPodcast= onEditPodcast,
             onRemovePodcast = viewModel::removePodcast,
             onDownloadSamples = viewModel::startSamplesInstall,
-            modifier = modifier.padding(horizontal = HomerTheme.dimensions.screenHorizPadding),
+            horizontalPadding = HomerTheme.dimensions.screenHorizPadding,
+            modifier = modifier,
             windowInsets = WindowInsets.navigationBars
         )
     }

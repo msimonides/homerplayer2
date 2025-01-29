@@ -107,16 +107,15 @@ fun ContentManagementPanel(
             bottom = windowInsets.asPaddingValues().calculateBottomPadding()
         )
         LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = insetsPadding,
             modifier = Modifier.consumeWindowInsets(insetsPadding)
         ) {
-            val horizontalPaddingModifier = Modifier.padding(horizontal = horizontalPadding)
+            val itemPaddingModifier = Modifier.padding(horizontal = horizontalPadding, vertical = 4.dp)
             if (state.folders.isNotEmpty()) {
                 item {
                     SectionTitle(
                         R.string.content_section_title_audiobooks,
-                        modifier = horizontalPaddingModifier
+                        modifier = itemPaddingModifier
                     )
                 }
                 items(
@@ -127,7 +126,7 @@ fun ContentManagementPanel(
                             folder = item,
                             onEditClicked = onEditFolder,
                             onRemoveClicked = { removeDialogAction = { onRemoveFolder(item) } },
-                            modifier = horizontalPaddingModifier
+                            modifier = itemPaddingModifier
                         )
                     }
                 )
@@ -136,7 +135,7 @@ fun ContentManagementPanel(
                 item {
                     SectionTitle(
                         R.string.content_section_title_podcasts,
-                        modifier = horizontalPaddingModifier
+                        modifier = itemPaddingModifier
                     )
                 }
                 val dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
@@ -149,7 +148,7 @@ fun ContentManagementPanel(
                             dateFormatter,
                             onEditClicked = onEditPodcast,
                             onRemoveClicked = { removeDialogAction = { onRemovePodcast(item) } },
-                            modifier = horizontalPaddingModifier
+                            modifier = itemPaddingModifier
                         )
                     }
                 )

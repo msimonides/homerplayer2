@@ -67,18 +67,34 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
 @Composable
-fun AudiobookFolderRow(
+fun BasicAudiobookFolderRow(
     folder: AudiobookFolderViewState,
-    onEditClicked: (String) -> Unit,
-    onRemoveClicked: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    actionIcon: (@Composable () -> Unit)? = null,
+    accessibilityActions: List<CustomAccessibilityAction> = emptyList()
 ) {
     ContentItemRow(
         label = folder.displayName,
         subLabel = folder.subLabel(),
         subLabelContentDescription = folder.subLabelContentDescription(),
         circleContent = { AudiobookFolderBadgeContent(folder) },
-        onRemoveClicked = onRemoveClicked,
+        modifier = modifier,
+        actionIcon = actionIcon,
+        accessibilityActions = accessibilityActions
+    )
+}
+
+@Composable
+fun AudiobookFolderRow(
+    folder: AudiobookFolderViewState,
+    onEditClicked: (String) -> Unit,
+    onRemoveClicked: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    BasicAudiobookFolderRow(
+        folder = folder,
+        actionIcon = { RemoveIcon(onRemoveClicked) },
+        accessibilityActions = listOf(removeAccessibilityAction(onRemoveClicked)),
         modifier = Modifier
             .clickable(
                 onClick = { onEditClicked(folder.uri.toString()) },
@@ -101,7 +117,8 @@ fun PodcastRow(
         subLabel = item.subLabel(dateFormatter),
         subLabelContentDescription = null,
         circleContent = { PodcastBadgeContent() },
-        onRemoveClicked = onRemoveClicked,
+        actionIcon = { RemoveIcon(onRemoveClicked) },
+        accessibilityActions = listOf(removeAccessibilityAction(onRemoveClicked)),
         modifier = Modifier
             .clickable(
                 onClick = { onEditClicked(item.feedUri) },
@@ -112,20 +129,35 @@ fun PodcastRow(
 }
 
 @Composable
+private fun removeAccessibilityAction(onRemoveClicked: () -> Unit): CustomAccessibilityAction =
+    CustomAccessibilityAction(
+        stringResource(R.string.audiobook_folder_accessibility_menu_action_remove),
+        { onRemoveClicked(); true }
+    )
+
+@Composable
+private fun RemoveIcon(onRemoveClicked: () -> Unit) {
+    IconButton(
+        onClick = onRemoveClicked,
+        modifier = Modifier.clearAndSetSemantics {}
+    ) {
+        Icon(
+            imageVector = Icons.Rounded.Delete,
+            contentDescription = null,
+        )
+    }
+}
+
+@Composable
 private fun ContentItemRow(
     label: String,
     subLabel: String,
     subLabelContentDescription: String?,
     circleContent: @Composable BoxScope.() -> Unit,
-    onRemoveClicked: () -> Unit,
     modifier: Modifier = Modifier,
-    customAccessibilityActions: List<CustomAccessibilityAction> = emptyList()
+    actionIcon: (@Composable () -> Unit)? = null,
+    accessibilityActions: List<CustomAccessibilityAction> = emptyList()
 ) {
-    val removeAction = CustomAccessibilityAction(
-        stringResource(R.string.audiobook_folder_accessibility_menu_action_remove),
-        { onRemoveClicked(); true }
-    )
-    val accessibilityActions = customAccessibilityActions + removeAction
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
@@ -167,14 +199,8 @@ private fun ContentItemRow(
                 }
             )
         }
-        IconButton(
-            onClick = onRemoveClicked,
-            modifier = Modifier.clearAndSetSemantics {}
-        ) {
-            Icon(
-                imageVector = Icons.Rounded.Delete,
-                contentDescription = null,
-            )
+        if (actionIcon != null) {
+            actionIcon()
         }
     }
 }
