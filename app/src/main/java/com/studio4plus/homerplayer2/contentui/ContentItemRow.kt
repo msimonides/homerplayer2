@@ -30,9 +30,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
@@ -59,6 +61,7 @@ import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFolderViewState
 import com.studio4plus.homerplayer2.audiobookfoldersui.subLabel
 import com.studio4plus.homerplayer2.audiobookfoldersui.subLabelContentDescription
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
+import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 import com.studio4plus.homerplayer2.podcastsui.PodcastBadgeContent
 import com.studio4plus.homerplayer2.podcastsui.PodcastItemViewState
 import com.studio4plus.homerplayer2.podcastsui.subLabel
@@ -70,7 +73,7 @@ import java.time.format.FormatStyle
 fun BasicAudiobookFolderRow(
     folder: AudiobookFolderViewState,
     modifier: Modifier = Modifier,
-    actionIcon: (@Composable () -> Unit)? = null,
+    actionContent: (@Composable () -> Unit)? = null,
     accessibilityActions: List<CustomAccessibilityAction> = emptyList()
 ) {
     ContentItemRow(
@@ -79,7 +82,7 @@ fun BasicAudiobookFolderRow(
         subLabelContentDescription = folder.subLabelContentDescription(),
         circleContent = { AudiobookFolderBadgeContent(folder) },
         modifier = modifier,
-        actionIcon = actionIcon,
+        actionContent = actionContent,
         accessibilityActions = accessibilityActions
     )
 }
@@ -93,7 +96,7 @@ fun AudiobookFolderRow(
 ) {
     BasicAudiobookFolderRow(
         folder = folder,
-        actionIcon = { RemoveIcon(onRemoveClicked) },
+        actionContent = { RemoveIcon(onRemoveClicked) },
         accessibilityActions = listOf(removeAccessibilityAction(onRemoveClicked)),
         modifier = Modifier
             .clickable(
@@ -117,7 +120,7 @@ fun PodcastRow(
         subLabel = item.subLabel(dateFormatter),
         subLabelContentDescription = null,
         circleContent = { PodcastBadgeContent() },
-        actionIcon = { RemoveIcon(onRemoveClicked) },
+        actionContent = { RemoveIcon(onRemoveClicked) },
         accessibilityActions = listOf(removeAccessibilityAction(onRemoveClicked)),
         modifier = Modifier
             .clickable(
@@ -155,7 +158,7 @@ private fun ContentItemRow(
     subLabelContentDescription: String?,
     circleContent: @Composable BoxScope.() -> Unit,
     modifier: Modifier = Modifier,
-    actionIcon: (@Composable () -> Unit)? = null,
+    actionContent: (@Composable () -> Unit)? = null,
     accessibilityActions: List<CustomAccessibilityAction> = emptyList()
 ) {
     Row(
@@ -199,8 +202,9 @@ private fun ContentItemRow(
                 }
             )
         }
-        if (actionIcon != null) {
-            actionIcon()
+        if (actionContent != null) {
+            Spacer(modifier = Modifier.width(HomerTheme.dimensions.labelSpacing))
+            actionContent()
         }
     }
 }

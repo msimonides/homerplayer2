@@ -29,29 +29,33 @@ import com.studio4plus.homerplayer2.audiobookfolders.AudiobooksFolderSettings
 import com.studio4plus.homerplayer2.base.DispatcherProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import org.koin.core.annotation.Factory
 
 data class AudiobookFoldersSettingsViewState(
-    val displayName: String,
+    val audiobookFolderViewState: AudiobookFolderViewState,
     val settings: AudiobooksFolderSettings
 )
 
 @Factory
 class AudiobookFoldersSettingsViewStateFlow(
-    dispatcherProvider: DispatcherProvider,
     audiobookFoldersDao: AudiobookFoldersDao,
-    audiobooksFolderName: AudiobooksFolderName,
+    audiobooksFoldersViewStateFlow: AudiobookFoldersViewStateFlow,
 ): Flow<List<AudiobookFoldersSettingsViewState>> {
     private val settings =
-        audiobookFoldersDao.getAllFolderWithSettings().map {
-            it.mapNotNull {
-                audiobooksFolderName(it.folder)?.let { name ->
-                    AudiobookFoldersSettingsViewState(displayName = name, settings = it.settings)
-                }
+        combine(
+            audiobooksFoldersViewStateFlow,
+            audiobookFoldersDao.getAllFolderSettings()
+        ) { folders, settings ->
+            folders.map { folder ->
+                AudiobookFoldersSettingsViewState(
+                    folder,
+                    settings.find { it.uri == folder.uri } ?: AudiobooksFolderSettings(folder.uri)
+                )
             }
-        }.flowOn(dispatcherProvider.Io)
+        }
 
     override suspend fun collect(collector: FlowCollector<List<AudiobookFoldersSettingsViewState>>) {
         settings.collect(collector)

@@ -56,9 +56,8 @@ abstract class AudiobookFoldersDao {
     """)
     abstract fun getAllWithBookTitles(): Flow<Map<@MapColumn(columnName = "uri") Uri, List<@MapColumn(columnName="display_name") String>>>
 
-    @Transaction
-    @Query("SELECT * FROM audiobooks_folders")
-    abstract fun getAllFolderWithSettings(): Flow<List<AudiobookFolderWithSettings>>
+    @Query("SELECT * FROM audiobooks_folder_settings")
+    abstract fun getAllFolderSettings(): Flow<List<AudiobooksFolderSettings>>
 
     @Transaction
     @Query("SELECT * FROM audiobooks_folders WHERE uri = :uri")

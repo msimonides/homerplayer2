@@ -31,16 +31,21 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.selection.toggleable
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFoldersSettingsViewState
 import com.studio4plus.homerplayer2.base.ui.SectionTitle
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
+import com.studio4plus.homerplayer2.contentui.AudiobookFolderRow
+import com.studio4plus.homerplayer2.contentui.BasicAudiobookFolderRow
 import com.studio4plus.homerplayer2.settingsui.composables.SettingSwitch
 import org.koin.androidx.compose.koinViewModel
 
@@ -80,14 +85,21 @@ private fun SettingsPlaybackRewindOnEnd(
         LazyColumn(
             modifier = Modifier.navigationBarsPadding()
         ) {
-            items(settings, key = { it.settings.uri }) { item ->
-                // TODO: full folder item display: with number of books and the first titles.
-                SettingSwitch(
-                    label = item.displayName,
-                    value = item.settings.rewindOnEnd,
-                    icon = null,
-                    onChange = { onToggle(item, it) },
+            items(settings, key = { it.audiobookFolderViewState.uri }) { item ->
+                BasicAudiobookFolderRow(
+                    folder = item.audiobookFolderViewState,
+                    actionContent = @Composable {
+                        Switch(
+                            checked = item.settings.rewindOnEnd,
+                            onCheckedChange = null,
+                            modifier = Modifier.clearAndSetSemantics { }
+                        )
+                    },
                     modifier = settingItemModifier
+                        .toggleable(
+                            value = item.settings.rewindOnEnd,
+                            onValueChange = { onToggle(item, it) },
+                        )
                 )
             }
         }
