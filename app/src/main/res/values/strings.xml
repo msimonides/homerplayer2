@@ -16,7 +16,6 @@
     </plurals>
     <string name="audiobook_folder_scanning_content_description">scanning</string>
 
-
     <plurals name="battery_level_content_description">
         <item quantity="one">battery %1$d percent</item>
         <item quantity="other">battery %1$d percent</item>

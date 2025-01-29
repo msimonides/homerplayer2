@@ -75,6 +75,9 @@ fun SettingSwitch(
     summary: String? = null,
 ) {
     SettingRow(
+        label = label,
+        icon = icon,
+        summary = summary,
         modifier = Modifier
             .toggleable(
                 value = value,
@@ -82,16 +85,8 @@ fun SettingSwitch(
                 role = Role.Switch
             )
             .then(modifier),
-        icon = icon,
-        summary = summary,
     ) {
-        Row (
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(label, modifier = Modifier.weight(1f))
-            Spacer(modifier = Modifier.width(HomerTheme.dimensions.labelSpacing))
-            Switch(checked = value, onCheckedChange = null, modifier = Modifier.clearAndSetSemantics {})
-        }
+        Switch(checked = value, onCheckedChange = null, modifier = Modifier.clearAndSetSemantics {})
     }
 }
 
@@ -117,19 +112,14 @@ fun SettingRadio(
     summary: String? = null,
 ) {
     SettingRow(
+        label = label,
         modifier = Modifier
             .selectable(selected = selected, onClick = onSelected, role = Role.RadioButton)
             .then(modifier),
         summary = summary,
         icon = icon,
     ) {
-        Row (
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(label, modifier = Modifier.weight(1f))
-            Spacer(modifier = Modifier.width(HomerTheme.dimensions.labelSpacing))
-            RadioButton(selected = selected, onClick = null, modifier = Modifier.clearAndSetSemantics {})
-        }
+        RadioButton(selected = selected, onClick = null, modifier = Modifier.clearAndSetSemantics {})
     }
 }
 
@@ -154,22 +144,23 @@ fun SettingItem(
 ) {
     val click = if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier
     SettingRow(
+        label = label,
         modifier = Modifier
             .then(click)
             .then(modifier),
         icon = icon,
         summary = summary,
-    ) {
-        Text(label, modifier = Modifier.padding(bottom = if (summary != null) 4.dp else 0.dp))
-    }
+        controlItem = null,
+    )
 }
 
 @Composable
 private fun SettingRow(
+    label: String,
     icon: Painter?,
     modifier: Modifier = Modifier,
     summary: String? = null,
-    labelRow: @Composable () -> Unit
+    controlItem: (@Composable () -> Unit)?,
 ) {
     Row(
         modifier = modifier,
@@ -180,9 +171,13 @@ private fun SettingRow(
             Icon(icon, contentDescription = null)
         }
         Column(
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.weight(1f)
         ) {
-            labelRow()
+            Text(
+                label,
+                modifier = Modifier.padding(bottom = if (summary != null) 4.dp else 0.dp)
+            )
             if (summary != null) {
                 Text(
                     summary,
@@ -190,6 +185,10 @@ private fun SettingRow(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
+        }
+        if (controlItem != null) {
+            Spacer(modifier = Modifier.width(HomerTheme.dimensions.labelSpacing))
+            controlItem()
         }
     }
 }
@@ -199,7 +198,7 @@ private fun SettingRow(
 private fun SettingItemPreview() {
     HomerPlayer2Theme {
         SettingItem(
-            "Some setting",
+            label = "Some setting",
             icon = Icons.Default.Settings,
             summary = "Enabled",
             onClick = {}
