@@ -49,16 +49,16 @@ class GetBookMediaItemsWithStartPosition(
         if (book.currentUri != null) {
             val rewindOnResumeMs = settings.data.first().rewindOnResumeSeconds * 1_000
             startPositionMs = (book.currentPositionMs - rewindOnResumeMs).coerceAtLeast(0)
-            startIndex = book.files.indexOfFirst { it.uri == book.currentUri }
+            startIndex = book.uris.indexOfFirst { it == book.currentUri }
         }
         return MediaItemsWithStartPosition(book.toMediaItems(), startIndex, startPositionMs)
     }
 
     private fun Audiobook.toMediaItems() =
-        files.map {
+        uris.map {
             MediaItem.Builder()
-                .setMediaId(it.uri.toString())
-                .setUri(it.uri)
+                .setMediaId(it.toString())
+                .setUri(it)
                 .build()
         }
 }

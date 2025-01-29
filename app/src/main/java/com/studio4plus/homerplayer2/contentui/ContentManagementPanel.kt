@@ -68,6 +68,7 @@ import com.studio4plus.homerplayer2.base.R as BaseR
 fun ContentManagementPanel(
     state: ContentPanelViewState,
     onAddFolder: () -> Unit,
+    onEditFolder: (folderUri: String) -> Unit,
     onRemoveFolder: (AudiobookFolderViewState) -> Unit,
     onAddPodcast: () -> Unit,
     onEditPodcast: (feedUri: String) -> Unit,
@@ -124,6 +125,7 @@ fun ContentManagementPanel(
                     itemContent = { item ->
                         AudiobookFolderRow(
                             folder = item,
+                            onEditClicked = onEditFolder,
                             onRemoveClicked = { removeDialogAction = { onRemoveFolder(item) } },
                             modifier = horizontalPaddingModifier
                         )
@@ -192,7 +194,7 @@ private fun PreviewContentManagementPanelPodcast() {
     HomerPlayer2Theme {
         val viewState =
             ContentPanelViewState(PreviewData.folderItems1, PreviewData.podcasts1, SamplesInstallState.Idle)
-        ContentManagementPanel(viewState, {}, {}, {}, {}, {}, {})
+        ContentManagementPanel(viewState, {}, {}, {}, {}, {}, {}, {})
     }
 }
 
@@ -202,6 +204,6 @@ private fun PreviewContentManagementPanel50() {
     HomerPlayer2Theme {
         val viewState =
             ContentPanelViewState(PreviewData.folderItems50, emptyList(), SamplesInstallState.Idle)
-        ContentManagementPanel(viewState, {}, {}, {}, {}, {}, {})
+        ContentManagementPanel(viewState, {}, {}, {}, {}, {}, {}, {})
     }
 }

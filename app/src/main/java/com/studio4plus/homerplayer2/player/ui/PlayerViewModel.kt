@@ -25,6 +25,7 @@
 package com.studio4plus.homerplayer2.player.ui
 
 import android.media.AudioManager
+import android.net.Uri
 import androidx.datastore.core.DataStore
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -34,7 +35,6 @@ import com.studio4plus.homerplayer2.audiobooks.AudiobooksDao
 import com.studio4plus.homerplayer2.battery.BatteryState
 import com.studio4plus.homerplayer2.battery.BatteryStateProvider
 import com.studio4plus.homerplayer2.player.Audiobook
-import com.studio4plus.homerplayer2.player.AudiobookFile
 import com.studio4plus.homerplayer2.player.PlaybackUiStateRepository
 import com.studio4plus.homerplayer2.player.toAudiobook
 import com.studio4plus.homerplayer2.podcasts.data.PodcastsDao
@@ -141,14 +141,14 @@ class PlayerViewModel(
             is PlaybackState.MediaState.Playing -> {
                 // TODO: refactor
                 // Store the matching file to get its Uri instead of parsing it from string.
-                var matchingFile: AudiobookFile? = null
+                var matchingUri: Uri? = null
                 val playingBook = booksState.books.find {
-                    matchingFile = it.files.find { f -> f.uri.toString() == mediaState.mediaUri }
-                    matchingFile != null
+                    matchingUri = it.uris.find { it.toString() == mediaState.mediaUri }
+                    matchingUri != null
                 }
                 val b = if (playingBook != null) {
                     val playingBookState = playingBook.copy(
-                        currentUri = matchingFile!!.uri,
+                        currentUri = matchingUri!!,
                         currentPositionMs = mediaState.positionMs
                     ).toUiBook()
                     booksState.bookStates.map {

@@ -53,6 +53,12 @@ abstract class AudiobooksDao {
     @Query("SELECT * FROM audiobooks WHERE id = :id")
     abstract suspend fun getAudiobook(id: String): AudiobookWithState?
 
+    @Transaction
+    @Query("""SELECT * FROM audiobooks
+               WHERE root_folder_uri = :folderUri
+               ORDER BY display_name COLLATE LOCALIZED""")
+    abstract fun getAllInFolder(folderUri: Uri): Flow<List<AudiobookWithState>>
+
     @Query("""SELECT audiobook_files.*
               FROM audiobook_files
                 LEFT JOIN audiobook_file_durations ON audiobook_files.uri = audiobook_file_durations.uri

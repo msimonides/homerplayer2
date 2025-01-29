@@ -62,6 +62,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.studio4plus.homerplayer2.R
+import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobooksFolderEditNav
+import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobooksFolderEditRoute
 import com.studio4plus.homerplayer2.base.ui.IconButtonNavigateBack
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
@@ -163,6 +165,7 @@ private fun SettingsNavHost(
     val mainTitle = stringResource(id = R.string.settings_ui_settings_title)
     val aboutTitle = stringResource(id = R.string.settings_ui_about_title)
     val contentTitle = stringResource(id = R.string.settings_ui_content_title)
+    val folderTitle = stringResource(id = R.string.settings_ui_folder_title)
     val kioskSetupTitle = stringResource(id = R.string.settings_ui_kiosk_mode_setup_title)
     val lockdownTitle = stringResource(id = R.string.settings_ui_lockdown_settings_title)
     val licensesTitle = stringResource(id = R.string.settings_ui_licenses_title)
@@ -205,7 +208,18 @@ private fun SettingsNavHost(
                     val argument = URLEncoder.encode(feedUri)
                     navController.navigate("podcast_edit/$argument")
                 },
+                onEditFolder = { folderUri ->
+                    val argument = URLEncoder.encode(folderUri)
+                    navController.navigate("folder_edit/$argument")
+                },
             )
+        }
+        composable(
+            "folder_edit/{${AudiobooksFolderEditNav.FolderUriKey}}",
+            label = folderTitle,
+            arguments = listOf(navArgument(AudiobooksFolderEditNav.FolderUriKey) { NavType.StringType })
+        ) {
+            AudiobooksFolderEditRoute()
         }
         composable("kiosk_setup", label = kioskSetupTitle) {
             SettingsKioskModeSetupRoute()

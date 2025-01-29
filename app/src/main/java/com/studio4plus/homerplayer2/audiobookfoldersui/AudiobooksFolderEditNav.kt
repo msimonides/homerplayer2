@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2024 Marcin Simonides
+ * Copyright (c) 2025 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,27 +22,8 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.player
+package com.studio4plus.homerplayer2.audiobookfoldersui
 
-import android.net.Uri
-import com.studio4plus.homerplayer2.audiobooks.AudiobooksDao
-import com.studio4plus.homerplayer2.audiobooks.currentPositionMs
-import com.studio4plus.homerplayer2.audiobooks.totalDurationMs
-
-data class Audiobook(
-    val id: String,
-    val displayName: String,
-    val currentUri: Uri?,
-    val currentPositionMs: Long,
-    val uris: List<Uri>,
-    val progress: Float,
-)
-
-fun AudiobooksDao.AudiobookWithState.toAudiobook() = Audiobook(
-    audiobook.id,
-    audiobook.displayName,
-    playbackState?.currentUri,
-    playbackState?.currentPositionMs ?: 0,
-    files.map { it.uri },
-    progress = currentPositionMs().toFloat() / (totalDurationMs()?.toFloat() ?: Float.MAX_VALUE)
-)
+object AudiobooksFolderEditNav {
+    const val FolderUriKey = "folderUri"
+}

@@ -45,6 +45,7 @@ fun SettingsContentRoute(
     snackbarHostState: SnackbarHostState,
     onAddPodcast: () -> Unit,
     onEditPodcast: (feedUri: String) -> Unit,
+    onEditFolder: (folderUri: String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SettingsContentViewModel = koinViewModel()
 ) {
@@ -64,6 +65,7 @@ fun SettingsContentRoute(
                 viewModel.clearErrorSnack()
                 openAudiobooksTree()
             },
+            onEditFolder = onEditFolder,
             onRemoveFolder = viewModel::removeFolder,
             onAddPodcast = onAddPodcast,
             onEditPodcast= onEditPodcast,

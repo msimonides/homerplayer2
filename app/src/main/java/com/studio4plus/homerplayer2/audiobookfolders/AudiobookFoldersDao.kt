@@ -61,6 +61,10 @@ abstract class AudiobookFoldersDao {
     abstract fun getAllFolderWithSettings(): Flow<List<AudiobookFolderWithSettings>>
 
     @Transaction
+    @Query("SELECT * FROM audiobooks_folders WHERE uri = :uri")
+    abstract fun getFolderWithSettings(uri: Uri): Flow<AudiobookFolderWithSettings>
+
+    @Transaction
     suspend open fun updateFolderSettings(
         uri: Uri,
         transform: (AudiobooksFolderSettings) -> AudiobooksFolderSettings

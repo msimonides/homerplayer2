@@ -2,8 +2,12 @@
     <string name="app_name" translatable="false">Homer Audio Player</string>
     <string name="app_tag" translatable="false">homerplayer2</string>
 
-    <string name="audiobook_folder_add_error_dialog">Unable to open file chooser</string>
+    <string name="audiobook_folder_accessibility_action_edit">Edit</string>
     <string name="audiobook_folder_accessibility_menu_action_remove">Remove</string>
+    <string name="audiobook_folder_add_error_dialog">Unable to open file chooser</string>
+    <string name="audiobook_folder_contents_title">Contents</string>
+    <string name="audiobook_folder_content_time_scanning">Scanning…</string>
+    <string name="audiobook_folder_content_time_format">%1$s / %2$s</string>
     <string name="audiobook_folder_samples_folder_name">Sample books</string>
     <string name="audiobook_folder_no_books_found">(no audiobooks found in this folder)</string>
     <plurals name="audiobook_folder_content_description">
@@ -11,6 +15,7 @@
         <item quantity="other">%1$d books starting with: %2$s</item>
     </plurals>
     <string name="audiobook_folder_scanning_content_description">scanning</string>
+
 
     <plurals name="battery_level_content_description">
         <item quantity="one">battery %1$d percent</item>
@@ -36,6 +41,7 @@
 
     <string name="onboarding_content_title">Audiobooks and Podcasts</string>
     <string name="onboarding_content_description">Please add at least one folder with your audiobooks or one podcast.</string>
+    <string name="onboarding_folder_title">Audio folder</string>
     <string name="onboarding_podcast_title">Podcast</string>
     <string name="onboarding_speech_title">Speak book titles</string>
     <string name="onboarding_speech_description">Homer uses text-to-speech engine to read book titles.\nYou can now test it and adjust configuration settings.</string>
@@ -107,6 +113,7 @@
         <item quantity="other">%1$d podcasts</item>
     </plurals>
     <string name="settings_ui_content_summary_empty">(no content selected)</string>
+    <string name="settings_ui_folder_title">Audiobooks folder</string>
     <string name="settings_ui_haptic_feedback_label">Haptic feedback</string>
     <string name="settings_ui_layout_settings_item">Screen margins…</string>
     <string name="settings_ui_layout_dialog_message">Drag the edges to adjust screen margins. Rotate screen to adjust the other orientation.</string>

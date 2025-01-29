@@ -56,6 +56,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun OnboardingContentRoute(
     modifier: Modifier = Modifier,
+    navigateEditFolder: (folderUri: String) -> Unit,
     navigateAddPodcast: () -> Unit,
     navigateEditPodcast: (feedUri: String) -> Unit,
     navigateNext: () -> Unit,
@@ -81,6 +82,7 @@ fun OnboardingContentRoute(
                 viewModel.clearErrorSnack()
                 openAudiobooksTree()
             },
+            editFolder = navigateEditFolder,
             removeFolder = viewModel::removeFolder,
             addPodcast = navigateAddPodcast,
             editPodcast = navigateEditPodcast,
@@ -96,6 +98,7 @@ fun OnboardingContentScreen(
     snackbarHostState: SnackbarHostState,
     navigateNext: () -> Unit,
     addFolder: () -> Unit,
+    editFolder: (folderUri: String) -> Unit,
     removeFolder: (AudiobookFolderViewState) -> Unit,
     addPodcast: () -> Unit,
     editPodcast: (feedUri: String) -> Unit,
@@ -125,6 +128,7 @@ fun OnboardingContentScreen(
                 .padding(top = HomerTheme.dimensions.screenVertPadding),
             panelState = viewState.panelState,
             onAddFolder = addFolder,
+            onEditFolder = editFolder,
             onRemoveFolder = removeFolder,
             onAddPodcast = addPodcast,
             onEditPodcast = editPodcast,
@@ -138,6 +142,7 @@ fun OnboardingContentScreen(
 private fun ScreenContent(
     panelState: ContentPanelViewState,
     onAddFolder: () -> Unit,
+    onEditFolder: (folderUri: String) -> Unit,
     onRemoveFolder: (AudiobookFolderViewState) -> Unit,
     onAddPodcast: () -> Unit,
     onEditPodcast: (feedUri: String) -> Unit,
@@ -157,6 +162,7 @@ private fun ScreenContent(
         ContentManagementPanel(
             state = panelState,
             onAddFolder = onAddFolder,
+            onEditFolder = onEditFolder,
             onRemoveFolder = onRemoveFolder,
             onAddPodcast = onAddPodcast,
             onEditPodcast = onEditPodcast,
@@ -175,7 +181,7 @@ private fun PreviewOnboardingAudiobookFoldersScreen1() {
             ContentPanelViewState(PreviewData.folderItems1, PreviewData.podcasts1, SamplesInstallState.Idle),
             canProceed = true
         )
-        OnboardingContentScreen(state, SnackbarHostState(), {}, {}, {}, {}, {}, {}, {})
+        OnboardingContentScreen(state, SnackbarHostState(), {}, {}, {}, {}, {}, {}, {}, {})
     }
 }
 
@@ -187,6 +193,6 @@ private fun PreviewOnboardingAudiobookFoldersScreen50() {
             ContentPanelViewState(PreviewData.folderItems50, emptyList(), SamplesInstallState.Idle),
             canProceed = true
         )
-        OnboardingContentScreen(state, SnackbarHostState(), {}, {}, {}, {}, {}, {}, {})
+        OnboardingContentScreen(state, SnackbarHostState(), {}, {}, {}, {}, {}, {}, {}, {})
     }
 }

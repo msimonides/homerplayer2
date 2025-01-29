@@ -69,6 +69,7 @@ import java.time.format.FormatStyle
 @Composable
 fun AudiobookFolderRow(
     folder: AudiobookFolderViewState,
+    onEditClicked: (String) -> Unit,
     onRemoveClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -78,7 +79,12 @@ fun AudiobookFolderRow(
         subLabelContentDescription = folder.subLabelContentDescription(),
         circleContent = { AudiobookFolderBadgeContent(folder) },
         onRemoveClicked = onRemoveClicked,
-        modifier = modifier,
+        modifier = Modifier
+            .clickable(
+                onClick = { onEditClicked(folder.uri.toString()) },
+                onClickLabel = stringResource(R.string.audiobook_folder_accessibility_action_edit)
+            )
+            .then(modifier),
     )
 }
 
@@ -187,6 +193,7 @@ private fun PreviewFolderRow() {
                 isScanning = false,
                 isSamplesFolder = false
             ),
+            {},
             {}
         )
     }
@@ -206,6 +213,7 @@ private fun PreviewFolderRowEmpty() {
                 isScanning = false,
                 isSamplesFolder = false,
             ),
+            {},
             {}
         )
     }
@@ -224,7 +232,7 @@ private fun PreviewFolderRowScanning() {
             isScanning = true,
             isSamplesFolder = false
         )
-        AudiobookFolderRow(folder, {})
+        AudiobookFolderRow(folder, {}, {})
     }
 }
 

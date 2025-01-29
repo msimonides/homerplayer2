@@ -30,6 +30,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
+import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobooksFolderEditNav
 import com.studio4plus.homerplayer2.podcastsui.PodcastEditNav
 import java.net.URLEncoder
 
@@ -37,6 +38,10 @@ fun NavGraphBuilder.onboardingGraph(navController: NavController, destinationRou
     navigation("onboarding/folders", "onboarding") {
         composable("onboarding/folders") {
             OnboardingContentRoute(
+                navigateEditFolder = { folderUri ->
+                    val argument = URLEncoder.encode(folderUri)
+                    navController.navigate("onboarding/folder/$argument")
+                },
                 navigateAddPodcast = { navController.navigate("onboarding/podcast/") },
                 navigateEditPodcast = { feedUri ->
                     val argument = URLEncoder.encode(feedUri)
@@ -52,6 +57,14 @@ fun NavGraphBuilder.onboardingGraph(navController: NavController, destinationRou
                         popUpTo("onboarding/folders") { inclusive = true }
                     }
                 }
+            )
+        }
+        composable(
+            "onboarding/folder/{${AudiobooksFolderEditNav.FolderUriKey}}",
+            arguments = listOf(navArgument(AudiobooksFolderEditNav.FolderUriKey) { NavType.StringType })
+        ) {
+            OnboardingEditFolderRoute(
+                navigateBack = { navController.popBackStack() }
             )
         }
         composable(
