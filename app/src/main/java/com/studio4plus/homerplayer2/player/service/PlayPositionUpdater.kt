@@ -118,6 +118,8 @@ class PlayPositionUpdater(
     private fun rewindToBeginningIfNeeded(player: Player, currentFileUri: Uri?) {
         if (player.playbackState == Player.STATE_ENDED && currentFileUri != null) {
             mainScope.launch {
+                // Note: defaults will also be used for podcasts. Better podcast handling
+                // may be needed in the future.
                 val folderSettings = audiobooksDao.getSettingsByFile(currentFileUri)
                     ?: AudiobooksFolderSettings.defaults
                 if (folderSettings.rewindOnEnd) {

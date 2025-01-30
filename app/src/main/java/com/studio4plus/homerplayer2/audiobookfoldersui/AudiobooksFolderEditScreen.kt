@@ -28,15 +28,17 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.RestartAlt
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -104,9 +106,7 @@ private fun AudiobooksFolderEditScreen(
                 modifier = Modifier.defaultSettingsItem()
             )
 
-            LazyColumn(
-                modifier = Modifier.navigationBarsPadding()
-            ) {
+            LazyColumn {
                 item {
                     SectionTitle(
                         stringResource(R.string.audiobook_folder_contents_title),
@@ -124,6 +124,9 @@ private fun AudiobooksFolderEditScreen(
                             .padding(horizontal = HomerTheme.dimensions.screenHorizPadding)
                             .padding(top = 8.dp, bottom = 16.dp)
                     )
+                }
+                item {
+                    Spacer(modifier = Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars))
                 }
             }
         }
