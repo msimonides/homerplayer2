@@ -31,6 +31,7 @@ import android.os.PowerManager.WakeLock
 import androidx.core.content.getSystemService
 import androidx.datastore.core.DataStore
 import androidx.room.Room
+import com.studio4plus.homerplayer2.BuildConfig
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.audiobookfolders.AudiobookFoldersDatabase
 import com.studio4plus.homerplayer2.audiobookfolders.AudiobookFoldersModule
@@ -38,6 +39,7 @@ import com.studio4plus.homerplayer2.audiobooks.AudiobooksDatabase
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksModule
 import com.studio4plus.homerplayer2.base.BaseModule
 import com.studio4plus.homerplayer2.base.DispatcherProvider
+import com.studio4plus.homerplayer2.base.VersionUpdate
 import com.studio4plus.homerplayer2.battery.BatteryModule
 import com.studio4plus.homerplayer2.fullkioskmode.FullKioskModeModule
 import com.studio4plus.homerplayer2.loccalstorage.LOCAL_STORAGE_JSON
@@ -89,7 +91,8 @@ class AppModule {
         appContext: Context,
         mainScope: CoroutineScope,
         dispatcherProvider: DispatcherProvider,
-        @Named(LOCAL_STORAGE_JSON) json: Json
+        @Named(LOCAL_STORAGE_JSON) json: Json,
+        versionUpdate: VersionUpdate,
     ): DataStore<StoredAppState> =
         createDataStore(
             appContext,
@@ -98,7 +101,10 @@ class AppModule {
             json,
             DATASTORE_APP_STATE,
             StoredAppState(),
-            StoredAppState.serializer()
+            StoredAppState.serializer(),
+            migrations = listOf(
+                StoredAppStateMigration1_2(versionUpdate)
+            )
         )
 
     @Single(
@@ -130,4 +136,9 @@ class AppModule {
     @Single
     @Named(SamplesDownloader.URL)
     fun samplesUrl(appContext: Context) = appContext.getString(R.string.samples_download_url)
+
+    // Always create to make sure it updates current version.
+    @Single(createdAtStart = true)
+    fun versionUpdate(appContext: Context): VersionUpdate =
+        VersionUpdate(appContext, BuildConfig.VERSION_CODE)
 }

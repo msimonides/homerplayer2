@@ -31,7 +31,6 @@ import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.dataStoreFile
 import com.studio4plus.homerplayer2.base.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.plus
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json

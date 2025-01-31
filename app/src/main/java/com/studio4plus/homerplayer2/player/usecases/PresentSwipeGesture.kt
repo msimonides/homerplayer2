@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Marcin Simonides
+ * Copyright (c) 2025 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,27 +22,12 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.app
+package com.studio4plus.homerplayer2.player.usecases
 
-import androidx.datastore.core.DataMigration
-import com.studio4plus.homerplayer2.base.VersionUpdate
-import kotlinx.serialization.Serializable
-import org.koin.core.annotation.Factory
+import kotlinx.coroutines.flow.Flow
 
-@Serializable
-data class StoredAppState(
-    val onboardingCompleted: Boolean = false,
-    val hasPresentSwipeGesture: Boolean = false,
-)
+interface PresentSwipeGesture {
+    val shouldPresent: Flow<Boolean>
 
-@Factory
-class StoredAppStateMigration1_2(val versionUpdate: VersionUpdate) : DataMigration<StoredAppState> {
-
-    override suspend fun shouldMigrate(currentData: StoredAppState): Boolean =
-        versionUpdate.updatingFromVersion <= 16
-
-    override suspend fun cleanUp() = Unit
-
-    override suspend fun migrate(currentData: StoredAppState): StoredAppState =
-        currentData.copy(hasPresentSwipeGesture = true)
+    fun onUserSwipeGesture()
 }

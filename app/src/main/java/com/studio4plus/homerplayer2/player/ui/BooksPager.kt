@@ -24,9 +24,12 @@
 
 package com.studio4plus.homerplayer2.player.ui
 
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -84,6 +87,11 @@ fun BooksPager(
             pagerState.scrollToPage(zeroPage + state.selectedIndex)
         }
     }
+    if (state.shouldPresentSwipeGesture) {
+        LaunchedEffect(pagerState) {
+            presentSwipeGesture(pagerState)
+        }
+    }
     val bookCollectionInfo = CollectionInfo(rowCount = 1, columnCount = books.size)
     ProvideTouchSlop(multiplier = 4f) {
         HorizontalPager(
@@ -125,6 +133,19 @@ private fun ProvideTouchSlop(multiplier: Float, content: @Composable () -> Unit)
     CompositionLocalProvider(LocalViewConfiguration provides adjustedViewConfiguration, content)
 }
 
+private suspend fun presentSwipeGesture(pagerState: PagerState) {
+    val easeInOut = CubicBezierEasing(0.42f, 0.0f, 0.58f, 1.0f)
+    fun animSpec(durationMs: Int) = tween<Float>(durationMs, easing = easeInOut)
+
+    while (true) {
+        delay(1000)
+        pagerState.animateScrollToPage(pagerState.settledPage, 0.15f, animSpec(500))
+        pagerState.animateScrollToPage(pagerState.settledPage, -0.15f, animSpec(750))
+        pagerState.animateScrollToPage(pagerState.settledPage, 0f, animSpec(500))
+        delay(9_000)
+    }
+}
+
 @Composable
 private fun rememberBookIndexLambda(
     zeroPage: Int,
@@ -154,6 +175,7 @@ fun DefaultPreview() {
                 ),
                 selectedIndex = 1,
                 isPlaying = false,
+                shouldPresentSwipeGesture = false,
             ),
             itemPadding = HomerTheme.dimensions.screenHorizPadding,
             landscape = false,

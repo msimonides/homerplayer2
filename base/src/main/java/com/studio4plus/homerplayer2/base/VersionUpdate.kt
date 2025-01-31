@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Marcin Simonides
+ * Copyright (c) 2025 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,27 +22,29 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.app
+package com.studio4plus.homerplayer2.base
 
-import androidx.datastore.core.DataMigration
-import com.studio4plus.homerplayer2.base.VersionUpdate
-import kotlinx.serialization.Serializable
-import org.koin.core.annotation.Factory
+import android.content.Context
+import androidx.core.content.edit
 
-@Serializable
-data class StoredAppState(
-    val onboardingCompleted: Boolean = false,
-    val hasPresentSwipeGesture: Boolean = false,
-)
+private const val PREF_CURRENT_VERSION = "current"
 
-@Factory
-class StoredAppStateMigration1_2(val versionUpdate: VersionUpdate) : DataMigration<StoredAppState> {
+class VersionUpdate(
+    appContext: Context,
+    currentVersion: Int,
+) {
+    private val sharedPrefs = appContext.getSharedPreferences("versionUpdate", Context.MODE_PRIVATE)
 
-    override suspend fun shouldMigrate(currentData: StoredAppState): Boolean =
-        versionUpdate.updatingFromVersion <= 16
+    // Returns MAX_VALUE when there's no update.
+    val updatingFromVersion: Int
 
-    override suspend fun cleanUp() = Unit
-
-    override suspend fun migrate(currentData: StoredAppState): StoredAppState =
-        currentData.copy(hasPresentSwipeGesture = true)
+    init {
+        val previousVersion = sharedPrefs.getInt(PREF_CURRENT_VERSION, 0)
+        updatingFromVersion = if (previousVersion > 0 && previousVersion != currentVersion) {
+            previousVersion
+        } else {
+            Int.MAX_VALUE
+        }
+        sharedPrefs.edit { putInt(PREF_CURRENT_VERSION, currentVersion) }
+    }
 }

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Marcin Simonides
+ * Copyright (c) 2025 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,25 +24,23 @@
 
 package com.studio4plus.homerplayer2.app
 
-import androidx.datastore.core.DataMigration
-import com.studio4plus.homerplayer2.base.VersionUpdate
-import kotlinx.serialization.Serializable
+import androidx.datastore.core.DataStore
+import com.studio4plus.homerplayer2.player.usecases.PresentSwipeGesture
+import com.studio4plus.homerplayer2.settingsui.launchUpdate
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import org.koin.core.annotation.Factory
-
-@Serializable
-data class StoredAppState(
-    val onboardingCompleted: Boolean = false,
-    val hasPresentSwipeGesture: Boolean = false,
-)
+import org.koin.core.annotation.Named
 
 @Factory
-class StoredAppStateMigration1_2(val versionUpdate: VersionUpdate) : DataMigration<StoredAppState> {
+class AppPresentSwipeGesture(
+    private val mainScope: CoroutineScope,
+    @Named(DATASTORE_APP_STATE) private val appStateStore: DataStore<StoredAppState>,
+) : PresentSwipeGesture {
+    override val shouldPresent: Flow<Boolean> = appStateStore.data.map { !it.hasPresentSwipeGesture }
 
-    override suspend fun shouldMigrate(currentData: StoredAppState): Boolean =
-        versionUpdate.updatingFromVersion <= 16
-
-    override suspend fun cleanUp() = Unit
-
-    override suspend fun migrate(currentData: StoredAppState): StoredAppState =
-        currentData.copy(hasPresentSwipeGesture = true)
+    override fun onUserSwipeGesture() {
+        mainScope.launchUpdate(appStateStore) { it.copy(hasPresentSwipeGesture = true) }
+    }
 }
