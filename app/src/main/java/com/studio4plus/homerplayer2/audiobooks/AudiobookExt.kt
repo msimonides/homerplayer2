@@ -24,14 +24,15 @@
 
 package com.studio4plus.homerplayer2.audiobooks
 
+import android.net.Uri
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksDao.AudiobookWithState
 
 fun AudiobookWithState.totalDurationMs(): Long? =
     if (files.all { it.durationMs != null }) files.sumOf { it.durationMs!! } else null
 
 fun AudiobookWithState.currentPositionMs(): Long {
-    val currentUri = playbackState?.currentUri
-    val currentUriPositionMs = playbackState?.currentPositionMs ?: 0
+    val currentUri: Uri = playbackState?.currentUri ?: return 0
+    val currentUriPositionMs = playbackState.currentPositionMs
     val previousFilesDuration =
         files.takeWhile { it.uri != currentUri }.sumOf { it.durationMs!! }
     return previousFilesDuration + currentUriPositionMs
