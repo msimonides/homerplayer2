@@ -25,10 +25,8 @@
 package com.studio4plus.homerplayer2.player.ui
 
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
@@ -40,12 +38,9 @@ import androidx.compose.material.icons.rounded.Stop
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -66,74 +61,45 @@ fun BookPage(
     playerUiSettings: PlayerUiSettings,
     modifier: Modifier = Modifier
 ) {
-    // TODO: wrap the button state animation into an Indication with IndicationNodeFactory once the
-    //  API is released in future Compose versions.
     val buttonInteractionSource = remember { MutableInteractionSource() }
-    val isPressed by buttonInteractionSource.collectIsPressedAsState()
-    var isClicked by remember { mutableStateOf(false) }
-    val buttonScale by animateFloatAsState(
-        targetValue = when {
-            isClicked -> 1.15f
-            isPressed -> 1.1f
-            else -> 1f
-        },
-        finishedListener = {
-            if (isClicked) isClicked = false
-        }
-    )
-    val scaleModifier = Modifier.graphicsLayer {scaleX = buttonScale; scaleY = buttonScale }
-    fun animateClick() {
-        isClicked = true
-    }
     val buttonColor by animateColorAsState(
         if (isPlaying) HomerTheme.colors.controlStop else HomerTheme.colors.controlPlay,
         animationSpec = tween()
     )
-    val button: @Composable BoxScope.() -> Unit = if (isPlaying) {
-        {
-            RoundIconButton(
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .then(scaleModifier),
-                iconImage = Icons.Rounded.Stop,
-                iconContentDescription = stringResource(R.string.playback_stop_button_description),
-                containerColor = buttonColor,
-                onClick = { animateClick(); playerActions.onStop() },
-                interactionSource = buttonInteractionSource,
-            )
-        }
-    } else {
-        {
-            RoundIconButton(
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .then(scaleModifier),
-                iconImage = Icons.Rounded.PlayArrow,
-                iconContentDescription = stringResource(R.string.playback_play_button_description),
-                containerColor = buttonColor,
-                onClick = { animateClick(); playerActions.onPlay(index) },
-                interactionSource = buttonInteractionSource,
-            )
-        }
+    val button: @Composable BoxScope.() -> Unit = {
+        val icon = if (isPlaying) Icons.Rounded.Stop else Icons.Rounded.PlayArrow
+        val contentDescription = if (isPlaying)
+            stringResource(R.string.playback_stop_button_description)
+        else
+            stringResource(R.string.playback_play_button_description)
+        RoundIconButton(
+            modifier = Modifier
+                .align(Alignment.Center),
+            iconImage = icon,
+            iconContentDescription = contentDescription,
+            containerColor = buttonColor,
+            onClick = { if (isPlaying) playerActions.onStop() else playerActions.onPlay(index) },
+            interactionSource = buttonInteractionSource
+        )
     }
     val showControls = isPlaying && playerUiSettings.showAnyControls
     val mainContent: @Composable BoxScope.() -> Unit = if (showControls) {
-         {
+        {
             ControlButtonsLayout(
                 {
                     if (playerUiSettings.showVolumeControls) {
-                        ButtonVolumeUp(modifier = Modifier, playerActions = playerActions)
-                        ButtonVolumeDown(modifier = Modifier, playerActions = playerActions)
+                        ButtonVolumeUp(playerActions = playerActions)
+                        ButtonVolumeDown(playerActions = playerActions)
                     }
                 },
                 {
                     if (playerUiSettings.showFfRewindControls) {
-                        ButtonFastRewind(modifier = Modifier, playerActions = playerActions)
-                        ButtonFastForward(modifier = Modifier, playerActions = playerActions)
+                        ButtonFastRewind(playerActions = playerActions)
+                        ButtonFastForward(playerActions = playerActions)
                     }
                     if (playerUiSettings.showSeekControls) {
-                        ButtonSeekBack(modifier = Modifier, playerActions = playerActions)
-                        ButtonSeekForward(modifier = Modifier, playerActions = playerActions)
+                        ButtonSeekBack(playerActions = playerActions)
+                        ButtonSeekForward(playerActions = playerActions)
                     }
                 }
             )

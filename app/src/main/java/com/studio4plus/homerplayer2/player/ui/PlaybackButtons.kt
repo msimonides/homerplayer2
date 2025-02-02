@@ -24,6 +24,7 @@
 
 package com.studio4plus.homerplayer2.player.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -83,20 +84,23 @@ fun RoundIconButton(
 ) {
     val hapticFeedback = LocalHapticFeedback.current
     val clickAction = { hapticFeedback.performHapticFeedback(hapticFeedbackType); onClick() }
-    Button(
-        modifier = modifier.aspectRatio(1f),
-        onClick = clickAction,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = containerColor,
-            contentColor = Color.White // TODO: should this be configurable?
-        ),
-        contentPadding = PaddingValues(0.dp),
-        interactionSource = interactionSource
+    Box(
+        modifier = modifier
+            .clickable(
+                onClick = clickAction,
+                indication = PlayerButtonIndicationFactory(largeEffect = false),
+                interactionSource = interactionSource
+            )
+            .background(containerColor, CircleShape)
+            .clip(CircleShape)
+            .aspectRatio(1f),
+        propagateMinConstraints = true
     ) {
         Icon(
             iconImage,
             contentDescription = iconContentDescription,
-            modifier = Modifier.fillMaxSize(0.9f)
+            modifier = Modifier.fillMaxSize(0.9f),
+            tint = Color.White // TODO: should this be configurable?
         )
     }
 }
@@ -115,8 +119,11 @@ fun FlatIconButton(
     Box(
         modifier = modifier
             .aspectRatio(1f)
-            .clip(CircleShape)
-            .clickable(onClick = clickAction)
+            .clickable(
+                onClick = clickAction,
+                indication = PlayerButtonIndicationFactory(largeEffect = true),
+                interactionSource = null,
+            )
     ) {
         Icon(
             iconImage,
@@ -129,8 +136,8 @@ fun FlatIconButton(
 
 @Composable
 fun ButtonVolumeUp(
-    modifier: Modifier,
-    playerActions: PlayerActions
+    playerActions: PlayerActions,
+    modifier: Modifier = Modifier,
 ) = FlatIconButton(
     modifier = modifier,
     iconImage = Icons.AutoMirrored.Rounded.VolumeUp,
@@ -141,8 +148,8 @@ fun ButtonVolumeUp(
 
 @Composable
 fun ButtonVolumeDown(
-    modifier: Modifier,
-    playerActions: PlayerActions
+    playerActions: PlayerActions,
+    modifier: Modifier = Modifier,
 ) = FlatIconButton(
     modifier = modifier,
     iconImage = Icons.AutoMirrored.Rounded.VolumeDown,
@@ -153,8 +160,8 @@ fun ButtonVolumeDown(
 
 @Composable
 fun ButtonFastRewind(
-    modifier: Modifier,
-    playerActions: PlayerActions
+    playerActions: PlayerActions,
+    modifier: Modifier = Modifier,
 ) = FlatIconButton(
     modifier = modifier,
     iconImage = Icons.Rounded.FastRewind,
@@ -166,8 +173,8 @@ fun ButtonFastRewind(
 
 @Composable
 fun ButtonFastForward(
-    modifier: Modifier,
-    playerActions: PlayerActions
+    playerActions: PlayerActions,
+    modifier: Modifier = Modifier,
 ) = FlatIconButton(
     modifier = modifier,
     iconImage = Icons.Rounded.FastForward,
@@ -179,8 +186,8 @@ fun ButtonFastForward(
 
 @Composable
 fun ButtonSeekBack(
-    modifier: Modifier,
-    playerActions: PlayerActions
+    playerActions: PlayerActions,
+    modifier: Modifier = Modifier,
 ) = FlatIconButton(
     modifier = modifier,
     iconImage = Icons.Rounded.Replay30,
@@ -191,8 +198,8 @@ fun ButtonSeekBack(
 
 @Composable
 fun ButtonSeekForward(
-    modifier: Modifier,
-    playerActions: PlayerActions
+    playerActions: PlayerActions,
+    modifier: Modifier = Modifier,
 ) = FlatIconButton(
     modifier = modifier,
     iconImage = Icons.Rounded.Forward10,
