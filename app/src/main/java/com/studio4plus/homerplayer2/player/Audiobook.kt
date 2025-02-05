@@ -38,11 +38,15 @@ data class Audiobook(
     val progress: Float,
 )
 
-fun AudiobooksDao.AudiobookWithState.toAudiobook() = Audiobook(
-    audiobook.id,
-    audiobook.displayName,
-    playbackState?.currentUri,
-    playbackState?.currentPositionMs ?: 0,
-    files.map { it.uri },
-    progress = currentPositionMs().toFloat() / (totalDurationMs()?.toFloat() ?: Float.MAX_VALUE)
-)
+fun AudiobooksDao.AudiobookWithState.toAudiobook(): Audiobook {
+    val totalNonZeroDurationMs =
+        totalDurationMs()?.takeIf { it > 0 }?.toFloat() ?: Float.MAX_VALUE
+    return Audiobook(
+        audiobook.id,
+        audiobook.displayName,
+        playbackState?.currentUri,
+        playbackState?.currentPositionMs ?: 0,
+        files.map { it.uri },
+        progress = currentPositionMs().toFloat() / totalNonZeroDurationMs
+    )
+}
