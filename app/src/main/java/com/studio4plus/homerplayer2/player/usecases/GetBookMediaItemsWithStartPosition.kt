@@ -46,10 +46,14 @@ class GetBookMediaItemsWithStartPosition(
     ): MediaItemsWithStartPosition {
         var startIndex: Int = 0
         var startPositionMs: Long = 0
+
         if (book.currentUri != null) {
-            val rewindOnResumeMs = settings.data.first().rewindOnResumeSeconds * 1_000
-            startPositionMs = (book.currentPositionMs - rewindOnResumeMs).coerceAtLeast(0)
-            startIndex = book.uris.indexOfFirst { it == book.currentUri }
+            val currentUriIndex = book.uris.indexOfFirst { it == book.currentUri }
+            if (currentUriIndex >= 0) {
+                val rewindOnResumeMs = settings.data.first().rewindOnResumeSeconds * 1_000
+                startPositionMs = (book.currentPositionMs - rewindOnResumeMs).coerceAtLeast(0)
+                startIndex = currentUriIndex
+            }
         }
         return MediaItemsWithStartPosition(book.toMediaItems(), startIndex, startPositionMs)
     }
