@@ -65,12 +65,12 @@ import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobooksFolderEditNav
 import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobooksFolderEditRoute
 import com.studio4plus.homerplayer2.base.ui.IconButtonNavigateBack
+import com.studio4plus.homerplayer2.base.ui.encodeToUriPathSegment
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 import com.studio4plus.homerplayer2.podcastsui.PodcastEditNav
 import com.studio4plus.homerplayer2.podcastsui.PodcastEditRoute
 import com.studio4plus.homerplayer2.utils.composable
-import java.net.URLEncoder
 
 @Composable
 fun Modifier.defaultSettingsItem() = this
@@ -205,12 +205,10 @@ private fun SettingsNavHost(
                 snackbarHostState,
                 onAddPodcast = { navController.navigate("podcast_edit/") },
                 onEditPodcast = { feedUri ->
-                    val argument = URLEncoder.encode(feedUri)
-                    navController.navigate("podcast_edit/$argument")
+                    navController.navigate("podcast_edit/${feedUri.encodeToUriPathSegment()}")
                 },
                 onEditFolder = { folderUri ->
-                    val argument = URLEncoder.encode(folderUri)
-                    navController.navigate("folder_edit/$argument")
+                    navController.navigate("folder_edit/${folderUri.encodeToUriPathSegment()}")
                 },
             )
         }

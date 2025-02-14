@@ -31,21 +31,19 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobooksFolderEditNav
+import com.studio4plus.homerplayer2.base.ui.encodeToUriPathSegment
 import com.studio4plus.homerplayer2.podcastsui.PodcastEditNav
-import java.net.URLEncoder
 
 fun NavGraphBuilder.onboardingGraph(navController: NavController, destinationRoute: String) {
     navigation("onboarding/folders", "onboarding") {
         composable("onboarding/folders") {
             OnboardingContentRoute(
                 navigateEditFolder = { folderUri ->
-                    val argument = URLEncoder.encode(folderUri)
-                    navController.navigate("onboarding/folder/$argument")
+                    navController.navigate("onboarding/folder/${folderUri.encodeToUriPathSegment()}")
                 },
                 navigateAddPodcast = { navController.navigate("onboarding/podcast/") },
                 navigateEditPodcast = { feedUri ->
-                    val argument = URLEncoder.encode(feedUri)
-                    navController.navigate("onboarding/podcast/$argument")
+                    navController.navigate("onboarding/podcast/${feedUri.encodeToUriPathSegment()}")
                 },
                 navigateNext = { navController.navigate("onboarding/tts") }
             )
