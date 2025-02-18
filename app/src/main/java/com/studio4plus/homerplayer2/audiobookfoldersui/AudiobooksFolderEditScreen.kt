@@ -188,8 +188,10 @@ private fun AudiobookRow(
                 modifier = Modifier.padding(top = 4.dp)
             )
         }
+        val progress = (currentPositionMs?.toFloat() ?: 0f) /
+                (totalDurationMs?.takeIf { it > 0 }?.toFloat() ?: 1f)
         HorizontalBookProgressIndicator(
-            progress = (currentPositionMs?.toFloat() ?: 0f) / (totalDurationMs?.toFloat() ?: 1f),
+            progress = progress,
             modifier = Modifier
                 .padding(top = 4.dp)
                 .fillMaxWidth(),
