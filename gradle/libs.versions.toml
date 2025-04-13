@@ -1,7 +1,7 @@
 [versions]
 
 about-libraries = "11.6.2"
-android-gradle-plugin = "8.8.1"
+android-gradle-plugin = "8.8.2"
 android-compileSdk = '35'
 android-minSdk = '21'
 androidx-lifecycle = '2.8.7'
@@ -14,17 +14,17 @@ kotlin = '2.0.21'
 kotlinx-coroutines = '1.9.0'
 ksp-compiler = '2.0.21-1.0.28'
 ktor = '3.0.1'
-media3 = '1.5.1'
+media3 = '1.6.0'
 okhttp = '4.12.0'
-room = '2.6.1'
-sentry-android = '7.22.0'
+room = '2.7.0'
+sentry-android = '7.22.5'
 workmanager = '2.10.0'
 
 [libraries]
 
 aboutlibraries-compose = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "about-libraries" }
-androidx-activity-compose = 'androidx.activity:activity-compose:1.10.0'
-androidx-core-ktx = 'androidx.core:core-ktx:1.15.0'
+androidx-activity-compose = 'androidx.activity:activity-compose:1.10.1'
+androidx-core-ktx = 'androidx.core:core-ktx:1.16.0'
 androidx-datastore-core = 'androidx.datastore:datastore:1.0.0'
 androidx-documentfile ='androidx.documentfile:documentfile:1.0.1'
 androidx-lifecycle-runtime-compose = { module = 'androidx.lifecycle:lifecycle-runtime-compose', version.ref = 'androidx-lifecycle' }
@@ -32,7 +32,7 @@ androidx-lifecycle-service = { module = 'androidx.lifecycle:lifecycle-service', 
 androidx-lifecycle-viewmodel = { module = 'androidx.lifecycle:lifecycle-viewmodel', version.ref = 'androidx-lifecycle' }
 androidx-media3-exoplayer = { module = 'androidx.media3:media3-exoplayer', version.ref = 'media3' }
 androidx-media3-session = { module = 'androidx.media3:media3-session', version.ref = 'media3' }
-androidx-navigation-compose = "androidx.navigation:navigation-compose:2.8.7"
+androidx-navigation-compose = "androidx.navigation:navigation-compose:2.8.9"
 androidx-room-compiler = { module = 'androidx.room:room-compiler', version.ref = 'room' }
 androidx-room-ktx = { module = 'androidx.room:room-ktx', version.ref = 'room' }
 androidx-test-corektx = 'androidx.test:core-ktx:1.6.1'
@@ -41,7 +41,7 @@ androidx-test-junit = 'androidx.test.ext:junit:1.2.1'
 androidx-window = 'androidx.window:window:1.3.0'
 androidx-workmanager-ktx = { module = 'androidx.work:work-runtime-ktx', version.ref = 'workmanager' }
 
-compose-material3 = 'androidx.compose.material3:material3:1.3.1'
+compose-material3 = 'androidx.compose.material3:material3:1.3.2'
 compose-material-icons-extended = { module = 'androidx.compose.material:material-icons-extended', version = '1.7.8' }
 compose-ui-ui = { module = 'androidx.compose.ui:ui', version.ref = 'compose' }
 compose-ui-test-junit = { module = 'androidx.compose.ui:ui-test-junit4', version.ref = 'compose' }
@@ -52,7 +52,7 @@ compose-ui-tooling-preview = { module = 'androidx.compose.ui:ui-tooling-preview'
 coil-compose = { module = 'io.coil-kt.coil3:coil-compose', version.ref = 'coil' }
 coil-okhttp = { module = 'io.coil-kt.coil3:coil-network-okhttp', version.ref = 'coil' }
 
-desugarjdk = 'com.android.tools:desugar_jdk_libs:2.1.4'
+desugarjdk = 'com.android.tools:desugar_jdk_libs:2.1.5'
 
 koin-android = { module = 'io.insert-koin:koin-android', version.ref = 'koin-android' }
 koin-androidx-compose = { module = 'io.insert-koin:koin-androidx-compose', version.ref = 'koin-android-compose' }
