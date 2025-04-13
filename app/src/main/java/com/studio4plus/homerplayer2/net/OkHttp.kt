@@ -54,7 +54,34 @@ object OkHttp {
         }
         return builder
             .addInterceptor(UserAgentInterceptor())
+            .addNetworkInterceptor(HttpsInterceptor())
             .build()
+    }
+}
+
+private class HttpsInterceptor : Interceptor {
+    override fun intercept(chain: Interceptor.Chain): Response {
+        val request = chain.request()
+        val newRequest = if (!chain.request().isHttps) {
+            val httpsUrl = request.url.newBuilder()
+                .scheme("https")
+                .build()
+            request.newBuilder().url(httpsUrl).build()
+        } else {
+            request
+        }
+        val response = chain.proceed(newRequest)
+        val newRedirect = response
+            .header("Location")
+            ?.toHttps()
+            ?.takeIf { response.isRedirect }
+        return if (newRedirect != null) {
+            response.newBuilder()
+                .header("Location", newRedirect)
+                .build()
+        } else {
+            response
+        }
     }
 }
 

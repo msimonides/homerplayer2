@@ -24,6 +24,7 @@
 
 package com.studio4plus.homerplayer2.podcasts.usecases
 
+import com.studio4plus.homerplayer2.net.toHttps
 import com.studio4plus.homerplayer2.podcasts.data.Podcast
 import com.studio4plus.homerplayer2.podcasts.data.PodcastEpisode
 import org.koin.core.annotation.Factory
@@ -40,7 +41,7 @@ class UpdatePodcastFromFeed(
         val episodes = latestEpisodes.mapIndexed { index, (episode, pubTime) ->
             val uri = requireNotNull(episode.audio) // Filtered above
             PodcastEpisode(
-                uri = uri,
+                uri = uri.toHttps(),
                 number = totalCount - index,
                 title = episode.title ?: "",
                 publicationTime = pubTime,

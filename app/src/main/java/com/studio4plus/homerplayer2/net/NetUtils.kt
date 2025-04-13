@@ -34,7 +34,6 @@ import java.io.IOException
 import kotlin.coroutines.resumeWithException
 
 
-@OptIn(ExperimentalCoroutinesApi::class)
 suspend fun Call.executeAwait(): Response = suspendCancellableCoroutine { continuation ->
     continuation.invokeOnCancellation {
         cancel()
@@ -52,4 +51,10 @@ suspend fun Call.executeAwait(): Response = suspendCancellableCoroutine { contin
         }
     }
     enqueue(callback)
+}
+
+fun String.toHttps() = when {
+    lowercase().startsWith("https://") -> this
+    lowercase().startsWith("http://") -> "https://" + substringAfter("://")
+    else -> this
 }
