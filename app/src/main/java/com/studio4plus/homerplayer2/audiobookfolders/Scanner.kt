@@ -47,7 +47,6 @@ private val DOCUMENTS_PROJECTION = arrayOf(
 private const val COLUMN_ID = 0
 private const val COLUMN_DISPLAY_NAME = 1
 private const val COLUMN_MIME_TYPE = 2
-private const val COLUMN_SIZE = 3
 
 private const val SORT_BY_DISPLAY_NAME = DocumentsContract.Document.COLUMN_DISPLAY_NAME + " ASC"
 
@@ -56,8 +55,6 @@ class Scanner(
     private val contentResolver: ContentResolver,
     private val dispatcherProvider: DispatcherProvider
 ) {
-    private data class ScannedFile(val fileUri: Uri, val path: String, val size: Long)
-
     data class ScanResult(val audiobook: Audiobook, val uris: List<Uri>)
 
     suspend fun scan(folderUris: List<Uri>): List<ScanResult> =
@@ -120,16 +117,16 @@ class Scanner(
         return scanAudiobook(bookId, rootFolderUri, folder.name, files)
     }
 
-    private fun scanAudiobook(bookId: String, rootFolderUri: Uri, displayName: String, files: List<ScannedFile>): ScanResult {
+    private fun scanAudiobook(bookId: String, rootFolderUri: Uri, displayName: String, fileUris: List<Uri>): ScanResult {
         return ScanResult(
             Audiobook(id = bookId, displayName = displayName, rootFolderUri = rootFolderUri),
-            files.map { it.fileUri }
+            fileUris,
         )
     }
 
     private fun scanAudiobookFiles(
         rootUri: Uri, folderDocumentId: String, path: String
-    ): List<ScannedFile> {
+    ): List<Uri> {
         val childrenUri =
             DocumentsContract.buildChildDocumentsUriUsingTree(rootUri, folderDocumentId)
         val cursor = contentResolver.query(
@@ -151,19 +148,19 @@ class Scanner(
                     scanAudiobookFiles(rootUri, documentId, filePath)
                 } else {
                     val uri = DocumentsContract.buildDocumentUriUsingTree(rootUri, documentId)
-                    listOf(ScannedFile(uri, filePath, cursor.getLong(COLUMN_SIZE)))
+                    listOf(uri)
                 }
             }
         }
     }
 
-    private fun scanAudiobookFiles(folder: File): List<ScannedFile> =
+    private fun scanAudiobookFiles(folder: File): List<Uri> =
         folder.listFiles()?.flatMap { file ->
             when {
                 file.isDirectory -> scanAudiobookFiles(file)
                 // mp3 is good enough for samples. One day scanning should be improved to filter out
                 // non-audio files for all scan types.
-                file.isFile && file.extension == "mp3" -> listOf(ScannedFile(Uri.fromFile(file), file.path, file.length()))
+                file.isFile && file.extension == "mp3" -> listOf(Uri.fromFile(file))
                 else -> emptyList()
             }
         } ?: emptyList()
