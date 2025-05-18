@@ -81,16 +81,23 @@ class Scanner(
             emptyList()
         } else {
             cursor.mapNotNull {
+                val fileName = cursor.getString(COLUMN_DISPLAY_NAME)
+                val bookId = "$folderUri/$fileName"
+                val documentId = cursor.getString(COLUMN_ID)
                 if (isFolder(cursor.getString(COLUMN_MIME_TYPE))) {
-                    val folderName = cursor.getString(COLUMN_DISPLAY_NAME)
                     scanAudiobook(
-                        bookId = "$folderUri/$folderName",
+                        bookId = bookId,
                         rootFolderUri = folderUri,
-                        folderDocumentId = cursor.getString(COLUMN_ID),
-                        folderName = folderName
+                        folderDocumentId = documentId,
+                        folderName = fileName
                     )
                 } else {
-                    null
+                    scanSingleFileAudiobook(
+                        bookId = bookId,
+                        rootFolderUri = folderUri,
+                        documentId = documentId,
+                        fileName = fileName,
+                    )
                 }
             }
         }
@@ -147,8 +154,7 @@ class Scanner(
                 if (isFolder(mimeType)) {
                     scanAudiobookFiles(rootUri, documentId, filePath)
                 } else {
-                    val uri = DocumentsContract.buildDocumentUriUsingTree(rootUri, documentId)
-                    listOf(uri)
+                    listOf(DocumentsContract.buildDocumentUriUsingTree(rootUri, documentId))
                 }
             }
         }
@@ -164,6 +170,17 @@ class Scanner(
                 else -> emptyList()
             }
         } ?: emptyList()
+
+    private fun scanSingleFileAudiobook(
+        bookId: String,
+        rootFolderUri: Uri,
+        documentId: String,
+        fileName: String
+    ): ScanResult {
+        val fileUri = DocumentsContract.buildDocumentUriUsingTree(rootFolderUri, documentId)
+        val displayName = fileName.substringBeforeLast(".")
+        return scanAudiobook(bookId, rootFolderUri, displayName, listOf(fileUri))
+    }
 
     private fun isFolder(mimeType: String?): Boolean {
         return DocumentsContract.Document.MIME_TYPE_DIR == mimeType
