@@ -1,6 +1,5 @@
 import com.android.build.gradle.api.ApplicationVariant
 import com.studio4plus.homerplayer2.GenerateProvisioningDataTask
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
 /*
  * MIT License
@@ -108,7 +107,8 @@ dependencies {
 
 fun ApplicationVariant.registerProvisioningInfoTask() {
     val variantName = name
-    val capitalizedName = name.capitalizeAsciiOnly()
+    val capitalizedName =
+        name.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
     if (outputs.size != 1) {
         throw IllegalArgumentException("Only single APK output is supported")
     }
