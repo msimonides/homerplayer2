@@ -371,7 +371,7 @@ class PodcastEditViewModel(
 
     private fun PodcastEpisode.toViewState(podcast: Podcast) = EpisodeViewState(
         displayName = podcastEpisodeName(podcast, episode = this),
-        publicationDate = LocalDate.ofInstant(publicationTime, ZoneId.systemDefault())
+        publicationDate = publicationTime?.let { LocalDate.ofInstant(it, ZoneId.systemDefault()) }
     )
 
     private suspend fun fetchAndParse(uri: String): Feed =
