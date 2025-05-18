@@ -108,7 +108,8 @@ fun BookPage(
         {
             AutosizeText(
                 text = displayName,
-                style = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
+                style = LocalTextStyle.current,
+                textAlign = TextAlign.Center,
             )
         }
     }

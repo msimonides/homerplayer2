@@ -29,7 +29,6 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.Color
@@ -37,16 +36,22 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.semantics.getTextLayoutResult
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.text
-import androidx.compose.ui.text.*
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.TextMeasurer
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
+import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 
 /**
  * A very primitive auto-size text.
  */
-@OptIn(ExperimentalTextApi::class)
 @Composable
 fun AutosizeText(
     text: String,
@@ -55,10 +60,16 @@ fun AutosizeText(
     maxSize: TextUnit = 112.sp,
     color: Color = LocalContentColor.current,
     style: TextStyle = LocalTextStyle.current,
+    textAlign: TextAlign? = null,
 ) {
+    // TODO: use Compose autoSize once it works with M3: https://issuetracker.google.com/issues/418491738
     val textMeasurer = rememberTextMeasurer()
     val textLayoutResult = remember { mutableStateOf<TextLayoutResult?>(null) }
-    val mergedStyle = style.copy(color = color)
+    val mergedStyle = if (textAlign != null) {
+        style.copy(color = color, textAlign = textAlign)
+    } else {
+        style.copy(color = color)
+    }
 
     Layout(
         modifier = modifier
@@ -94,7 +105,6 @@ fun AutosizeText(
     )
 }
 
-@OptIn(ExperimentalTextApi::class)
 fun measureText(
     annotatedText: AnnotatedString,
     style: TextStyle,
@@ -121,11 +131,12 @@ fun measureText(
 }
 
 private fun TextLayoutResult.breaksWords(): Boolean =
-    // TODO: simplify when fixed: https://issuetracker.google.com/issues/270679576
-    size.width < multiParagraph.intrinsics.minIntrinsicWidth
+    size.width < multiParagraph.minIntrinsicWidth
 
-@Preview(widthDp = 100, heightDp = 60)
+@Preview(widthDp = 150, heightDp = 300)
 @Composable
 fun AutosizeTextPreview() {
-    AutosizeText("Abcd efg hijklm opqr stuvw xyz")
+    HomerPlayer2Theme {
+        AutosizeText("Abcd efg hijklm opqr stuvw xyz")
+    }
 }
