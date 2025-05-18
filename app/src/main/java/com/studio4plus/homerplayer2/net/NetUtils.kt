@@ -24,12 +24,12 @@
 
 package com.studio4plus.homerplayer2.net
 
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.suspendCancellableCoroutine
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
 import okhttp3.internal.closeQuietly
+import timber.log.Timber
 import java.io.IOException
 import kotlin.coroutines.resumeWithException
 
@@ -40,7 +40,7 @@ suspend fun Call.executeAwait(): Response = suspendCancellableCoroutine { contin
     }
     val callback = object : Callback {
         override fun onFailure(call: Call, e: IOException) {
-            println("### on failure $e")
+            Timber.w(e, "Network call failed")
             continuation.resumeWithException(e)
         }
 

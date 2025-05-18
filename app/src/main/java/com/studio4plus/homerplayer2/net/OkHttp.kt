@@ -30,6 +30,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Response
 import okhttp3.tls.HandshakeCertificates
 import java.io.ByteArrayInputStream
+import java.io.IOException
 import java.security.cert.CertificateFactory
 import java.security.cert.X509Certificate
 
@@ -60,6 +61,7 @@ object OkHttp {
 }
 
 private class HttpsInterceptor : Interceptor {
+    @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
         val newRequest = if (!chain.request().isHttps) {
@@ -86,6 +88,7 @@ private class HttpsInterceptor : Interceptor {
 }
 
 private class UserAgentInterceptor : Interceptor {
+    @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
             .newBuilder()
