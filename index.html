@@ -5,6 +5,37 @@ nav_title: "Home"
 meta_title: "Homer Audio Player: audio player for the elderly and visually impaired"
 meta_description: "Audiobook and podcast player for the elderly and visually impaired"
 ---
+<style>
+.lite-youtube-fallback {
+	aspect-ratio: 16 / 9; /* matches YouTube player */
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	gap: 1em;
+	padding: 1em;
+	background-color: #000;
+	color: #fff;
+	text-decoration: none;
+}
+
+/* right-facing triangle "Play" icon */
+.lite-youtube-fallback::before {
+	display: block;
+	content: '';
+	border: solid transparent;
+	border-width: 2em 0 2em 3em;
+	border-left-color: red;
+}
+
+.lite-youtube-fallback:hover::before {
+	border-left-color: #fff;
+}
+
+.lite-youtube-fallback:focus {
+	outline: 2px solid red;
+}
+</style>
 
 <h3>Audiobooks and podcasts for seniors</h3>
 
@@ -13,9 +44,9 @@ Homer is an audiobook and podcast player designed for the elderly and visually i
 With Homer you can repurpose an Android tablet to an easy to use dedicated player for audiobooks and podcasts.
 </p>
 
-<div class="single-picture-landscape">
-    <iframe id="ytplayer" style="aspect-ratio: 16 / 9; width: 100% !important;" src="https://www.youtube.com/embed/JR14egcqfg8?si=aK7TywrxLu7lXWxn&cc_load_policy=1&enablejsapi=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-</div>
+<lite-youtube class="single-picture-landscape" videoid="JR14egcqfg8" params="cc_load_policy=1">
+  <a class="lite-youtube-fallback" href="https://www.youtube.com/watch?v=JR14egcqfg8">Watch on YouTube: "Sample output of devtools-to-video cli tool"</a>
+</lite-youtube>
 
 <p>
 In a typical scenario one person (e.g. a caregiver, a library assistant) will set up Homer, install content,
@@ -45,17 +76,5 @@ they don't need to worry about inadvertantly changing settings, switching to ano
     <img src="assets/screenshots/phone_4-settings.webp">
 </section>
 
-<script>
-    // Load the IFrame Player API code asynchronously.
-  var tag = document.createElement('script');
-  tag.src = "https://www.youtube.com/player_api";
-  var firstScriptTag = document.getElementsByTagName('script')[0];
-  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-  // Replace the 'ytplayer' element with an <iframe> and
-  // YouTube player after the API code downloads.
-  var player;
-  function onYouTubeIframeAPIReady() {
-    player = new YT.Player('ytplayer', {});
-  }
-</script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@justinribeiro/lite-youtube@1/lite-youtube.min.js"></script>
