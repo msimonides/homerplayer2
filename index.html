@@ -14,7 +14,7 @@ With Homer you can repurpose an Android tablet to an easy to use dedicated playe
 </p>
 
 <div class="single-picture-landscape">
-<iframe style="aspect-ratio: 16 / 9; width: 100% !important;" src="https://www.youtube.com/embed/JR14egcqfg8?si=aK7TywrxLu7lXWxn&cc_load_policy=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    <iframe id="ytplayer" style="aspect-ratio: 16 / 9; width: 100% !important;" src="https://www.youtube.com/embed/JR14egcqfg8?si=aK7TywrxLu7lXWxn&cc_load_policy=1&enablejsapi=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 </div>
 
 <p>
@@ -44,3 +44,18 @@ they don't need to worry about inadvertantly changing settings, switching to ano
     <img src="assets/screenshots/phone_3-playback.webp">
     <img src="assets/screenshots/phone_4-settings.webp">
 </section>
+
+<script>
+    // Load the IFrame Player API code asynchronously.
+  var tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/player_api";
+  var firstScriptTag = document.getElementsByTagName('script')[0];
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+  // Replace the 'ytplayer' element with an <iframe> and
+  // YouTube player after the API code downloads.
+  var player;
+  function onYouTubeIframeAPIReady() {
+    player = new YT.Player('ytplayer', {});
+  }
+</script>
