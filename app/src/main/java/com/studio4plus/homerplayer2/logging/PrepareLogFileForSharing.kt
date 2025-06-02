@@ -50,9 +50,10 @@ class PrepareLogFileForSharing(
         val resultFile = createTempFile(directory = outputFolder, prefix = "homer_", suffix = ".log")
         resultFile.bufferedWriter().use { writer ->
             writer.appendDeviceInfo()
-            logsFolder.listFiles()?.forEach { inputFile ->
-                inputFile.bufferedReader().use { reader -> reader.copyTo(writer) }
-            }
+            logsFolder.listFiles()
+                ?.filter { it.name.endsWith(".log") } // Filter out lock files.
+                ?.sortedBy { it.lastModified() }
+                ?.forEach { it.bufferedReader().use { reader -> reader.copyTo(writer) } }
         }
         return resultFile
     }
