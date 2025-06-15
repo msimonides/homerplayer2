@@ -1,7 +1,7 @@
 files:
-  - source: app/src/main/res/values/strings.xml
-    translation: app/src/main/res/values-%android_code%/strings.xml
-  - source: base/src/main/res/values/strings.xml
-    translation: base/src/main/res/values-%android_code%/strings.xml
-  - source: kiosksetup/src/main/res/values/strings.xml
-    translation: kiosksetup/src/main/res/values-%android_code%/strings.xml
+  - source: /app/src/main/res/values/strings.xml
+    translation: /app/src/main/res/values-%android_code%/strings.xml
+  - source: /base/src/main/res/values/strings.xml
+    translation: /base/src/main/res/values-%android_code%/strings.xml
+  - source: /kiosksetup/src/main/res/values/strings.xml
+    translation: /kiosksetup/src/main/res/values-%android_code%/strings.xml
