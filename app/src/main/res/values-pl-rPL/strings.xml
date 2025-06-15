@@ -3,7 +3,8 @@
     <string name="audiobook_folder_accessibility_action_edit">Edytuj</string>
     <string name="audiobook_folder_accessibility_menu_action_remove">Usuń</string>
     <string name="audiobook_folder_add_error_dialog">Nie można otworzyć wyboru plików</string>
-    <string name="audiobook_folder_contents_title">Treści</string>
+    <!-- Header about the list of contents of audiobooks folder. -->
+    <string name="audiobook_folder_contents_title">Zawartość</string>
     <string name="audiobook_folder_content_time_scanning">Skanowanie…</string>
     <string name="audiobook_folder_content_time_format">%1$s / %2$s</string>
     <string name="audiobook_folder_samples_folder_name">Przykładowe książki</string>
@@ -76,6 +77,17 @@
     <string name="podcast_download_info_in_background">Odcinki podcastów pojawią się wśród audiobooków, gdy zostaną w pełni pobrane.\nMoże to potrwać kilka minut.</string>
     <string name="podcast_download_info_unmetered_network">Pobieranie podcastów jest włączone tylko na sieciach WiFi.</string>
     <string name="podcast_download_info_change_network_settings">Zmień</string>
+    <string name="podcast_edit_episode_count">Episode count</string>
+    <!-- Header above list of switches for configuring episode display name in browse screen. -->
+    <string name="podcast_edit_title_episode_display_name">Episode display name</string>
+    <!-- Header above list of podcast episodes in the podcast edit screen. -->
+    <string name="podcast_edit_title_episodes">Episodes</string>
+    <!-- Label for switch for including episode number in episode display name in browse screen. -->
+    <string name="podcast_edit_name_episode_number">Episode number</string>
+    <!-- Label for switch for including episode title in episode display name in browse screen. -->
+    <string name="podcast_edit_name_episode_title">Episode title</string>
+    <!-- Label for switch for including podcast title in episode display name in browse screen. -->
+    <string name="podcast_edit_name_podcast_title">Tytuł podcastu</string>
     <string name="podcast_feed_error_doesnt_exist">Nieznany lub nieprawidłowy adres URL</string>
     <string name="podcast_feed_error_ssl_error">Błąd certyfikatu SSL</string>
     <string name="podcast_feed_error_download">Błąd podczas pobierania kanału podcastu</string>
@@ -184,7 +196,7 @@
     <string name="settings_ui_network_title">Sieć i pobieranie</string>
     <string name="settings_ui_network_podcasts_download_network_item">Sieć używana do pobierania podcastów</string>
     <string name="settings_ui_network_podcasts_download_network_dialog_title">Pobieranie podcastów</string>
-    <string name="settings_ui_network_podcasts_download_network_dialog_message">Homer automatycznie pobiera wszystkie odcinki podcastu, aby zagwarantować nieprzerwane odtwarzanie.\nMoże to zużywać setek megabajtów danych na tydzień.</string>
+    <string name="settings_ui_network_podcasts_download_network_dialog_message">Homer automatycznie pobiera wszystkie odcinki podcastu, aby zagwarantować nieprzerwane odtwarzanie.\nMoże to zużywać setki megabajtów danych na tydzień.</string>
     <string name="settings_ui_network_podcasts_download_network_type_any">Komórkowa i WiFi</string>
     <string name="settings_ui_network_podcasts_download_network_type_any_description">Może powodować dodatkowe koszty transmisji lub zużyć limit danych</string>
     <string name="settings_ui_network_podcasts_download_network_type_unmetered">Tylko WiFi</string>
