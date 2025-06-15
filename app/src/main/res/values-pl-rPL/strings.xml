@@ -42,7 +42,7 @@
     <!-- Button for downloading sample audiobooks. Keep short. -->
     <string name="content_download_samples_button">Pobierz przykładowe książki</string>
     <!-- Error message displayed when downloading sample audiobooks fails. -->
-    <string name="content_samples_download_error">Samples download failed. Check your network connection and try again.</string>
+    <string name="content_samples_download_error">Pobieranie przykładowych książek nie powiodło się. Sprawdź połączenie sieciowe i spróbuj ponownie.</string>
     <!-- Error message displayed when installation of sample audiobooks fails.
          %1$d - komunikat błędu.
     -->
