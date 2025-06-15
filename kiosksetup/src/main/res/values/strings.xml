@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Homer Kiosk Setup</string>
+    <string name="app_name" translatable="false">Homer Kiosk Setup</string>
 
     <string name="kiosk_mode_available_title">Kiosk mode is available</string>
     <string name="kiosk_mode_available_description">You can enable and disable kiosk mode in Homer Audio Player lock down settings.</string>

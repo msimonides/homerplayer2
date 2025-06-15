@@ -41,8 +41,10 @@
     <!-- Button for downloading sample audiobooks. Keep short. -->
     <string name="content_download_samples_button">Download samples</string>
     <!-- Error message displayed when downloading sample audiobooks fails. -->
-    <string name="content_samples_download_error">Samples download failed. Check your network and try again.</string>
-    <!-- Error message displayed when installation of sample audiobooks fails. -->
+    <string name="content_samples_download_error">Samples download failed. Check your network connection and try again.</string>
+    <!-- Error message displayed when installation of sample audiobooks fails.
+         %1$d - komunikat błędu.
+    -->
     <string name="content_samples_install_error">Samples installation failed. %1$s</string>
     <string name="content_section_title_audiobooks">Audiobooks folders</string>
     <string name="content_section_title_podcasts">Podcasts</string>
