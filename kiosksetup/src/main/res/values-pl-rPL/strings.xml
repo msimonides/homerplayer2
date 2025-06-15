@@ -9,7 +9,7 @@
     <string name="button_install_homerplayer">Zainstaluj Homer Audio Player</string>
     <string name="button_setup_instructions_website">Otwórz instrukcje</string>
     <string name="drop_privilege_button">Porzuć uprawnienia trybu kiosku</string>
-    <string name="drop_privilege_confirm_message">Tej akcji nie można łatwo cofnąć.\nPrzywraca ona urządzenie do normalnego użycia, nie będzie już możliwe użycie trybu kiosku w Homer Audio Playerze.\n\nZrób reset fabryczny zamiast (lub dodatkowo) użycia tej funkcji.</string>
+    <string name="drop_privilege_confirm_message">This action cannot be easily undone.\nReturn the device to regular use, it will no longer be possible to use kiosk mode in Homer Player.\n\nUse Factory Reset instead of (or in addition to) using this function.</string>
     <string name="drop_privilege_confirm_confirm_button">Usuń uprawnienie</string>
     <string name="drop_privilege_confirm_cancel_button">Anuluj</string>
 </resources>
