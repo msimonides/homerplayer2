@@ -37,13 +37,15 @@
     <string name="content_add_folder_button">Dodaj folder…</string>
     <string name="content_add_folder_error_exists">Ten folder został już dodany</string>
     <string name="content_add_podcast_button">Dodaj podcast…</string>
-    <string name="content_dialog_remove_message">Jesteś pewien?</string>
+    <string name="content_dialog_remove_message">Na pewno?</string>
     <string name="content_dialog_remove_button_remove">Usuń</string>
     <!-- Button for downloading sample audiobooks. Keep short. -->
-    <string name="content_download_samples_button">Pobierz przykładowe</string>
+    <string name="content_download_samples_button">Pobierz przykładowe książki</string>
     <!-- Error message displayed when downloading sample audiobooks fails. -->
-    <string name="content_samples_download_error">Pobieranie przykładowych książek nie powiodło się. Sprawdź sieć i spróbuj ponownie.</string>
-    <!-- Error message displayed when installation of sample audiobooks fails. -->
+    <string name="content_samples_download_error">Samples download failed. Check your network connection and try again.</string>
+    <!-- Error message displayed when installation of sample audiobooks fails.
+         %1$d - komunikat błędu.
+    -->
     <string name="content_samples_install_error">Instalacja przykładowych książek nie powiodła się. %1$s</string>
     <string name="content_section_title_audiobooks">Foldery z audiobookami</string>
     <string name="content_section_title_podcasts">Podcasty</string>
@@ -60,7 +62,7 @@
     <string name="onboarding_step_next">Dalej</string>
     <string name="onboarding_step_skip">Pomiń</string>
     <string name="playback_fast_forward_button_description">Przewiń do przodu</string>
-    <string name="playback_fast_rewind_button_description">Przewiń do przodu</string>
+    <string name="playback_fast_rewind_button_description">Przewiń do tyłu</string>
     <string name="playback_forward10_button_description">10 sekund do przodu</string>
     <string name="playback_replay30_rewind_button_description">30 sekund do tyłu</string>
     <string name="playback_play_button_description">Odtwarzaj</string>
@@ -77,15 +79,15 @@
     <string name="podcast_download_info_in_background">Odcinki podcastów pojawią się wśród audiobooków, gdy zostaną w pełni pobrane.\nMoże to potrwać kilka minut.</string>
     <string name="podcast_download_info_unmetered_network">Pobieranie podcastów jest włączone tylko na sieciach WiFi.</string>
     <string name="podcast_download_info_change_network_settings">Zmień</string>
-    <string name="podcast_edit_episode_count">Episode count</string>
+    <string name="podcast_edit_episode_count">Liczba odcinków</string>
     <!-- Header above list of switches for configuring episode display name in browse screen. -->
-    <string name="podcast_edit_title_episode_display_name">Episode display name</string>
+    <string name="podcast_edit_title_episode_display_name">Wyświetlana nazwa odcinka</string>
     <!-- Header above list of podcast episodes in the podcast edit screen. -->
-    <string name="podcast_edit_title_episodes">Episodes</string>
+    <string name="podcast_edit_title_episodes">Odcinki</string>
     <!-- Label for switch for including episode number in episode display name in browse screen. -->
-    <string name="podcast_edit_name_episode_number">Episode number</string>
+    <string name="podcast_edit_name_episode_number">Numer odcinka</string>
     <!-- Label for switch for including episode title in episode display name in browse screen. -->
-    <string name="podcast_edit_name_episode_title">Episode title</string>
+    <string name="podcast_edit_name_episode_title">Tytuł odcinka</string>
     <!-- Label for switch for including podcast title in episode display name in browse screen. -->
     <string name="podcast_edit_name_podcast_title">Tytuł podcastu</string>
     <string name="podcast_feed_error_doesnt_exist">Nieznany lub nieprawidłowy adres URL</string>
@@ -113,9 +115,9 @@
     <string name="podcast_search_error_message">Nie można pobrać wyników wyszukiwania</string>
     <plurals name="podcast_search_first_results">
         <item quantity="one">Pokazuję pierwszy wynik</item>
-        <item quantity="few">Showing first %1$d results</item>
-        <item quantity="many">Showing first %1$d results</item>
-        <item quantity="other">Showing first %1$d results</item>
+        <item quantity="few">Pokazuję pierwsze %1$d wyniki</item>
+        <item quantity="many">Pokazuję pierwsze %1$d wyników</item>
+        <item quantity="other">Pokazuję pierwsze %1$d wyniki</item>
     </plurals>
     <string name="podcast_search_no_results">Brak wyników pasujących do frazy wyszukiwania</string>
     <string name="podcast_search_ratelimit_title">Usługa wyszukiwania jest zajęta, spróbuj później</string>
@@ -123,7 +125,7 @@
     <string name="podcast_url_instructions_preface">Oprócz wyszukiwania możesz skopiować i wkleić adres kanału RSS podcastu do pola wyszukiwania, aby pobrać go bezpośrednio.</string>
     <string name="podcast_url_instructions_step1">Otwórz przeglądarkę internetową.</string>
     <string name="podcast_url_instructions_step2">Otwórz stronę podcastu.</string>
-    <string name="podcast_url_instructions_step3">Znajdź ikonę RSS lub link, naciśnij i przytrzymaj, aby otworzyć menu i skopiuj adres do schowka.</string>
+    <string name="podcast_url_instructions_step3">Znajdź ikonę lub link do RSS, naciśnij i przytrzymaj, aby otworzyć menu i skopiuj adres do schowka.</string>
     <string name="podcast_url_instructions_step4">Wróć do Homera, naciśnij i przytrzymaj pole tekstowe, aby wkleić adres.</string>
     <string name="settings_ui_settings_title">Ustawienia</string>
     <string name="settings_ui_about_item">Informacje o aplikacji…</string>
@@ -212,7 +214,7 @@
     <string name="settings_ui_playback_play_speed_title">Prędkość odtwarzania</string>
     <string name="settings_ui_playback_rewind_on_end_item">Przewiń na początek po zakończeniu…</string>
     <string name="settings_ui_playback_rewind_on_end_title">Przewiń na początek po zakończeniu</string>
-    <string name="settings_ui_playback_rewind_on_end_description">Kiedy odtwarzanie osiągnie koniec książki, automatycznie ustaw na początek dla kolejnego odtwarzania.\nWłącz dla treści, które są odtwarzane wielokrotnie, np. poezji, tekstów religijnych, albumów muzycznych.</string>
+    <string name="settings_ui_playback_rewind_on_end_description">Kiedy odtwarzanie osiągnie koniec książki, automatycznie przewinie na początek dla kolejnego odtwarzania.\nWłącz dla treści, które są odtwarzane wielokrotnie, np. poezji, tekstów religijnych, albumów muzycznych.</string>
     <string name="settings_ui_playback_rewind_on_resume_label">Cofnij przy wznowieniu odtwarzania</string>
     <string name="settings_ui_playback_rewind_on_resume_setting_disabled">Wyłączone</string>
     <string name="settings_ui_playback_settings_item">Ustawienia odtwarzania…</string>
