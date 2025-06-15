@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Homer Kiosk Setup</string>
+    <string name="kiosk_mode_available_title">Full kiosk mode is available</string>
+    <string name="kiosk_mode_available_description">You can enable and disable full kiosk mode in Homer Audio Player UI settings.</string>
+    <string name="kiosk_mode_unavailable_title">Full kiosk mode is not available</string>
+    <string name="kiosk_mode_unavailable_description">To enable kiosk mode you need to install Homer Kiosk Mode as a device owner application.</string>
+    <string name="button_open_homerplayer">Open Homer Audio Player</string>
+    <string name="button_install_homerplayer">Install Homer Audio Player</string>
+    <string name="button_setup_instructions_website">Open instructions</string>
+    <string name="drop_privilege_button">Drop kiosk mode privilege</string>
+    <string name="drop_privilege_confirm_message">This action cannot be easily undone.\nReturn the device to regular use, it will no longer be possible to use full kiosk mode in Homer Player.\n\nUse Factory Reset instead of (or in addition to) using this function.</string>
+    <string name="drop_privilege_confirm_confirm_button">Remove privilege</string>
+    <string name="drop_privilege_confirm_cancel_button">Cancel</string>
+</resources>
