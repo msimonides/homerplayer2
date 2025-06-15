@@ -1,10 +1,10 @@
 <resources>
     <string name="app_name">Homer Kiosk Setup</string>
 
-    <string name="kiosk_mode_available_title">Full kiosk mode is available</string>
-    <string name="kiosk_mode_available_description">You can enable and disable full kiosk mode in Homer Audio Player UI settings.</string>
-    <string name="kiosk_mode_unavailable_title">Full kiosk mode is not available</string>
-    <string name="kiosk_mode_unavailable_description">To enable kiosk mode you need to install Homer Kiosk Mode as a device owner application.</string>
+    <string name="kiosk_mode_available_title">Kiosk mode is available</string>
+    <string name="kiosk_mode_available_description">You can enable and disable kiosk mode in Homer Audio Player lock down settings.</string>
+    <string name="kiosk_mode_unavailable_title">Kiosk mode is not available</string>
+    <string name="kiosk_mode_unavailable_description">To enable kiosk mode you need to install Homer Kiosk Setup as a device owner application.</string>
 
     <string name="button_open_homerplayer">Open Homer Audio Player</string>
     <string name="button_install_homerplayer">Install Homer Audio Player</string>
