@@ -180,35 +180,35 @@ private fun PodcastEdit(
         Text(podcast.title, style = MaterialTheme.typography.headlineMedium, modifier = rowModifier)
 
         EpisodeCountPicker(
-            "Episode count",
+            stringResource(R.string.podcast_edit_episode_count),
             podcast.downloadEpisodeCount,
             onEpisodeCountChanged,
             modifier = rowModifier
         )
 
-        SectionTitle("Episode title", modifier = rowModifier)
+        SectionTitle(stringResource(R.string.podcast_edit_title_episode_display_name), modifier = rowModifier)
         LabeledSwitch(
-            "Podcast title",
+            stringResource(R.string.podcast_edit_name_podcast_title),
             podcast.includePodcastTitle,
             onEpisodeTitleIncludePodcastTitle,
             modifier = rowModifier
         )
         AnimatedVisibility(podcast.includePodcastTitle) {
             LabeledSwitch(
-                "Episode number",
+                stringResource(R.string.podcast_edit_name_episode_number),
                 podcast.includeEpisodeNumber,
                 onEpisodeTitleIncludeNumber,
                 modifier = rowModifier
             )
         }
         LabeledSwitch(
-            "Episode title",
+            stringResource(R.string.podcast_edit_name_episode_title),
             podcast.includeEpisodeTitle,
             onEpisodeTitleIncludeEpisodeTitle,
             modifier = rowModifier
         )
 
-        SectionTitle("Episodes", modifier = rowModifier)
+        SectionTitle(stringResource(R.string.podcast_edit_title_episodes), modifier = rowModifier)
         val showDownloadInfo = viewState.showDownloadInfo
         AnimatedVisibility(showDownloadInfo != null) {
             val messageRes = when (showDownloadInfo) {

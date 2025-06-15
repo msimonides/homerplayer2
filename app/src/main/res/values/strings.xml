@@ -5,6 +5,7 @@
     <string name="audiobook_folder_accessibility_action_edit">Edit</string>
     <string name="audiobook_folder_accessibility_menu_action_remove">Remove</string>
     <string name="audiobook_folder_add_error_dialog">Unable to open file chooser</string>
+    <!-- Header about the list of contents of audiobooks folder. -->
     <string name="audiobook_folder_contents_title">Contents</string>
     <string name="audiobook_folder_content_time_scanning">Scanning…</string>
     <string name="audiobook_folder_content_time_format">%1$s / %2$s</string>
@@ -79,6 +80,17 @@
     <string name="podcast_download_info_in_background">Podcast episodes will show up among audiobooks once they are fully downloaded.\nThis may take several minutes.</string>
     <string name="podcast_download_info_unmetered_network">Podcasts are configured to download only on WiFi networks.</string>
     <string name="podcast_download_info_change_network_settings">Change</string>
+    <string name="podcast_edit_episode_count">Episode count</string>
+    <!-- Header above list of switches for configuring episode display name in browse screen. -->
+    <string name="podcast_edit_title_episode_display_name">Episode display name</string>
+    <!-- Header above list of podcast episodes in the podcast edit screen. -->
+    <string name="podcast_edit_title_episodes">Episodes</string>
+    <!-- Label for switch for including episode number in episode display name in browse screen. -->
+    <string name="podcast_edit_name_episode_number">Episode number</string>
+    <!-- Label for switch for including episode title in episode display name in browse screen. -->
+    <string name="podcast_edit_name_episode_title">Episode title</string>
+    <!-- Label for switch for including podcast title in episode display name in browse screen. -->
+    <string name="podcast_edit_name_podcast_title">Podcast title</string>
     <string name="podcast_feed_error_doesnt_exist">Unknown or incorrect URL</string>
     <string name="podcast_feed_error_ssl_error">SSL certificate error</string>
     <string name="podcast_feed_error_download">Error downloading podcast feed</string>
