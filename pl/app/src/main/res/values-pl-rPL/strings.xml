@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="audiobook_folder_accessibility_action_edit">Edytuj</string>
+    <string name="audiobook_folder_accessibility_menu_action_remove">Usuń</string>
+    <string name="audiobook_folder_add_error_dialog">Nie można otworzyć wyboru plików</string>
+    <string name="audiobook_folder_contents_title">Treści</string>
+    <string name="audiobook_folder_content_time_scanning">Skanowanie…</string>
+    <string name="audiobook_folder_content_time_format">%1$s / %2$s</string>
+    <string name="audiobook_folder_samples_folder_name">Przykładowe książki</string>
+    <string name="audiobook_folder_no_books_found">(brak audiobooków w tym folderze)</string>
+    <!-- Describes folder contents for accessibility services.
+         Parameters:
+         - %1$d - book count
+         - %2$s - list of book titles, contains only the first few.
+      -->
+    <plurals name="audiobook_folder_content_description">
+        <item quantity="one">%1$d książka: %2$s</item>
+        <item quantity="few">%1$d książki, w tym: %2$s</item>
+        <item quantity="many">%1$d książek, w tym: %2$s</item>
+        <item quantity="other">%1$d książki, w tym: %2$s</item>
+    </plurals>
+    <string name="audiobook_folder_scanning_content_description">skanuję</string>
+    <plurals name="battery_level_content_description">
+        <item quantity="one">bateria %1$d procent</item>
+        <item quantity="few">bateria %1$d procent</item>
+        <item quantity="many">bateria %1$d procent</item>
+        <item quantity="other">bateria %1$d procent</item>
+    </plurals>
+    <plurals name="battery_level_charging_content_description">
+        <item quantity="one">ładowanie baterii, %1$d procent</item>
+        <item quantity="few">ładowanie baterii, %1$d procent</item>
+        <item quantity="many">ładowanie baterii, %1$d procent</item>
+        <item quantity="other">ładowanie baterii, %1$d procent</item>
+    </plurals>
+    <string name="browse_settings_button_accessibility_label">Ustawienia</string>
+    <string name="content_add_folder_button">Dodaj folder…</string>
+    <string name="content_add_folder_error_exists">Ten folder został już dodany</string>
+    <string name="content_add_podcast_button">Dodaj podcast…</string>
+    <string name="content_dialog_remove_message">Jesteś pewien?</string>
+    <string name="content_dialog_remove_button_remove">Usuń</string>
+    <!-- Button for downloading sample audiobooks. Keep short. -->
+    <string name="content_download_samples_button">Pobierz przykładowe</string>
+    <!-- Error message displayed when downloading sample audiobooks fails. -->
+    <string name="content_samples_download_error">Pobieranie przykładowych książek nie powiodło się. Sprawdź sieć i spróbuj ponownie.</string>
+    <!-- Error message displayed when installation of sample audiobooks fails. -->
+    <string name="content_samples_install_error">Instalacja przykładowych książek nie powiodła się. %1$s</string>
+    <string name="content_section_title_audiobooks">Foldery z audiobookami</string>
+    <string name="content_section_title_podcasts">Podcasty</string>
+    <string name="onboarding_content_title">Audiobooki i podcasty</string>
+    <string name="onboarding_content_description">Dodaj przynajmniej jeden folder z audiobookami lub jeden podcast.</string>
+    <string name="onboarding_folder_title">Folder z audiobookami</string>
+    <string name="onboarding_podcast_title">Podcast</string>
+    <string name="onboarding_speech_title">Wymawiaj tytuły książek</string>
+    <string name="onboarding_speech_description">Homer używa mechanizmu zamiany tekstu na mowę, aby czytać tytuły książek.\nMożesz go teraz przetestować i dostosować ustawienia.</string>
+    <string name="onboarding_speech_open_settings">Otwórz ustawienia zamiany tekstu na mowę</string>
+    <string name="onboarding_speech_tts_checkbox_label">Wymawiaj tytuły książek</string>
+    <string name="onboarding_speech_tts_checkbox_note">Wyłącz, jeśli używasz czytnika ekranu</string>
+    <string name="onboarding_step_done">Gotowe</string>
+    <string name="onboarding_step_next">Dalej</string>
+    <string name="onboarding_step_skip">Pomiń</string>
+    <string name="playback_fast_forward_button_description">Przewiń do przodu</string>
+    <string name="playback_fast_rewind_button_description">Przewiń do przodu</string>
+    <string name="playback_forward10_button_description">10 sekund do przodu</string>
+    <string name="playback_replay30_rewind_button_description">30 sekund do tyłu</string>
+    <string name="playback_play_button_description">Odtwarzaj</string>
+    <string name="playback_stop_button_description">Zatrzymaj</string>
+    <string name="playback_volume_up_button_description">Głośniej</string>
+    <string name="playback_volume_down_button_description">Ciszej</string>
+    <string name="player_no_books_title">Nie ma jeszcze audiobooków</string>
+    <string name="player_no_books_message">Otwórz ustawienia i dodaj folder z audiobookami lub podcasty</string>
+    <string name="player_no_books_podcasts_title">Pobieranie podcastów</string>
+    <string name="player_no_books_podcasts_message">Odcinki podcastów pojawią się jak tylko zostaną w pełni pobrane. Może to potrwać kilka minut.</string>
+    <string name="podcast_accessibility_action_edit">Edytuj</string>
+    <string name="podcast_add_dialog_latest_episode">Najnowszy odcinek:</string>
+    <string name="podcast_add_dialog_add_button">Dodaj podcast</string>
+    <string name="podcast_download_info_in_background">Odcinki podcastów pojawią się wśród audiobooków, gdy zostaną w pełni pobrane.\nMoże to potrwać kilka minut.</string>
+    <string name="podcast_download_info_unmetered_network">Pobieranie podcastów jest włączone tylko na sieciach WiFi.</string>
+    <string name="podcast_download_info_change_network_settings">Zmień</string>
+    <string name="podcast_feed_error_doesnt_exist">Nieznany lub nieprawidłowy adres URL</string>
+    <string name="podcast_feed_error_ssl_error">Błąd certyfikatu SSL</string>
+    <string name="podcast_feed_error_download">Błąd podczas pobierania kanału podcastu</string>
+    <string name="podcast_feed_error_parse">Nie można przetworzyć danych podcastu</string>
+    <string name="podcast_info_no_episodes_found">Podcast nie ma żadnych odcinków</string>
+    <string name="podcast_info_latest_episode_date">Najnowszy: %1$s</string>
+    <!-- Display format for podcast episode:
+         %1$s - podcast title
+         %2$d - episode number
+         %3$s - episode title -->
+    <string name="podcast_episode_name_title_number_episode">%1$s %2$d. %3$s</string>
+    <!-- Display format for podcast episode:
+         %1$s - podcast title
+         %2$s - episode title -->
+    <string name="podcast_episode_name_title_episode">%1$s. %2$s</string>
+    <!-- Display format for podcast episode:
+         %1$s - podcast title
+         %2$d - episode number -->
+    <string name="podcast_episode_name_title_number">%1$s %2$d</string>
+    <string name="podcast_search_label">Szukaj podcastu</string>
+    <string name="podcast_search_hint">Tytuł podcastu</string>
+    <string name="podcast_search_error_title">Błąd</string>
+    <string name="podcast_search_error_message">Nie można pobrać wyników wyszukiwania</string>
+    <plurals name="podcast_search_first_results">
+        <item quantity="one">Showing first result</item>
+        <item quantity="few">Showing first %1$d results</item>
+        <item quantity="many">Showing first %1$d results</item>
+        <item quantity="other">Showing first %1$d results</item>
+    </plurals>
+    <string name="podcast_search_no_results">Brak wyników pasujących do frazy wyszukiwania</string>
+    <string name="podcast_search_ratelimit_title">Search service is busy, try later</string>
+    <string name="podcast_search_ratelimit_message">Usługa wyszukiwania podcastów jest tymczasowo niedostępna. Spróbuj ponownie później.</string>
+    <string name="podcast_url_instructions_preface">Oprócz wyszukiwania możesz skopiować i wkleić adres kanału RSS podcastu do pola wyszukiwania, aby pobrać go bezpośrednio.</string>
+    <string name="podcast_url_instructions_step1">Otwórz przeglądarkę internetową.</string>
+    <string name="podcast_url_instructions_step2">Otwórz stronę podcastu.</string>
+    <string name="podcast_url_instructions_step3">Znajdź ikonę RSS lub link, naciśnij i przytrzymaj, aby otworzyć menu i skopiuj adres do schowka.</string>
+    <string name="podcast_url_instructions_step4">Wróć do Homera, naciśnij i przytrzymaj pole tekstowe, aby wkleić adres.</string>
+    <string name="settings_ui_settings_title">Ustawienia</string>
+    <string name="settings_ui_about_item">Informacje o aplikacji…</string>
+    <string name="settings_ui_about_title">Informacje o Homer Audio Player</string>
+    <string name="settings_ui_content_item">Audiobooki i podcasty…</string>
+    <string name="settings_ui_content_title">Audiobooki i podcasty</string>
+    <!-- Summary for configured audio folders and podcasts.
+         %1$s - value of "settings_ui_content_summary_audiobook_folders"
+         %2$s - value of "settings_ui_content_summary_pocasts"
+
+         Example:
+         4 audiobook folders and 2 podcasts. -->
+    <string name="settings_ui_content_summary">%1$s oraz %2$s</string>
+    <plurals name="settings_ui_content_summary_audiobook_folders">
+        <item quantity="one">%1$d folder z audiobookami</item>
+        <item quantity="few">%1$d foldery z audiobookami</item>
+        <item quantity="many">%1$d folderów z audiobookami</item>
+        <item quantity="other">%1$d folderu z audiobookami</item>
+    </plurals>
+    <plurals name="settings_ui_content_summary_pocasts">
+        <item quantity="one">%1$d podcast</item>
+        <item quantity="few">%1$d podcasty</item>
+        <item quantity="many">%1$d podcastów</item>
+        <item quantity="other">%1$d podcastu</item>
+    </plurals>
+    <string name="settings_ui_content_summary_empty">(nie wybrano żadnych treści)</string>
+    <string name="settings_ui_folder_title">Folder z audiobookami</string>
+    <string name="settings_ui_haptic_feedback_label">Wibracje przy dotyku przycisków</string>
+    <string name="settings_ui_layout_settings_item">Marginesy ekranu…</string>
+    <string name="settings_ui_layout_dialog_message">Przeciągnij krawędzie, aby dostosować marginesy ekranu. Obróć ekran, aby dostosować inną orientację.</string>
+    <string name="settings_ui_lockdown_settings_item">Ustawienia blokady…</string>
+    <string name="settings_ui_lockdown_settings_title">Ustawienia blokady</string>
+    <string name="settings_ui_lockdown_settings_description">Zablokuj aplikację, aby stworzyć urządzenie wyłącznie do odtwarzania audiobooków.</string>
+    <string name="settings_ui_lockdown_hide_settings_button_item">Ukryj przycisk ustawień</string>
+    <string name="settings_ui_lockdown_hide_settings_dialog_title">Naciśnij oba przyciski, aby otworzyć ustawienia</string>
+    <string name="settings_ui_lockdown_hide_settings_dialog_description">Ukryj przycisk ustawień, aby uniemożliwić użytkownikowi przypadkowe otwarcie ekranu ustawień.\nPrzetestuj aby włączyć.</string>
+    <string name="settings_ui_lockdown_hide_settings_dialog_confirm_button">Ukryj przycisk ustawień</string>
+    <string name="settings_ui_lockdown_home_component_item">Zostań aplikacją \"ekranu głównego\"</string>
+    <string name="settings_ui_lockdown_home_component_kiosk_only">Gdy tryb kiosku jest włączony</string>
+    <string name="settings_ui_lockdown_home_component_kiosk_only_description">Default. You can use other apps when kiosk mode is disabled.</string>
+    <string name="settings_ui_lockdown_home_component_always">Zawsze</string>
+    <string name="settings_ui_lockdown_home_component_always_description">Pozwala ustawić Homer jako domyślną aplikację domową. Może być bardziej niezawodny, jeśli aplikacja zostanie sporadycznie zatrzymana i opuści tryb kiosku.</string>
+    <string name="settings_ui_lockdown_kiosk_mode_item">Tryb kiosku…</string>
+    <string name="settings_ui_lockdown_kiosk_mode_setting_enabled">Włączony</string>
+    <string name="settings_ui_lockdown_kiosk_mode_setting_disabled">Wyłączony</string>
+    <!-- Kiosk mode setting: disable temporarily.
+         %1$s - time when the setting will be enabled again.
+
+         Example:
+         Disabled, will enable at 12:04 -->
+    <string name="settings_ui_lockdown_kiosk_mode_setting_disabled_until">Wyłączony, zostanie włączony o %1$s</string>
+    <string name="settings_ui_lockdown_kiosk_mode_dialog_title">Tryb kiosku</string>
+    <string name="settings_ui_lockdown_kiosk_mode_dialog_enable">Włącz</string>
+    <string name="settings_ui_lockdown_kiosk_mode_dialog_disable">Wyłącz</string>
+    <string name="settings_ui_lockdown_kiosk_mode_dialog_disable_for_10_minutes">Wyłącz na 10 minut</string>
+    <string name="settings_ui_kiosk_mode_setup_title">Informacje o trybie kiosku</string>
+    <string name="settings_ui_kiosk_mode_setup_description1">Tryb kiosku blokuje urządzenie w aplikacji Homer Audio Player:</string>
+    <string name="settings_ui_kiosk_mode_setup_description1_bullet1">zapobiega opuszczeniu aplikacji za pomocą przycisku \"wstecz\",</string>
+    <string name="settings_ui_kiosk_mode_setup_description1_bullet2">powiadomienia i górny pasek systemowy są ukryte.</string>
+    <string name="settings_ui_kiosk_mode_setup_description2">Ta funkcjonalność wymaga specjalnej procedury instalacji.</string>
+    <string name="settings_ui_kiosk_mode_setup_open_instructions">Otwórz instrukcje</string>
+    <string name="settings_ui_lockdown_show_battery">Pokaż wskaźnik baterii</string>
+    <string name="settings_ui_licenses_item">Licencje…</string>
+    <string name="settings_ui_licenses_title">Licencje</string>
+    <string name="settings_ui_mode_label">Schemat kolorów</string>
+    <string name="settings_ui_mode_dark">Ciemny</string>
+    <string name="settings_ui_mode_light">Jasny</string>
+    <string name="settings_ui_mode_system">Systemowy</string>
+    <string name="settings_ui_network_item">Sieć i pobieranie…</string>
+    <string name="settings_ui_network_title">Sieć i pobieranie</string>
+    <string name="settings_ui_network_podcasts_download_network_item">Sieć używana do pobierania podcastów</string>
+    <string name="settings_ui_network_podcasts_download_network_dialog_title">Pobieranie podcastów</string>
+    <string name="settings_ui_network_podcasts_download_network_dialog_message">Homer automatycznie pobiera wszystkie odcinki podcastu, aby zagwarantować nieprzerwane odtwarzanie.\nMoże to zużywać setek megabajtów danych na tydzień.</string>
+    <string name="settings_ui_network_podcasts_download_network_type_any">Komórkowa i WiFi</string>
+    <string name="settings_ui_network_podcasts_download_network_type_any_description">Może powodować dodatkowe koszty transmisji lub zużyć limit danych</string>
+    <string name="settings_ui_network_podcasts_download_network_type_unmetered">Tylko WiFi</string>
+    <string name="settings_ui_network_podcasts_download_network_type_unmetered_description">Tylko sieci bez limitu danych</string>
+    <string name="settings_ui_orientation_item">Orientacja</string>
+    <string name="settings_ui_orientation_auto">Automatyczna</string>
+    <string name="settings_ui_orientation_portrait">Pionowa</string>
+    <string name="settings_ui_orientation_landscape_auto">Pozioma, automatyczna</string>
+    <string name="settings_ui_orientation_landscape_locked">Pozioma, zablokowana</string>
+    <string name="settings_ui_orientation_landscape_locked_reverse">Pozioma, zablokowana (odwrotnie)</string>
+    <string name="settings_ui_playback_flip_to_stop_item">Odwróć, aby zatrzymać</string>
+    <string name="settings_ui_playback_flip_to_stop_summary">Odłóż urządzenie ekranem do dołu, aby zatrzymać odtwarzanie</string>
+    <string name="settings_ui_playback_play_speed_title">Prędkość odtwarzania</string>
+    <string name="settings_ui_playback_rewind_on_end_item">Przewiń na początek po zakończeniu…</string>
+    <string name="settings_ui_playback_rewind_on_end_title">Przewiń na początek po zakończeniu</string>
+    <string name="settings_ui_playback_rewind_on_end_description">When a book is played to the very end, it will automatically rewind to the beginning for another playback.\nEnable for content that is played repeatedly, e.g. poetry, religious texts, music albums.</string>
+    <string name="settings_ui_playback_rewind_on_resume_label">Cofnij przy wznowieniu odtwarzania</string>
+    <string name="settings_ui_playback_rewind_on_resume_setting_disabled">Wyłączone</string>
+    <string name="settings_ui_playback_settings_item">Ustawienia odtwarzania…</string>
+    <string name="settings_ui_playback_settings_title">Ustawienia odtwarzania</string>
+    <string name="settings_ui_playback_sleep_timer_label">Wyłącznik czasowy</string>
+    <string name="settings_ui_playback_sleep_timer_disabled">Wyłączony</string>
+    <string name="settings_ui_playback_speed_choice_very_fast">Bardzo szybko</string>
+    <string name="settings_ui_playback_speed_choice_fast">Szybko</string>
+    <string name="settings_ui_playback_speed_choice_regular">Zwyczajnie</string>
+    <string name="settings_ui_playback_speed_choice_moderate">Umiarkowanie</string>
+    <string name="settings_ui_playback_speed_choice_slow">Powoli</string>
+    <string name="settings_ui_playback_speed_choice_very_slow">Bardzo powoli</string>
+    <string name="settings_ui_playback_speed_title">Prędkość odtwarzania</string>
+    <string name="settings_ui_player_ui_item">Sterowanie odtwarzaczem…</string>
+    <string name="settings_ui_player_ui_title">Sterowanie odtwarzaczem</string>
+    <string name="settings_ui_player_ui_book_title">Tytuł audiobooka</string>
+    <string name="settings_ui_player_ui_volume_controls">Przyciski głośności</string>
+    <string name="settings_ui_player_ui_ff_rewind_controls">Przyciski zmiany rozdziału</string>
+    <string name="settings_ui_player_ui_seek_controls">Przyciski przewijania</string>
+    <string name="settings_ui_podcast_title">Podcast</string>
+    <string name="settings_ui_privacy_policy_item">Polityka prywatności…</string>
+    <string name="settings_ui_rate_app_item">Oceń aplikację…</string>
+    <string name="settings_ui_section_advanced">Zaawansowane</string>
+    <string name="settings_ui_share_diagnostic_log_title">Udostępnij dziennik diagnostyczny</string>
+    <string name="settings_ui_share_diagnostic_log_summary">Wyślij dziennik diagnostyczny do dewelopera, aby zgłosić problem</string>
+    <string name="settings_ui_tts_settings_item">Zamiana tekstu na mowę…</string>
+    <string name="settings_ui_tts_settings_enabled">Włączona</string>
+    <string name="settings_ui_tts_settings_disabled">Wyłączona</string>
+    <string name="settings_ui_tts_settings_title">Zamiana tekstu na mowę</string>
+    <string name="settings_ui_tts_read_book_titles">Czytaj tytuły książek</string>
+    <string name="settings_ui_tts_open_settings">Otwórz ustawienia zamiany tekstu na mowę…</string>
+    <string name="settings_ui_version_item">Wersja</string>
+    <plurals name="settings_time_seconds">
+        <item quantity="one">%1$d sekunda</item>
+        <item quantity="few">%1$d sekundy</item>
+        <item quantity="many">%1$d sekund</item>
+        <item quantity="other">%1$d sekundy</item>
+    </plurals>
+    <plurals name="settings_time_minutes">
+        <item quantity="one">%1$d minuta</item>
+        <item quantity="few">%1$d minuty</item>
+        <item quantity="many">%1$d minut</item>
+        <item quantity="other">%1$d minuty</item>
+    </plurals>
+    <string name="speech_init_say_failed">Odtwarzanie frazy testowej nie powiodło się. Sprawdź ustawienia zamiany tekstu na mowę.</string>
+    <string name="speech_init_tts_error">Nie można zainicjować mechanizmu zamiany tekstu na mowę. Spróbuj użyć innego mechanizmu.</string>
+    <string name="speech_init_lang_data_missing">Brakuje danych językowych. Zainstaluj swój język w ustawieniach zamiany tekstu na mowę.</string>
+    <string name="speech_init_lang_not_supported">Język nie jest obsługiwany. Zainstaluj mechanizm zamiany tekstu na mowę, który obsługuje Twój język.</string>
+    <string name="speech_play_test_phrase">Odtwórz frazę testową</string>
+    <string name="speech_test_phrase">Alicja w krainie czarów</string>
+</resources>
