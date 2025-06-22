@@ -24,6 +24,7 @@
 
 package com.studio4plus.homerplayer2.podcasts.data
 
+import androidx.annotation.VisibleForTesting
 import androidx.room.Dao
 import androidx.room.Embedded
 import androidx.room.Ignore
@@ -126,8 +127,7 @@ abstract class PodcastsDao {
     abstract suspend fun getEpisodesForDownload(): List<PodcastEpisode>
 
     @Transaction
-    open suspend fun updateEpisodes(newEpisodes: List<PodcastEpisode>): List<String> {
-        val feedUri = newEpisodes.first().feedUri
+    open suspend fun updateEpisodes(feedUri: String, newEpisodes: List<PodcastEpisode>): List<String> {
         check(newEpisodes.all { feedUri == it.feedUri })
         val oldEpisodes = getPodcastEpisodes(feedUri)
         insertEpisodes(newEpisodes)
@@ -151,6 +151,7 @@ abstract class PodcastsDao {
     @Query("""DELETE FROM podcast_episodes WHERE feed_uri = :feedUri AND uri NOT IN (:episodeUris)""")
     protected abstract suspend fun deleteRemainingEpisodes(feedUri: String, episodeUris: List<String>)
 
+    @VisibleForTesting
     @Query("""SELECT * FROM podcast_episodes WHERE feed_uri = :feedUri""")
-    protected abstract suspend fun getPodcastEpisodes(feedUri: String): List<PodcastEpisode>
+    abstract suspend fun getPodcastEpisodes(feedUri: String): List<PodcastEpisode>
 }
