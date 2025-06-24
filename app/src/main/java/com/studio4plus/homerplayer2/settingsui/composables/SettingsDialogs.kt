@@ -32,9 +32,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ComposeCompilerApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.studio4plus.homerplayer2.base.ui.DefaultAlertDialog
+import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 
 @Composable
 fun <T> SelectFromRadioListDialog(
@@ -90,12 +93,21 @@ fun <T> SelectFromListDialog(
     onValueChange: (T) -> Unit,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
+    message: String? = null,
 ) {
     DefaultAlertDialog(
         title = title,
         onDismissRequest = onDismissRequest,
         modifier = modifier,
     ) { horizontalPadding ->
+        if (message != null) {
+            Text(
+                message,
+                modifier = Modifier
+                    .padding(horizontal = horizontalPadding)
+                    .padding(bottom = 16.dp)
+            )
+        }
         values.map { value ->
             Text(
                 text = produceLabel(value),
@@ -112,3 +124,18 @@ fun <T> SelectFromListDialog(
     }
 }
 
+@Preview
+@Composable
+private fun PreviewSelectFromListDialog() {
+    HomerPlayer2Theme {
+        val items = mapOf("a" to "Item 1", "b" to "Item 2")
+        SelectFromListDialog(
+            values = items.keys.toList(),
+            produceLabel = { items[it]!! },
+            title = "Title",
+            onValueChange = {},
+            onDismissRequest = {},
+            message = "Dialog message",
+        )
+    }
+}

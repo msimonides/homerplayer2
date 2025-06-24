@@ -36,7 +36,6 @@ import androidx.compose.material.icons.filled.FitScreen
 import androidx.compose.material.icons.filled.LockOpen
 import androidx.compose.material.icons.filled.PhonelinkLock
 import androidx.compose.material.icons.filled.ScreenLockRotation
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -236,6 +235,7 @@ private fun KioskModeSelectionDialog(
 ) {
     SelectFromListDialog(
         title = stringResource(R.string.settings_ui_lockdown_kiosk_mode_dialog_title),
+        message = stringResource(R.string.settings_ui_lockdown_kiosk_mode_dialog_description),
         values = listOf(
             SettingsLockdownViewModel.FullKioskModeSetValue.Enable,
             SettingsLockdownViewModel.FullKioskModeSetValue.Disable,

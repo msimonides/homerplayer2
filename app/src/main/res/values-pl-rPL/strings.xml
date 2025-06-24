@@ -168,16 +168,17 @@
     <string name="settings_ui_lockdown_home_component_kiosk_only_description">Domyślne. Możesz używać innych aplikacji, gdy tryb kiosku jest wyłączony.</string>
     <string name="settings_ui_lockdown_home_component_always">Zawsze</string>
     <string name="settings_ui_lockdown_home_component_always_description">Pozwala ustawić Homer jako domyślną aplikację domową. Może być bardziej niezawodny, jeśli aplikacja zostanie sporadycznie zatrzymana i opuści tryb kiosku.</string>
-    <string name="settings_ui_lockdown_kiosk_mode_item">Tryb kiosku…</string>
-    <string name="settings_ui_lockdown_kiosk_mode_setting_enabled">Włączony</string>
-    <string name="settings_ui_lockdown_kiosk_mode_setting_disabled">Wyłączony</string>
+    <string name="settings_ui_lockdown_kiosk_mode_item">Blokada aplikacji (tryb kiosku)…</string>
+    <string name="settings_ui_lockdown_kiosk_mode_setting_enabled">Włączona, nie można opuścić aplikacji</string>
+    <string name="settings_ui_lockdown_kiosk_mode_setting_disabled">Wyłączona</string>
     <!-- Kiosk mode setting: disable temporarily.
          %1$s - time when the setting will be enabled again.
 
          Example:
          Disabled, will enable at 12:04 -->
-    <string name="settings_ui_lockdown_kiosk_mode_setting_disabled_until">Wyłączony, zostanie włączony o %1$s</string>
-    <string name="settings_ui_lockdown_kiosk_mode_dialog_title">Tryb kiosku</string>
+    <string name="settings_ui_lockdown_kiosk_mode_setting_disabled_until">Wyłączona, zostanie włączona o %1$s</string>
+    <string name="settings_ui_lockdown_kiosk_mode_dialog_title">Blokada aplikacji (tryb kiosku)</string>
+    <string name="settings_ui_lockdown_kiosk_mode_dialog_description">Gdy jest włączona, użytkownik nie może opuścić aplikacji. Powiadomienia są ukryte.</string>
     <string name="settings_ui_lockdown_kiosk_mode_dialog_enable">Włącz</string>
     <string name="settings_ui_lockdown_kiosk_mode_dialog_disable">Wyłącz</string>
     <string name="settings_ui_lockdown_kiosk_mode_dialog_disable_for_10_minutes">Wyłącz na 10 minut</string>
