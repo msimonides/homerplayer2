@@ -52,6 +52,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
+import com.studio4plus.homerplayer2.utils.optional
 
 @Composable
 fun SettingSwitch(
@@ -61,8 +62,9 @@ fun SettingSwitch(
     onChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     summary: String? = null,
+    multilineSummary: Boolean = false,
 ) {
-    SettingSwitch(label, value, rememberVectorPainter(icon), onChange, modifier, summary)
+    SettingSwitch(label, value, rememberVectorPainter(icon), onChange, modifier, summary, multilineSummary)
 }
 
 @Composable
@@ -73,20 +75,34 @@ fun SettingSwitch(
     onChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     summary: String? = null,
+    multilineSummary: Boolean = false,
 ) {
-    SettingRow(
-        label = label,
-        icon = icon,
-        summary = summary,
-        modifier = Modifier
-            .toggleable(
-                value = value,
-                onValueChange = onChange,
-                role = Role.Switch
-            )
-            .then(modifier),
-    ) {
+    val switch = @Composable {
         Switch(checked = value, onCheckedChange = null, modifier = Modifier.clearAndSetSemantics {})
+    }
+    val settingModifier = Modifier
+        .toggleable(
+            value = value,
+            onValueChange = onChange,
+            role = Role.Switch
+        )
+        .then(modifier)
+    if (summary != null && multilineSummary) {
+        SettingRowMultiline(
+            label = label,
+            icon = icon,
+            summary = summary,
+            modifier = settingModifier,
+            controlItem = switch
+        )
+    } else {
+        SettingRow(
+            label = label,
+            icon = icon,
+            summary = summary,
+            modifier = settingModifier,
+            controlItem = switch
+        )
     }
 }
 
@@ -163,9 +179,9 @@ private fun SettingRow(
     controlItem: (@Composable () -> Unit)?,
 ) {
     Row(
-        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = modifier,
     ) {
         if (icon != null) {
             Icon(icon, contentDescription = null)
@@ -179,11 +195,7 @@ private fun SettingRow(
                 modifier = Modifier.padding(bottom = if (summary != null) 4.dp else 0.dp)
             )
             if (summary != null) {
-                Text(
-                    summary,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
+                SettingRowSummaryText(summary)
             }
         }
         if (controlItem != null) {
@@ -191,6 +203,52 @@ private fun SettingRow(
             controlItem()
         }
     }
+}
+
+@Composable
+private fun SettingRowMultiline(
+    label: String,
+    icon: Painter?,
+    modifier: Modifier = Modifier,
+    summary: String,
+    controlItem: (@Composable () -> Unit)?,
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            if (icon != null) {
+                Icon(icon, contentDescription = null)
+            }
+            Text(label, modifier = Modifier.weight(1f))
+            if (controlItem != null) {
+                Spacer(modifier = Modifier.width(HomerTheme.dimensions.labelSpacing))
+                controlItem()
+            }
+        }
+        SettingRowSummaryText(
+            text = summary,
+            modifier = Modifier
+                .padding(top = 2.dp)
+                .optional(icon != null) { padding(start = 40.dp) })
+    }
+}
+
+@Composable
+private fun SettingRowSummaryText(
+    text: String,
+    modifier: Modifier = Modifier,
+) {
+    Text(
+        text,
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = modifier
+    )
 }
 
 @Preview

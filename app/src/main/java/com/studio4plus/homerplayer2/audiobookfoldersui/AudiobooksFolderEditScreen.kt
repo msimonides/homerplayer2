@@ -100,6 +100,7 @@ private fun AudiobooksFolderEditScreen(
             SettingSwitch(
                 stringResource(R.string.settings_ui_playback_rewind_on_end_title),
                 summary = stringResource(R.string.settings_ui_playback_rewind_on_end_description),
+                multilineSummary = true,
                 value = viewState.rewindOnEnd,
                 icon = Icons.Default.RestartAlt,
                 onChange = onRewindOnEndChanged,

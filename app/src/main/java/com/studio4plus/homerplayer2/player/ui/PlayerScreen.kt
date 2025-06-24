@@ -134,7 +134,7 @@ private fun PlayerScreen(
         isLandscape = isLandscape,
         modifier = modifier
             .statusBarsFixedPadding()
-            .optional(playerUiSettings.layout.hasMargins(isLandscape)) { Modifier.background(Color.Black) }
+            .optional(playerUiSettings.layout.hasMargins(isLandscape)) { background(Color.Black) }
             .navigationBarsPadding()
 
     ) {

@@ -57,5 +57,5 @@ fun Modifier.blockTouchEvents() = pointerInput("block events") {
     }
 }
 
-fun Modifier.optional(include: Boolean, modifier: () -> Modifier): Modifier =
-    if (include) this.then(modifier()) else this
+fun Modifier.optional(include: Boolean, modifier: Modifier.() -> Modifier): Modifier =
+    if (include) this.then(this.modifier()) else this
