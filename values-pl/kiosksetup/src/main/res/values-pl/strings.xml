@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+  <string name="kiosk_mode_available_title">Tryb kiosku jest dostępny</string>
+  <string name="kiosk_mode_available_description">Możesz włączyć i wyłączyć tryb kiosku w ustawieniach blokady Homer Audio Playera.</string>
+  <string name="kiosk_mode_unavailable_title">Tryb kiosku jest niedostępny</string>
+  <string name="kiosk_mode_unavailable_description">Aby włączyć tryb kiosku, musisz zainstalować Homer Kiosk Setup jako właściciela urządzenia.</string>
+  <string name="button_open_homerplayer">Otwórz Homer Audio Player</string>
+  <string name="button_install_homerplayer">Zainstaluj Homer Audio Player</string>
+  <string name="button_setup_instructions_website">Otwórz instrukcje</string>
+  <string name="drop_privilege_button">Porzuć uprawnienia trybu kiosku</string>
+  <string name="drop_privilege_confirm_message">Tej akcji nie można łatwo cofnąć.
+Przywraca ona urządzenie do normalnego użycia, nie będzie już możliwe użycie trybu kiosku w Homer Audio Playerze.
+
+Zrób reset fabryczny zamiast (lub dodatkowo) użycia tej funkcji.</string>
+  <string name="drop_privilege_confirm_confirm_button">Usuń uprawnienie</string>
+  <string name="drop_privilege_confirm_cancel_button">Anuluj</string>
+</resources>
