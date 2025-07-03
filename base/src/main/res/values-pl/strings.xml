@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+  <string name="generic_dialog_confirm">OK</string>
+  <string name="generic_dialog_cancel">Anuluj</string>
+  <string name="generic_dialog_save">Zapisz</string>
+  <string name="generic_navigate_back">Wstecz</string>
+  <string name="generic_text_field_clear_content_description">Wyczyść</string>
+  <string name="generic_website_alternative">lub otwórz:
+%1$s</string>
+</resources>

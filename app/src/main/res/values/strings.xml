@@ -1,265 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <resources>
-    <string name="app_name" translatable="false">Homer Audio Player</string>
-    <string name="app_tag" translatable="false">homerplayer2</string>
-
-    <string name="audiobook_folder_accessibility_action_edit">Edit</string>
-    <string name="audiobook_folder_accessibility_menu_action_remove">Remove</string>
-    <string name="audiobook_folder_add_error_dialog">Unable to open file chooser</string>
-    <!-- Header about the list of contents of audiobooks folder. -->
-    <string name="audiobook_folder_contents_title">Contents</string>
-    <string name="audiobook_folder_content_time_scanning">Scanning…</string>
-    <string name="audiobook_folder_content_time_format">%1$s / %2$s</string>
-    <string name="audiobook_folder_samples_folder_name">Sample books</string>
-    <string name="audiobook_folder_no_books_found">(no audiobooks found in this folder)</string>
-    <!-- Describes folder contents for accessibility services.
-         Parameters:
-         - %1$d - book count
-         - %2$s - list of book titles, contains only the first few.
-      -->
-    <plurals name="audiobook_folder_content_description">
-        <item quantity="one">%1$d book: %2$s</item>
-        <item quantity="other">%1$d books starting with: %2$s</item>
-    </plurals>
-    <string name="audiobook_folder_scanning_content_description">scanning</string>
-
-    <plurals name="battery_level_content_description">
-        <item quantity="one">battery %1$d percent</item>
-        <item quantity="other">battery %1$d percent</item>
-    </plurals>
-    <plurals name="battery_level_charging_content_description">
-        <item quantity="one">battery charging, %1$d percent</item>
-        <item quantity="other">battery charging, %1$d percent</item>
-    </plurals>
-
-    <string name="browse_settings_button_accessibility_label">Settings</string>
-
-    <string name="content_add_folder_button">Add folder…</string>
-    <string name="content_add_folder_error_exists">This folder has already been added</string>
-    <string name="content_add_podcast_button">Add podcast…</string>
-    <string name="content_dialog_remove_message">Are you sure?</string>
-    <string name="content_dialog_remove_button_remove">Remove</string>
-    <!-- Button for downloading sample audiobooks. Keep short. -->
-    <string name="content_download_samples_button">Download samples</string>
-    <!-- Error message displayed when downloading sample audiobooks fails. -->
-    <string name="content_samples_download_error">Samples download failed. Check your network connection and try again.</string>
-    <!-- Error message displayed when installation of sample audiobooks fails.
-         %1$d - komunikat błędu.
-    -->
-    <string name="content_samples_install_error">Samples installation failed. %1$s</string>
-    <string name="content_section_title_audiobooks">Audiobooks folders</string>
-    <string name="content_section_title_podcasts">Podcasts</string>
-
-    <string name="onboarding_content_title">Audiobooks and Podcasts</string>
-    <string name="onboarding_content_description">Please add at least one folder with your audiobooks or one podcast.</string>
-    <string name="onboarding_folder_title">Audiobooks folder</string>
-    <string name="onboarding_podcast_title">Podcast</string>
-    <string name="onboarding_speech_title">Speak book titles</string>
-    <string name="onboarding_speech_description">Homer uses text-to-speech engine to read book titles.\nYou can now test it and adjust configuration settings.</string>
-    <string name="onboarding_speech_open_settings">Open text-to-speech settings</string>
-    <string name="onboarding_speech_tts_checkbox_label">Speak book titles</string>
-    <string name="onboarding_speech_tts_checkbox_note">Disable if already using a screen reader</string>
-    <string name="onboarding_step_done">Done</string>
-    <string name="onboarding_step_next">Next</string>
-    <string name="onboarding_step_skip">Skip</string>
-
-    <string name="playback_fast_forward_button_description">Fast forward</string>
-    <string name="playback_fast_rewind_button_description">Rewind</string>
-    <string name="playback_forward10_button_description">Forward 10 seconds</string>
-    <string name="playback_replay30_rewind_button_description">Back 30 seconds</string>
-    <string name="playback_play_button_description">Play</string>
-    <string name="playback_stop_button_description">Stop</string>
-    <string name="playback_volume_up_button_description">Volume Up</string>
-    <string name="playback_volume_down_button_description">Volume Down</string>
-
-    <string name="player_no_books_title">No audiobooks yet</string>
-    <string name="player_no_books_message">Open settings and add a folder with audiobooks or some podcasts</string>
-    <string name="player_no_books_podcasts_title">Podcasts downloading</string>
-    <string name="player_no_books_podcasts_message">Podcast episodes will show up as soon as they are fully downloaded. This may take a few minutes.</string>
-
-    <string name="podcast_accessibility_action_edit">Edit</string>
-    <string name="podcast_add_dialog_latest_episode">Latest episode:</string>
-    <string name="podcast_add_dialog_add_button">Add podcast</string>
-    <string name="podcast_download_info_in_background">Podcast episodes will show up among audiobooks once they are fully downloaded.\nThis may take several minutes.</string>
-    <string name="podcast_download_info_unmetered_network">Podcasts are configured to download only on WiFi networks.</string>
-    <string name="podcast_download_info_change_network_settings">Change</string>
-    <string name="podcast_edit_episode_count">Episode count</string>
-    <!-- Header above list of switches for configuring episode display name in browse screen. -->
-    <string name="podcast_edit_title_episode_display_name">Episode display name</string>
-    <!-- Header above list of podcast episodes in the podcast edit screen. -->
-    <string name="podcast_edit_title_episodes">Episodes</string>
-    <!-- Label for switch for including episode number in episode display name in browse screen. -->
-    <string name="podcast_edit_name_episode_number">Episode number</string>
-    <!-- Label for switch for including episode title in episode display name in browse screen. -->
-    <string name="podcast_edit_name_episode_title">Episode title</string>
-    <!-- Label for switch for including podcast title in episode display name in browse screen. -->
-    <string name="podcast_edit_name_podcast_title">Podcast title</string>
-    <string name="podcast_feed_error_doesnt_exist">Unknown or incorrect URL</string>
-    <string name="podcast_feed_error_ssl_error">SSL certificate error</string>
-    <string name="podcast_feed_error_download">Error downloading podcast feed</string>
-    <string name="podcast_feed_error_parse">Unable to process podcast data</string>
-    <string name="podcast_info_no_episodes_found">Podcast has no episodes</string>
-    <string name="podcast_info_latest_episode_date">Latest: %1$s</string>
-    <!-- Display format for podcast episode:
-         %1$s - podcast title
-         %2$d - episode number
-         %3$s - episode title -->
-    <string name="podcast_episode_name_title_number_episode">%1$s %2$d. %3$s</string>
-    <!-- Display format for podcast episode:
-         %1$s - podcast title
-         %2$s - episode title -->
-    <string name="podcast_episode_name_title_episode">%1$s. %2$s</string>
-    <!-- Display format for podcast episode:
-         %1$s - podcast title
-         %2$d - episode number -->
-    <string name="podcast_episode_name_title_number">%1$s %2$d</string>
-    <string name="podcast_search_label">Podcast search</string>
-    <string name="podcast_search_hint">Podcast title</string>
-    <string name="podcast_search_error_title">Error</string>
-    <string name="podcast_search_error_message">Unable to fetch search results</string>
-    <plurals name="podcast_search_first_results">
-        <item quantity="one">Showing first result</item>
-        <item quantity="other">Showing first %1$d results</item>
-    </plurals>
-    <string name="podcast_search_no_results">No results match the search phrase</string>
-    <string name="podcast_search_ratelimit_title">Search service is busy, try later</string>
-    <string name="podcast_search_ratelimit_message">The podcast search service is temporarily unavailable. Please try again later.</string>
-    <string name="podcast_url_instructions_preface">In addition to search you can copy and paste address of the podcast\'s RSS feed into the search field to fetch it directly.</string>
-    <string name="podcast_url_instructions_step1">Open a web browser.</string>
-    <string name="podcast_url_instructions_step2">Open the website of the podcast.</string>
-    <string name="podcast_url_instructions_step3">Find RSS icon or link, long tap for context menu and copy the address to clipboard.</string>
-    <string name="podcast_url_instructions_step4">Return to Homer and long tap the search field to paste the address.</string>
-
-    <string name="settings_ui_settings_title">Settings</string>
-    <string name="settings_ui_about_item">About the app…</string>
-    <string name="settings_ui_about_title">About Homer Audio Player</string>
-    <string name="settings_ui_content_item">Audiobooks and podcasts…</string>
-    <string name="settings_ui_content_title">Audiobooks and podcasts</string>
-    <!-- Summary for configured audio folders and podcasts.
-         %1$s - value of "settings_ui_content_summary_audiobook_folders"
-         %2$s - value of "settings_ui_content_summary_pocasts"
-
-         Example:
-         4 audiobook folders and 2 podcasts. -->
-    <string name="settings_ui_content_summary">%1$s and %2$s</string>
-    <plurals name="settings_ui_content_summary_audiobook_folders">
-        <item quantity="one">%1$d audiobooks folder</item>
-        <item quantity="other">%1$d audiobooks folders</item>
-    </plurals>
-    <plurals name="settings_ui_content_summary_pocasts">
-        <item quantity="one">%1$d podcast</item>
-        <item quantity="other">%1$d podcasts</item>
-    </plurals>
-    <string name="settings_ui_content_summary_empty">(no content selected)</string>
-    <string name="settings_ui_folder_title">Audiobooks folder</string>
-    <string name="settings_ui_haptic_feedback_label">Haptic feedback</string>
-    <string name="settings_ui_layout_settings_item">Screen margins…</string>
-    <string name="settings_ui_layout_dialog_message">Drag the edges to adjust screen margins. Rotate screen to adjust the other orientation.</string>
-    <string name="settings_ui_lockdown_settings_item">Lockdown settings…</string>
-    <string name="settings_ui_lockdown_settings_title">Lockdown settings</string>
-    <string name="settings_ui_lockdown_settings_description">Lock down the app to make a device only for playing audiobooks.</string>
-    <string name="settings_ui_lockdown_hide_settings_button_item">Hide settings button</string>
-    <string name="settings_ui_lockdown_hide_settings_dialog_title">Press both buttons to open settings</string>
-    <string name="settings_ui_lockdown_hide_settings_dialog_description">Hide settings button to prevent the user from accidentally opening the settings screen.\nPlease test to enable.</string>
-    <string name="settings_ui_lockdown_hide_settings_dialog_confirm_button">Hide settings button</string>
-    <string name="settings_ui_lockdown_home_component_item">Become a "Home screen" app</string>
-    <string name="settings_ui_lockdown_home_component_kiosk_only">When kiosk mode enabled</string>
-    <string name="settings_ui_lockdown_home_component_kiosk_only_description">Default. You can use other apps when kiosk mode is disabled.</string>
-    <string name="settings_ui_lockdown_home_component_always">Always</string>
-    <string name="settings_ui_lockdown_home_component_always_description">Allows setting Homer as the default home app. Can be more robust if the application gets occasionally stopped and leaves kiosk mode.</string>
-    <string name="settings_ui_lockdown_kiosk_mode_item">Application lockdown (kiosk mode)…</string>
-    <string name="settings_ui_lockdown_kiosk_mode_setting_enabled">Enabled, can\'t exit the application</string>
-    <string name="settings_ui_lockdown_kiosk_mode_setting_disabled">Disabled</string>
-    <!-- Kiosk mode setting: disable temporarily.
-         %1$s - time when the setting will be enabled again.
-
-         Example:
-         Disabled, will enable at 12:04 -->
-    <string name="settings_ui_lockdown_kiosk_mode_setting_disabled_until">Disabled, will enable at %1$s</string>
-    <string name="settings_ui_lockdown_kiosk_mode_dialog_title">Application lockdown (kiosk mode)</string>
-    <string name="settings_ui_lockdown_kiosk_mode_dialog_description">When enabled, the user cannot exit the app. Notifications are hidden.</string>
-    <string name="settings_ui_lockdown_kiosk_mode_dialog_enable">Enable</string>
-    <string name="settings_ui_lockdown_kiosk_mode_dialog_disable">Disable</string>
-    <string name="settings_ui_lockdown_kiosk_mode_dialog_disable_for_10_minutes">Disable for 10 minutes</string>
-    <string name="settings_ui_kiosk_mode_setup_title">Kiosk mode information</string>
-    <string name="settings_ui_kiosk_mode_setup_description1">Kiosk mode locks down the device within the Homer Audio Player application:</string>
-    <string name="settings_ui_kiosk_mode_setup_description1_bullet1">prevents exiting the application with the "back" button,</string>
-    <string name="settings_ui_kiosk_mode_setup_description1_bullet2">notifications and the top system bar are hidden.</string>
-    <string name="settings_ui_kiosk_mode_setup_description2">This functionality requires a special installation procedure.</string>
-    <string name="settings_ui_kiosk_mode_setup_open_instructions">Open instructions</string>
-    <string name="settings_ui_lockdown_show_battery">Show battery indicator</string>
-    <string name="settings_ui_licenses_item">Licenses…</string>
-    <string name="settings_ui_licenses_title">Licenses</string>
-    <string name="settings_ui_mode_label">Color scheme</string>
-    <string name="settings_ui_mode_dark">Dark</string>
-    <string name="settings_ui_mode_light">Light</string>
-    <string name="settings_ui_mode_system">System</string>
-    <string name="settings_ui_network_item">Network and downloads…</string>
-    <string name="settings_ui_network_title">Network and downloads</string>
-    <string name="settings_ui_network_podcasts_download_network_item">Podcasts download network</string>
-    <string name="settings_ui_network_podcasts_download_network_dialog_title">Podcasts download</string>
-    <string name="settings_ui_network_podcasts_download_network_dialog_message">Homer automatically downloads all podcast episodes to guarantee uninterrupted playback.\nThis may use hundreds of megabytes of data per week.</string>
-    <string name="settings_ui_network_podcasts_download_network_type_any">Mobile and WiFi</string>
-    <string name="settings_ui_network_podcasts_download_network_type_any_description">May incur additional data cost or deplete data limit</string>
-    <string name="settings_ui_network_podcasts_download_network_type_unmetered">WiFi only</string>
-    <string name="settings_ui_network_podcasts_download_network_type_unmetered_description">Only unmetered networks</string>
-    <string name="settings_ui_orientation_item">Orientation</string>
-    <string name="settings_ui_orientation_auto">Auto</string>
-    <string name="settings_ui_orientation_portrait">Portrait</string>
-    <string name="settings_ui_orientation_landscape_auto">Landscape auto</string>
-    <string name="settings_ui_orientation_landscape_locked">Landscape locked</string>
-    <string name="settings_ui_orientation_landscape_locked_reverse">Landscape locked (reverse)</string>
-    <string name="settings_ui_playback_flip_to_stop_item">Flip to stop</string>
-    <string name="settings_ui_playback_flip_to_stop_summary">Put device screen down to stop playback</string>
-    <string name="settings_ui_playback_play_speed_title">Playback speed</string>
-    <string name="settings_ui_playback_rewind_on_end_item">Rewind to beginning when finished…</string>
-    <string name="settings_ui_playback_rewind_on_end_title">Rewind to beginning when finished</string>
-    <string name="settings_ui_playback_rewind_on_end_description">When a book is played to the very end, it will automatically rewind to the beginning for another playback.\nEnable for content that is played repeatedly, e.g. poetry, religious texts, music albums.</string>
-    <string name="settings_ui_playback_rewind_on_resume_label">Rewind when resuming playback</string>
-    <string name="settings_ui_playback_rewind_on_resume_setting_disabled">Disabled</string>
-    <string name="settings_ui_playback_settings_item">Playback settings…</string>
-    <string name="settings_ui_playback_settings_title">Playback settings</string>
-    <string name="settings_ui_playback_sleep_timer_label">Sleep timer</string>
-    <string name="settings_ui_playback_sleep_timer_disabled">Disabled</string>
-    <string name="settings_ui_playback_speed_choice_very_fast">Very fast</string>
-    <string name="settings_ui_playback_speed_choice_fast">Fast</string>
-    <string name="settings_ui_playback_speed_choice_regular">Regular</string>
-    <string name="settings_ui_playback_speed_choice_moderate">Moderate</string>
-    <string name="settings_ui_playback_speed_choice_slow">Slow</string>
-    <string name="settings_ui_playback_speed_choice_very_slow">Very slow</string>
-    <string name="settings_ui_playback_speed_title">Playback speed</string>
-    <string name="settings_ui_player_ui_item">Player controls…</string>
-    <string name="settings_ui_player_ui_title">Player controls</string>
-    <string name="settings_ui_player_ui_book_title">Audiobook title</string>
-    <string name="settings_ui_player_ui_volume_controls">Volume controls</string>
-    <string name="settings_ui_player_ui_ff_rewind_controls">Skip chapter controls</string>
-    <string name="settings_ui_player_ui_seek_controls">Forward/back controls</string>
-    <string name="settings_ui_podcast_title">Podcast</string>
-    <string name="settings_ui_privacy_policy_item">Privacy policy…</string>
-    <string name="settings_ui_rate_app_item">Rate the application…</string>
-    <string name="settings_ui_section_advanced">Advanced</string>
-    <string name="settings_ui_share_diagnostic_log_title">Share diagnostic log</string>
-    <string name="settings_ui_share_diagnostic_log_summary">Send diagnostic log to developer to report an issue</string>
-    <string name="settings_ui_tts_settings_item">Text-to-speech…</string>
-    <string name="settings_ui_tts_settings_enabled">Enabled</string>
-    <string name="settings_ui_tts_settings_disabled">Disabled</string>
-    <string name="settings_ui_tts_settings_title">Text-to-speech</string>
-    <string name="settings_ui_tts_read_book_titles">Read book titles</string>
-    <string name="settings_ui_tts_open_settings">Open text-to-speech settings…</string>
-    <string name="settings_ui_version_item">Version</string>
-
-    <plurals name="settings_time_seconds">
-        <item quantity="one">%1$d second</item>
-        <item quantity="other">%1$d seconds</item>
-    </plurals>
-    <plurals name="settings_time_minutes">
-        <item quantity="one">%1$d minute</item>
-        <item quantity="other">%1$d minutes</item>
-    </plurals>
-
-    <string name="speech_init_say_failed">Playing test phrase failed. Check your text-to-speech settings.</string>
-    <string name="speech_init_tts_error">Unable to initialize text-to-speech. Try a different TTS engine.</string>
-    <string name="speech_init_lang_data_missing">Language data is missing. Please install your language in text-to-speech settings.</string>
-    <string name="speech_init_lang_not_supported">Language not supported. Please install a text-to-speech engine that supports your langauge.</string>
-    <string name="speech_play_test_phrase">Play test phrase</string>
-    <string name="speech_test_phrase">Alice\'s Adventures in Wonderland</string>
+  <string name="app_name" translatable="false">Homer Audio Player</string>
+  <string name="app_tag" translatable="false">homerplayer2</string>
+  <string name="audiobook_folder_accessibility_action_edit">Edit</string>
+  <string name="audiobook_folder_accessibility_menu_action_remove">Remove</string>
+  <string name="audiobook_folder_add_error_dialog">Unable to open file chooser</string>
+  <string name="audiobook_folder_contents_title">Contents</string>
+  <string name="audiobook_folder_content_time_scanning">Scanning…</string>
+  <string name="audiobook_folder_content_time_format">%1$s / %2$s</string>
+  <string name="audiobook_folder_samples_folder_name">Sample books</string>
+  <string name="audiobook_folder_no_books_found">(no audiobooks found in this folder)</string>
+  <plurals name="audiobook_folder_content_description">
+    <item quantity="one">%1$d book: %2$s</item>
+    <item quantity="other">%1$d books starting with: %2$s</item>
+  </plurals>
+  <string name="audiobook_folder_scanning_content_description">scanning</string>
+  <plurals name="battery_level_content_description">
+    <item quantity="one">battery %1$d percent</item>
+    <item quantity="other">battery %1$d percent</item>
+  </plurals>
+  <plurals name="battery_level_charging_content_description">
+    <item quantity="one">battery charging, %1$d percent</item>
+    <item quantity="other">battery charging, %1$d percent</item>
+  </plurals>
+  <string name="browse_settings_button_accessibility_label">Settings</string>
+  <string name="content_add_folder_button">Add folder…</string>
+  <string name="content_add_folder_error_exists">This folder has already been added</string>
+  <string name="content_add_podcast_button">Add podcast…</string>
+  <string name="content_dialog_remove_message">Are you sure?</string>
+  <string name="content_dialog_remove_button_remove">Remove</string>
+  <string name="content_download_samples_button">Download samples</string>
+  <string name="content_samples_download_error">Samples download failed. Check your network connection and try again.</string>
+  <string name="content_samples_install_error">Samples installation failed. %1$s</string>
+  <string name="content_section_title_audiobooks">Audiobooks folders</string>
+  <string name="content_section_title_podcasts">Podcasts</string>
+  <string name="onboarding_content_title">Audiobooks and Podcasts</string>
+  <string name="onboarding_content_description">Please add at least one folder with your audiobooks or one podcast.</string>
+  <string name="onboarding_folder_title">Audiobooks folder</string>
+  <string name="onboarding_podcast_title">Podcast</string>
+  <string name="onboarding_speech_title">Speak book titles</string>
+  <string name="onboarding_speech_description">Homer uses text-to-speech engine to read book titles.
+You can now test it and adjust configuration settings.</string>
+  <string name="onboarding_speech_open_settings">Open text-to-speech settings</string>
+  <string name="onboarding_speech_tts_checkbox_label">Speak book titles</string>
+  <string name="onboarding_speech_tts_checkbox_note">Disable if already using a screen reader</string>
+  <string name="onboarding_step_done">Done</string>
+  <string name="onboarding_step_next">Next</string>
+  <string name="onboarding_step_skip">Skip</string>
+  <string name="playback_fast_forward_button_description">Fast forward</string>
+  <string name="playback_fast_rewind_button_description">Rewind</string>
+  <string name="playback_forward10_button_description">Forward 10 seconds</string>
+  <string name="playback_replay30_rewind_button_description">Back 30 seconds</string>
+  <string name="playback_play_button_description">Play</string>
+  <string name="playback_stop_button_description">Stop</string>
+  <string name="playback_volume_up_button_description">Volume Up</string>
+  <string name="playback_volume_down_button_description">Volume Down</string>
+  <string name="player_no_books_title">No audiobooks yet</string>
+  <string name="player_no_books_message">Open settings and add a folder with audiobooks or some podcasts</string>
+  <string name="player_no_books_podcasts_title">Podcasts downloading</string>
+  <string name="player_no_books_podcasts_message">Podcast episodes will show up as soon as they are fully downloaded. This may take a few minutes.</string>
+  <string name="podcast_accessibility_action_edit">Edit</string>
+  <string name="podcast_add_dialog_latest_episode">Latest episode:</string>
+  <string name="podcast_add_dialog_add_button">Add podcast</string>
+  <string name="podcast_download_info_in_background">Podcast episodes will show up among audiobooks once they are fully downloaded.
+This may take several minutes.</string>
+  <string name="podcast_download_info_unmetered_network">Podcasts are configured to download only on WiFi networks.</string>
+  <string name="podcast_download_info_change_network_settings">Change</string>
+  <string name="podcast_edit_episode_count">Episode count</string>
+  <string name="podcast_edit_title_episode_display_name">Episode display name</string>
+  <string name="podcast_edit_title_episodes">Episodes</string>
+  <string name="podcast_edit_name_episode_number">Episode number</string>
+  <string name="podcast_edit_name_episode_title">Episode title</string>
+  <string name="podcast_edit_name_podcast_title">Podcast title</string>
+  <string name="podcast_feed_error_doesnt_exist">Unknown or incorrect URL</string>
+  <string name="podcast_feed_error_ssl_error">SSL certificate error</string>
+  <string name="podcast_feed_error_download">Error downloading podcast feed</string>
+  <string name="podcast_feed_error_parse">Unable to process podcast data</string>
+  <string name="podcast_info_no_episodes_found">Podcast has no episodes</string>
+  <string name="podcast_info_latest_episode_date">Latest: %1$s</string>
+  <string name="podcast_episode_name_title_number_episode">%1$s %2$d. %3$s</string>
+  <string name="podcast_episode_name_title_episode">%1$s. %2$s</string>
+  <string name="podcast_episode_name_title_number">%1$s %2$d</string>
+  <string name="podcast_search_label">Podcast search</string>
+  <string name="podcast_search_hint">Podcast title</string>
+  <string name="podcast_search_error_title">Error</string>
+  <string name="podcast_search_error_message">Unable to fetch search results</string>
+  <plurals name="podcast_search_first_results">
+    <item quantity="one">Showing first result</item>
+    <item quantity="other">Showing first %1$d results</item>
+  </plurals>
+  <string name="podcast_search_no_results">No results match the search phrase</string>
+  <string name="podcast_search_ratelimit_title">Search service is busy, try later</string>
+  <string name="podcast_search_ratelimit_message">The podcast search service is temporarily unavailable. Please try again later.</string>
+  <string name="podcast_url_instructions_preface">In addition to search you can copy and paste address of the podcast\'s RSS feed into the search field to fetch it directly.</string>
+  <string name="podcast_url_instructions_step1">Open a web browser.</string>
+  <string name="podcast_url_instructions_step2">Open the website of the podcast.</string>
+  <string name="podcast_url_instructions_step3">Find RSS icon or link, long tap for context menu and copy the address to clipboard.</string>
+  <string name="podcast_url_instructions_step4">Return to Homer and long tap the search field to paste the address.</string>
+  <string name="settings_ui_settings_title">Settings</string>
+  <string name="settings_ui_about_item">About the app…</string>
+  <string name="settings_ui_about_title">About Homer Audio Player</string>
+  <string name="settings_ui_content_item">Audiobooks and podcasts…</string>
+  <string name="settings_ui_content_title">Audiobooks and podcasts</string>
+  <string name="settings_ui_content_summary">%1$s and %2$s</string>
+  <plurals name="settings_ui_content_summary_audiobook_folders">
+    <item quantity="one">%1$d audiobooks folder</item>
+    <item quantity="other">%1$d audiobooks folders</item>
+  </plurals>
+  <plurals name="settings_ui_content_summary_pocasts">
+    <item quantity="one">%1$d podcast</item>
+    <item quantity="other">%1$d podcasts</item>
+  </plurals>
+  <string name="settings_ui_content_summary_empty">(no content selected)</string>
+  <string name="settings_ui_folder_title">Audiobooks folder</string>
+  <string name="settings_ui_haptic_feedback_label">Haptic feedback</string>
+  <string name="settings_ui_layout_settings_item">Screen margins…</string>
+  <string name="settings_ui_layout_dialog_message">Drag the edges to adjust screen margins. Rotate screen to adjust the other orientation.</string>
+  <string name="settings_ui_lockdown_settings_item">Lockdown settings…</string>
+  <string name="settings_ui_lockdown_settings_title">Lockdown settings</string>
+  <string name="settings_ui_lockdown_settings_description">Lock down the app to make a device only for playing audiobooks.</string>
+  <string name="settings_ui_lockdown_hide_settings_button_item">Hide settings button</string>
+  <string name="settings_ui_lockdown_hide_settings_dialog_title">Press both buttons to open settings</string>
+  <string name="settings_ui_lockdown_hide_settings_dialog_description">Hide settings button to prevent the user from accidentally opening the settings screen.
+Please test to enable.</string>
+  <string name="settings_ui_lockdown_hide_settings_dialog_confirm_button">Hide settings button</string>
+  <string name="settings_ui_lockdown_home_component_item">Become a \"Home screen\" app</string>
+  <string name="settings_ui_lockdown_home_component_kiosk_only">When kiosk mode enabled</string>
+  <string name="settings_ui_lockdown_home_component_kiosk_only_description">Default. You can use other apps when kiosk mode is disabled.</string>
+  <string name="settings_ui_lockdown_home_component_always">Always</string>
+  <string name="settings_ui_lockdown_home_component_always_description">Allows setting Homer as the default home app. Can be more robust if the application gets occasionally stopped and leaves kiosk mode.</string>
+  <string name="settings_ui_lockdown_kiosk_mode_item">Application lockdown (kiosk mode)…</string>
+  <string name="settings_ui_lockdown_kiosk_mode_setting_enabled">Enabled, can\'t exit the application</string>
+  <string name="settings_ui_lockdown_kiosk_mode_setting_disabled">Disabled</string>
+  <string name="settings_ui_lockdown_kiosk_mode_setting_disabled_until">Disabled, will enable at %1$s</string>
+  <string name="settings_ui_lockdown_kiosk_mode_dialog_title">Application lockdown (kiosk mode)</string>
+  <string name="settings_ui_lockdown_kiosk_mode_dialog_description">When enabled, the user cannot exit the app. Notifications are hidden.</string>
+  <string name="settings_ui_lockdown_kiosk_mode_dialog_enable">Enable</string>
+  <string name="settings_ui_lockdown_kiosk_mode_dialog_disable">Disable</string>
+  <string name="settings_ui_lockdown_kiosk_mode_dialog_disable_for_10_minutes">Disable for 10 minutes</string>
+  <string name="settings_ui_kiosk_mode_setup_title">Kiosk mode information</string>
+  <string name="settings_ui_kiosk_mode_setup_description1">Kiosk mode locks down the device within the Homer Audio Player application:</string>
+  <string name="settings_ui_kiosk_mode_setup_description1_bullet1">prevents exiting the application with the \"back\" button,</string>
+  <string name="settings_ui_kiosk_mode_setup_description1_bullet2">notifications and the top system bar are hidden.</string>
+  <string name="settings_ui_kiosk_mode_setup_description2">This functionality requires a special installation procedure.</string>
+  <string name="settings_ui_kiosk_mode_setup_open_instructions">Open instructions</string>
+  <string name="settings_ui_lockdown_show_battery">Show battery indicator</string>
+  <string name="settings_ui_licenses_item">Licenses…</string>
+  <string name="settings_ui_licenses_title">Licenses</string>
+  <string name="settings_ui_mode_label">Color scheme</string>
+  <string name="settings_ui_mode_dark">Dark</string>
+  <string name="settings_ui_mode_light">Light</string>
+  <string name="settings_ui_mode_system">System</string>
+  <string name="settings_ui_network_item">Network and downloads…</string>
+  <string name="settings_ui_network_title">Network and downloads</string>
+  <string name="settings_ui_network_podcasts_download_network_item">Podcasts download network</string>
+  <string name="settings_ui_network_podcasts_download_network_dialog_title">Podcasts download</string>
+  <string name="settings_ui_network_podcasts_download_network_dialog_message">Homer automatically downloads all podcast episodes to guarantee uninterrupted playback.
+This may use hundreds of megabytes of data per week.</string>
+  <string name="settings_ui_network_podcasts_download_network_type_any">Mobile and WiFi</string>
+  <string name="settings_ui_network_podcasts_download_network_type_any_description">May incur additional data cost or deplete data limit</string>
+  <string name="settings_ui_network_podcasts_download_network_type_unmetered">WiFi only</string>
+  <string name="settings_ui_network_podcasts_download_network_type_unmetered_description">Only unmetered networks</string>
+  <string name="settings_ui_orientation_item">Orientation</string>
+  <string name="settings_ui_orientation_auto">Auto</string>
+  <string name="settings_ui_orientation_portrait">Portrait</string>
+  <string name="settings_ui_orientation_landscape_auto">Landscape auto</string>
+  <string name="settings_ui_orientation_landscape_locked">Landscape locked</string>
+  <string name="settings_ui_orientation_landscape_locked_reverse">Landscape locked (reverse)</string>
+  <string name="settings_ui_playback_flip_to_stop_item">Flip to stop</string>
+  <string name="settings_ui_playback_flip_to_stop_summary">Put device screen down to stop playback</string>
+  <string name="settings_ui_playback_play_speed_title">Playback speed</string>
+  <string name="settings_ui_playback_rewind_on_end_item">Rewind to beginning when finished…</string>
+  <string name="settings_ui_playback_rewind_on_end_title">Rewind to beginning when finished</string>
+  <string name="settings_ui_playback_rewind_on_end_description">When a book is played to the very end, it will automatically rewind to the beginning for another playback.
+Enable for content that is played repeatedly, e.g. poetry, religious texts, music albums.</string>
+  <string name="settings_ui_playback_rewind_on_resume_label">Rewind when resuming playback</string>
+  <string name="settings_ui_playback_rewind_on_resume_setting_disabled">Disabled</string>
+  <string name="settings_ui_playback_settings_item">Playback settings…</string>
+  <string name="settings_ui_playback_settings_title">Playback settings</string>
+  <string name="settings_ui_playback_sleep_timer_label">Sleep timer</string>
+  <string name="settings_ui_playback_sleep_timer_disabled">Disabled</string>
+  <string name="settings_ui_playback_speed_choice_very_fast">Very fast</string>
+  <string name="settings_ui_playback_speed_choice_fast">Fast</string>
+  <string name="settings_ui_playback_speed_choice_regular">Regular</string>
+  <string name="settings_ui_playback_speed_choice_moderate">Moderate</string>
+  <string name="settings_ui_playback_speed_choice_slow">Slow</string>
+  <string name="settings_ui_playback_speed_choice_very_slow">Very slow</string>
+  <string name="settings_ui_playback_speed_title">Playback speed</string>
+  <string name="settings_ui_player_ui_item">Player controls…</string>
+  <string name="settings_ui_player_ui_title">Player controls</string>
+  <string name="settings_ui_player_ui_book_title">Audiobook title</string>
+  <string name="settings_ui_player_ui_volume_controls">Volume controls</string>
+  <string name="settings_ui_player_ui_ff_rewind_controls">Skip chapter controls</string>
+  <string name="settings_ui_player_ui_seek_controls">Forward/back controls</string>
+  <string name="settings_ui_podcast_title">Podcast</string>
+  <string name="settings_ui_privacy_policy_item">Privacy policy…</string>
+  <string name="settings_ui_rate_app_item">Rate the application…</string>
+  <string name="settings_ui_section_advanced">Advanced</string>
+  <string name="settings_ui_share_diagnostic_log_title">Share diagnostic log</string>
+  <string name="settings_ui_share_diagnostic_log_summary">Send diagnostic log to developer to report an issue</string>
+  <string name="settings_ui_tts_settings_item">Text-to-speech…</string>
+  <string name="settings_ui_tts_settings_enabled">Enabled</string>
+  <string name="settings_ui_tts_settings_disabled">Disabled</string>
+  <string name="settings_ui_tts_settings_title">Text-to-speech</string>
+  <string name="settings_ui_tts_read_book_titles">Read book titles</string>
+  <string name="settings_ui_tts_open_settings">Open text-to-speech settings…</string>
+  <string name="settings_ui_version_item">Version</string>
+  <plurals name="settings_time_seconds">
+    <item quantity="one">%1$d second</item>
+    <item quantity="other">%1$d seconds</item>
+  </plurals>
+  <plurals name="settings_time_minutes">
+    <item quantity="one">%1$d minute</item>
+    <item quantity="other">%1$d minutes</item>
+  </plurals>
+  <string name="speech_init_say_failed">Playing test phrase failed. Check your text-to-speech settings.</string>
+  <string name="speech_init_tts_error">Unable to initialize text-to-speech. Try a different TTS engine.</string>
+  <string name="speech_init_lang_data_missing">Language data is missing. Please install your language in text-to-speech settings.</string>
+  <string name="speech_init_lang_not_supported">Language not supported. Please install a text-to-speech engine that supports your langauge.</string>
+  <string name="speech_play_test_phrase">Play test phrase</string>
+  <string name="speech_test_phrase">Alice\'s Adventures in Wonderland</string>
 </resources>
