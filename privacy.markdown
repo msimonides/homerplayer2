@@ -5,7 +5,7 @@ meta_title: "Homer Audio Player: privacy policy"
 
 # Privacy Policy
 
-By using the "Homer Player 2" application (the "App") you consent to the collection
+By using the "Homer Audio Player" application (the "App") you consent to the collection
 and processing of data concerning your use of the App in accordance with this
 privacy policy.
 
