@@ -34,7 +34,6 @@ import java.util.UUID
 class UpdatePodcastFromFeed(
     private val updatePodcastEpisodes: UpdatePodcastEpisodes,
 ) {
-    // TODO: unit tests
     suspend operator fun invoke(podcast: Podcast, feed: PodcastFeed): Boolean {
         val latestEpisodes = feed.latestEpisodes.take(podcast.downloadEpisodeCount)
         val totalCount = feed.rss.items.size

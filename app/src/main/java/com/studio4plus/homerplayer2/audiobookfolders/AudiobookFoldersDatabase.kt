@@ -25,5 +25,5 @@
 package com.studio4plus.homerplayer2.audiobookfolders
 
 interface AudiobookFoldersDatabase {
-    fun audiobookFoldersDa(): AudiobookFoldersDao
+    fun audiobookFoldersDao(): AudiobookFoldersDao
 }
