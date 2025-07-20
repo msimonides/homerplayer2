@@ -24,10 +24,10 @@
 
 package com.studio4plus.homerplayer2.utils
 
-import android.os.SystemClock
-import org.koin.core.annotation.Factory
+import java.time.Instant
 
 interface Clock {
     fun elapsedRealTime(): Long
     fun wallTime(): Long
+    fun wallInstant(): Instant
 }

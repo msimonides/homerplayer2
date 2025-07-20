@@ -26,8 +26,11 @@ package com.studio4plus.homerplayer2.app
 
 import androidx.room.AutoMigration
 import androidx.room.Database
+import androidx.room.DeleteColumn
+import androidx.room.RenameColumn
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import androidx.room.migration.AutoMigrationSpec
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.studio4plus.homerplayer2.audiobookfolders.AudiobookFoldersDatabase
@@ -56,11 +59,12 @@ import com.studio4plus.homerplayer2.utils.DbTypeConverters
         PodcastEpisode::class,
     ],
     views = [ AudiobookFileWithDuration::class ],
-    version = 5,
+    version = AppDatabase.VERSION,
     autoMigrations = [
         AutoMigration(1, 2),
         AutoMigration(3, 4),
         AutoMigration(4, 5),
+        AutoMigration(5, 6, AppDatabase.AutoMigration_5_6::class)
     ],
 )
 @TypeConverters(DbTypeConverters::class)
@@ -72,6 +76,8 @@ abstract class AppDatabase :
 {
 
     companion object {
+        const val VERSION = 6
+
         val MIGRATION_2_3 = object : Migration(2, 3) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 val statements = listOf(
@@ -90,5 +96,15 @@ abstract class AppDatabase :
                 }
             }
         }
+
+        val migrations = arrayOf(MIGRATION_2_3)
     }
+
+    @RenameColumn(
+        tableName = "podcasts",
+        fromColumnName = "include_episode_number",
+        toColumnName = "include_episode_date"
+    )
+    @DeleteColumn(tableName = "podcast_episodes", columnName = "number")
+    class AutoMigration_5_6 : AutoMigrationSpec
 }

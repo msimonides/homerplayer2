@@ -41,14 +41,14 @@ class UpdatePodcastNameConfig(
     suspend operator fun invoke(
         podcast: PodcastWithEpisodes,
         includePodcastTitle: Boolean,
-        includeEpisodeNumber: Boolean,
+        includeEpisodeDate: Boolean,
         includeEpisodeTitle: Boolean
     ) {
         db.withTransaction {
             podcastsDao.updateEpisodeTitle(
                 podcast.podcast.feedUri,
                 includePodcastTitle = includePodcastTitle,
-                includeEpisodeNumber = includeEpisodeNumber,
+                includeEpisodeDate = includeEpisodeDate,
                 includeEpisodeTitle = includeEpisodeTitle
             )
             val updatedPodcast = requireNotNull(podcastsDao.getPodcast(podcast.podcast.feedUri))

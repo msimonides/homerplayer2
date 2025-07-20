@@ -99,19 +99,18 @@ class PodcastsDaoTests {
 
     private fun podcastEpisode(
         uri: String,
-        number: Int = 1,
         title: String = "title",
         publicationTime: Instant? = Instant.ofEpochSecond(1000),
         feedUri: String = "https://feedUri",
         isDownloaded: Boolean = true,
         fileId: String = "fileId"
-    ) = PodcastEpisode(uri, number, title, publicationTime, feedUri, isDownloaded, fileId)
+    ) = PodcastEpisode(uri, title, publicationTime, feedUri, isDownloaded, fileId)
 
     private fun podcast(
         feedUri: String,
         title: String = "podcast title",
         titleOverride: String? = null,
-        includeEpisodeNumber: Boolean = true,
+        includeEpisodeDate: Boolean = true,
         includePodcastTitle: Boolean = true,
         includeEpisodeTitle: Boolean = true,
         downloadEpisodeCount: Int = 2,
@@ -119,7 +118,7 @@ class PodcastsDaoTests {
         feedUri = feedUri,
         title = title,
         titleOverride = titleOverride,
-        includeEpisodeNumber = includeEpisodeNumber,
+        includeEpisodeDate = includeEpisodeDate,
         includePodcastTitle = includePodcastTitle,
         includeEpisodeTitle = includeEpisodeTitle,
         downloadEpisodeCount = downloadEpisodeCount

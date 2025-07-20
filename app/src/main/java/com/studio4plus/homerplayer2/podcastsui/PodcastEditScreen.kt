@@ -195,8 +195,8 @@ private fun PodcastEdit(
         )
         AnimatedVisibility(podcast.includePodcastTitle) {
             LabeledSwitch(
-                stringResource(R.string.podcast_edit_name_episode_number),
-                podcast.includeEpisodeNumber,
+                stringResource(R.string.podcast_edit_name_episode_date),
+                podcast.includeEpisodeDate,
                 onEpisodeTitleIncludeNumber,
                 modifier = rowModifier
             )

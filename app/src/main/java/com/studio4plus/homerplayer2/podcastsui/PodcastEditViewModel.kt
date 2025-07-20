@@ -291,7 +291,7 @@ class PodcastEditViewModel(
                 feedUri = podcastUri,
                 title = feed.title,
                 titleOverride = null,
-                includeEpisodeNumber = true,
+                includeEpisodeDate = true,
                 includePodcastTitle = true,
                 includeEpisodeTitle = true,
                 downloadEpisodeCount = DEFAULT_EPISODE_COUNT,
@@ -318,14 +318,14 @@ class PodcastEditViewModel(
             updatePodcastNameConfig(
                 podcast,
                 includePodcastTitle = true,
-                includeEpisodeNumber = podcast.podcast.includeEpisodeNumber,
+                includeEpisodeDate = podcast.podcast.includeEpisodeDate,
                 includeEpisodeTitle = podcast.podcast.includeEpisodeTitle
             )
         } else {
             updatePodcastNameConfig(
                 podcast,
                 includePodcastTitle = false,
-                includeEpisodeNumber = false,
+                includeEpisodeDate = false,
                 includeEpisodeTitle = true
             )
         }
@@ -337,14 +337,14 @@ class PodcastEditViewModel(
             updatePodcastNameConfig(
                 podcast,
                 includePodcastTitle = true,
-                includeEpisodeNumber = true,
+                includeEpisodeDate = true,
                 includeEpisodeTitle = podcast.podcast.includeEpisodeTitle
             )
         } else {
             updatePodcastNameConfig(
                 podcast,
                 includePodcastTitle = podcast.podcast.includePodcastTitle,
-                includeEpisodeNumber = false,
+                includeEpisodeDate = false,
                 includeEpisodeTitle = true
             )
         }
@@ -356,14 +356,14 @@ class PodcastEditViewModel(
             updatePodcastNameConfig(
                 podcast,
                 includePodcastTitle = podcast.podcast.includePodcastTitle,
-                includeEpisodeNumber = podcast.podcast.includeEpisodeNumber,
+                includeEpisodeDate = podcast.podcast.includeEpisodeDate,
                 includeEpisodeTitle = true
             )
         } else {
             updatePodcastNameConfig(
                 podcast,
                 includePodcastTitle = true,
-                includeEpisodeNumber = true,
+                includeEpisodeDate = true,
                 includeEpisodeTitle = false
             )
         }

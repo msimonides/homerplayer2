@@ -47,10 +47,9 @@ import java.util.UUID
 data class PodcastEpisode(
     @PrimaryKey
     val uri: String,
-    val number: Int,
     val title: String,
     @ColumnInfo(name = "pub_time")
-    val publicationTime: Instant?,
+    val publicationTime: Instant?, // TODO: make it non-nullable after a transition period.
     @ColumnInfo(name = "feed_uri")
     val feedUri: String,
     @ColumnInfo(name = "is_downloaded")

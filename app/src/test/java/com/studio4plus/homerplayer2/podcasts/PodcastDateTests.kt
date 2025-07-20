@@ -24,7 +24,7 @@
 
 package com.studio4plus.homerplayer2.podcasts
 
-import com.studio4plus.homerplayer2.podcasts.usecases.DownloadPodcastFeed.Companion.parseRssDate
+import com.studio4plus.homerplayer2.podcasts.usecases.ParsePodcastFeed.Companion.parseRssDate
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test

@@ -29,7 +29,7 @@ import com.studio4plus.homerplayer2.settingsdata.FullKioskModeSetting
 import com.studio4plus.homerplayer2.settingsdata.UiSettings
 import com.studio4plus.homerplayer2.testutils.FakeDataStore
 import com.studio4plus.homerplayer2.testutils.FakeIsInForeground
-import com.studio4plus.homerplayer2.testutils.TestClock
+import com.studio4plus.homerplayer2.testutils.TestScopeClock
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.TestScope
@@ -63,7 +63,7 @@ class IsFullKioskModeEnabledTests {
             uiSettings = uiSettingsStore,
             isFullKioskAvailable = { true },
             isInForeground = isInForeground,
-            clock = TestClock(testScope)
+            clock = TestScopeClock(testScope)
         )
     }
 

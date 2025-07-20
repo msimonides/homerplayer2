@@ -27,23 +27,24 @@ package com.studio4plus.homerplayer2.podcasts.usecases
 import com.studio4plus.homerplayer2.net.toHttps
 import com.studio4plus.homerplayer2.podcasts.data.Podcast
 import com.studio4plus.homerplayer2.podcasts.data.PodcastEpisode
+import com.studio4plus.homerplayer2.utils.Clock
 import org.koin.core.annotation.Factory
 import java.util.UUID
 
 @Factory
 class UpdatePodcastFromFeed(
     private val updatePodcastEpisodes: UpdatePodcastEpisodes,
+    private val clock: Clock,
 ) {
     suspend operator fun invoke(podcast: Podcast, feed: PodcastFeed): Boolean {
         val latestEpisodes = feed.latestEpisodes.take(podcast.downloadEpisodeCount)
-        val totalCount = feed.rss.items.size
+        val now = clock.wallInstant()
         val episodes = latestEpisodes.mapIndexed { index, (episode, pubTime) ->
             val uri = requireNotNull(episode.audio) // Filtered above
             PodcastEpisode(
                 uri = uri.toHttps(),
-                number = totalCount - index,
                 title = episode.title ?: "",
-                publicationTime = pubTime,
+                publicationTime = pubTime ?: now,
                 feedUri = podcast.feedUri,
                 isDownloaded = false,
                 fileId = UUID.nameUUIDFromBytes(uri.encodeToByteArray()).toString()

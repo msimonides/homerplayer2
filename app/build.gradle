@@ -124,11 +124,12 @@ dependencies {
 
     testImplementation libs.androidx.test.corektx
     testImplementation libs.junit
+    testImplementation libs.kotlin.test.junit
     testImplementation libs.kotlinx.coroutines.test
     testImplementation libs.robolectric
     testImplementation libs.turbine
 
-    androidTestImplementation libs.androidx.test.espresso.core
+    androidTestImplementation libs.androidx.room.testing
     androidTestImplementation libs.androidx.test.junit
     androidTestImplementation libs.compose.ui.test.junit
 

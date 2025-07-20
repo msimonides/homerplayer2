@@ -28,9 +28,11 @@ import com.studio4plus.homerplayer2.utils.Clock
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.currentTime
+import java.time.Instant
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class TestClock(private val testScope: TestScope) : Clock {
+class TestScopeClock(private val testScope: TestScope) : Clock {
     override fun elapsedRealTime(): Long = testScope.currentTime
     override fun wallTime(): Long = testScope.currentTime
+    override fun wallInstant(): Instant = Instant.ofEpochMilli(wallTime())
 }

@@ -26,40 +26,56 @@ package com.studio4plus.homerplayer2.podcasts.usecases
 
 import android.content.Context
 import com.studio4plus.homerplayer2.R
+import com.studio4plus.homerplayer2.base.LocaleProvider
 import com.studio4plus.homerplayer2.podcasts.data.Podcast
 import com.studio4plus.homerplayer2.podcasts.data.PodcastEpisode
 import org.koin.core.annotation.Factory
+import java.text.SimpleDateFormat
 
 @Factory
 class PodcastEpisodeName(
-    private val appContext: Context
+    private val appContext: Context,
+    private val localeProvider: LocaleProvider,
 ) {
 
     operator fun invoke(podcast: Podcast, episode: PodcastEpisode): String = with (podcast) {
         when {
-            includePodcastTitle && includeEpisodeNumber && includeEpisodeTitle ->
+            includePodcastTitle && includeEpisodeDate && includeEpisodeTitle ->
                 appContext.getString(
-                    R.string.podcast_episode_name_title_number_episode,
+                    R.string.podcast_episode_name_title_date_episode,
                     podcast.displayName(),
-                    episode.number,
+                    formatEpisodeDate(episode),
                     episode.title
                 )
             includePodcastTitle && includeEpisodeTitle ->
                 appContext.getString(
                     R.string.podcast_episode_name_title_episode, podcast.displayName(), episode.title
                 )
-            includePodcastTitle && includeEpisodeNumber ->
+            includePodcastTitle && includeEpisodeDate ->
                 appContext.getString(
-                    R.string.podcast_episode_name_title_number, podcast.displayName(), episode.number
+                    R.string.podcast_episode_name_title_date, podcast.displayName(), formatEpisodeDate(episode)
                 )
             includeEpisodeTitle ->
                 episode.title
             else ->
                 throw IllegalStateException(
-                    "Unsupported episode name combination: podcast=$includePodcastTitle; number=$includeEpisodeNumber; episode=$includeEpisodeTitle"
+                    "Unsupported episode name combination: podcast=$includePodcastTitle; date=$includeEpisodeDate; episode=$includeEpisodeTitle"
                 )
         }
     }
+
+    private fun formatEpisodeDate(episode: PodcastEpisode): String =
+        // Already downloaded podcast episodes can have a null publication time,
+        // newly downloaded ones will get a date.
+        episode.publicationTime?.let { date ->
+            // SimpleDateFormat has correct localization of MMMM as opposed to desugared
+            // java.time.DateTimeFormatter.
+            // Not cached because it's not thread safe, this code is not being called that often.
+            SimpleDateFormat(
+                appContext.getString(R.string.podcast_episode_name_date_format),
+                localeProvider()
+            ).format(date.toEpochMilli())
+        } ?: ""
 }
 
 private fun Podcast.displayName() = titleOverride ?: title

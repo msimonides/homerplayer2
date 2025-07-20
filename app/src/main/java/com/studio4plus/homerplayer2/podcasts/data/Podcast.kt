@@ -38,8 +38,8 @@ data class Podcast(
     val title: String,
     @ColumnInfo(name = "title_override")
     val titleOverride: String?,
-    @ColumnInfo(name = "include_episode_number")
-    val includeEpisodeNumber: Boolean,
+    @ColumnInfo(name = "include_episode_date")
+    val includeEpisodeDate: Boolean,
     @ColumnInfo(name = "include_podcast_title")
     val includePodcastTitle: Boolean,
     @ColumnInfo(name = "include_episode_title")

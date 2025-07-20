@@ -87,8 +87,8 @@
     <string name="podcast_edit_title_episode_display_name">Episode display name</string>
     <!-- Header above list of podcast episodes in the podcast edit screen. -->
     <string name="podcast_edit_title_episodes">Episodes</string>
-    <!-- Label for switch for including episode number in episode display name in browse screen. -->
-    <string name="podcast_edit_name_episode_number">Episode number</string>
+    <!-- Label for switch for including episode date in episode display name in browse screen. -->
+    <string name="podcast_edit_name_episode_date">Episode date</string>
     <!-- Label for switch for including episode title in episode display name in browse screen. -->
     <string name="podcast_edit_name_episode_title">Episode title</string>
     <!-- Label for switch for including podcast title in episode display name in browse screen. -->
@@ -101,17 +101,27 @@
     <string name="podcast_info_latest_episode_date">Latest: %1$s</string>
     <!-- Display format for podcast episode:
          %1$s - podcast title
-         %2$d - episode number
+         %2$d - episode publication date
          %3$s - episode title -->
-    <string name="podcast_episode_name_title_number_episode">%1$s %2$d. %3$s</string>
+    <string name="podcast_episode_name_title_date_episode">%1$s. %2$s. %3$s</string>
     <!-- Display format for podcast episode:
          %1$s - podcast title
          %2$s - episode title -->
     <string name="podcast_episode_name_title_episode">%1$s. %2$s</string>
     <!-- Display format for podcast episode:
          %1$s - podcast title
-         %2$d - episode number -->
-    <string name="podcast_episode_name_title_number">%1$s %2$d</string>
+         %2$d - episode publication date -->
+    <string name="podcast_episode_name_title_date">%1$s. %2$s</string>
+    <!-- Pattern for formatting dates used in podcast episode display names.
+         It should include day of the month and month name. The formatted date
+         needs to sound natural when read by text-to-speech. Text-to-speech
+         usually applies its own additional logic (e.g. "3 July" may be read as
+         "the third of July").
+         This is tricky and requires testing, contact the developer.
+
+         The date format pattern is documented here: https://docs.oracle.com/javase/8/docs/api/java/text/SimpleDateFormat.html
+         -->
+    <string name="podcast_episode_name_date_format">d MMMM</string>
     <string name="podcast_search_label">Podcast search</string>
     <string name="podcast_search_hint">Podcast title</string>
     <string name="podcast_search_error_title">Error</string>

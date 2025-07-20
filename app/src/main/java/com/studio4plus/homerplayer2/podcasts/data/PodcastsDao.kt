@@ -49,7 +49,7 @@ class PodcastWithEpisodes(
 ) {
     // @Relation doesn't provide ordering, sort explicitly. The number of episodes is less than ten.
     @Ignore
-    val episodes = episodesUnordered.sortedByDescending { it.number }
+    val episodes = episodesUnordered.sortedByDescending { it.publicationTime }
 
     // Don't use data class to use component2 for the ordered episodes
     operator fun component1(): Podcast = podcast
@@ -108,7 +108,7 @@ abstract class PodcastsDao {
     @Query("""
         UPDATE podcasts
            SET include_podcast_title = :includePodcastTitle,
-               include_episode_number = :includeEpisodeNumber,
+               include_episode_date = :includeEpisodeDate,
                include_episode_title = :includeEpisodeTitle
          WHERE feed_uri = :feedUri
          """
@@ -116,7 +116,7 @@ abstract class PodcastsDao {
     abstract suspend fun updateEpisodeTitle(
         feedUri: String,
         includePodcastTitle: Boolean,
-        includeEpisodeNumber: Boolean,
+        includeEpisodeDate: Boolean,
         includeEpisodeTitle: Boolean
     )
 

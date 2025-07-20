@@ -27,9 +27,11 @@ package com.studio4plus.homerplayer2.app
 import android.os.SystemClock
 import com.studio4plus.homerplayer2.utils.Clock
 import org.koin.core.annotation.Factory
+import java.time.Instant
 
 @Factory
 class DefaultClock : Clock {
     override fun elapsedRealTime(): Long = SystemClock.elapsedRealtime()
     override fun wallTime(): Long = System.currentTimeMillis()
+    override fun wallInstant(): Instant = Instant.now()
 }

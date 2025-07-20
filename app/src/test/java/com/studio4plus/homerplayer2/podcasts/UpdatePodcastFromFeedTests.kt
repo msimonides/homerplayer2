@@ -34,11 +34,17 @@ import com.studio4plus.homerplayer2.app.AppDatabase
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksDao
 import com.studio4plus.homerplayer2.podcasts.data.Podcast
 import com.studio4plus.homerplayer2.podcasts.data.PodcastsDao
+import com.studio4plus.homerplayer2.podcasts.usecases.ParsePodcastFeed.Companion.parseRssDate
 import com.studio4plus.homerplayer2.podcasts.usecases.PodcastFeed
 import com.studio4plus.homerplayer2.podcasts.usecases.PodcastFeedEpisode
 import com.studio4plus.homerplayer2.podcasts.usecases.UpdatePodcastEpisodes
 import com.studio4plus.homerplayer2.podcasts.usecases.UpdatePodcastFromFeed
+import com.studio4plus.homerplayer2.testutils.TestScopeClock
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.advanceTimeBy
+import kotlinx.coroutines.test.currentTime
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -48,6 +54,9 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import java.io.IOException
+import java.time.Instant
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 
 @RunWith(RobolectricTestRunner::class)
 @Config(application = Application::class)
@@ -56,12 +65,14 @@ class UpdatePodcastFromFeedTests {
     private lateinit var db: AppDatabase
     private lateinit var audiobooksDao: AudiobooksDao
     private lateinit var podcastsDao: PodcastsDao
+    private lateinit var testScope: TestScope
+    private lateinit var testScopeClock: TestScopeClock
 
     private val podcast = Podcast(
         feedUri = "dummyUri",
         title = "Podcast Title",
         titleOverride = null,
-        includeEpisodeNumber = true,
+        includeEpisodeDate = true,
         includePodcastTitle = true,
         includeEpisodeTitle = true,
         downloadEpisodeCount = 2,
@@ -77,8 +88,11 @@ class UpdatePodcastFromFeedTests {
             .build()
         podcastsDao = db.podcastsDao()
         audiobooksDao = db.audiobooksDao()
+        testScope = TestScope()
+        testScopeClock = TestScopeClock(testScope)
         updatePodcast = UpdatePodcastFromFeed(
-            UpdatePodcastEpisodes(db, audiobooksDao, podcastsDao)
+            UpdatePodcastEpisodes(db, audiobooksDao, podcastsDao),
+            testScopeClock
         )
 
         runBlocking {
@@ -93,7 +107,7 @@ class UpdatePodcastFromFeedTests {
     }
 
     @Test
-    fun `insert 3 episodes in batches of 2`() = runTest {
+    fun `insert 3 episodes in batches of 2`() = testScope.runTest {
         val items = makeRssItems(3)
         val feed = makeFeed(makeRssChannel(podcast.title, items.take(2)))
         updatePodcast(podcast, feed)
@@ -105,15 +119,41 @@ class UpdatePodcastFromFeedTests {
         updatePodcast(podcast, updatedFeed)
         val episodesAfterUpdate = podcastsDao.getPodcastEpisodes(podcast.feedUri)
         assertEquals(setOf("Episode 2", "Episode 3"), episodesAfterUpdate.map { it.title }.toSet())
-        assertEquals(listOf(2, 3), episodesAfterUpdate.map { it.number }.sorted())
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `missing episode publication date is set to current time`() = testScope.runTest {
+        val episode1PubTime = Instant.ofEpochMilli(currentTime)
+        val items =
+            makeRssItems(3) { num -> if (num == 1) episode1PubTime.toUtcRssTime() else null }
+
+        advanceTimeBy(1000)
+        val episode2ExpectedPubTime = Instant.ofEpochMilli(currentTime)
+        val feed1 = makeFeed(makeRssChannel(podcast.title, items.take(2)))
+        updatePodcast(podcast, feed1)
+        val episodes1 = podcastsDao.getPodcastEpisodes(podcast.feedUri)
+        assertEquals(
+            listOf("Episode 2", "Episode 1"),
+            episodes1.map { it.title }.sortedDescending()
+        )
+
+        advanceTimeBy(1000)
+        val episode3ExpectedPubTime = Instant.ofEpochMilli(currentTime)
+        val feed2 = makeFeed(makeRssChannel(podcast.title, items.takeLast(2)))
+        updatePodcast(podcast, feed2)
+        val episodes2 = podcastsDao.getPodcastEpisodes(podcast.feedUri)
+        assertEquals(
+            listOf("Episode 3", "Episode 2"),
+            episodes2.map { it.title }.sortedDescending()
+        )
     }
 
     private fun makeFeed(rssChannel: RssChannel) =
         PodcastFeed(
-            rss = rssChannel,
             title = podcast.title,
             latestEpisodes = rssChannel.items.reversed().map {
-                PodcastFeedEpisode(it, publicationTime = null)
+                PodcastFeedEpisode(it, publicationTime = it.pubDate.parseRssDate())
             }
         )
 
@@ -130,15 +170,17 @@ class UpdatePodcastFromFeedTests {
             youtubeChannelData = null,
         )
 
-    private fun makeRssItems(itemCount: Int) =
-        (1 .. itemCount).map { number -> makeRssItem(number) }
+    private fun makeRssItems(
+        itemCount: Int,
+        itemPubDate: (Int) -> String? = { "Tue, 3 Jun 2008 1:05:30 GMT" }
+    ) = (1 .. itemCount).map { number -> makeRssItem(number, itemPubDate(number)) }
 
-    private fun makeRssItem(number: Int) = RssItem(
+    private fun makeRssItem(number: Int, pubDate: String?) = RssItem(
         guid = null,
         title = "Episode $number",
         author = "Author",
         link = null,
-        pubDate = null,
+        pubDate = pubDate,
         description = null,
         content = null,
         image = null,
@@ -152,4 +194,7 @@ class UpdatePodcastFromFeedTests {
         youtubeItemData = null,
         rawEnclosure = null,
     )
+
+    private fun Instant.toUtcRssTime(): String =
+        DateTimeFormatter.RFC_1123_DATE_TIME.format(this.atZone(ZoneOffset.UTC))
 }
