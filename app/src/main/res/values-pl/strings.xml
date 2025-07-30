@@ -234,4 +234,8 @@ Włącz dla treści, które są odtwarzane wielokrotnie, np. poezji, tekstów re
     <string name="speech_init_lang_not_supported">Język nie jest obsługiwany. Zainstaluj mechanizm zamiany tekstu na mowę, który obsługuje Twój język.</string>
     <string name="speech_play_test_phrase">Odtwórz frazę testową</string>
     <string name="speech_test_phrase">Alicja w krainie czarów</string>
+    <string name="podcast_edit_name_episode_date">Data odcinka</string>
+    <string name="podcast_episode_name_title_date_episode">%1$s. %2$s. %3$s</string>
+    <string name="podcast_episode_name_title_date">%1$s. %2$s</string>
+    <string name="podcast_episode_name_date_format">d MMMM</string>
 </resources>
