@@ -73,7 +73,6 @@ Może to potrwać kilka minut.</string>
     <string name="podcast_edit_episode_count">Liczba odcinków</string>
     <string name="podcast_edit_title_episode_display_name">Wyświetlana nazwa odcinka</string>
     <string name="podcast_edit_title_episodes">Odcinki</string>
-    <string name="podcast_edit_name_episode_number">Numer odcinka</string>
     <string name="podcast_edit_name_episode_title">Tytuł odcinka</string>
     <string name="podcast_edit_name_podcast_title">Tytuł podcastu</string>
     <string name="podcast_feed_error_doesnt_exist">Nieznany lub nieprawidłowy adres URL</string>
@@ -82,9 +81,7 @@ Może to potrwać kilka minut.</string>
     <string name="podcast_feed_error_parse">Nie można przetworzyć danych podcastu</string>
     <string name="podcast_info_no_episodes_found">Podcast nie ma żadnych odcinków</string>
     <string name="podcast_info_latest_episode_date">Najnowszy: %1$s</string>
-    <string name="podcast_episode_name_title_number_episode">%1$s %2$d. %3$s</string>
     <string name="podcast_episode_name_title_episode">%1$s. %2$s</string>
-    <string name="podcast_episode_name_title_number">%1$s %2$d</string>
     <string name="podcast_search_label">Szukaj podcastu</string>
     <string name="podcast_search_hint">Tytuł podcastu</string>
     <string name="podcast_search_error_title">Błąd</string>
