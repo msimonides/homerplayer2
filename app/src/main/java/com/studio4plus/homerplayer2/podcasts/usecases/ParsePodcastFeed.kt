@@ -30,6 +30,7 @@ import com.prof18.rssparser.exception.RssParsingException
 import com.prof18.rssparser.model.RssItem
 import com.studio4plus.homerplayer2.podcasts.MAX_PODCAST_EPISODE_COUNT
 import io.sentry.Sentry
+import org.koin.core.annotation.Factory
 import timber.log.Timber
 import java.time.DateTimeException
 import java.time.Instant
@@ -52,6 +53,7 @@ data class PodcastFeed(
     val latestEpisodes: List<PodcastFeedEpisode> // Ordered newest to oldest.
 )
 
+@Factory
 class ParsePodcastFeed(
     private val rssParser: RssParser,
 ) {
