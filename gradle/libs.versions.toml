@@ -1,6 +1,6 @@
 [versions]
 about-libraries = "12.2.4"
-android-gradle-plugin = "8.11.1"
+android-gradle-plugin = "8.8.2"
 android-compileSdk = '36'
 android-minSdk = '21'
 androidx-lifecycle = '2.9.1'
