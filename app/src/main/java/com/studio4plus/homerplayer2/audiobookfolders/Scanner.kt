@@ -82,6 +82,8 @@ class Scanner(
         } else {
             cursor.mapNotNull {
                 val fileName = cursor.getString(COLUMN_DISPLAY_NAME)
+                if (fileName.startsWith(".")) return@mapNotNull null
+
                 val bookId = "$folderUri/$fileName"
                 val documentId = cursor.getString(COLUMN_ID)
                 if (isFolder(cursor.getString(COLUMN_MIME_TYPE))) {
