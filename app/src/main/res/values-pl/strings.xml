@@ -38,7 +38,6 @@
     <string name="content_samples_install_error">Instalacja przykładowych książek nie powiodła się. %1$s</string>
     <string name="content_section_title_audiobooks">Foldery z audiobookami</string>
     <string name="content_section_title_podcasts">Podcasty</string>
-    <string name="content_tts_new_title">Nowość</string>
     <string name="onboarding_content_title">Audiobooki i podcasty</string>
     <string name="onboarding_content_description">Dodaj przynajmniej jeden folder z audiobookami lub jeden podcast.</string>
     <string name="onboarding_folder_title">Folder z audiobookami</string>
@@ -236,4 +235,11 @@ Włącz dla treści, które są odtwarzane wielokrotnie, np. poezji, tekstów re
     <string name="podcast_episode_name_title_date_episode">%1$s. %2$s. %3$s</string>
     <string name="podcast_episode_name_title_date">%1$s. %2$s</string>
     <string name="podcast_episode_name_date_format">d MMMM</string>
+    <string name="content_tts_new_title">Nowość</string>
+    <string name="settings_ui_tts_read_book_titles_announce_new_item">Powiedz \"%1$s\" dla nowej zawartości…</string>
+    <string name="settings_ui_tts_read_book_titles_announce_new_descripton">Oznacz nowo dodane książki i podcasty podczas czytania ich tytułów.</string>
+    <string name="settings_ui_tts_read_book_titles_announce_new_switch">Powiedz \"%1$s\" dla nowej zawartości</string>
+    <string name="settings_ui_tts_read_book_titles_announce_new_enabled">Włączone</string>
+    <string name="settings_ui_tts_read_book_titles_announce_new_disabled">Wyłączone</string>
+    <string name="settings_ui_tts_read_book_titles_announce_new_test">Przetestuj</string>
 </resources>
