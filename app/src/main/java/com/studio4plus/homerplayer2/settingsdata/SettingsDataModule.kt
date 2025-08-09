@@ -27,6 +27,8 @@ package com.studio4plus.homerplayer2.settingsdata
 import android.content.Context
 import androidx.datastore.core.DataStore
 import com.studio4plus.homerplayer2.base.DispatcherProvider
+import com.studio4plus.homerplayer2.base.LocaleProvider
+import com.studio4plus.homerplayer2.base.VersionUpdate
 import com.studio4plus.homerplayer2.loccalstorage.LOCAL_STORAGE_JSON
 import com.studio4plus.homerplayer2.loccalstorage.LocalStorageModule
 import com.studio4plus.homerplayer2.loccalstorage.createDataStore
@@ -84,7 +86,9 @@ class SettingsDataModule {
         appContext: Context,
         mainScope: CoroutineScope,
         dispatcherProvider: DispatcherProvider,
-        @Named(LOCAL_STORAGE_JSON) json: Json
+        @Named(LOCAL_STORAGE_JSON) json: Json,
+        versionUpdate: VersionUpdate,
+        localeProvider: LocaleProvider,
     ): DataStore<UiSettings> =
         createDataStore(
             appContext,
@@ -93,7 +97,10 @@ class SettingsDataModule {
             json,
             UI,
             UiSettings(),
-            UiSettings.serializer()
+            UiSettings.serializer(),
+            migrations = listOf(
+                UiSettingsMigration1_2(versionUpdate, localeProvider)
+            )
         )
 
     companion object {

@@ -28,6 +28,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import com.studio4plus.homerplayer2.BuildConfig
+import java.util.Locale
 
 fun broadcastReceiver(block: (Intent) -> Unit): BroadcastReceiver =
     object : BroadcastReceiver() {
@@ -44,3 +46,6 @@ fun openWebUrl(context: Context, url: String) {
 fun Uri.hasFileScheme() = scheme?.lowercase() == "file" && path != null
 
 fun Uri.hasContentScheme() = scheme?.lowercase() == "content"
+
+fun hasUserLanguageTranslation(userLocale: Locale): Boolean =
+    BuildConfig.SUPPORTED_TRANSLATIONS.contains(userLocale.language.lowercase())

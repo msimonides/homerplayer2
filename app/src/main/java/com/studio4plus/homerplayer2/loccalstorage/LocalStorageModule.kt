@@ -49,6 +49,8 @@ class LocalStorageModule {
     @Named(LOCAL_STORAGE_JSON)
     fun json() = Json {
         ignoreUnknownKeys = true
+        encodeDefaults = true
+        explicitNulls = true
     }
 }
 

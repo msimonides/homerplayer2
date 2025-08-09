@@ -24,6 +24,10 @@
 
 package com.studio4plus.homerplayer2.settingsdata
 
+import androidx.datastore.core.DataMigration
+import com.studio4plus.homerplayer2.base.LocaleProvider
+import com.studio4plus.homerplayer2.base.VersionUpdate
+import com.studio4plus.homerplayer2.utils.hasUserLanguageTranslation
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -86,4 +90,18 @@ data class UiSettings(
             null -> null
         }
     }
+}
+
+class UiSettingsMigration1_2(
+    val versionUpdate: VersionUpdate,
+    val localeProvider: LocaleProvider
+) : DataMigration<UiSettings> {
+
+    override suspend fun shouldMigrate(currentData: UiSettings): Boolean =
+        versionUpdate.updatingFromVersion <= 26
+
+    override suspend fun cleanUp() = Unit
+
+    override suspend fun migrate(currentData: UiSettings): UiSettings =
+        currentData.copy(readBookTitleAnnounceNew = hasUserLanguageTranslation(localeProvider()))
 }

@@ -25,9 +25,11 @@
 package com.studio4plus.homerplayer2.app
 
 import androidx.datastore.core.DataStore
+import com.studio4plus.homerplayer2.base.LocaleProvider
 import com.studio4plus.homerplayer2.onboarding.OnboardingDelegate
 import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
 import com.studio4plus.homerplayer2.settingsdata.UiSettings
+import com.studio4plus.homerplayer2.utils.hasUserLanguageTranslation
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.koin.core.annotation.Factory
@@ -37,12 +39,16 @@ import org.koin.core.annotation.Named
 class AppOnboardingDelegate(
     private val mainScope: CoroutineScope,
     @Named(DATASTORE_APP_STATE) private val appStateStore: DataStore<StoredAppState>,
-    @Named(SettingsDataModule.UI) private val uiSettingsStore: DataStore<UiSettings>
+    @Named(SettingsDataModule.UI) private val uiSettingsStore: DataStore<UiSettings>,
+    private val localeProvider: LocaleProvider
 ) : OnboardingDelegate {
 
     override fun onOnboardingFinished() {
         mainScope.launch {
             appStateStore.updateData { it.copy(onboardingCompleted = true) }
+            uiSettingsStore.updateData {
+                it.copy(readBookTitleAnnounceNew = hasUserLanguageTranslation(localeProvider()))
+            }
         }
     }
 

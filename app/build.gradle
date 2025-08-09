@@ -10,6 +10,7 @@ plugins {
 }
 
 def enableComposeMetrics = project.hasProperty("enableComposeMetrics") ? project["enableComposeMetrics"] : false
+def supportedTranslations = ["en", "pl"]
 
 android {
     namespace 'com.studio4plus.homerplayer2'
@@ -21,6 +22,9 @@ android {
         targetSdk 35
         versionCode 26
         versionName "1.4.3"
+
+        // Note: don't set resConfigs, the app needs to support all languages regardless of available translations.
+        buildConfigField("String[]", "SUPPORTED_TRANSLATIONS", "{ ${supportedTranslations.collect { "\"$it\"" }.join(", ")} }")
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         testOptions {
