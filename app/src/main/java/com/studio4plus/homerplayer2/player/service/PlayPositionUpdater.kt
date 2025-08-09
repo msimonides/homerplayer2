@@ -42,6 +42,8 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.koin.core.annotation.Factory
 
+private const val NEW_BOOK_PLAY_THRESHOLD_MS = 15_000
+
 @OptIn(ExperimentalCoroutinesApi::class)
 @Factory
 class PlayPositionUpdater(
@@ -52,7 +54,7 @@ class PlayPositionUpdater(
 
     // TODO: handle changes via notification while paused.
 
-    private data class Position(val fileUri: Uri, val position: Long)
+    private data class Position(val fileUri: Uri, val fileIndex: Int, val position: Long)
 
     private sealed interface State {
         data class Playing(val player: Player) : State
@@ -69,9 +71,10 @@ class PlayPositionUpdater(
                     updateLastSelectedBook(state.player)
                     tickerFlow(5_000L)
                         .mapNotNull {
+                            val currentFileIndex = state.player.currentMediaItemIndex
                             val currentFileUri = state.player.currentMediaItem?.localConfiguration?.uri
                             currentFileUri?.let {
-                                Position(it, state.player.currentPosition)
+                                Position(currentFileUri, currentFileIndex, state.player.currentPosition)
                             }
                         }
                 }
@@ -84,19 +87,23 @@ class PlayPositionUpdater(
             }
         }.onEach { position ->
             mainScope.launch {
-                audiobooksDao.updatePlayPosition(position.fileUri, position.position)
+                val mayBeNew = position.fileIndex == 0 && position.position < NEW_BOOK_PLAY_THRESHOLD_MS
+                audiobooksDao.updatePlayPosition(mayBeNew, position.fileUri, position.position)
             }
         }.launchIn(mainScope)
     }
 
     override fun onEvents(player: Player, events: Player.Events) {
         // onEvents is a more cumbersome API but it gets the Player.
-        if (events.contains(Player.EVENT_PLAYBACK_STATE_CHANGED)) {
+        if (events.contains(Player.EVENT_IS_PLAYING_CHANGED)) {
             if (player.isPlaying) {
                 stateFlow.value = State.Playing(player)
             } else {
+                val currentFileIndex = player.currentMediaItemIndex
                 val currentFileUri = player.currentMediaItem?.localConfiguration?.uri
-                val position = currentFileUri?.let { Position(it, player.currentPosition) }
+                val position = currentFileUri?.let {
+                    Position(currentFileUri, currentFileIndex, player.currentPosition)
+                }
                 stateFlow.value = State.Stopped(lastPosition = position)
 
                 // Rewinding triggers another event.

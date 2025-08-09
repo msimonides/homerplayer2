@@ -24,13 +24,11 @@
 
 package com.studio4plus.homerplayer2.podcasts
 
-import android.content.Context
-import androidx.room.Room
-import androidx.test.core.app.ApplicationProvider
 import com.studio4plus.homerplayer2.app.AppDatabase
 import com.studio4plus.homerplayer2.podcasts.data.Podcast
 import com.studio4plus.homerplayer2.podcasts.data.PodcastEpisode
 import com.studio4plus.homerplayer2.podcasts.data.PodcastsDao
+import com.studio4plus.homerplayer2.testutils.createInMemoryDatabase
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -57,10 +55,7 @@ class PodcastsDaoTests {
 
     @Before
     fun createDb() {
-        val context = ApplicationProvider.getApplicationContext<Context>()
-        db = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java)
-            .allowMainThreadQueries()
-            .build()
+        db = createInMemoryDatabase()
         podcastsDao = db.podcastsDao()
     }
 

@@ -38,6 +38,7 @@
     <string name="content_samples_install_error">Instalacja przykładowych książek nie powiodła się. %1$s</string>
     <string name="content_section_title_audiobooks">Foldery z audiobookami</string>
     <string name="content_section_title_podcasts">Podcasty</string>
+    <string name="content_tts_new_title">Nowość</string>
     <string name="onboarding_content_title">Audiobooki i podcasty</string>
     <string name="onboarding_content_description">Dodaj przynajmniej jeden folder z audiobookami lub jeden podcast.</string>
     <string name="onboarding_folder_title">Folder z audiobookami</string>

@@ -64,7 +64,8 @@ import com.studio4plus.homerplayer2.utils.DbTypeConverters
         AutoMigration(1, 2),
         AutoMigration(3, 4),
         AutoMigration(4, 5),
-        AutoMigration(5, 6, AppDatabase.AutoMigration_5_6::class)
+        AutoMigration(5, 6, AppDatabase.AutoMigration_5_6::class),
+        AutoMigration(6, 7),
     ],
 )
 @TypeConverters(DbTypeConverters::class)
@@ -76,7 +77,7 @@ abstract class AppDatabase :
 {
 
     companion object {
-        const val VERSION = 6
+        const val VERSION = 7
 
         val MIGRATION_2_3 = object : Migration(2, 3) {
             override fun migrate(db: SupportSQLiteDatabase) {

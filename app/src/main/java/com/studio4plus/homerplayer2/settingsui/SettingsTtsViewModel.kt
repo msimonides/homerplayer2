@@ -27,10 +27,13 @@ package com.studio4plus.homerplayer2.settingsui
 import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.studio4plus.homerplayer2.player.usecases.GetSelectedBook
 import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
 import com.studio4plus.homerplayer2.settingsdata.UiSettings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import org.koin.android.annotation.KoinViewModel
@@ -39,20 +42,39 @@ import org.koin.core.annotation.Named
 @KoinViewModel
 class SettingsTtsViewModel(
     private val mainScope: CoroutineScope,
-    @Named(SettingsDataModule.UI) private val settings: DataStore<UiSettings>
+    @Named(SettingsDataModule.UI) private val settings: DataStore<UiSettings>,
+    getSelectedBook: GetSelectedBook
 ) : ViewModel() {
 
     data class ViewState(
-        val readBookTitlesEnabled: Boolean
+        val readBookTitlesEnabled: Boolean,
+        val readBookTitlesAnnounceNew: Boolean,
+        val readBookTitlesAnnounceNewPhrase: String?,
+        val selectedBookTitle: String?,
     )
 
-    val viewState = settings.data.map { uiSettings ->
+    val viewState = combine(
+        settings.data,
+        getSelectedBook.observe().map { it?.displayName }.distinctUntilChanged(),
+    ) { uiSettings, selectedBookTitle ->
         ViewState(
-            readBookTitlesEnabled = uiSettings.readBookTitles
+            readBookTitlesEnabled = uiSettings.readBookTitles,
+            readBookTitlesAnnounceNew = uiSettings.readBookTitleAnnounceNew,
+            readBookTitlesAnnounceNewPhrase = uiSettings.readBookTitleAnnounceNewPhrase,
+            selectedBookTitle = selectedBookTitle
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
     fun setReadBookTitles(enable: Boolean) {
         mainScope.launchUpdate(settings) { it.copy(readBookTitles = enable) }
+    }
+
+    fun setAnnounceNewTitles(enable: Boolean, phrase: String?) {
+        mainScope.launchUpdate(settings) {
+            it.copy(
+                readBookTitleAnnounceNew = enable,
+                readBookTitleAnnounceNewPhrase = phrase
+            )
+        }
     }
 }

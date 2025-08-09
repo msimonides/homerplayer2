@@ -48,6 +48,12 @@
     <string name="content_samples_install_error">Samples installation failed. %1$s</string>
     <string name="content_section_title_audiobooks">Audiobooks folders</string>
     <string name="content_section_title_podcasts">Podcasts</string>
+    <!-- A phrase to indicate that a book or podcast episode is new. It is used only when reading
+         titles with text-to-speech. It is added in front of the title.
+
+         Example:
+         New. Alice in Wonderland -->
+    <string name="content_tts_new_title">New</string>
 
     <string name="onboarding_content_title">Audiobooks and Podcasts</string>
     <string name="onboarding_content_description">Please add at least one folder with your audiobooks or one podcast.</string>
@@ -254,6 +260,25 @@
     <string name="settings_ui_tts_settings_disabled">Disabled</string>
     <string name="settings_ui_tts_settings_title">Text-to-speech</string>
     <string name="settings_ui_tts_read_book_titles">Read book titles</string>
+    <!-- Label for setting controlling announcing new books.
+    %1$s - the phrase for labeling new content.
+
+    Example: Say "New" for new content…
+-->
+    <string name="settings_ui_tts_read_book_titles_announce_new_item">Say \"%1$s\" for new content…</string>
+    <!-- Description for the functionality of announcing new content by adding the phrase "New" to the title.
+         The word "New" in this description must match "content_tts_new_title". -->
+    <string name="settings_ui_tts_read_book_titles_announce_new_descripton">Identify newly added books and podcast when reading their titles.</string>
+    <!-- Label for switch for announcing "New" book.
+        %1$s - the phrase for labeling new content.
+
+        Example: Say "New" for new content
+    -->
+    <string name="settings_ui_tts_read_book_titles_announce_new_switch">Say \"%1$s\" for new content</string>
+    <string name="settings_ui_tts_read_book_titles_announce_new_enabled">Enabled</string>
+    <string name="settings_ui_tts_read_book_titles_announce_new_disabled">Disabled</string>
+    <!-- Button that plays the user's phrase for announcing "New" book. -->
+    <string name="settings_ui_tts_read_book_titles_announce_new_test">Test</string>
     <string name="settings_ui_tts_open_settings">Open text-to-speech settings…</string>
     <string name="settings_ui_version_item">Version</string>
 

@@ -35,6 +35,7 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
@@ -77,9 +78,66 @@ fun SettingSwitch(
     summary: String? = null,
     multilineSummary: Boolean = false,
 ) {
-    val switch = @Composable {
+    SettingToggleable(
+        label = label,
+        value = value,
+        icon = icon,
+        onChange = onChange,
+        modifier = modifier,
+        summary = summary,
+        multilineSummary = multilineSummary,
+    ) {
         Switch(checked = value, onCheckedChange = null, modifier = Modifier.clearAndSetSemantics {})
     }
+}
+
+@Composable
+fun SettingCheckbox(
+    label: String,
+    value: Boolean,
+    icon: ImageVector,
+    onChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+    summary: String? = null,
+    multilineSummary: Boolean = false,
+) {
+    SettingCheckbox(label, value, rememberVectorPainter(icon), onChange, modifier, summary, multilineSummary)
+}
+
+@Composable
+fun SettingCheckbox(
+    label: String,
+    value: Boolean,
+    icon: Painter?,
+    onChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+    summary: String? = null,
+    multilineSummary: Boolean = false,
+) {
+    SettingToggleable(
+        label = label,
+        value = value,
+        icon = icon,
+        onChange = onChange,
+        modifier = modifier,
+        summary = summary,
+        multilineSummary = multilineSummary,
+    ) {
+        Checkbox(checked = value, onCheckedChange = null, modifier = Modifier.clearAndSetSemantics {})
+    }
+}
+
+@Composable
+fun SettingToggleable(
+    label: String,
+    value: Boolean,
+    icon: Painter?,
+    onChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+    summary: String? = null,
+    multilineSummary: Boolean = false,
+    toggle: @Composable () -> Unit,
+) {
     val settingModifier = Modifier
         .toggleable(
             value = value,
@@ -93,7 +151,7 @@ fun SettingSwitch(
             icon = icon,
             summary = summary,
             modifier = settingModifier,
-            controlItem = switch
+            controlItem = toggle
         )
     } else {
         SettingRow(
@@ -101,7 +159,7 @@ fun SettingSwitch(
             icon = icon,
             summary = summary,
             modifier = settingModifier,
-            controlItem = switch
+            controlItem = toggle
         )
     }
 }
@@ -283,5 +341,13 @@ private fun SettingSwitchWithSummaryPreview() {
 private fun SettingSwitchWithoutSummaryPreview() {
     HomerPlayer2Theme {
         SettingSwitch("Some switch", icon = Icons.Default.Settings, value = false, onChange = {})
+    }
+}
+
+@Preview
+@Composable
+private fun SettingCheckboxWithoutSummaryPreview() {
+    HomerPlayer2Theme {
+        SettingCheckbox("Some switch", icon = Icons.Default.Settings, value = false, onChange = {})
     }
 }

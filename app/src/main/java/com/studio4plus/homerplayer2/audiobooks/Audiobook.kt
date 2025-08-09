@@ -100,6 +100,8 @@ data class AudiobookPlaybackState(
     @PrimaryKey
     @ColumnInfo(name = "book_id")
     val bookId: String,
+    @ColumnInfo(name = "is_new", defaultValue = "0")
+    val isNew: Boolean,
     @ColumnInfo(name = "current_uri")
     val currentUri: Uri,
     @ColumnInfo(name = "current_position_ms")

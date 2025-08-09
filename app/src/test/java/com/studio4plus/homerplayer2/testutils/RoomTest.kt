@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2024 Marcin Simonides
+ * Copyright (c) 2025 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,33 +22,13 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.player
+package com.studio4plus.homerplayer2.testutils
 
-import android.net.Uri
-import com.studio4plus.homerplayer2.audiobooks.AudiobooksDao
-import com.studio4plus.homerplayer2.audiobooks.currentPositionMs
-import com.studio4plus.homerplayer2.audiobooks.totalDurationMs
+import androidx.room.Room
+import androidx.test.core.app.ApplicationProvider
+import com.studio4plus.homerplayer2.app.AppDatabase
 
-data class Audiobook(
-    val id: String,
-    val displayName: String,
-    val currentUri: Uri?,
-    val currentPositionMs: Long,
-    val isNew: Boolean,
-    val uris: List<Uri>,
-    val progress: Float,
-)
-
-fun AudiobooksDao.AudiobookWithState.toAudiobook(): Audiobook {
-    val totalNonZeroDurationMs =
-        totalDurationMs()?.takeIf { it > 0 }?.toFloat() ?: Float.MAX_VALUE
-    return Audiobook(
-        audiobook.id,
-        audiobook.displayName,
-        playbackState?.currentUri,
-        playbackState?.currentPositionMs ?: 0,
-        isNew = playbackState?.isNew != false,
-        uris = files.map { it.uri },
-        progress = currentPositionMs().toFloat() / totalNonZeroDurationMs
-    )
-}
+fun createInMemoryDatabase() =
+    Room.inMemoryDatabaseBuilder(ApplicationProvider.getApplicationContext(), AppDatabase::class.java)
+        .allowMainThreadQueries()
+        .build()

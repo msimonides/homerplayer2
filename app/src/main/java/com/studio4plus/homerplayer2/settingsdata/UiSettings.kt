@@ -73,6 +73,8 @@ data class UiSettings(
     val homeComponentAlwaysEnabled: Boolean = false,
     val playerUiSettings: PlayerUiSettings = PlayerUiSettings(),
     val readBookTitles: Boolean = false,
+    val readBookTitleAnnounceNew: Boolean = true,
+    val readBookTitleAnnounceNewPhrase: String? = null,
     val screenOrientation: ScreenOrientation = ScreenOrientation.AUTO,
     val showBatteryIndicator: Boolean = false,
     val uiThemeMode: UiThemeMode = UiThemeMode.SYSTEM,

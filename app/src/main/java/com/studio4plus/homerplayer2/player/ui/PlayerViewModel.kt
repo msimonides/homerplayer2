@@ -24,6 +24,7 @@
 
 package com.studio4plus.homerplayer2.player.ui
 
+import android.content.Context
 import android.media.AudioManager
 import android.net.Uri
 import androidx.datastore.core.DataStore
@@ -31,6 +32,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksDao
 import com.studio4plus.homerplayer2.battery.BatteryState
 import com.studio4plus.homerplayer2.battery.BatteryStateProvider
@@ -38,6 +40,7 @@ import com.studio4plus.homerplayer2.player.Audiobook
 import com.studio4plus.homerplayer2.player.PlaybackUiStateRepository
 import com.studio4plus.homerplayer2.player.toAudiobook
 import com.studio4plus.homerplayer2.player.usecases.PresentSwipeGesture
+import com.studio4plus.homerplayer2.player.usecases.bookTitleTtsPhrase
 import com.studio4plus.homerplayer2.podcasts.data.PodcastsDao
 import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
 import com.studio4plus.homerplayer2.settingsdata.UiSettings
@@ -65,6 +68,7 @@ import org.koin.core.annotation.Named
 
 @KoinViewModel
 class PlayerViewModel(
+    private val appContext: Context,
     private val playbackState: PlaybackState,
     audiobooksDao: AudiobooksDao,
     podcastsDao: PodcastsDao,
@@ -239,10 +243,10 @@ class PlayerViewModel(
                 presentSwipeGesture.onUserSwipeGesture()
             speaker.stop()
             if (book != null) {
-
-                if (uiSettings.first().readBookTitles && !isPlaying()) {
+                val settings = uiSettings.first()
+                if (settings.readBookTitles && !isPlaying()) {
                     viewModelScope.launch {
-                        speaker.speakAndWait(book.displayName)
+                        speaker.speakAndWait(bookTitleTtsPhrase(appContext, settings, book))
                     }
                 }
                 playbackUiStateRepository.updateLastSelectedBookId(book.id)

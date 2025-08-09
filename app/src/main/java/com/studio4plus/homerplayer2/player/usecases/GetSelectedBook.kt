@@ -28,7 +28,11 @@ import com.studio4plus.homerplayer2.audiobooks.AudiobooksDao
 import com.studio4plus.homerplayer2.player.PlaybackUiStateRepository
 import com.studio4plus.homerplayer2.player.Audiobook
 import com.studio4plus.homerplayer2.player.toAudiobook
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import org.koin.core.annotation.Factory
 
 @Factory
@@ -36,8 +40,10 @@ class GetSelectedBook(
     private val audiobooksDao: AudiobooksDao,
     private val playbackUiState: PlaybackUiStateRepository
 ) {
-    suspend operator fun invoke(): Audiobook? {
-        val bookId = playbackUiState.lastSelectedBookId().first()
-        return audiobooksDao.getAudiobook(bookId)?.toAudiobook()
-    }
+    suspend operator fun invoke(): Audiobook? = observe().first()
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun observe(): Flow<Audiobook?> = playbackUiState.lastSelectedBookId()
+        .flatMapLatest { bookId -> audiobooksDao.getAudiobook(bookId) }
+        .map { it?.toAudiobook() }
 }

@@ -27,6 +27,8 @@ package com.studio4plus.homerplayer2.audiobooks
 import android.net.Uri
 import androidx.room.Dao
 import androidx.room.Embedded
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Relation
 import androidx.room.Transaction
@@ -51,7 +53,7 @@ abstract class AudiobooksDao {
 
     @Transaction
     @Query("SELECT * FROM audiobooks WHERE id = :id")
-    abstract suspend fun getAudiobook(id: String): AudiobookWithState?
+    abstract fun getAudiobook(id: String): Flow<AudiobookWithState?>
 
     @Transaction
     @Query("""SELECT * FROM audiobooks
@@ -71,7 +73,7 @@ abstract class AudiobooksDao {
         // Check that the files for which duration is being added still exist.
         // It's possible for the user to remove folders that are being scanned.
         val files = getAudiobookFiles(durations.map { it.uri })
-        val validDurations = durations.filter { it -> files.any { file -> file.uri == it.uri } }
+        val validDurations = durations.filter { files.any { file -> file.uri == it.uri } }
         insertAudiobookFileDurationsRaw(validDurations)
     }
 
@@ -111,10 +113,13 @@ abstract class AudiobooksDao {
     }
 
     @Transaction
-    open suspend fun updatePlayPosition(uri: Uri, positionMs: Long) {
+    open suspend fun updatePlayPosition(mayBeNew: Boolean, uri: Uri, positionMs: Long) {
         val file = getAudiobookFile(uri)
         if (file != null) {
-            updatePlaybackState(AudiobookPlaybackState(file.bookId, uri, positionMs))
+            val id = insertPlaybackState(AudiobookPlaybackState(file.bookId, mayBeNew, uri, positionMs))
+            if (id == -1L) {
+                updatePlaybackState(file.bookId, mayBeNew, uri, positionMs)
+            }
         }
     }
 
@@ -127,8 +132,18 @@ abstract class AudiobooksDao {
         return file?.bookId?.let { getSettingsForBook(file.bookId) }
     }
 
-    @Upsert
-    protected abstract suspend fun updatePlaybackState(state: AudiobookPlaybackState)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    protected abstract suspend fun insertPlaybackState(state: AudiobookPlaybackState): Long
+
+    @Query("""UPDATE audiobook_playback_states SET
+        is_new = is_new AND :mayBeNew, current_uri = :currentUri, current_position_ms = :currentPositionMs
+        WHERE book_id = :bookId""")
+    protected abstract suspend fun updatePlaybackState(
+        bookId: String,
+        mayBeNew: Boolean,
+        currentUri: Uri,
+        currentPositionMs: Long
+    )
 
     @Upsert
     protected abstract suspend fun insertAudiobooks(audiobooks: List<Audiobook>)
