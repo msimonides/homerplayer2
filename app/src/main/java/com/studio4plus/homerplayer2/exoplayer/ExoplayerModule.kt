@@ -70,8 +70,7 @@ class ExoplayerModule {
 
     @Factory
     @Named(UTILITY)
-    @OptIn(UnstableApi::class)
-    fun exoplayerUtility(appContext: Context): Lazy<ExoPlayer> = lazy { commonBuilder(appContext).build() }
+    fun exoplayerUtility(appContext: Context): ExoPlayer = commonBuilder(appContext).build()
 
     @OptIn(UnstableApi::class)
     private fun commonBuilder(appContext: Context): ExoPlayer.Builder {

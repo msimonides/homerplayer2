@@ -26,11 +26,12 @@ package com.studio4plus.homerplayer2.audiobooks
 
 import com.studio4plus.homerplayer2.audiobookfolders.AudiobookFoldersModule
 import com.studio4plus.homerplayer2.base.BaseModule
+import com.studio4plus.homerplayer2.exoplayer.ExoplayerModule
 import org.koin.core.annotation.ComponentScan
 import org.koin.core.annotation.Factory
 import org.koin.core.annotation.Module
 
-@Module(includes = [AudiobookFoldersModule::class, BaseModule::class])
+@Module(includes = [AudiobookFoldersModule::class, BaseModule::class, ExoplayerModule::class])
 @ComponentScan("com.studio4plus.homerplayer2.audiobooks")
 class AudiobooksModule {
     @Factory
