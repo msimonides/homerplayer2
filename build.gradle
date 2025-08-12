@@ -10,7 +10,7 @@ buildscript {
     // Remove once R8 is updated in AGP to a fixed version.
     // https://issuetracker.google.com/issues/435466316
     dependencies {
-        classpath("com.android.tools:r8:8.10.32")
+        classpath("com.android.tools:r8:8.12.18")
     }
 }
 
