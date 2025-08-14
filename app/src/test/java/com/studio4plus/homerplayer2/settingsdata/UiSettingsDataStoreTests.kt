@@ -27,10 +27,13 @@ package com.studio4plus.homerplayer2.settingsdata
 import android.app.Application
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
-import com.studio4plus.homerplayer2.testutils.TestDispatcherProvider
 import com.studio4plus.homerplayer2.base.DispatcherProvider
+import com.studio4plus.homerplayer2.base.testing.FakeLocaleProvider
+import com.studio4plus.homerplayer2.base.testing.FakeVersionUpdate
 import com.studio4plus.homerplayer2.loccalstorage.LocalStorageModule
+import com.studio4plus.homerplayer2.testutils.TestDispatcherProvider
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.plus
@@ -67,12 +70,7 @@ class UiSettingsDataStoreTests {
     @Test
     fun `fullKioskModeEnableTimestamp updates are stored`() = testScope.runTest {
         val dataStore1Job = Job()
-        val dataStore1 = SettingsDataModule().uiSettingsDatastore(
-            context,
-            this + dataStore1Job,
-            dispatcherProvider,
-            LocalStorageModule().json()
-        )
+        val dataStore1 = createDatastore(this + dataStore1Job)
         val defaultData = dataStore1.data.first()
         assertEquals(UiSettings(), defaultData)
 
@@ -81,12 +79,7 @@ class UiSettingsDataStoreTests {
         }
         dataStore1Job.cancel()
 
-        val dataStore2 = SettingsDataModule().uiSettingsDatastore(
-            context,
-            this,
-            dispatcherProvider,
-            LocalStorageModule().json()
-        )
+        val dataStore2 = createDatastore(this)
         val loadedData = dataStore2.data.first()
         assertEquals(FullKioskModeSetting.ENABLED, loadedData.fullKioskModeEnableTimestamp)
     }
@@ -101,13 +94,17 @@ class UiSettingsDataStoreTests {
         assertTrue(datastoreFolder.mkdirs())
         datastoreFile.writeText(settingsJson)
 
-        val dataStore = SettingsDataModule().uiSettingsDatastore(
-            context,
-            this,
-            dispatcherProvider,
-            LocalStorageModule().json()
-        )
+        val dataStore = createDatastore(this)
         val loadedData = dataStore.data.first()
         assertEquals(FullKioskModeSetting.ENABLED, loadedData.fullKioskModeEnableTimestamp)
     }
+
+    private fun createDatastore(scope: CoroutineScope) = SettingsDataModule().uiSettingsDatastore(
+        context,
+        scope,
+        dispatcherProvider,
+        LocalStorageModule().json(),
+        FakeVersionUpdate(),
+        FakeLocaleProvider(),
+    )
 }

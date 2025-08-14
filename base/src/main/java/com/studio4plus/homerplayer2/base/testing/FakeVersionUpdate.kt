@@ -22,34 +22,17 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.base
+package com.studio4plus.homerplayer2.base.testing
 
-import android.content.Context
-import androidx.core.content.edit
+import com.studio4plus.homerplayer2.base.VersionUpdate
 
-private const val PREF_CURRENT_VERSION = "current"
+class FakeVersionUpdate : VersionUpdate {
 
-interface VersionUpdate {
-    // Returns MAX_VALUE when there's no update.
-    val updatingFromVersion: Int
-}
+    private var _updateFromVersion: Int? = null
 
-class DefaultVersionUpdate(
-    appContext: Context,
-    currentVersion: Int,
-) : VersionUpdate {
-    private val sharedPrefs = appContext.getSharedPreferences("versionUpdate", Context.MODE_PRIVATE)
+    override val updatingFromVersion: Int get() = _updateFromVersion ?: Int.MAX_VALUE
 
-    // Returns MAX_VALUE when there's no update.
-    override val updatingFromVersion: Int
-
-    init {
-        val previousVersion = sharedPrefs.getInt(PREF_CURRENT_VERSION, 0)
-        updatingFromVersion = if (previousVersion > 0 && previousVersion != currentVersion) {
-            previousVersion
-        } else {
-            Int.MAX_VALUE
-        }
-        sharedPrefs.edit { putInt(PREF_CURRENT_VERSION, currentVersion) }
+    fun setUpdatingFromVersion(version: Int?) {
+        _updateFromVersion = version
     }
 }

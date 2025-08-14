@@ -38,6 +38,7 @@ import com.studio4plus.homerplayer2.audiobookfolders.AudiobookFoldersModule
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksDatabase
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksModule
 import com.studio4plus.homerplayer2.base.BaseModule
+import com.studio4plus.homerplayer2.base.DefaultVersionUpdate
 import com.studio4plus.homerplayer2.base.DispatcherProvider
 import com.studio4plus.homerplayer2.base.VersionUpdate
 import com.studio4plus.homerplayer2.battery.BatteryModule
@@ -140,5 +141,5 @@ class AppModule {
     // Always create to make sure it updates current version.
     @Single(createdAtStart = true)
     fun versionUpdate(appContext: Context): VersionUpdate =
-        VersionUpdate(appContext, BuildConfig.VERSION_CODE)
+        DefaultVersionUpdate(appContext, BuildConfig.VERSION_CODE)
 }

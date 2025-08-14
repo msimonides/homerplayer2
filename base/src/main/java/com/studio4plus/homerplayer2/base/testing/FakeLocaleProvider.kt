@@ -22,34 +22,13 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.base
+package com.studio4plus.homerplayer2.base.testing
 
-import android.content.Context
-import androidx.core.content.edit
+import com.studio4plus.homerplayer2.base.LocaleProvider
+import java.util.Locale
 
-private const val PREF_CURRENT_VERSION = "current"
+class FakeLocaleProvider : LocaleProvider {
+    var locale: Locale = Locale.US
 
-interface VersionUpdate {
-    // Returns MAX_VALUE when there's no update.
-    val updatingFromVersion: Int
-}
-
-class DefaultVersionUpdate(
-    appContext: Context,
-    currentVersion: Int,
-) : VersionUpdate {
-    private val sharedPrefs = appContext.getSharedPreferences("versionUpdate", Context.MODE_PRIVATE)
-
-    // Returns MAX_VALUE when there's no update.
-    override val updatingFromVersion: Int
-
-    init {
-        val previousVersion = sharedPrefs.getInt(PREF_CURRENT_VERSION, 0)
-        updatingFromVersion = if (previousVersion > 0 && previousVersion != currentVersion) {
-            previousVersion
-        } else {
-            Int.MAX_VALUE
-        }
-        sharedPrefs.edit { putInt(PREF_CURRENT_VERSION, currentVersion) }
-    }
+    override fun invoke(): Locale = locale
 }
