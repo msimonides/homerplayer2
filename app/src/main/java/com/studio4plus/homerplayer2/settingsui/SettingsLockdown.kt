@@ -60,6 +60,7 @@ import com.studio4plus.homerplayer2.settingsui.composables.SelectFromListDialog
 import com.studio4plus.homerplayer2.settingsui.composables.SelectFromRadioListDialog
 import com.studio4plus.homerplayer2.settingsui.composables.SettingItem
 import com.studio4plus.homerplayer2.settingsui.composables.SettingSwitch
+import com.studio4plus.homerplayer2.settingsui.usecases.ChangeFullKioskModeSetting
 import org.koin.androidx.compose.koinViewModel
 import java.time.format.DateTimeFormatter
 
@@ -91,7 +92,7 @@ fun SettingsLockdownRoute(
 @Composable
 fun SettingsLockdown(
     viewState : SettingsLockdownViewModel.ViewState?,
-    onSetFullKioskMode: (setting: SettingsLockdownViewModel.FullKioskModeSetValue) -> Unit,
+    onSetFullKioskMode: (setting: ChangeFullKioskModeSetting.FullKioskModeSetValue) -> Unit,
     onOpenKioskModeSetup: () -> Unit,
     onOpenLayoutSettings: () -> Unit,
     onSetHideSettingsButton: (hide: Boolean) -> Unit,
@@ -229,7 +230,7 @@ private fun HomeComponentModeDialog(
 
 @Composable
 private fun KioskModeSelectionDialog(
-    onValueChange: (SettingsLockdownViewModel.FullKioskModeSetValue) -> Unit,
+    onValueChange: (ChangeFullKioskModeSetting.FullKioskModeSetValue) -> Unit,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -237,19 +238,19 @@ private fun KioskModeSelectionDialog(
         title = stringResource(R.string.settings_ui_lockdown_kiosk_mode_dialog_title),
         message = stringResource(R.string.settings_ui_lockdown_kiosk_mode_dialog_description),
         values = listOf(
-            SettingsLockdownViewModel.FullKioskModeSetValue.Enable,
-            SettingsLockdownViewModel.FullKioskModeSetValue.Disable,
-            SettingsLockdownViewModel.FullKioskModeSetValue.DisableTemporarily
+            ChangeFullKioskModeSetting.FullKioskModeSetValue.Enable,
+            ChangeFullKioskModeSetting.FullKioskModeSetValue.Disable,
+            ChangeFullKioskModeSetting.FullKioskModeSetValue.DisableTemporarily
         ),
         produceLabel = @Composable { value ->
             val stringRes = when (value) {
-                SettingsLockdownViewModel.FullKioskModeSetValue.Enable ->
+                ChangeFullKioskModeSetting.FullKioskModeSetValue.Enable ->
                     R.string.settings_ui_lockdown_kiosk_mode_dialog_enable
 
-                SettingsLockdownViewModel.FullKioskModeSetValue.Disable ->
+                ChangeFullKioskModeSetting.FullKioskModeSetValue.Disable ->
                     R.string.settings_ui_lockdown_kiosk_mode_dialog_disable
 
-                SettingsLockdownViewModel.FullKioskModeSetValue.DisableTemporarily ->
+                ChangeFullKioskModeSetting.FullKioskModeSetValue.DisableTemporarily ->
                     R.string.settings_ui_lockdown_kiosk_mode_dialog_disable_for_10_minutes
             }
             stringResource(stringRes)
@@ -268,7 +269,7 @@ private fun homeComponentAlwaysEnabledLabel(alwaysEnabled: Boolean): String =
     )
 
 @Composable
-private fun IsFullKioskEnabled.Value.toSummary(): String {
+fun IsFullKioskEnabled.Value.toSummary(): String {
     val locale = LocalConfiguration.current.locale
     val timeFormatter = remember(locale) { DateTimeFormatter.ofPattern("HH:mm", locale) }
     return when (this) {

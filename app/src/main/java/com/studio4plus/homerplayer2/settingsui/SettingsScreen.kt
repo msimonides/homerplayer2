@@ -39,6 +39,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsIgnoringVisibility
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.union
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -54,6 +55,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -73,10 +75,11 @@ import com.studio4plus.homerplayer2.podcastsui.PodcastEditRoute
 import com.studio4plus.homerplayer2.utils.composable
 
 @Composable
-fun Modifier.defaultSettingsItem() = this
-    .fillMaxWidth()
-    .padding(horizontal = HomerTheme.dimensions.screenHorizPadding, vertical = 8.dp)
-    .heightIn(min = HomerTheme.dimensions.settingsRowMinHeight)
+fun Modifier.defaultSettingsItem(horizontalPadding: Dp = HomerTheme.dimensions.screenHorizPadding) =
+    this
+        .fillMaxWidth()
+        .padding(horizontal= horizontalPadding, vertical = 8.dp)
+        .heightIn(min = HomerTheme.dimensions.settingsRowMinHeight)
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -105,7 +108,9 @@ fun SettingsScreen(
                 windowInsets = insets,
             )
         },
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState, modifier = Modifier.systemBarsPadding())
+        },
         contentWindowInsets = insets,
     ) { paddingValues ->
         SettingsNavHost(
@@ -186,6 +191,7 @@ private fun SettingsNavHost(
     ) {
         composable("main", label = mainTitle) {
             SettingsMainRoute(
+                snackbarHostState,
                 navigateFolders = { navController.navigate("content") },
                 navigateLockdownSettings = { navController.navigate("lockdown_settings") },
                 navigateNetworkSettings = { navController.navigate("network_settings") },

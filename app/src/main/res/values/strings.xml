@@ -196,6 +196,7 @@
     <string name="settings_ui_lockdown_kiosk_mode_dialog_enable">Enable</string>
     <string name="settings_ui_lockdown_kiosk_mode_dialog_disable">Disable</string>
     <string name="settings_ui_lockdown_kiosk_mode_dialog_disable_for_10_minutes">Disable for 10 minutes</string>
+    <string name="settings_ui_lockdown_kiosk_mode_setting_disabled_snackbar">Disabled, lockdown will be automatically enabled at %1$s</string>
     <string name="settings_ui_kiosk_mode_setup_title">Kiosk mode information</string>
     <string name="settings_ui_kiosk_mode_setup_description1">Kiosk mode locks down the device within the Homer Audio Player application:</string>
     <string name="settings_ui_kiosk_mode_setup_description1_bullet1">prevents exiting the application with the "back" button,</string>

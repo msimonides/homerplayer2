@@ -28,31 +28,23 @@ import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import com.studio4plus.homerplayer2.fullkioskmode.IsFullKioskAvailable
 import com.studio4plus.homerplayer2.fullkioskmode.IsFullKioskEnabled
-import com.studio4plus.homerplayer2.settingsdata.FullKioskModeSetting
 import com.studio4plus.homerplayer2.settingsdata.ScreenOrientation
 import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
 import com.studio4plus.homerplayer2.settingsdata.UiSettings
-import com.studio4plus.homerplayer2.utils.Clock
+import com.studio4plus.homerplayer2.settingsui.usecases.ChangeFullKioskModeSetting
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.combine
 import org.koin.android.annotation.KoinViewModel
 import org.koin.core.annotation.Named
-import kotlin.time.Duration.Companion.minutes
-
-private val TEMPORARY_KIOSK_MODE_DISABLE_DURATION = 10.minutes
 
 @KoinViewModel
 class SettingsLockdownViewModel(
     @Named(SettingsDataModule.UI) private val uiSettingsStore: DataStore<UiSettings>,
     private val mainScope: CoroutineScope,
     private val isFullKioskAvailable: IsFullKioskAvailable,
-    private val clock: Clock,
+    private val changeFullKioskModeSetting: ChangeFullKioskModeSetting,
     isFullKioskEnabled: IsFullKioskEnabled,
 ) : ViewModel() {
-
-    enum class FullKioskModeSetValue {
-        Enable, Disable, DisableTemporarily
-    }
 
     class ViewState(
         val fullKioskMode: IsFullKioskEnabled.Value,
@@ -77,16 +69,8 @@ class SettingsLockdownViewModel(
         )
     }
 
-    fun setFullKioskMode(value: FullKioskModeSetValue) {
-        update {
-            val enableTimestamp = when (value) {
-                FullKioskModeSetValue.Enable -> FullKioskModeSetting.ENABLED
-                FullKioskModeSetValue.Disable -> FullKioskModeSetting.DISABLED
-                FullKioskModeSetValue.DisableTemporarily ->
-                    clock.wallTime() + TEMPORARY_KIOSK_MODE_DISABLE_DURATION.inWholeMilliseconds
-            }
-            it.copy(fullKioskModeEnableTimestamp = enableTimestamp)
-        }
+    fun setFullKioskMode(value: ChangeFullKioskModeSetting.FullKioskModeSetValue) {
+        changeFullKioskModeSetting(value)
     }
 
     fun setHideSettingsButton(isHidden: Boolean) {

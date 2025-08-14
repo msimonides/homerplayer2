@@ -297,7 +297,7 @@ private fun SettingRowMultiline(
 }
 
 @Composable
-private fun SettingRowSummaryText(
+fun SettingRowSummaryText(
     text: String,
     modifier: Modifier = Modifier,
 ) {

@@ -24,42 +24,68 @@
 
 package com.studio4plus.homerplayer2.settingsui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CellWifi
 import androidx.compose.material.icons.filled.Contrast
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LibraryMusic
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.LockOpen
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.RateReview
 import androidx.compose.material.icons.filled.RecordVoiceOver
 import androidx.compose.material.icons.filled.Tune
+import androidx.compose.material3.Icon
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.flowWithLifecycle
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
+import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
+import com.studio4plus.homerplayer2.fullkioskmode.IsFullKioskEnabled
 import com.studio4plus.homerplayer2.settingsdata.UiThemeMode
 import com.studio4plus.homerplayer2.settingsui.composables.SelectFromRadioListDialog
 import com.studio4plus.homerplayer2.settingsui.composables.SettingItem
+import com.studio4plus.homerplayer2.settingsui.composables.SettingRowSummaryText
 import com.studio4plus.homerplayer2.settingsui.usecases.ContentDescriptionFlow
+import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun SettingsMainRoute(
+    snackbarHostState: SnackbarHostState,
     navigateFolders: () -> Unit,
     navigateLockdownSettings: () -> Unit,
     navigateNetworkSettings: () -> Unit,
@@ -72,6 +98,7 @@ fun SettingsMainRoute(
     SettingsMain(
         viewModel.viewState.collectAsStateWithLifecycle().value,
         onSetUiMode = viewModel::setUiMode,
+        onSetFullKioskMode = viewModel::setFullKioskMode,
         navigateFolders = navigateFolders,
         navigateLockdownSettings = navigateLockdownSettings,
         navigateNetworkSettings = navigateNetworkSettings,
@@ -80,6 +107,20 @@ fun SettingsMainRoute(
         navigateTtsSettings = navigateTtsSettings,
         navigateAbout = navigateAbout,
     )
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val context = LocalContext.current
+    val configuration = LocalConfiguration.current
+    LaunchedEffect(Unit) {
+        val timeFormatter = DateTimeFormatter.ofPattern("HH:mm", configuration.locale)
+        viewModel.eventFullKioskDisabledUntil
+            .flowWithLifecycle(lifecycleOwner.lifecycle)
+            .collectLatest { event ->
+                snackbarHostState.showSnackbar(context.resources.getString(
+                    R.string.settings_ui_lockdown_kiosk_mode_setting_disabled_snackbar,
+                    timeFormatter.format(event.enableTime)
+                ))
+        }
+    }
 }
 
 private enum class SettingsMainDialogType {
@@ -90,6 +131,7 @@ private enum class SettingsMainDialogType {
 private fun SettingsMain(
     viewState: SettingsMainViewModel.ViewState?,
     onSetUiMode: (UiThemeMode) -> Unit,
+    onSetFullKioskMode: (Boolean) -> Unit,
     navigateFolders: () -> Unit,
     navigateLockdownSettings: () -> Unit,
     navigateNetworkSettings: () -> Unit,
@@ -149,11 +191,16 @@ private fun SettingsMain(
                 icon = Icons.Default.Contrast,
                 modifier = settingItemModifier
             )
-            SettingItem(
+            SettingItemWithSwitch(
                 label = stringResource(R.string.settings_ui_lockdown_settings_item),
-                onClick = navigateLockdownSettings,
+                onLabelClick = navigateLockdownSettings,
+                summary = viewState.fullKioskMode.toSummary(),
                 icon = Icons.Default.LockOpen,
-                modifier = settingItemModifier,
+                modifier = Modifier.heightIn(min = HomerTheme.dimensions.settingsRowMinHeight),
+                onSwitchChange = onSetFullKioskMode.takeIf { viewState.showFullKioskSwitch },
+                horizontalContentPadding = HomerTheme.dimensions.screenHorizPadding,
+                verticalContentPadding = 8.dp,
+                switchValue = viewState.fullKioskMode == IsFullKioskEnabled.Enabled,
             )
             SettingItem(
                 label = stringResource(R.string.settings_ui_about_item),
@@ -200,6 +247,57 @@ private fun ChooseUiModeDialog(
     )
 }
 
+@Composable
+private fun SettingItemWithSwitch(
+    label: String,
+    icon: ImageVector,
+    onLabelClick: () -> Unit,
+    onSwitchChange: ((Boolean) -> Unit)?,
+    switchValue: Boolean,
+    summary: String,
+    verticalContentPadding: Dp,
+    horizontalContentPadding: Dp,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier
+            .height(IntrinsicSize.Min),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Row(
+            modifier = Modifier
+                .weight(1f)
+                .clickable(onClick = onLabelClick)
+                .padding(
+                    top = verticalContentPadding,
+                    bottom = verticalContentPadding,
+                    start = horizontalContentPadding
+                ),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(icon, contentDescription = null)
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+            ) {
+                Text(label)
+                SettingRowSummaryText(summary, modifier = Modifier.padding(top = 2.dp))
+            }
+        }
+        if (onSwitchChange != null) {
+            VerticalDivider(modifier = Modifier.padding(vertical = 4.dp))
+            Switch(
+                checked = switchValue,
+                onCheckedChange = null,
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .toggleable(value = switchValue, onValueChange = onSwitchChange)
+                    .padding(horizontal = horizontalContentPadding)
+            )
+        }
+    }
+}
+
 private fun UiThemeMode.labelRes() = when(this) {
     UiThemeMode.SYSTEM -> R.string.settings_ui_mode_system
     UiThemeMode.LIGHT -> R.string.settings_ui_mode_light
@@ -228,10 +326,12 @@ private fun PreviewSettingsMain() {
     HomerPlayer2Theme {
         val viewState = SettingsMainViewModel.ViewState(
             content = ContentDescriptionFlow.Content(audiobookFolders = 2, podcasts = 1),
+            fullKioskMode = IsFullKioskEnabled.Enabled,
+            showFullKioskSwitch = true,
             rateAppIntent = null,
             ttsEnabled = true,
             uiMode = UiThemeMode.SYSTEM,
         )
-        SettingsMain(viewState, {}, {}, {}, {}, {}, {}, {}, {})
+        SettingsMain(viewState, {}, {}, {}, {}, {}, {}, {}, {}, {})
     }
 }
