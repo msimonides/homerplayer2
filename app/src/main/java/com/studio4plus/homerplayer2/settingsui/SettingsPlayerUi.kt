@@ -92,7 +92,7 @@ private fun SettingsPlayerUi(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         HomerPlayer2Theme(
-            screenWidth = Dp.Unspecified,
+            screenLargeWidth = Dp.Unspecified,
         ) {
             BookPage(
                 landscape = isLandscape,

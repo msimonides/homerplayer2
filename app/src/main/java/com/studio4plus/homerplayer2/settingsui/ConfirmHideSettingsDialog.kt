@@ -98,7 +98,7 @@ private fun HideSettingsButtonConfirmation(
     ) {
         HomerPlayer2Theme(
             darkTheme = false,
-            screenWidth = Dp.Unspecified,
+            screenLargeWidth = Dp.Unspecified,
         ) {
             CompositionLocalProvider(
                 LocalContentColor provides MaterialTheme.colorScheme.onSurface

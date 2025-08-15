@@ -144,12 +144,12 @@ private val ExtendedLightColors = ExtendedColors(
 @Composable
 fun HomerPlayer2Theme(
     darkTheme: Boolean = isNightMode(),
-    screenWidth: Dp = windowWidth(),
+    screenLargeWidth: Dp = windowLargeWidth(),
     content: @Composable () -> Unit
 ) {
     val materialColorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
     val homerColorScheme = if (darkTheme) ExtendedDarkColors else ExtendedLightColors
-    val dimensions = screenDimensions(screenWidth)
+    val dimensions = screenDimensions(screenLargeWidth)
 
     CompositionLocalProvider(
         LocalExtendedColors provides homerColorScheme,

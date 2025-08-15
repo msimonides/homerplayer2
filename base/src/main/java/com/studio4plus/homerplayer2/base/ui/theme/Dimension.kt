@@ -30,16 +30,17 @@ import android.content.ContextWrapper
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
-import androidx.compose.ui.graphics.toComposeRect
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.isSpecified
-import androidx.window.layout.WindowMetricsCalculator
+import androidx.compose.ui.unit.max
+import androidx.compose.ui.unit.toSize
 
 @Immutable
 data class Dimensions(
@@ -72,11 +73,11 @@ internal val LocalDimensions = staticCompositionLocalOf {
 
 private val MaxMainContentWidth = 800.dp
 
-internal fun screenDimensions(windowWidth: Dp) =
-    if (windowWidth.isSpecified && windowWidth >= MaxMainContentWidth) {
-        largeScreenDimensions(windowWidth)
+internal fun screenDimensions(windowLargeWidth: Dp) =
+    if (windowLargeWidth.isSpecified && windowLargeWidth >= MaxMainContentWidth) {
+        largeScreenDimensions(windowLargeWidth)
     } else {
-        regularScreenDimensions(windowWidth)
+        regularScreenDimensions(windowLargeWidth)
     }
 
 private fun largeScreenDimensions(windowWidth: Dp): Dimensions {
@@ -110,26 +111,18 @@ private fun regularScreenDimensions(windowWidth: Dp) = Dimensions(
 )
 
 @Composable
-internal fun windowWidth(): Dp =
+internal fun windowLargeWidth(): Dp =
     if (LocalInspectionMode.current) {
         LocalConfiguration.current.screenWidthDp.dp
     } else {
-        androidWindowWidth()
+        with (androidWindowSize()) { max(width, height) }
     }
 
 @Composable
-internal fun androidWindowWidth(): Dp {
-    // Based on calculateWindowSizeClass from material3.windowsizeclass
-    // Observe view configuration changes and recalculate the size class on each change. We can't
-    // use Activity#onConfigurationChanged as this will sometimes fail to be called on different
-    // API levels, hence why this function needs to be @Composable so we can observe the
-    // ComposeView's configuration changes.
-    LocalConfiguration.current
-    val activity = LocalContext.current.getActivity()
+internal fun androidWindowSize(): DpSize {
     val density = LocalDensity.current
-    val metrics = WindowMetricsCalculator.getOrCreate().computeCurrentWindowMetrics(activity)
-    val size = with(density) { metrics.bounds.toComposeRect().size.toDpSize() }
-    return size.width
+    val containerSize = LocalWindowInfo.current.containerSize
+    return with(density) { containerSize.toSize().toDpSize() }
 }
 
 private fun Context.getActivity(): Activity =

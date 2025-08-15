@@ -251,7 +251,7 @@ private fun PlayerLayoutSettings.hasMargins(isLandscape: Boolean) = when {
 @Composable
 private fun PreviewTopControlsLarge() {
     HomerPlayer2Theme(
-        screenWidth = 850.dp
+        screenLargeWidth = 850.dp
     ) {
         TopControlsRow(
             batteryState = BatteryState.Discharging(0.9f),
