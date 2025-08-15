@@ -94,7 +94,6 @@ data class AudiobookFileDuration(
         )
     ]
 )
-// TODO: decide whether to keep state when a book is removed (and if so, for how long),
 // TODO: consider adding a foreign key for currentUri.
 data class AudiobookPlaybackState(
     @PrimaryKey

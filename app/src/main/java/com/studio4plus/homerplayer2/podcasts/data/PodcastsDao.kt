@@ -97,7 +97,7 @@ abstract class PodcastsDao {
     abstract suspend fun upsert(podcast: Podcast)
 
     @Query("""UPDATE podcasts SET title = :newTitle WHERE feed_uri = :feedUri""")
-    abstract suspend fun updatePodcast(feedUri: String, newTitle: String)
+    abstract suspend fun updatePodcast(feedUri: String, newTitle: String): Int
 
     @Query("""UPDATE podcasts SET title_override = :newTitleOverride WHERE feed_uri = :feedUri""")
     abstract suspend fun updatePodcastTitleOverride(feedUri: String, newTitleOverride: String?)

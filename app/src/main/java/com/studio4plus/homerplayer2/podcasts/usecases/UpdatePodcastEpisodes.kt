@@ -45,9 +45,11 @@ class UpdatePodcastEpisodes(
     ) {
         db.withTransaction {
             val feedUri = podcast.feedUri
-            podcastsDao.updatePodcast(feedUri, newTitle)
-            val oldBookIds = podcastsDao.updateEpisodes(feedUri, newEpisodes)
-            oldBookIds.forEach { audiobooksDao.deleteAudiobook(it) }
+            val updateCount = podcastsDao.updatePodcast(feedUri, newTitle)
+            if (updateCount > 0) { // Otherwise the podcast is no longer there.
+                val oldBookIds = podcastsDao.updateEpisodes(feedUri, newEpisodes)
+                oldBookIds.forEach { audiobooksDao.deleteAudiobook(it) }
+            }
         }
     }
 }

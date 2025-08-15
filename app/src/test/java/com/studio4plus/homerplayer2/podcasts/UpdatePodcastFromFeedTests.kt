@@ -129,7 +129,6 @@ class UpdatePodcastFromFeedTests {
             makeRssItems(3) { num -> if (num == 1) episode1PubTime.toUtcRssTime() else null }
 
         advanceTimeBy(1000)
-        val episode2ExpectedPubTime = Instant.ofEpochMilli(currentTime)
         val feed1 = makeFeed(makeRssChannel(podcast.title, items.take(2)))
         updatePodcast(podcast, feed1)
         val episodes1 = podcastsDao.getPodcastEpisodes(podcast.feedUri)
@@ -139,7 +138,6 @@ class UpdatePodcastFromFeedTests {
         )
 
         advanceTimeBy(1000)
-        val episode3ExpectedPubTime = Instant.ofEpochMilli(currentTime)
         val feed2 = makeFeed(makeRssChannel(podcast.title, items.takeLast(2)))
         updatePodcast(podcast, feed2)
         val episodes2 = podcastsDao.getPodcastEpisodes(podcast.feedUri)
@@ -147,6 +145,13 @@ class UpdatePodcastFromFeedTests {
             listOf("Episode 3", "Episode 2"),
             episodes2.map { it.title }.sortedDescending()
         )
+    }
+
+    @Test
+    fun `when podcast gets removed during update then there is no crash`() = testScope.runTest {
+        val feed = makeFeed(makeRssChannel(podcast.title, makeRssItems(1)))
+        podcastsDao.deletePodcast(podcast.feedUri)
+        updatePodcast(podcast, feed)
     }
 
     private fun makeFeed(rssChannel: RssChannel) =
