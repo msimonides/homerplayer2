@@ -77,13 +77,7 @@ fun BooksPager(
         }
     }
     LaunchedEffect(pagerState, state.selectedIndex) {
-        // Wait for things to settle, when content changes there will be multiple state updates
-        // (because pager has its state in the UI).
-        delay(500)
-        // scrollToPage breaks the next tap gesture (user needs to tap twice to trigger buttons)
-        // Avoid unnecessary calls to minimize the issue. TODO: report to Google.
-        val currentSelectedIndex = getBookIndex(pagerState.currentPage)
-        if (currentSelectedIndex != state.selectedIndex) {
+        if (pagerState.settledPage == pagerState.currentPage) {
             pagerState.scrollToPage(zeroPage + state.selectedIndex)
         }
     }
