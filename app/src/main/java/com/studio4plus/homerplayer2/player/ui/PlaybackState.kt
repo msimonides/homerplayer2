@@ -24,19 +24,16 @@
 
 package com.studio4plus.homerplayer2.player.ui
 
-import android.content.ComponentName
-import android.content.Context
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.session.MediaController
-import androidx.media3.session.SessionToken
-import com.studio4plus.homerplayer2.base.DispatcherProvider
 import com.studio4plus.homerplayer2.player.Audiobook
-import com.studio4plus.homerplayer2.player.service.PlaybackService
+import com.studio4plus.homerplayer2.player.usecases.BuildMediaController
+import com.studio4plus.homerplayer2.player.usecases.GetAudiobookFileDuration
 import com.studio4plus.homerplayer2.player.usecases.GetBookMediaItemsWithStartPosition
 import com.studio4plus.homerplayer2.utils.tickerFlow
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -46,7 +43,6 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runInterruptible
 import org.koin.core.annotation.Factory
 import timber.log.Timber
 
@@ -63,9 +59,9 @@ interface PlaybackController {
  */
 @Factory
 class PlaybackState(
-    mainScope: CoroutineScope,
-    dispatcherProvider: DispatcherProvider,
-    appContext: Context,
+    private val mainScope: CoroutineScope,
+    buildMediaController: BuildMediaController,
+    private val getAudiobookFileDuration: GetAudiobookFileDuration,
     private val getBookMediaItemsWithStartPosition: GetBookMediaItemsWithStartPosition,
 ) : PlaybackController {
 
@@ -75,8 +71,9 @@ class PlaybackState(
         data class Playing(val mediaUri: String, val positionMs: Long) : MediaState
     }
 
+    private var lastPlayedBookId: String? = null
     private val mediaState = MutableStateFlow<MediaState>(MediaState.Initializing)
-    private var mediaController: MediaController? = null
+    private var mediaController: Player? = null
     private val eventProgressUpdate = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -89,13 +86,9 @@ class PlaybackState(
         }
     }
     init {
-        val sessionToken =
-            SessionToken(appContext, ComponentName(appContext, PlaybackService::class.java))
         mainScope.launch {
-            val builder = MediaController.Builder(appContext, sessionToken)
-            mediaController = runInterruptible(dispatcherProvider.Io) {
-                builder.buildAsync().get()
-            }
+            mediaController = buildMediaController()
+            println("### mediaController created")
             mediaController?.addListener(
                 object : Player.Listener {
                     override fun onPlayerError(error: PlaybackException) {
@@ -143,6 +136,7 @@ class PlaybackState(
             controller.playWhenReady = true
             controller.prepare()
         }
+        lastPlayedBookId = book.id
     }
 
     override fun seekForward() {
@@ -150,7 +144,29 @@ class PlaybackState(
     }
 
     override fun seekBack() {
-        mediaController?.seekBack()
+        mediaController?.run {
+            val newPositionMs = currentPosition - seekBackIncrement
+            val bookId = lastPlayedBookId
+            val halfIncrement = seekBackIncrement / 2
+            when {
+                -halfIncrement <= newPositionMs && newPositionMs < halfIncrement ->
+                    // Snap to beginning of file.
+                    seekToDefaultPosition()
+
+                newPositionMs >= 0 ->
+                    seekBack()
+
+                /* newPositionMs is negative */
+                previousMediaItemIndex >= 0 && bookId != null ->
+                    mainScope.launch() {
+                        println("### launch")
+                        seekBackWithinPreviousMediaItem(bookId, previousMediaItemIndex, -newPositionMs)
+                    }
+
+                else ->
+                    Timber.w("Unable to seek back: $bookId $currentMediaItemIndex; $currentPosition -> $newPositionMs")
+            }
+        }
     }
 
     override fun seekNext() {
@@ -173,7 +189,17 @@ class PlaybackState(
         mediaController?.stop()
     }
 
-    private fun MediaController.getMediaState(): MediaState {
+    private suspend fun Player.seekBackWithinPreviousMediaItem(bookId: String, itemIndex: Int, offsetFromEndMs: Long) {
+        println("### seekBackWithin...")
+        val previousFileDurationMs =
+            getAudiobookFileDuration(bookId, itemIndex)
+        println("### got previous file duration $previousFileDurationMs")
+        if (previousFileDurationMs != null) {
+            seekTo(previousMediaItemIndex, (previousFileDurationMs - offsetFromEndMs).coerceAtLeast(0))
+        }
+    }
+
+    private fun Player.getMediaState(): MediaState {
         val playingStates = arrayOf(Player.STATE_BUFFERING, Player.STATE_READY, Player.STATE_ENDED)
         val mediaItem = currentMediaItem
         return if (playWhenReady && playbackState in playingStates && mediaItem != null)

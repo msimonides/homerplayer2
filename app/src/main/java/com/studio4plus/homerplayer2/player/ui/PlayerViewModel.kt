@@ -32,7 +32,6 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksDao
 import com.studio4plus.homerplayer2.battery.BatteryState
 import com.studio4plus.homerplayer2.battery.BatteryStateProvider
