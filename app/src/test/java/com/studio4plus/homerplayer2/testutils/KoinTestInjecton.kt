@@ -25,15 +25,18 @@
 package com.studio4plus.homerplayer2.testutils
 
 import android.content.Context
-import android.net.Uri
 import androidx.datastore.core.DataStore
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.test.utils.TestExoPlayerBuilder
 import androidx.test.core.app.ApplicationProvider
 import com.studio4plus.homerplayer2.app.AppDatabase
 import com.studio4plus.homerplayer2.base.DispatcherProvider
+import com.studio4plus.homerplayer2.exoplayer.ExoplayerModule.Companion.MAX_SEEK_TO_PREVIOUS_POSITION
+import com.studio4plus.homerplayer2.exoplayer.ExoplayerModule.Companion.SEEK_BACK_INCREMENT_MS
+import com.studio4plus.homerplayer2.exoplayer.ExoplayerModule.Companion.SEEK_FORWARD_INCREMENT_MS
 import com.studio4plus.homerplayer2.player.PlaybackUiState
 import com.studio4plus.homerplayer2.player.PlayerModule
+import com.studio4plus.homerplayer2.player.usecases.BuildMediaController
 import com.studio4plus.homerplayer2.podcasts.PodcastsTaskScheduler
 import com.studio4plus.homerplayer2.utils.Clock
 import kotlinx.coroutines.CoroutineScope
@@ -41,9 +44,10 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import org.koin.core.qualifier.named
 import org.koin.test.KoinTest
+import org.koin.test.get
 import org.koin.test.mock.declare
 
-fun KoinTest.declareFakes(mediaDurationsMs: Map<Uri, Long>) {
+fun KoinTest.declareFakes() {
     val testDispatcher = StandardTestDispatcher()
     val testScope = TestScope(testDispatcher)
     declare<Context> { ApplicationProvider.getApplicationContext() }
@@ -54,9 +58,15 @@ fun KoinTest.declareFakes(mediaDurationsMs: Map<Uri, Long>) {
     declare<CoroutineScope> { testScope.backgroundScope }
     declare<ExoPlayer> {
         TestExoPlayerBuilder(ApplicationProvider.getApplicationContext())
-            .setMediaSourceFactory(FakeMediaSourceFactory(mediaDurationsMs))
+            .setMediaSourceFactory(FakeMediaSourceFactory())
+            // Unfortunately TestExoPlayerBuilder is not an ExoPlayer.Builder and the configuration
+            // code cannot be directly shared.
+            .setSeekForwardIncrementMs(SEEK_FORWARD_INCREMENT_MS)
+            .setSeekBackIncrementMs(SEEK_BACK_INCREMENT_MS)
+            .setMaxSeekToPreviousPositionMs(MAX_SEEK_TO_PREVIOUS_POSITION)
             .build()
     }
+    declare<BuildMediaController> { TestBuildMediaController(get<ExoPlayer>()) }
     declare<DataStore<PlaybackUiState>>(named(PlayerModule.UI_STATE)) { FakeDataStore(PlaybackUiState()) }
     declare<PodcastsTaskScheduler> { FakePodcastsTaskScheduler() }
 }

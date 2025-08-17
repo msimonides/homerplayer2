@@ -49,8 +49,9 @@ class ExoplayerModule {
             .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
             .build()
         val player = commonBuilder(appContext)
-            .setSeekForwardIncrementMs(10_000)
-            .setSeekBackIncrementMs(30_000)
+            .setSeekForwardIncrementMs(SEEK_FORWARD_INCREMENT_MS)
+            .setSeekBackIncrementMs(SEEK_BACK_INCREMENT_MS)
+            .setMaxSeekToPreviousPositionMs(MAX_SEEK_TO_PREVIOUS_POSITION)
             .setAudioAttributes(audioAttributes, true)
             .build()
         val audioOffloadPreferences =
@@ -91,5 +92,8 @@ class ExoplayerModule {
     companion object {
         const val PLAYBACK = "playback"
         const val UTILITY = "utility"
+        const val SEEK_FORWARD_INCREMENT_MS = 10_000L
+        const val SEEK_BACK_INCREMENT_MS = 30_000L
+        const val MAX_SEEK_TO_PREVIOUS_POSITION = 10_000L
     }
 }

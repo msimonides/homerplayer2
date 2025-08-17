@@ -25,15 +25,13 @@
 package com.studio4plus.homerplayer2.player.service
 
 import android.app.Application
-import android.net.Uri
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.test.utils.robolectric.TestPlayerRunHelper
 import com.studio4plus.homerplayer2.app.AppModule
-import com.studio4plus.homerplayer2.audiobooks.Audiobook
 import com.studio4plus.homerplayer2.audiobooks.AudiobookFile
-import com.studio4plus.homerplayer2.audiobooks.AudiobookFileDuration
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksDao
+import com.studio4plus.homerplayer2.testdata.TestData
 import com.studio4plus.homerplayer2.testutils.declareFakes
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -61,7 +59,7 @@ class PlayPositionUpdaterTests : KoinTest {
     @get:Rule
     val koinTestRule = KoinTestRule.create {
         modules(AppModule().module)
-        declareFakes(mediaDurationsMs)
+        declareFakes()
     }
 
     val audiobooksDao: AudiobooksDao by inject()
@@ -69,24 +67,6 @@ class PlayPositionUpdaterTests : KoinTest {
     val testScope: TestScope by inject()
 
     val positionUpdater: PlayPositionUpdater by inject()
-
-    private val audiobook = Audiobook(
-        id = "audiobook1",
-        displayName = "Audiobook 1",
-        rootFolderUri = Uri.parse("content://audiobook1")
-    )
-    private val audiobookFile1 = AudiobookFile(
-        bookId = audiobook.id,
-        uri = Uri.parse("content://audiobook1/1")
-    )
-    private val audiobookFile2 = AudiobookFile(
-        bookId = audiobook.id,
-        uri = Uri.parse("content://audiobook1/1")
-    )
-    private val audiobookFileDuration1 = AudiobookFileDuration(audiobookFile1.uri, 15_000)
-    private val audiobookFileDuration2 = AudiobookFileDuration(audiobookFile2.uri, 20_000)
-    private val mediaDurationsMs =
-        listOf(audiobookFileDuration1, audiobookFileDuration2).associate { it.uri to it.durationMs }
 
     @Before
     fun setup() {
@@ -98,7 +78,7 @@ class PlayPositionUpdaterTests : KoinTest {
 
     @Test
     fun `when playback stops then positon is saved`() {
-        player.setMediaItem(audiobookFile1.toMediaItem())
+        player.setMediaItem(TestData.audiobookFile1.toMediaItem())
         player.prepare()
 
         TestPlayerRunHelper.play(player).untilPosition(0, 501)
@@ -108,72 +88,72 @@ class PlayPositionUpdaterTests : KoinTest {
         TestPlayerRunHelper.advance(player).untilPendingCommandsAreFullyHandled()
         testScope.runCurrent()
 
-        val audiobookWithState = runBlocking { audiobooksDao.getAudiobook(audiobook.id).first() }
-        assertEquals(audiobookFile1.uri, audiobookWithState?.playbackState?.currentUri)
+        val audiobookWithState = runBlocking { audiobooksDao.getAudiobook(TestData.audiobook.id).first() }
+        assertEquals(TestData.audiobookFile1.uri, audiobookWithState?.playbackState?.currentUri)
         assertEquals(500, audiobookWithState?.playbackState?.currentPositionMs)
     }
 
     @Test
     fun `when playing then position is saved every 5 seconds`() {
-        player.setMediaItem(audiobookFile1.toMediaItem())
+        player.setMediaItem(TestData.audiobookFile1.toMediaItem())
         player.prepare()
 
         TestPlayerRunHelper.play(player).untilPosition(0, 5001)
         testScope.advanceTimeBy(5000)
 
-        val audiobookWithState5s = runBlocking { audiobooksDao.getAudiobook(audiobook.id).first() }
-        assertEquals(audiobookFile1.uri, audiobookWithState5s?.playbackState?.currentUri)
+        val audiobookWithState5s = runBlocking { audiobooksDao.getAudiobook(TestData.audiobook.id).first() }
+        assertEquals(TestData.audiobookFile1.uri, audiobookWithState5s?.playbackState?.currentUri)
         assertEquals(5000, audiobookWithState5s?.playbackState?.currentPositionMs)
 
         TestPlayerRunHelper.play(player).untilPosition(0, 10001)
         testScope.advanceTimeBy(5000)
 
-        val audiobookWithState10s = runBlocking { audiobooksDao.getAudiobook(audiobook.id).first() }
-        assertEquals(audiobookFile1.uri, audiobookWithState10s?.playbackState?.currentUri)
+        val audiobookWithState10s = runBlocking { audiobooksDao.getAudiobook(TestData.audiobook.id).first() }
+        assertEquals(TestData.audiobookFile1.uri, audiobookWithState10s?.playbackState?.currentUri)
         assertEquals(10000, audiobookWithState10s?.playbackState?.currentPositionMs)
     }
 
     @Test
     fun `when audiobook is played below 15s then it's still new`() {
-        player.setMediaItem(audiobookFile1.toMediaItem())
+        player.setMediaItem(TestData.audiobookFile1.toMediaItem())
         player.prepare()
 
         TestPlayerRunHelper.play(player).untilPosition(0, 5001)
         testScope.advanceTimeBy(5000)
 
-        val audiobookWhilePlaying = runBlocking { audiobooksDao.getAudiobook(audiobook.id).first() }
+        val audiobookWhilePlaying = runBlocking { audiobooksDao.getAudiobook(TestData.audiobook.id).first() }
         assertEquals(true, audiobookWhilePlaying?.playbackState?.isNew)
 
         player.playWhenReady = false
         TestPlayerRunHelper.advance(player).untilPendingCommandsAreFullyHandled()
         testScope.runCurrent()
 
-        val audiobookAfterStopping = runBlocking { audiobooksDao.getAudiobook(audiobook.id).first() }
+        val audiobookAfterStopping = runBlocking { audiobooksDao.getAudiobook(TestData.audiobook.id).first() }
         assertEquals(true, audiobookAfterStopping?.playbackState?.isNew)
     }
 
     @Test
     fun `when audiobook is played above 15s then it's not-new`() {
-        player.setMediaItem(audiobookFile2.toMediaItem())
+        player.setMediaItem(TestData.audiobookFile2.toMediaItem())
         player.prepare()
 
         TestPlayerRunHelper.play(player).untilPosition(0, 17001)
         testScope.advanceTimeBy(17000)
 
-        val audiobookWhilePlaying = runBlocking { audiobooksDao.getAudiobook(audiobook.id).first() }
+        val audiobookWhilePlaying = runBlocking { audiobooksDao.getAudiobook(TestData.audiobook.id).first() }
         assertEquals(false, audiobookWhilePlaying?.playbackState?.isNew)
 
         player.playWhenReady = false
         TestPlayerRunHelper.advance(player).untilPendingCommandsAreFullyHandled()
         testScope.runCurrent()
 
-        val audiobookAfterStopping = runBlocking { audiobooksDao.getAudiobook(audiobook.id).first() }
+        val audiobookAfterStopping = runBlocking { audiobooksDao.getAudiobook(TestData.audiobook.id).first() }
         assertEquals(false, audiobookAfterStopping?.playbackState?.isNew)
     }
 
     @Test
     fun `when not-new audiobook is rewound below 15s then it's not-new`() {
-        player.setMediaItem(audiobookFile2.toMediaItem())
+        player.setMediaItem(TestData.audiobookFile2.toMediaItem())
         player.prepare()
 
         TestPlayerRunHelper.play(player).untilPosition(0, 17_001)
@@ -183,14 +163,14 @@ class PlayPositionUpdaterTests : KoinTest {
         TestPlayerRunHelper.advance(player).untilPendingCommandsAreFullyHandled()
         testScope.runCurrent()
 
-        val audiobook = runBlocking { audiobooksDao.getAudiobook(audiobook.id).first() }
+        val audiobook = runBlocking { audiobooksDao.getAudiobook(TestData.audiobook.id).first() }
         assertEquals(1000, audiobook?.playbackState?.currentPositionMs)
         assertEquals(false, audiobook?.playbackState?.isNew)
     }
 
     private suspend fun insertAudiobooks() {
-        audiobooksDao.insertAudiobook(audiobook, listOf(audiobookFile1, audiobookFile2))
-        audiobooksDao.insertAudiobookFileDurations(listOf(audiobookFileDuration1, audiobookFileDuration2))
+        audiobooksDao.insertAudiobook(TestData.audiobook, listOf(TestData.audiobookFile1, TestData.audiobookFile2))
+        audiobooksDao.insertAudiobookFileDurations(listOf(TestData.audiobookFileDuration1, TestData.audiobookFileDuration2))
     }
 
     private fun AudiobookFile.toMediaItem() = MediaItem.Builder().setUri(uri).build()

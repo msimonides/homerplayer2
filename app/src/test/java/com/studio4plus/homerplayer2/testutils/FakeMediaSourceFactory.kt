@@ -24,7 +24,6 @@
 
 package com.studio4plus.homerplayer2.testutils
 
-import android.net.Uri
 import androidx.media3.common.AdPlaybackState
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
@@ -33,10 +32,15 @@ import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.upstream.LoadErrorHandlingPolicy
 import androidx.media3.test.utils.FakeMediaSource
 import androidx.media3.test.utils.FakeTimeline
-import androidx.media3.test.utils.FakeTimeline.TimelineWindowDefinition
-import kotlin.collections.get
+import com.studio4plus.homerplayer2.audiobooks.AudiobookFileDuration
+import com.studio4plus.homerplayer2.testdata.TestData
 
-class FakeMediaSourceFactory(private val durationsMs : Map<Uri, Long>) : MediaSource.Factory {
+class FakeMediaSourceFactory(
+    fileDurations: List<AudiobookFileDuration> =
+        listOf(TestData.audiobookFileDuration1, TestData.audiobookFileDuration2)
+) : MediaSource.Factory {
+
+    private val durationsMs = fileDurations.associate { it.uri to it.durationMs }
     private val DEFAULT_UID = Unit
 
     override fun setDrmSessionManagerProvider(drmSessionManagerProvider: DrmSessionManagerProvider): MediaSource.Factory {
@@ -53,7 +57,7 @@ class FakeMediaSourceFactory(private val durationsMs : Map<Uri, Long>) : MediaSo
         val uri = mediaItem.localConfiguration?.uri
         val durationMs = durationsMs[uri]
         checkNotNull(durationMs)
-        val timelineWindowDefinition = TimelineWindowDefinition(
+        val timelineWindowDefinition = FakeTimeline.TimelineWindowDefinition(
             /* periodCount = */ 1,
             /* id = */ DEFAULT_UID,
             /* isSeekable = */ true,
@@ -68,5 +72,4 @@ class FakeMediaSourceFactory(private val durationsMs : Map<Uri, Long>) : MediaSo
         )
         return FakeMediaSource(FakeTimeline(timelineWindowDefinition))
     }
-
 }
