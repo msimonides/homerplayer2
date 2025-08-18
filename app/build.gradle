@@ -128,6 +128,7 @@ dependencies {
 
     testImplementation libs.androidx.test.corektx
     testImplementation libs.junit
+    testImplementation libs.koin.test.junit4
     testImplementation libs.kotlin.test.junit
     testImplementation libs.kotlinx.coroutines.test
     testImplementation libs.androidx.media3.test.utils

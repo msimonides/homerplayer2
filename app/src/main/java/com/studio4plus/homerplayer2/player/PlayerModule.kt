@@ -27,6 +27,7 @@ package com.studio4plus.homerplayer2.player
 import android.content.Context
 import androidx.datastore.core.DataStore
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksDao
+import com.studio4plus.homerplayer2.audiobooks.AudiobooksModule
 import com.studio4plus.homerplayer2.base.DispatcherProvider
 import com.studio4plus.homerplayer2.exoplayer.ExoplayerModule
 import com.studio4plus.homerplayer2.loccalstorage.LOCAL_STORAGE_JSON
@@ -39,7 +40,7 @@ import org.koin.core.annotation.Module
 import org.koin.core.annotation.Named
 import org.koin.core.annotation.Single
 
-@Module(includes = [ExoplayerModule::class, LocalStorageModule::class])
+@Module(includes = [AudiobooksModule::class, ExoplayerModule::class, LocalStorageModule::class])
 @ComponentScan("com.studio4plus.homerplayer2.player")
 class PlayerModule {
 

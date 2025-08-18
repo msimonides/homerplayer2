@@ -6,8 +6,7 @@ android-minSdk = '21'
 androidx-lifecycle = '2.9.2'
 compose = '1.8.3'
 coil = '3.3.0'
-koin-android = '4.1.0'
-koin-android-compose = "4.1.0"
+koin = '4.1.0'
 koin-annotation= "2.1.0"
 kotlin = '2.2.0'
 kotlinx-coroutines = '1.10.2'
@@ -55,10 +54,11 @@ coil-okhttp = { module = 'io.coil-kt.coil3:coil-network-okhttp', version.ref = '
 
 desugarjdk = 'com.android.tools:desugar_jdk_libs:2.1.5'
 
-koin-android = { module = 'io.insert-koin:koin-android', version.ref = 'koin-android' }
-koin-androidx-compose = { module = 'io.insert-koin:koin-androidx-compose', version.ref = 'koin-android-compose' }
+koin-android = { module = 'io.insert-koin:koin-android', version.ref = 'koin' }
+koin-androidx-compose = { module = 'io.insert-koin:koin-androidx-compose', version.ref = 'koin' }
 koin-annotations = { module = 'io.insert-koin:koin-annotations', version.ref = 'koin-annotation' }
 koin-compiler = { module = 'io.insert-koin:koin-ksp-compiler', version.ref = 'koin-annotation' }
+koin-test-junit4 = { module = 'io.insert-koin:koin-test-junit4', version.ref = 'koin' }
 
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 

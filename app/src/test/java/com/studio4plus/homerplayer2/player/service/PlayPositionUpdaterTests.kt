@@ -26,29 +26,15 @@ package com.studio4plus.homerplayer2.player.service
 
 import android.app.Application
 import android.net.Uri
-import androidx.media3.common.AdPlaybackState
-import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.drm.DrmSessionManagerProvider
-import androidx.media3.exoplayer.source.MediaSource
-import androidx.media3.exoplayer.upstream.LoadErrorHandlingPolicy
-import androidx.media3.test.utils.FakeMediaSource
-import androidx.media3.test.utils.FakeRenderer
-import androidx.media3.test.utils.FakeTimeline
-import androidx.media3.test.utils.FakeTimeline.TimelineWindowDefinition
-import androidx.media3.test.utils.TestExoPlayerBuilder
 import androidx.media3.test.utils.robolectric.TestPlayerRunHelper
-import androidx.test.core.app.ApplicationProvider
-import com.studio4plus.homerplayer2.app.AppDatabase
+import com.studio4plus.homerplayer2.app.AppModule
 import com.studio4plus.homerplayer2.audiobooks.Audiobook
 import com.studio4plus.homerplayer2.audiobooks.AudiobookFile
 import com.studio4plus.homerplayer2.audiobooks.AudiobookFileDuration
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksDao
-import com.studio4plus.homerplayer2.player.PlaybackUiState
-import com.studio4plus.homerplayer2.player.PlaybackUiStateRepository
-import com.studio4plus.homerplayer2.testutils.FakeDataStore
-import com.studio4plus.homerplayer2.testutils.createInMemoryDatabase
+import com.studio4plus.homerplayer2.testutils.declareFakes
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -56,7 +42,12 @@ import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runCurrent
 import org.junit.Before
+import org.junit.Rule
 import org.junit.runner.RunWith
+import org.koin.ksp.generated.module
+import org.koin.test.KoinTest
+import org.koin.test.KoinTestRule
+import org.koin.test.inject
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import kotlin.test.Test
@@ -65,15 +56,19 @@ import kotlin.test.assertEquals
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(RobolectricTestRunner::class)
 @Config(application = Application::class)
-class PlayPositionUpdaterTests {
+class PlayPositionUpdaterTests : KoinTest {
 
-    private lateinit var db: AppDatabase
-    private lateinit var audiobooksDao: AudiobooksDao
-    private lateinit var playbackUiStateRepository: PlaybackUiStateRepository
-    private lateinit var player: ExoPlayer
-    private lateinit var testScope: TestScope
+    @get:Rule
+    val koinTestRule = KoinTestRule.create {
+        modules(AppModule().module)
+        declareFakes(mediaDurationsMs)
+    }
 
-    private lateinit var positionUpdater: PlayPositionUpdater
+    val audiobooksDao: AudiobooksDao by inject()
+    val player: ExoPlayer by inject()
+    val testScope: TestScope by inject()
+
+    val positionUpdater: PlayPositionUpdater by inject()
 
     private val audiobook = Audiobook(
         id = "audiobook1",
@@ -95,22 +90,9 @@ class PlayPositionUpdaterTests {
 
     @Before
     fun setup() {
-        db = createInMemoryDatabase()
-        audiobooksDao = db.audiobooksDao()
-
-        testScope = TestScope()
-
-        playbackUiStateRepository =
-            PlaybackUiStateRepository(testScope.backgroundScope, FakeDataStore(PlaybackUiState()))
-        positionUpdater =
-            PlayPositionUpdater(testScope.backgroundScope, audiobooksDao, playbackUiStateRepository)
         runBlocking {
             insertAudiobooks()
         }
-        player = TestExoPlayerBuilder(ApplicationProvider.getApplicationContext())
-            .setMediaSourceFactory(FakeMediaSourceFactory(mediaDurationsMs))
-            .setRenderers(FakeRenderer(C.TRACK_TYPE_AUDIO))
-            .build()
         player.addListener(positionUpdater)
     }
 
@@ -212,39 +194,4 @@ class PlayPositionUpdaterTests {
     }
 
     private fun AudiobookFile.toMediaItem() = MediaItem.Builder().setUri(uri).build()
-}
-
-private class FakeMediaSourceFactory(private val durationsMs : Map<Uri, Long>) : MediaSource.Factory {
-    private val DEFAULT_UID = Unit
-
-    override fun setDrmSessionManagerProvider(drmSessionManagerProvider: DrmSessionManagerProvider): MediaSource.Factory {
-        throw UnsupportedOperationException()
-    }
-
-    override fun setLoadErrorHandlingPolicy(loadErrorHandlingPolicy: LoadErrorHandlingPolicy): MediaSource.Factory {
-        throw UnsupportedOperationException()
-    }
-
-    override fun getSupportedTypes(): IntArray = intArrayOf(C.CONTENT_TYPE_OTHER)
-
-    override fun createMediaSource(mediaItem: MediaItem): MediaSource {
-        val uri = mediaItem.localConfiguration?.uri
-        val durationMs = durationsMs[uri]
-        checkNotNull(durationMs)
-        val timelineWindowDefinition = TimelineWindowDefinition(
-            /* periodCount = */ 1,
-            /* id = */ DEFAULT_UID,
-            /* isSeekable = */ true,
-            /* isDynamic = */ false,
-            /* isLive = */ false,
-            /* isPlaceholder = */ false,
-            /* durationUs = */ durationMs * C.MICROS_PER_SECOND,
-            /* defaultPositionUs = */ 0L,
-            /* windowOffsetInFirstPeriodUs = */ 0L,
-            /* adPlaybackStates = */ mutableListOf(AdPlaybackState.NONE),
-            /* mediaItem = */ mediaItem
-        )
-        return FakeMediaSource(FakeTimeline(timelineWindowDefinition))
-    }
-
 }
