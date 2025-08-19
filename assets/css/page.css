@@ -89,11 +89,15 @@ main img {
     padding-inline-end: 1rem;
 }
 
+#contact a:not(:hover) {
+    text-decoration: none;
+}
+
 @media (min-width: 768px) {
     #contact a {
         margin: 0 auto 0.5rem;
         display: block;
-        width: 5rem;
+        width: 6rem;
     }
 }
 
