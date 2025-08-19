@@ -5,16 +5,18 @@ body {
     grid-template-areas:
       "logo header"
       "nav nav"
-      "main main";
+      "main main"
+      "contact contact";
 }
 
 @media (min-width: 768px) {
     body {
         grid-template-columns: 12em 4fr;
-        grid-auto-rows: auto;
+        grid-template-rows: auto auto 1fr;
         grid-template-areas:
-          "logo header"
-          "nav main";
+          "logo    header"
+          "nav     main"
+          "contact main";
     }
 }
 
@@ -74,6 +76,25 @@ main img {
     margin: 1rem auto 0;
     display: block;
     width: 10rem;
+}
+
+
+#contact {
+    grid-area: contact;
+}
+
+#contact a {
+    font-size: 90%;
+    display: inline-block;
+    padding-inline-end: 1rem;
+}
+
+@media (min-width: 768px) {
+    #contact a {
+        margin: 0 auto 0.5rem;
+        display: block;
+        width: 5rem;
+    }
 }
 
 .inline-icon {
