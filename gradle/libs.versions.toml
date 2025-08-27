@@ -3,14 +3,14 @@ about-libraries = "12.2.4"
 android-gradle-plugin = "8.12.0"
 android-compileSdk = '36'
 android-minSdk = '21'
-androidx-lifecycle = '2.9.2'
+androidx-lifecycle = '2.9.3'
 compose = '1.8.3'
 coil = '3.3.0'
 koin = '4.1.0'
 koin-annotation= "2.1.0"
-kotlin = '2.2.0'
+kotlin = '2.2.10'
 kotlinx-coroutines = '1.10.2'
-ksp-compiler = '2.2.0-2.0.2'
+ksp-compiler = '2.2.10-2.0.2'
 ktor = '3.2.3'
 media3 = '1.8.0'
 okhttp = '4.12.0'
@@ -22,7 +22,7 @@ workmanager = '2.10.3'
 
 aboutlibraries-compose = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "about-libraries" }
 androidx-activity-compose = 'androidx.activity:activity-compose:1.10.1'
-androidx-core-ktx = 'androidx.core:core-ktx:1.16.0'
+androidx-core-ktx = 'androidx.core:core-ktx:1.17.0'
 androidx-datastore-core = 'androidx.datastore:datastore:1.0.0'
 androidx-documentfile ='androidx.documentfile:documentfile:1.1.0'
 androidx-lifecycle-runtime-compose = { module = 'androidx.lifecycle:lifecycle-runtime-compose', version.ref = 'androidx-lifecycle' }
@@ -82,7 +82,7 @@ timber = 'com.jakewharton.timber:timber:5.0.1'
 treessence = 'com.github.bastienpaulfr:Treessence:1.1.2'
 
 junit = 'junit:junit:4.13.2'
-robolectric = 'org.robolectric:robolectric:4.15.1'
+robolectric = 'org.robolectric:robolectric:4.16'
 turbine = 'app.cash.turbine:turbine:1.2.1'
 
 
