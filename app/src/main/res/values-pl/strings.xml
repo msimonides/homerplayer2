@@ -164,6 +164,7 @@ Przetestuj aby włączyć.</string>
     <string name="settings_ui_lockdown_kiosk_mode_dialog_title">Blokada aplikacji (tryb kiosku)</string>
     <string name="settings_ui_lockdown_kiosk_mode_item">Blokada aplikacji (tryb kiosku)…</string>
     <string name="settings_ui_lockdown_kiosk_mode_setting_disabled">Wyłączona</string>
+    <string name="settings_ui_lockdown_kiosk_mode_setting_disabled_snackbar">Wyłączono, blokada zostanie automatycznie włączona o %1$s</string>
     <string name="settings_ui_lockdown_kiosk_mode_setting_disabled_until">Wyłączona, zostanie włączona o %1$s</string>
     <string name="settings_ui_lockdown_kiosk_mode_setting_enabled">Włączona, nie można opuścić aplikacji</string>
     <string name="settings_ui_lockdown_settings_description">Zablokuj aplikację, aby stworzyć urządzenie wyłącznie do odtwarzania audiobooków.</string>
