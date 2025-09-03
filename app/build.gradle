@@ -20,8 +20,8 @@ android {
         applicationId "com.studio4plus.homerplayer2"
         minSdk libs.versions.android.minSdk.get().toInteger()
         targetSdk 35
-        versionCode 28
-        versionName "1.4.5"
+        versionCode 29
+        versionName "1.4.6"
 
         // Note: don't set resConfigs, the app needs to support all languages regardless of available translations.
         buildConfigField("String[]", "SUPPORTED_TRANSLATIONS", "{ ${supportedTranslations.collect { "\"$it\"" }.join(", ")} }")
