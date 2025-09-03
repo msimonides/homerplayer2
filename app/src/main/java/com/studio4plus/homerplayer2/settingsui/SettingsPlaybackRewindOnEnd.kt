@@ -45,7 +45,7 @@ import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFoldersSettingsV
 import com.studio4plus.homerplayer2.base.ui.SectionTitle
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 import com.studio4plus.homerplayer2.contentui.BasicAudiobookFolderRow
-import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SettingsPlaybackRewindOnEndRoute(

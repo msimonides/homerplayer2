@@ -51,7 +51,7 @@ import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 import com.studio4plus.homerplayer2.player.ui.BookPage
 import com.studio4plus.homerplayer2.player.ui.PlayerActions
 import com.studio4plus.homerplayer2.settingsui.composables.SettingSwitch
-import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SettingsPlayerUiRoute(viewModel: SettingsPlayerUiViewModel = koinViewModel()) {

@@ -24,7 +24,7 @@
 
 package com.studio4plus.homerplayer2.onboarding
 
-import androidx.compose.foundation.layout.Box
+import android.net.Uri
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -45,11 +45,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFolderViewState
 import com.studio4plus.homerplayer2.audiobookfoldersui.OpenAudiobooksTreeScreenWrapper
-import com.studio4plus.homerplayer2.base.Constants
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 import com.studio4plus.homerplayer2.contentanalytics.ContentEvent
-import com.studio4plus.homerplayer2.contentui.AddContentCardsColumn
 import com.studio4plus.homerplayer2.contentui.ContentManagementPanel
 import com.studio4plus.homerplayer2.contentui.ContentPanelViewModel
 import com.studio4plus.homerplayer2.contentui.ContentPanelViewState
@@ -57,15 +55,14 @@ import com.studio4plus.homerplayer2.contentui.PreviewData
 import com.studio4plus.homerplayer2.podcastsui.PodcastItemViewState
 import com.studio4plus.homerplayer2.samplebooks.SamplesInstallState
 import com.studio4plus.homerplayer2.speech.LaunchErrorSnackDisplay
-import com.studio4plus.homerplayer2.utils.openWebUrl
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun OnboardingContentRoute(
     modifier: Modifier = Modifier,
-    navigateEditFolder: (folderUri: String) -> Unit,
+    navigateEditFolder: (folderUri: Uri) -> Unit,
     navigateAddPodcast: () -> Unit,
-    navigateEditPodcast: (feedUri: String) -> Unit,
+    navigateEditPodcast: (feedUri: Uri) -> Unit,
     navigateNext: () -> Unit,
     viewModel: OnboardingContentViewModel = koinViewModel()
 ) {
@@ -112,10 +109,10 @@ fun OnboardingContentScreen(
     snackbarHostState: SnackbarHostState,
     navigateNext: () -> Unit,
     addFolder: () -> Unit,
-    editFolder: (folderUri: String) -> Unit,
+    editFolder: (folderUri: Uri) -> Unit,
     removeFolder: (AudiobookFolderViewState) -> Unit,
     addPodcast: () -> Unit,
-    editPodcast: (feedUri: String) -> Unit,
+    editPodcast: (feedUri: Uri) -> Unit,
     removePodcast: (PodcastItemViewState) -> Unit,
     downloadSamples: () -> Unit,
     modifier: Modifier = Modifier,
@@ -156,10 +153,10 @@ fun OnboardingContentScreen(
 private fun ScreenContent(
     panelState: ContentPanelViewState?,
     onAddFolder: () -> Unit,
-    onEditFolder: (folderUri: String) -> Unit,
+    onEditFolder: (folderUri: Uri) -> Unit,
     onRemoveFolder: (AudiobookFolderViewState) -> Unit,
     onAddPodcast: () -> Unit,
-    onEditPodcast: (feedUri: String) -> Unit,
+    onEditPodcast: (feedUri: Uri) -> Unit,
     onRemovePodcast: (PodcastItemViewState) -> Unit,
     onDownloadSamples: () -> Unit,
     modifier: Modifier = Modifier,

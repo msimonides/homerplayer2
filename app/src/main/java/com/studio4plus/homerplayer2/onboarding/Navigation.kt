@@ -24,54 +24,62 @@
 
 package com.studio4plus.homerplayer2.onboarding
 
-import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.navigation
-import androidx.navigation.navArgument
-import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobooksFolderEditNav
-import com.studio4plus.homerplayer2.base.ui.encodeToUriPathSegment
-import com.studio4plus.homerplayer2.podcastsui.PodcastEditNav
+import androidx.navigation3.runtime.EntryProviderScope
+import androidx.navigation3.runtime.NavKey
+import com.studio4plus.homerplayer2.base.serialization.UriAsText
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.modules.PolymorphicModuleBuilder
 
-fun NavGraphBuilder.onboardingGraph(navController: NavController, destinationRoute: String) {
-    navigation("onboarding/folders", "onboarding") {
-        composable("onboarding/folders") {
-            OnboardingContentRoute(
-                navigateEditFolder = { folderUri ->
-                    navController.navigate("onboarding/folder/${folderUri.encodeToUriPathSegment()}")
-                },
-                navigateAddPodcast = { navController.navigate("onboarding/podcast/") },
-                navigateEditPodcast = { feedUri ->
-                    navController.navigate("onboarding/podcast/${feedUri.encodeToUriPathSegment()}")
-                },
-                navigateNext = { navController.navigate("onboarding/tts") }
-            )
-        }
-        composable("onboarding/tts") {
-            OnboardingSpeechRoute(
-                navigateNext = {
-                    navController.navigate(destinationRoute) {
-                        popUpTo("onboarding/folders") { inclusive = true }
-                    }
-                }
-            )
-        }
-        composable(
-            "onboarding/folder/{${AudiobooksFolderEditNav.FolderUriKey}}",
-            arguments = listOf(navArgument(AudiobooksFolderEditNav.FolderUriKey) { NavType.StringType })
-        ) {
-            OnboardingEditFolderRoute(
-                navigateBack = { navController.popBackStack() }
-            )
-        }
-        composable(
-            "onboarding/podcast/{${PodcastEditNav.FeedUriKey}}",
-            arguments = listOf(navArgument(PodcastEditNav.FeedUriKey) { NavType.StringType })
-        ) {
-            OnboardingAddPodcastRoute(
-                navigateBack = { navController.popBackStack() }
-            )
-        }
+@Serializable
+abstract class OnboardingDestination() : NavKey {
+    companion object {
+        val Default: OnboardingDestination = OnboardingContent
+
+        context(builder: PolymorphicModuleBuilder<NavKey>)
+        fun serializers() =
+            with(builder) {
+                subclass(OnboardingContent::class, OnboardingContent.serializer())
+                subclass(OnboardingTts::class, OnboardingTts.serializer())
+                subclass(
+                    OnboardingAudiobooksFolderEdit::class,
+                    OnboardingAudiobooksFolderEdit.serializer(),
+                )
+                subclass(OnboardingPodcastEdit::class, OnboardingPodcastEdit.serializer())
+            }
+    }
+}
+
+@Serializable private object OnboardingContent : OnboardingDestination()
+
+@Serializable private object OnboardingTts : OnboardingDestination()
+
+@Serializable
+private data class OnboardingAudiobooksFolderEdit(val folderUri: UriAsText) :
+    OnboardingDestination()
+
+@Serializable
+private data class OnboardingPodcastEdit(val podcastUri: UriAsText?) : OnboardingDestination()
+
+fun EntryProviderScope<NavKey>.onboardingEntries(
+    navigate: (OnboardingDestination) -> Unit,
+    navigateBack: () -> Unit,
+    onFinished: () -> Unit,
+) {
+    entry<OnboardingContent> {
+        OnboardingContentRoute(
+            navigateEditFolder = { folderUri ->
+                navigate(OnboardingAudiobooksFolderEdit(folderUri))
+            },
+            navigateAddPodcast = { navigate(OnboardingPodcastEdit(null)) },
+            navigateEditPodcast = { feedUri -> navigate(OnboardingPodcastEdit(feedUri)) },
+            navigateNext = { navigate(OnboardingTts) },
+        )
+    }
+    entry<OnboardingTts> { OnboardingSpeechRoute(navigateNext = onFinished) }
+    entry<OnboardingAudiobooksFolderEdit> { entry ->
+        OnboardingEditFolderRoute(folderUri = entry.folderUri, navigateBack = navigateBack)
+    }
+    entry<OnboardingPodcastEdit> {
+        OnboardingAddPodcastRoute(podcastUri = it.podcastUri, navigateBack = navigateBack)
     }
 }

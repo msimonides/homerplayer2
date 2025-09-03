@@ -54,6 +54,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFolderBadgeContent
 import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFolderViewState
@@ -91,7 +92,7 @@ fun BasicAudiobookFolderRow(
 @Composable
 fun AudiobookFolderRow(
     folder: AudiobookFolderViewState,
-    onEditClicked: (String) -> Unit,
+    onEditClicked: (Uri) -> Unit,
     onRemoveClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -103,7 +104,7 @@ fun AudiobookFolderRow(
         modifier = Modifier
             .optional(isEnabled) {
                 clickable(
-                    onClick = { onEditClicked(folder.uri.toString()) },
+                    onClick = { onEditClicked(folder.uri) },
                     onClickLabel = stringResource(R.string.audiobook_folder_accessibility_action_edit)
                 )
             }
@@ -115,7 +116,7 @@ fun AudiobookFolderRow(
 fun PodcastRow(
     item: PodcastItemViewState,
     dateFormatter: DateTimeFormatter,
-    onEditClicked: (feedUri: String) -> Unit,
+    onEditClicked: (feedUri: Uri) -> Unit,
     onRemoveClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -128,7 +129,7 @@ fun PodcastRow(
         accessibilityActions = listOf(removeAccessibilityAction(onRemoveClicked)),
         modifier = Modifier
             .clickable(
-                onClick = { onEditClicked(item.feedUri) },
+                onClick = { onEditClicked(item.feedUri.toUri()) },
                 onClickLabel = stringResource(R.string.podcast_accessibility_action_edit)
             )
             .then(modifier),

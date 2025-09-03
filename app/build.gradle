@@ -51,6 +51,7 @@ android {
     }
     kotlinOptions {
         jvmTarget = '17'
+        freeCompilerArgs = ['-XXLanguage:+ContextParameters']
     }
     buildFeatures {
         compose true
@@ -108,9 +109,12 @@ dependencies {
     implementation libs.androidx.lifecycle.runtime.compose
     implementation libs.androidx.lifecycle.service
     implementation libs.androidx.lifecycle.viewmodel
+    implementation libs.androidx.lifecycle.viewmodel.navigation3
     implementation libs.androidx.media3.exoplayer
     implementation libs.androidx.media3.session
     implementation libs.androidx.navigation.compose
+    implementation libs.androidx.navigation3.runtime
+    implementation libs.androidx.navigation3.ui
     implementation libs.androidx.room.ktx
     implementation libs.androidx.workmanager.ktx
     implementation libs.compose.ui.ui

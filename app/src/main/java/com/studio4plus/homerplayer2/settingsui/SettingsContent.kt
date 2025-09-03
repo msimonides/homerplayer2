@@ -24,6 +24,7 @@
 
 package com.studio4plus.homerplayer2.settingsui
 
+import android.net.Uri
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.material3.SnackbarHostState
@@ -38,14 +39,14 @@ import com.studio4plus.homerplayer2.contentanalytics.ContentEvent
 import com.studio4plus.homerplayer2.contentui.ContentManagementPanel
 import com.studio4plus.homerplayer2.contentui.ContentPanelViewModel
 import com.studio4plus.homerplayer2.speech.LaunchErrorSnackDisplay
-import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SettingsContentRoute(
     snackbarHostState: SnackbarHostState,
     onAddPodcast: () -> Unit,
-    onEditPodcast: (feedUri: String) -> Unit,
-    onEditFolder: (folderUri: String) -> Unit,
+    onEditPodcast: (feedUri: Uri) -> Unit,
+    onEditFolder: (folderUri: Uri) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SettingsContentViewModel = koinViewModel()
 ) {

@@ -32,6 +32,7 @@ import androidx.lifecycle.viewModelScope
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.analytics.Analytics
 import com.studio4plus.homerplayer2.contentanalytics.ContentEvent
+import com.studio4plus.homerplayer2.base.serialization.UriAsText
 import com.studio4plus.homerplayer2.podcasts.PodcastsTaskScheduler
 import com.studio4plus.homerplayer2.podcasts.data.Podcast
 import com.studio4plus.homerplayer2.podcasts.data.PodcastEpisode
@@ -80,6 +81,7 @@ private const val DEFAULT_EPISODE_COUNT = 2
 @KoinViewModel
 class PodcastEditViewModel(
     @InjectedParam private val analyticsEventPrefix: String,
+    @InjectedParam private val podcastFeedUri: UriAsText?,
     private val savedStateHandle: SavedStateHandle,
     private val downloadPodcastFeed: DownloadPodcastFeed,
     private val searchPodcasts: SearchPodcasts,
@@ -151,9 +153,9 @@ class PodcastEditViewModel(
         set(value) { savedStateHandle["searchPhrase"] = value }
 
     private var podcastUri: String
-        get() = savedStateHandle[PodcastEditNav.FeedUriKey] ?: ""
+        get() = savedStateHandle[PodcastEditNav.FeedUriKey] ?: podcastFeedUri?.toString() ?: ""
         set(value) { savedStateHandle[PodcastEditNav.FeedUriKey] = value }
-    private val podcastUriFlow = savedStateHandle.getStateFlow(PodcastEditNav.FeedUriKey, "")
+    private val podcastUriFlow = savedStateHandle.getStateFlow(PodcastEditNav.FeedUriKey, podcastFeedUri?.toString() ?: "")
     private val isNewPodcast = podcastUriFlow.value.isEmpty()
 
     // TODO:

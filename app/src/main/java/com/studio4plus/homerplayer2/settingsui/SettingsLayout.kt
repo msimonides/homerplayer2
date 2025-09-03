@@ -78,7 +78,7 @@ import com.studio4plus.homerplayer2.settingsdata.PlayerUiSettings
 import com.studio4plus.homerplayer2.settingsui.composables.LayoutSizeDragHandle
 import com.studio4plus.homerplayer2.settingsui.composables.rememberLayoutSizeDragHandleState
 import com.studio4plus.homerplayer2.utils.blockTouchEvents
-import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SettingsLayoutRoute(

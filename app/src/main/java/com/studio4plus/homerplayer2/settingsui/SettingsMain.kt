@@ -50,6 +50,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.painterResource
@@ -71,7 +72,7 @@ import com.studio4plus.homerplayer2.settingsui.composables.SettingItem
 import com.studio4plus.homerplayer2.settingsui.composables.SettingRowSummaryText
 import com.studio4plus.homerplayer2.settingsui.usecases.ContentDescriptionFlow
 import kotlinx.coroutines.flow.collectLatest
-import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.viewmodel.koinViewModel
 import java.time.format.DateTimeFormatter
 import com.studio4plus.homerplayer2.base.R as BaseR
 
@@ -101,8 +102,9 @@ fun SettingsMainRoute(
     )
     val lifecycleOwner = LocalLifecycleOwner.current
     val resources = LocalResources.current
+    val configuration = LocalConfiguration.current
     LaunchedEffect(Unit) {
-        val timeFormatter = DateTimeFormatter.ofPattern("HH:mm", resources.configuration.locale)
+        val timeFormatter = DateTimeFormatter.ofPattern("HH:mm", configuration.locale)
         viewModel.eventFullKioskDisabledUntil
             .flowWithLifecycle(lifecycleOwner.lifecycle)
             .collectLatest { event ->

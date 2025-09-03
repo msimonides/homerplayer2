@@ -25,7 +25,6 @@
 package com.studio4plus.homerplayer2.audiobookfoldersui
 
 import android.net.Uri
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.studio4plus.homerplayer2.audiobookfolders.AudiobookFoldersDao
@@ -39,10 +38,11 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
+import org.koin.core.annotation.InjectedParam
 
 @KoinViewModel
 class AudiobooksFolderEditViewModel(
-    savedStateHandle: SavedStateHandle,
+    @InjectedParam private val folderUri: Uri,
     private val mainScope: CoroutineScope,
     private val audiobooksFolderName: AudiobooksFolderName,
     private val audiobooksFoldersDao: AudiobookFoldersDao,
@@ -61,8 +61,6 @@ class AudiobooksFolderEditViewModel(
         val rewindOnEnd: Boolean,
         val audiobooks: List<AudiobookViewState>
     )
-
-    private val folderUri = Uri.parse(savedStateHandle[AudiobooksFolderEditNav.FolderUriKey] ?: "")
 
     val viewState: StateFlow<ViewState?> =
         combine(

@@ -55,7 +55,7 @@ import com.studio4plus.homerplayer2.settingsui.composables.SelectFromRadioListDi
 import com.studio4plus.homerplayer2.settingsui.composables.SettingItem
 import com.studio4plus.homerplayer2.settingsui.composables.SettingSwitch
 import com.studio4plus.homerplayer2.settingsui.usecases.ChangeFullKioskModeSetting
-import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.viewmodel.koinViewModel
 import java.time.format.DateTimeFormatter
 
 

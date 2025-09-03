@@ -32,10 +32,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobooksFolderEditRoute
+import com.studio4plus.homerplayer2.base.serialization.UriAsText
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OnboardingEditFolderRoute(
+    folderUri: UriAsText,
     navigateBack: () -> Unit
 ) {
     OnboardingDetailsScaffold(
@@ -43,6 +47,7 @@ fun OnboardingEditFolderRoute(
         navigateBack = navigateBack
     ) { contentPadding ->
         AudiobooksFolderEditRoute(
+            viewModel = koinViewModel { parametersOf(folderUri) },
             modifier = Modifier
                 .padding(contentPadding)
                 .consumeWindowInsets(contentPadding)

@@ -46,7 +46,7 @@ import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.settingsui.composables.SelectFromRadioListDialog
 import com.studio4plus.homerplayer2.settingsui.composables.SettingItem
-import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.viewmodel.koinViewModel
 import java.util.concurrent.TimeUnit
 import com.studio4plus.homerplayer2.base.R as BaseR
 

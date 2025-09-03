@@ -40,7 +40,7 @@ import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.settingsdata.NetworkType
 import com.studio4plus.homerplayer2.settingsui.composables.SelectFromRadioListDialog
 import com.studio4plus.homerplayer2.settingsui.composables.SettingItem
-import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 private enum class SettingsNetworkDialogType {
     PodcastsDownloadNetworkType

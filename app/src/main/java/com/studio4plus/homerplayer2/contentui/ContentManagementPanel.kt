@@ -25,6 +25,7 @@
 package com.studio4plus.homerplayer2.contentui
 
 import androidx.compose.foundation.layout.Box
+import android.net.Uri
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
@@ -71,10 +72,10 @@ import com.studio4plus.homerplayer2.base.R as BaseR
 fun ContentManagementPanel(
     state: ContentPanelViewState?,
     onAddFolder: () -> Unit,
-    onEditFolder: (folderUri: String) -> Unit,
+    onEditFolder: (folderUri: Uri) -> Unit,
     onRemoveFolder: (AudiobookFolderViewState) -> Unit,
     onAddPodcast: () -> Unit,
-    onEditPodcast: (feedUri: String) -> Unit,
+    onEditPodcast: (feedUri: Uri) -> Unit,
     onRemovePodcast: (PodcastItemViewState) -> Unit,
     onDownloadSamples: () -> Unit,
     modifier: Modifier = Modifier,
@@ -166,9 +167,9 @@ fun ContentManagementPanel(
 @Composable
 private fun ContentColumn(
     state: ContentPanelViewState,
-    onEditFolder: (folderUri: String) -> Unit,
+    onEditFolder: (folderUri: Uri) -> Unit,
     onRemoveFolder: (AudiobookFolderViewState) -> Unit,
-    onEditPodcast: (feedUri: String) -> Unit,
+    onEditPodcast: (feedUri: Uri) -> Unit,
     onRemovePodcast: (PodcastItemViewState) -> Unit,
     contentPadding: PaddingValues,
     horizontalItemPadding: Dp,

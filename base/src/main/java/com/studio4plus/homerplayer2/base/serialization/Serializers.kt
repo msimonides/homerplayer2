@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2024 Marcin Simonides
+ * Copyright (c) 2025 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,21 +22,27 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.settingsui
+package com.studio4plus.homerplayer2.base.serialization
 
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
-import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
+import android.net.Uri
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+import androidx.core.net.toUri
+import kotlinx.serialization.Serializable
 
-@Composable
-fun Modifier.defaultSettingsItem(horizontalPadding: Dp = HomerTheme.dimensions.screenHorizPadding) =
-    this
-        .fillMaxWidth()
-        .padding(horizontal= horizontalPadding, vertical = 8.dp)
-        .heightIn(min = HomerTheme.dimensions.settingsRowMinHeight)
+typealias UriAsText = @Serializable(UriSerializer::class) Uri
 
+object UriSerializer : KSerializer<Uri> {
+    override val descriptor: SerialDescriptor =
+        PrimitiveSerialDescriptor("android.net.Uri", PrimitiveKind.STRING)
+
+    override fun serialize(encoder: Encoder, value: Uri) {
+        encoder.encodeString(value.toString())
+    }
+
+    override fun deserialize(decoder: Decoder): Uri = decoder.decodeString().toUri()
+}

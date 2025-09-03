@@ -63,7 +63,7 @@ import com.studio4plus.homerplayer2.settingsui.composables.SettingSwitch
 import com.studio4plus.homerplayer2.speech.LaunchErrorSnackDisplay
 import com.studio4plus.homerplayer2.speech.SpeechTestViewModel
 import com.studio4plus.homerplayer2.speech.TtsCheckContract
-import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.viewmodel.koinViewModel
 import com.studio4plus.homerplayer2.base.R as BaseR
 
 @Composable

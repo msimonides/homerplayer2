@@ -55,12 +55,12 @@ import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 import com.studio4plus.homerplayer2.player.ui.HorizontalBookProgressIndicator
 import com.studio4plus.homerplayer2.settingsui.composables.SettingSwitch
 import com.studio4plus.homerplayer2.settingsui.defaultSettingsItem
-import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.viewmodel.koinViewModel
 import kotlin.Long
 
 @Composable
 fun AudiobooksFolderEditRoute(
-    viewModel: AudiobooksFolderEditViewModel = koinViewModel(),
+    viewModel: AudiobooksFolderEditViewModel,
     modifier: Modifier = Modifier,
 ) {
     val viewState = viewModel.viewState.collectAsStateWithLifecycle().value

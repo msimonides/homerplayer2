@@ -31,6 +31,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.studio4plus.homerplayer2.R
+import com.studio4plus.homerplayer2.base.serialization.UriAsText
 import com.studio4plus.homerplayer2.podcastsui.PodcastEditRoute
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -38,6 +39,7 @@ import org.koin.core.parameter.parametersOf
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OnboardingAddPodcastRoute(
+    podcastUri: UriAsText?,
     navigateBack: () -> Unit
 ) {
     OnboardingDetailsScaffold(
@@ -45,7 +47,7 @@ fun OnboardingAddPodcastRoute(
         navigateBack = navigateBack
     ) { contentPadding ->
         PodcastEditRoute(
-            viewModel = koinViewModel { parametersOf("Onboarding") },
+            viewModel = koinViewModel { parametersOf("Onboarding", podcastUri) },
             modifier = Modifier
                 .padding(contentPadding)
                 .consumeWindowInsets(contentPadding)

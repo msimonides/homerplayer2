@@ -65,7 +65,7 @@ import com.studio4plus.homerplayer2.settingsdata.PlayerUiSettings
 import com.studio4plus.homerplayer2.utils.max
 import com.studio4plus.homerplayer2.utils.optional
 import kotlinx.coroutines.flow.SharedFlow
-import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun PlayerRoute(
