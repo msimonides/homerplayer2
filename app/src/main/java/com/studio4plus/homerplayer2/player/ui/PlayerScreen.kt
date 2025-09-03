@@ -51,6 +51,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -251,7 +252,7 @@ private fun PlayerLayoutSettings.hasMargins(isLandscape: Boolean) = when {
 @Composable
 private fun PreviewTopControlsLarge() {
     HomerPlayer2Theme(
-        screenLargeWidth = 850.dp
+        windowContentSize = DpSize(850.dp, 300.dp)
     ) {
         TopControlsRow(
             batteryState = BatteryState.Discharging(0.9f),

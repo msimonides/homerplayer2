@@ -11,6 +11,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpSize
 
 @Immutable
 data class ExtendedColors(
@@ -144,12 +145,12 @@ private val ExtendedLightColors = ExtendedColors(
 @Composable
 fun HomerPlayer2Theme(
     darkTheme: Boolean = isNightMode(),
-    screenLargeWidth: Dp = windowLargeWidth(),
+    windowContentSize: DpSize = windowContentSize(),
     content: @Composable () -> Unit
 ) {
     val materialColorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
     val homerColorScheme = if (darkTheme) ExtendedDarkColors else ExtendedLightColors
-    val dimensions = screenDimensions(screenLargeWidth)
+    val dimensions = screenDimensions(windowContentSize)
 
     CompositionLocalProvider(
         LocalExtendedColors provides homerColorScheme,

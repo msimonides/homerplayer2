@@ -73,12 +73,14 @@ internal val LocalDimensions = staticCompositionLocalOf {
 
 private val MaxMainContentWidth = 800.dp
 
-internal fun screenDimensions(windowLargeWidth: Dp) =
-    if (windowLargeWidth.isSpecified && windowLargeWidth >= MaxMainContentWidth) {
-        largeScreenDimensions(windowLargeWidth)
+internal fun screenDimensions(windowSize: DpSize): Dimensions {
+    val windowLargeWidth = with (windowSize) { max(width, height) }
+    return if (windowLargeWidth.isSpecified && windowLargeWidth >= MaxMainContentWidth) {
+        largeScreenDimensions(windowSize.width)
     } else {
-        regularScreenDimensions(windowLargeWidth)
+        regularScreenDimensions(windowSize.width)
     }
+}
 
 private fun largeScreenDimensions(windowWidth: Dp): Dimensions {
     val screenContentPadding = 24.dp
@@ -111,11 +113,11 @@ private fun regularScreenDimensions(windowWidth: Dp) = Dimensions(
 )
 
 @Composable
-internal fun windowLargeWidth(): Dp =
+internal fun windowContentSize(): DpSize =
     if (LocalInspectionMode.current) {
-        LocalConfiguration.current.screenWidthDp.dp
+        with(LocalConfiguration.current) { DpSize(screenWidthDp.dp, screenHeightDp.dp) }
     } else {
-        with (androidWindowSize()) { max(width, height) }
+        androidWindowSize()
     }
 
 @Composable

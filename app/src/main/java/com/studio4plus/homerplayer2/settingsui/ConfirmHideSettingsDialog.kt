@@ -48,6 +48,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.base.ui.DefaultAlertDialog
@@ -98,7 +99,7 @@ private fun HideSettingsButtonConfirmation(
     ) {
         HomerPlayer2Theme(
             darkTheme = false,
-            screenLargeWidth = Dp.Unspecified,
+            windowContentSize = DpSize.Unspecified,
         ) {
             CompositionLocalProvider(
                 LocalContentColor provides MaterialTheme.colorScheme.onSurface
