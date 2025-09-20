@@ -123,6 +123,7 @@ dependencies {
     implementation libs.podcastindex
     implementation libs.rssparser
     implementation libs.sentry.android
+    implementation libs.sentry.android.timber
     implementation libs.timber
     implementation libs.treessence
 

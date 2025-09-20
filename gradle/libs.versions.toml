@@ -77,6 +77,7 @@ podcastindex = 'io.github.mr3y-the-programmer:podcastindex-sdk-ktor3:0.4.0'
 rssparser = 'com.prof18.rssparser:rssparser:6.0.12'
 
 sentry-android = { module = 'io.sentry:sentry-android', version.ref = 'sentry-android' }
+sentry-android-timber = { module = 'io.sentry:sentry-android-timber', version.ref = 'sentry-android' }
 
 timber = 'com.jakewharton.timber:timber:5.0.1'
 treessence = 'com.github.bastienpaulfr:Treessence:1.1.2'

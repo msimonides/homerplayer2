@@ -36,7 +36,9 @@ import coil3.request.CachePolicy
 import com.studio4plus.homerplayer2.BuildConfig
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.logging.FileLoggerTreeProvider
+import io.sentry.SentryLevel
 import io.sentry.android.core.SentryAndroid
+import io.sentry.android.timber.SentryTimberIntegration
 import okhttp3.OkHttpClient
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
@@ -99,6 +101,12 @@ class HomerPlayerApp : Application(), SingletonImageLoader.Factory, Configuratio
                 options.isEnableUserInteractionBreadcrumbs = false
                 options.isEnableActivityLifecycleBreadcrumbs = false
                 options.isEnableNetworkEventBreadcrumbs = false
+
+                val timber = SentryTimberIntegration(
+                    minEventLevel = SentryLevel.FATAL,
+                    minBreadcrumbLevel = SentryLevel.INFO,
+                )
+                options.addIntegration(timber)
             }
         }
     }

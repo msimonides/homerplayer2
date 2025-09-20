@@ -32,6 +32,7 @@ import androidx.annotation.WorkerThread
 import com.studio4plus.homerplayer2.audiobooks.Audiobook
 import com.studio4plus.homerplayer2.base.DispatcherProvider
 import com.studio4plus.homerplayer2.utils.hasFileScheme
+import io.sentry.Sentry
 import kotlinx.coroutines.withContext
 import org.koin.core.annotation.Single
 import timber.log.Timber
@@ -50,6 +51,8 @@ private const val COLUMN_MIME_TYPE = 2
 
 private const val SORT_BY_DISPLAY_NAME = DocumentsContract.Document.COLUMN_DISPLAY_NAME + " ASC"
 
+private const val SENTRY_SCAN_INFO = "Scan info"
+
 @Single
 class Scanner(
     private val contentResolver: ContentResolver,
@@ -64,6 +67,8 @@ class Scanner(
                     it.hasFileScheme() -> scanFileFolder(it)
                     else -> scanDocumentFolder(it)
                 }
+            }.also {
+                Sentry.removeExtra(SENTRY_SCAN_INFO)
             }
         }
 
@@ -136,6 +141,7 @@ class Scanner(
     private fun scanAudiobookFiles(
         rootUri: Uri, folderDocumentId: String, path: String
     ): List<Uri> {
+        Sentry.setExtra(SENTRY_SCAN_INFO, "path '$path', rootUri '$rootUri'")
         val childrenUri =
             DocumentsContract.buildChildDocumentsUriUsingTree(rootUri, folderDocumentId)
         val cursor = contentResolver.query(
