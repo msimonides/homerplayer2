@@ -64,7 +64,7 @@ abstract class AudiobookFoldersDao {
     abstract fun getFolderWithSettings(uri: Uri): Flow<AudiobookFolderWithSettings>
 
     @Transaction
-    suspend open fun updateFolderSettings(
+    open suspend fun updateFolderSettings(
         uri: Uri,
         transform: (AudiobooksFolderSettings) -> AudiobooksFolderSettings
     ) {

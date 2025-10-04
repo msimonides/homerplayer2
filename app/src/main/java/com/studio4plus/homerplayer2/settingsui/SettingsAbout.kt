@@ -35,7 +35,6 @@ import androidx.compose.material.icons.automirrored.filled.TextSnippet
 import androidx.compose.material.icons.filled.Gavel
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Policy
-import androidx.compose.material.icons.filled.TextSnippet
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier

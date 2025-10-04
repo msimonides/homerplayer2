@@ -44,9 +44,7 @@ import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFoldersSettingsViewState
 import com.studio4plus.homerplayer2.base.ui.SectionTitle
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
-import com.studio4plus.homerplayer2.contentui.AudiobookFolderRow
 import com.studio4plus.homerplayer2.contentui.BasicAudiobookFolderRow
-import com.studio4plus.homerplayer2.settingsui.composables.SettingSwitch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable

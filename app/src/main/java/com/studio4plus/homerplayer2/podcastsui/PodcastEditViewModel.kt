@@ -40,7 +40,6 @@ import com.studio4plus.homerplayer2.podcasts.usecases.PodcastEpisodeName
 import com.studio4plus.homerplayer2.podcasts.usecases.PodcastFeed
 import com.studio4plus.homerplayer2.podcasts.usecases.UpdatePodcastFromFeed
 import com.studio4plus.homerplayer2.podcasts.usecases.UpdatePodcastNameConfig
-import com.studio4plus.homerplayer2.podcastsui.PodcastEditViewModel.Feed
 import com.studio4plus.homerplayer2.podcastsui.usecases.CurrentNetworkType
 import com.studio4plus.homerplayer2.podcastsui.usecases.PodcastSearchResult
 import com.studio4plus.homerplayer2.podcastsui.usecases.SearchPodcasts
@@ -69,7 +68,6 @@ import org.koin.android.annotation.KoinViewModel
 import org.koin.core.annotation.Named
 import java.time.LocalDate
 import java.time.ZoneId
-import kotlin.collections.map
 
 private const val DEFAULT_EPISODE_COUNT = 2
 

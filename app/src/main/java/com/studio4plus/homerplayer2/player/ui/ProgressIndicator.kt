@@ -26,12 +26,9 @@ package com.studio4plus.homerplayer2.player.ui
 
 import androidx.annotation.FloatRange
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.progressSemantics
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
@@ -44,53 +41,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
-
-@Composable
-fun VerticalBookProgressIndicator(
-    @FloatRange(from = 0.0, to = 1.0)
-    progress: Float,
-    modifier: Modifier = Modifier,
-    color: Color = LocalContentColor.current,
-    thickness: Dp = HomerTheme.dimensions.progressIndicatorWidth
-) {
-    Canvas(
-        modifier
-            .progressSemantics(progress)
-            .fillMaxHeight()
-            .width(thickness)
-    ) {
-        val xOffset = size.width / 2
-        val halfThickness = xOffset
-        val progressHeight = (size.height - 2*halfThickness) * progress
-        val progressY = size.height - progressHeight
-
-        drawLine(color, Offset(xOffset, 0f), Offset(xOffset, progressY))
-        if (progress > 0f) {
-            drawLine(
-                color,
-                Offset(xOffset, progressY - halfThickness),
-                Offset(xOffset, size.height - halfThickness),
-                strokeWidth = size.width
-            )
-            drawArc(
-                color,
-                0f, 180f,
-                useCenter = false,
-                topLeft = Offset(0f, size.height - 2*halfThickness),
-                size = Size(size.width, size.width)
-            )
-        }
-        if (progress >= 1f) {
-            drawArc(
-                color,
-                0f, -180f,
-                useCenter = false,
-                topLeft = Offset(0f, 0f),
-                size = Size(size.width, size.width)
-            )
-        }
-    }
-}
 
 @Composable
 fun HorizontalBookProgressIndicator(
@@ -135,14 +85,6 @@ fun HorizontalBookProgressIndicator(
                 size = Size(size.height, size.height)
             )
         }
-    }
-}
-
-@Preview
-@Composable
-fun VerticalBookProgressIndicatorPreview() {
-    HomerPlayer2Theme {
-        VerticalBookProgressIndicator(.5f, thickness = 64.dp, modifier = Modifier.padding(16.dp))
     }
 }
 

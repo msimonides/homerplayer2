@@ -150,8 +150,8 @@ class PlayerViewModel(
                 // TODO: refactor
                 // Store the matching file to get its Uri instead of parsing it from string.
                 var matchingUri: Uri? = null
-                val playingBook = booksState.books.find {
-                    matchingUri = it.uris.find { it.toString() == mediaState.mediaUri }
+                val playingBook = booksState.books.find { book ->
+                    matchingUri = book.uris.find { it.toString() == mediaState.mediaUri }
                     matchingUri != null
                 }
                 val b = if (playingBook != null) {

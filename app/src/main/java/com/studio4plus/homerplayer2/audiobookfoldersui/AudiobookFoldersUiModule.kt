@@ -26,7 +26,6 @@ package com.studio4plus.homerplayer2.audiobookfoldersui
 
 import com.studio4plus.homerplayer2.audiobookfolders.AudiobookFoldersModule
 import com.studio4plus.homerplayer2.base.BaseModule
-import com.studio4plus.homerplayer2.samplebooks.SampleBooksModule
 import org.koin.core.annotation.ComponentScan
 import org.koin.core.annotation.Module
 

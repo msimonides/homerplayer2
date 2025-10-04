@@ -60,8 +60,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -108,14 +108,13 @@ fun SettingsMainRoute(
         navigateAbout = navigateAbout,
     )
     val lifecycleOwner = LocalLifecycleOwner.current
-    val context = LocalContext.current
-    val configuration = LocalConfiguration.current
+    val resources = LocalResources.current
     LaunchedEffect(Unit) {
-        val timeFormatter = DateTimeFormatter.ofPattern("HH:mm", configuration.locale)
+        val timeFormatter = DateTimeFormatter.ofPattern("HH:mm", resources.configuration.locale)
         viewModel.eventFullKioskDisabledUntil
             .flowWithLifecycle(lifecycleOwner.lifecycle)
             .collectLatest { event ->
-                snackbarHostState.showSnackbar(context.resources.getString(
+                snackbarHostState.showSnackbar(resources.getString(
                     R.string.settings_ui_lockdown_kiosk_mode_setting_disabled_snackbar,
                     timeFormatter.format(event.enableTime)
                 ))

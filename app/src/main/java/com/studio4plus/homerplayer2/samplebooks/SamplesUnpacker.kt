@@ -33,7 +33,6 @@ import java.io.File
 import java.io.FileFilter
 import java.io.IOException
 import java.io.InputStream
-import java.util.Locale
 
 private const val TITLE_FILE_NAME = "titles.json"
 private const val FALLBACK_LANG = "default"

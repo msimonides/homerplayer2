@@ -33,7 +33,6 @@ import com.studio4plus.homerplayer2.player.usecases.GetAudiobookFileDuration
 import com.studio4plus.homerplayer2.player.usecases.GetBookMediaItemsWithStartPosition
 import com.studio4plus.homerplayer2.utils.tickerFlow
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -43,7 +42,6 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.koin.core.annotation.Factory
 import timber.log.Timber
 

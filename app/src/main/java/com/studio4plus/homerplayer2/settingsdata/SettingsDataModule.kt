@@ -32,7 +32,6 @@ import com.studio4plus.homerplayer2.base.VersionUpdate
 import com.studio4plus.homerplayer2.loccalstorage.LOCAL_STORAGE_JSON
 import com.studio4plus.homerplayer2.loccalstorage.LocalStorageModule
 import com.studio4plus.homerplayer2.loccalstorage.createDataStore
-import com.studio4plus.homerplayer2.net.NetModule
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.serialization.json.Json
 import org.koin.core.annotation.ComponentScan
