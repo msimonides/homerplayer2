@@ -24,10 +24,8 @@
 
 package com.studio4plus.homerplayer2.contentui
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -38,13 +36,13 @@ import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -80,27 +78,16 @@ fun ContentManagementPanel(
     Column(
         modifier = modifier
     ) {
+        var addDialog by rememberSaveable { mutableStateOf(false) }
+        var removeDialogAction by remember { mutableStateOf<(() -> Unit)?>(null) }
+
         Spacer(modifier = Modifier.windowInsetsTopHeight(windowInsets))
-        FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        Button(
+            onClick = { addDialog = true },
             modifier = Modifier.padding(horizontal = horizontalPadding)
         ) {
-            Button(onClick = onAddFolder) {
-                Text(stringResource(id = R.string.content_add_folder_button))
-            }
-            Button(onClick = onAddPodcast) {
-                Text(stringResource(id = R.string.content_add_podcast_button))
-            }
-            if (state.samplesInstallState != null) {
-                OutlinedButton(
-                    onClick = onDownloadSamples,
-                    enabled = state.samplesInstallState is SamplesInstallState.Idle
-                ) {
-                    Text(stringResource(id = R.string.content_download_samples_button))
-                }
-            }
+            Text(stringResource(R.string.content_add_button))
         }
-        var removeDialogAction by remember { mutableStateOf<(() -> Unit)?>(null) }
 
         val insetsPadding = PaddingValues(
             bottom = windowInsets.asPaddingValues().calculateBottomPadding()
@@ -152,6 +139,18 @@ fun ContentManagementPanel(
                     }
                 )
             }
+        }
+
+        if (addDialog) {
+            AddContentDialog(
+                showSamples = state.samplesInstallState is SamplesInstallState.Idle,
+                onDismiss = { addDialog = false },
+                onAddFolder = onAddFolder,
+                onAddPodcast = onAddPodcast,
+                onDownloadSamples = onDownloadSamples,
+                onLearnMoreFolders = {},
+                onLearnMorePodcasts = {},
+            )
         }
         if (removeDialogAction != null) {
             ConfirmRemoveDialog(
