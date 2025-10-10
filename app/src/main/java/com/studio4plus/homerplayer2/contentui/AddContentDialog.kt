@@ -27,16 +27,26 @@ package com.studio4plus.homerplayer2.contentui
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.filled.Folder
+import androidx.compose.material.icons.filled.Podcasts
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -99,6 +109,7 @@ private fun AddContentSelection(
         AddContentTypeCard(
             stringResource(R.string.content_add_dialog_folder_card_title),
             stringResource(R.string.content_add_dialog_folder_card_description),
+            icon = Icons.Filled.Folder,
             onClick = onAddFolder,
             onLearnMoreClick = onLearnMoreFolders,
             modifier = cardModifier,
@@ -107,6 +118,7 @@ private fun AddContentSelection(
         AddContentTypeCard(
             stringResource(R.string.content_add_dialog_podcast_card_title),
             stringResource(R.string.content_add_dialog_podcast_card_description),
+            icon = Icons.Filled.Podcasts,
             onClick = onAddPodcast,
             onLearnMoreClick = onLearnMorePodcasts,
             modifier = cardModifier,
@@ -116,6 +128,7 @@ private fun AddContentSelection(
             AddContentTypeCard(
                 stringResource(R.string.content_add_dialog_samples_card_title),
                 stringResource(R.string.content_add_dialog_samples_card_description),
+                icon = Icons.Filled.Download,
                 onClick = onDownloadSamples,
                 modifier = cardModifier,
             )
@@ -127,6 +140,7 @@ private fun AddContentSelection(
 private fun AddContentTypeCard(
     title: String,
     description: String,
+    icon: ImageVector,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     onLearnMoreClick: (() -> Unit)? = null,
@@ -137,18 +151,31 @@ private fun AddContentTypeCard(
         shape = MaterialTheme.shapes.medium,
         border = BorderStroke(Dp.Hairline, MaterialTheme.colorScheme.primary),
     ) {
-        Column(
+        Row(
             modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            Text(title, style = MaterialTheme.typography.titleMedium)
-            Text(description)
-            if (onLearnMoreClick != null) {
-                Text(
-                    "Learn more",
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.clickable(onClick = onLearnMoreClick)
-                )
+            Icon(
+                icon,
+                contentDescription = null,
+                modifier = Modifier.padding(end = 8.dp)
+            )
+            Column(
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                Box(
+                    modifier = Modifier.heightIn(min = 24.dp), // Icon size.
+                    contentAlignment = Alignment.CenterStart,
+                ) {
+                    Text(title, style = MaterialTheme.typography.titleMedium)
+                }
+                Text(description)
+                if (onLearnMoreClick != null) {
+                    Text(
+                        "Learn more",
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.clickable(onClick = onLearnMoreClick)
+                    )
+                }
             }
         }
     }
