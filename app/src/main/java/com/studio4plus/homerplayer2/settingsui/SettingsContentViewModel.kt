@@ -46,9 +46,5 @@ class SettingsContentViewModel(
 ): ContentPanelViewModel(mainScope, audiobookFoldersManager, deletePodcast, samplesInstaller) {
 
     val viewState = contentPanelViewStateFlow
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(),
-            ContentPanelViewState(emptyList(), emptyList(), null)
-        )
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 }

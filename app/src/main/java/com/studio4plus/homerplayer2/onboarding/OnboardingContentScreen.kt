@@ -140,7 +140,7 @@ fun OnboardingContentScreen(
 
 @Composable
 private fun ScreenContent(
-    panelState: ContentPanelViewState,
+    panelState: ContentPanelViewState?,
     onAddFolder: () -> Unit,
     onEditFolder: (folderUri: String) -> Unit,
     onRemoveFolder: (AudiobookFolderViewState) -> Unit,
