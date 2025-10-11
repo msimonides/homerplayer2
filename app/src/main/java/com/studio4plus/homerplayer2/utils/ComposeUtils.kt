@@ -25,6 +25,7 @@
 package com.studio4plus.homerplayer2.utils
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.PointerInputChange
@@ -57,5 +58,6 @@ fun Modifier.blockTouchEvents() = pointerInput("block events") {
     }
 }
 
-fun Modifier.optional(include: Boolean, modifier: Modifier.() -> Modifier): Modifier =
+@Composable
+fun Modifier.optional(include: Boolean, modifier: @Composable Modifier.() -> Modifier): Modifier =
     if (include) this.then(this.modifier()) else this

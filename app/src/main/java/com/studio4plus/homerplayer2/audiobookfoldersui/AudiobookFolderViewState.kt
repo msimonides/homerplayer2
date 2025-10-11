@@ -37,6 +37,11 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.base.ui.SmallCircularProgressIndicator
 
+enum class SamplesFolderState {
+    Downloading, Installed
+}
+
+// TODO: consider sealed class hierarchy.
 data class AudiobookFolderViewState(
     val displayName: String,
     val uri: Uri,
@@ -44,18 +49,26 @@ data class AudiobookFolderViewState(
     val bookTitles: String,
     val firstBookTitle: String?,
     val isScanning: Boolean,
-    val isSamplesFolder: Boolean,
-)
+    val samplesFolderState: SamplesFolderState?,
+) {
+    val isEnabled = samplesFolderState != SamplesFolderState.Downloading
+}
 
 @Composable
-fun AudiobookFolderViewState.subLabel() = when (bookCount) {
-    0 -> stringResource(R.string.audiobook_folder_no_books_found)
+fun AudiobookFolderViewState.subLabel() = when {
+    samplesFolderState == SamplesFolderState.Downloading ->
+        stringResource(R.string.audiobook_folder_samples_downloading_label)
+    isScanning -> stringResource(R.string.audiobook_folder_content_scanning)
+    bookCount == 0 -> stringResource(R.string.audiobook_folder_no_books_found)
     else -> bookTitles
 }
 
 @Composable
-fun AudiobookFolderViewState.subLabelContentDescription() = when (bookCount) {
-    0 -> stringResource(R.string.audiobook_folder_no_books_found)
+fun AudiobookFolderViewState.subLabelContentDescription() = when {
+    samplesFolderState == SamplesFolderState.Downloading ->
+        stringResource(R.string.audiobook_folder_samples_downloading_content_description)
+    isScanning -> stringResource(R.string.audiobook_folder_content_scanning_content_description)
+    bookCount == 0 -> stringResource(R.string.audiobook_folder_no_books_found)
     else -> pluralStringResource(
         id = R.plurals.audiobook_folder_content_description,
         count = bookCount,
@@ -68,7 +81,7 @@ fun AudiobookFolderViewState.subLabelContentDescription() = when (bookCount) {
 fun BoxScope.AudiobookFolderBadgeContent(
     item: AudiobookFolderViewState,
 ) {
-    if (item.isScanning) {
+    if (item.isScanning || item.samplesFolderState == SamplesFolderState.Downloading) {
         SmallCircularProgressIndicator(
             modifier = Modifier
                 .align(Alignment.Center)

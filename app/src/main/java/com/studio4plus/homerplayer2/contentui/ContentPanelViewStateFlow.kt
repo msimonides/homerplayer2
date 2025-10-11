@@ -56,7 +56,7 @@ class ContentPanelViewStateFlow(
         ContentPanelViewState(
             folders,
             podcasts,
-            samplesState.takeIf { folders.none { it.isSamplesFolder } }
+            samplesState.takeIf { folders.all { it.samplesFolderState == null } }
         )
     }
 

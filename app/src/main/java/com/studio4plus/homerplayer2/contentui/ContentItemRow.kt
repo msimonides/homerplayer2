@@ -58,6 +58,7 @@ import androidx.compose.ui.unit.dp
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFolderBadgeContent
 import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFolderViewState
+import com.studio4plus.homerplayer2.audiobookfoldersui.SamplesFolderState
 import com.studio4plus.homerplayer2.audiobookfoldersui.subLabel
 import com.studio4plus.homerplayer2.audiobookfoldersui.subLabelContentDescription
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
@@ -65,6 +66,7 @@ import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 import com.studio4plus.homerplayer2.podcastsui.PodcastBadgeContent
 import com.studio4plus.homerplayer2.podcastsui.PodcastItemViewState
 import com.studio4plus.homerplayer2.podcastsui.subLabel
+import com.studio4plus.homerplayer2.utils.optional
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -83,7 +85,7 @@ fun BasicAudiobookFolderRow(
         circleContent = { AudiobookFolderBadgeContent(folder) },
         modifier = modifier,
         actionContent = actionContent,
-        accessibilityActions = accessibilityActions
+        accessibilityActions = accessibilityActions,
     )
 }
 
@@ -94,15 +96,18 @@ fun AudiobookFolderRow(
     onRemoveClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val isEnabled = folder.isEnabled
     BasicAudiobookFolderRow(
         folder = folder,
-        actionContent = { RemoveIcon(onRemoveClicked) },
-        accessibilityActions = listOf(removeAccessibilityAction(onRemoveClicked)),
+        actionContent = if (isEnabled) { { RemoveIcon(onRemoveClicked) } } else { null },
+        accessibilityActions = if (isEnabled) listOf(removeAccessibilityAction(onRemoveClicked)) else emptyList(),
         modifier = Modifier
-            .clickable(
-                onClick = { onEditClicked(folder.uri.toString()) },
-                onClickLabel = stringResource(R.string.audiobook_folder_accessibility_action_edit)
-            )
+            .optional(isEnabled) {
+                clickable(
+                    onClick = { onEditClicked(folder.uri.toString()) },
+                    onClickLabel = stringResource(R.string.audiobook_folder_accessibility_action_edit)
+                )
+            }
             .then(modifier),
     )
 }
@@ -159,7 +164,7 @@ private fun ContentItemRow(
     circleContent: @Composable BoxScope.() -> Unit,
     modifier: Modifier = Modifier,
     actionContent: (@Composable () -> Unit)? = null,
-    accessibilityActions: List<CustomAccessibilityAction> = emptyList()
+    accessibilityActions: List<CustomAccessibilityAction> = emptyList(),
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -221,7 +226,7 @@ private fun PreviewFolderRow() {
                 "Alice in Wonderland, Hamlet",
                 firstBookTitle = "Alice in Wonderland",
                 isScanning = false,
-                isSamplesFolder = false
+                samplesFolderState = null,
             ),
             {},
             {}
@@ -241,7 +246,7 @@ private fun PreviewFolderRowEmpty() {
                 "",
                 firstBookTitle = null,
                 isScanning = false,
-                isSamplesFolder = false,
+                samplesFolderState = null,
             ),
             {},
             {}
@@ -260,7 +265,24 @@ private fun PreviewFolderRowScanning() {
             "",
             firstBookTitle = null,
             isScanning = true,
-            isSamplesFolder = false
+            samplesFolderState = null,
+        )
+        AudiobookFolderRow(folder, {}, {})
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewFolderDownloadingSamples() {
+    HomerPlayer2Theme {
+        val folder = AudiobookFolderViewState(
+            "My audiobooks",
+            Uri.EMPTY,
+            0,
+            "",
+            firstBookTitle = null,
+            isScanning = false,
+            samplesFolderState = SamplesFolderState.Downloading,
         )
         AudiobookFolderRow(folder, {}, {})
     }

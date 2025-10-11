@@ -153,7 +153,7 @@ private fun AudiobookRow(
                 formatPeriod(totalDurationMs)
             )
         } else {
-            stringResource(R.string.audiobook_folder_content_time_scanning)
+            stringResource(R.string.audiobook_folder_content_scanning)
         }
         if (useWideLayout) {
             Row(

@@ -7,9 +7,12 @@
     <string name="audiobook_folder_add_error_dialog">Unable to open file chooser</string>
     <!-- Header about the list of contents of audiobooks folder. -->
     <string name="audiobook_folder_contents_title">Contents</string>
-    <string name="audiobook_folder_content_time_scanning">Scanning…</string>
+    <string name="audiobook_folder_content_scanning">Scanning…</string>
+    <string name="audiobook_folder_content_scanning_content_description">Scanning</string>
     <string name="audiobook_folder_content_time_format">%1$s / %2$s</string>
     <string name="audiobook_folder_samples_folder_name">Sample books</string>
+    <string name="audiobook_folder_samples_downloading_label">Downloading…</string>
+    <string name="audiobook_folder_samples_downloading_content_description">Downloading</string>
     <string name="audiobook_folder_no_books_found">(no audiobooks found in this folder)</string>
     <!-- Describes folder contents for accessibility services.
          Parameters:

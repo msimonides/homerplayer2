@@ -67,7 +67,7 @@ class SamplesInstallController(
         bindService.stateIn(mainScope, SharingStarted.WhileSubscribed(), null)
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val stateFlow = boundService.flatMapLatest { binder ->
+    val stateFlow: Flow<SamplesInstallState> = boundService.flatMapLatest { binder ->
         binder?.state ?: flowOf(SamplesInstallState.Idle)
     }
 
