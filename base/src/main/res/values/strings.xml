@@ -23,6 +23,7 @@
   -->
 
 <resources>
+    <string name="generic_button_learn_more">Learn more</string>
     <string name="generic_dialog_confirm">OK</string>
     <string name="generic_dialog_cancel">Cancel</string>
     <string name="generic_dialog_save">Save</string>

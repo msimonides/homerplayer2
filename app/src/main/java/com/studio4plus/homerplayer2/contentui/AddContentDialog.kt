@@ -43,16 +43,15 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.studio4plus.homerplayer2.R
-import com.studio4plus.homerplayer2.base.R as BaseR
 import com.studio4plus.homerplayer2.base.ui.DefaultAlertDialog
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
+import com.studio4plus.homerplayer2.base.R as BaseR
 
 @Composable
 fun AddContentDialog(
@@ -169,7 +168,7 @@ private fun AddContentTypeCard(
                 Text(description)
                 if (onLearnMoreClick != null) {
                     Text(
-                        "Learn more",
+                        stringResource(BaseR.string.generic_button_learn_more),
                         color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.clickable(onClick = onLearnMoreClick)
                     )
