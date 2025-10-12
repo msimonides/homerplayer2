@@ -55,6 +55,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
@@ -63,11 +64,13 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFolderViewState
+import com.studio4plus.homerplayer2.base.Constants
 import com.studio4plus.homerplayer2.base.ui.DefaultAlertDialog
 import com.studio4plus.homerplayer2.base.ui.SectionTitle
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.podcastsui.PodcastItemViewState
 import com.studio4plus.homerplayer2.samplebooks.SamplesInstallState
+import com.studio4plus.homerplayer2.utils.openWebUrl
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import com.studio4plus.homerplayer2.base.R as BaseR
@@ -130,14 +133,15 @@ fun ContentManagementPanel(
         }
 
         if (addDialog) {
+            val context = LocalContext.current
             AddContentDialog(
                 showSamples = state.samplesInstallState is SamplesInstallState.Idle,
                 onDismiss = { addDialog = false },
                 onAddFolder = onAddFolder,
                 onAddPodcast = onAddPodcast,
                 onDownloadSamples = onDownloadSamples,
-                onLearnMoreFolders = {},
-                onLearnMorePodcasts = {},
+                onLearnMoreFolders = { openWebUrl(context, Constants.UrlLearnMoreAudiobooks) },
+                onLearnMorePodcasts = { openWebUrl(context, Constants.UrlLearnMorePodcasts) },
             )
         }
         if (removeDialogAction != null) {

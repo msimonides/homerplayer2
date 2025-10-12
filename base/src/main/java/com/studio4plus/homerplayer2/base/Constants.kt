@@ -27,6 +27,8 @@ package com.studio4plus.homerplayer2.base
 object Constants {
     const val PlayerAppPackage = "com.studio4plus.homerplayer2"
     const val PlayerHomeActivityClass = "com.studio4plus.homerplayer2.app.HomeActivity"
-    const val UrlKioskSetupInstructions = "https://msimonides.github.io/homerplayer2"
+    const val UrlKioskSetupInstructions = "https://msimonides.github.io/homerplayer2/dedicated_device"
+    const val UrlLearnMoreAudiobooks = "https://msimonides.github.io/homerplayer2/audiobooks"
+    const val UrlLearnMorePodcasts = "https://msimonides.github.io/homerplayer2/podcasts"
     const val UrlPrivacyPolicy = "https://msimonides.github.io/homerplayer2/privacy"
 }
