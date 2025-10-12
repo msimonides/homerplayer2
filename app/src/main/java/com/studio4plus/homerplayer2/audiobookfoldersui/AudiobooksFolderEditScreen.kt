@@ -37,14 +37,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.RestartAlt
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -102,7 +101,7 @@ private fun AudiobooksFolderEditScreen(
                 summary = stringResource(R.string.settings_ui_playback_rewind_on_end_description),
                 multilineSummary = true,
                 value = viewState.rewindOnEnd,
-                icon = Icons.Default.RestartAlt,
+                icon = painterResource(R.drawable.icon_restart_alt),
                 onChange = onRewindOnEndChanged,
                 modifier = Modifier.defaultSettingsItem()
             )

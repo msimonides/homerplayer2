@@ -34,11 +34,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.RecordVoiceOver
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SnackbarHostState
@@ -148,7 +143,7 @@ private fun SettingsTtsScreen(
             label = stringResource(id = R.string.settings_ui_tts_read_book_titles),
             value = settingsViewState.readBookTitlesEnabled,
             onChange = onSetReadBookTitles,
-            icon = Icons.Default.RecordVoiceOver,
+            icon = R.drawable.icon_record_voice_over,
             modifier = settingItemModifier,
         )
         AnimatedVisibility(settingsViewState.readBookTitlesEnabled) {
@@ -163,21 +158,21 @@ private fun SettingsTtsScreen(
                 label = stringResource(id = R.string.settings_ui_tts_read_book_titles_announce_new_item, announceNewPhrase),
                 onClick = { showDialog = SettingsTtsDialogType.AnnounceNewSettings },
                 summary = stringResource(announceNewSetting),
-                icon = Icons.Outlined.Info,
+                icon = BaseR.drawable.icon_outlined_info,
                 modifier = settingItemModifier,
             )
         }
         SettingItem(
             label = stringResource(R.string.speech_play_test_phrase),
             onClick = onPlayTestPhrase,
-            icon = Icons.Default.PlayArrow,
+            icon = R.drawable.icon_play_arrow,
             modifier = settingItemModifier,
         )
         if (speechTestViewState.showTtsSettings) {
             SettingItem(
                 label = stringResource(R.string.settings_ui_tts_open_settings),
                 onClick = onOpenTtsSettings,
-                icon = Icons.Default.Settings,
+                icon = R.drawable.icon_settings,
                 modifier = settingItemModifier,
             )
         }

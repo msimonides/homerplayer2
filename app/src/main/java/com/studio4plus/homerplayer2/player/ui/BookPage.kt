@@ -32,9 +32,6 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.PlayArrow
-import androidx.compose.material.icons.rounded.Stop
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -67,7 +64,7 @@ fun BookPage(
         animationSpec = tween()
     )
     val button: @Composable BoxScope.() -> Unit = {
-        val icon = if (isPlaying) Icons.Rounded.Stop else Icons.Rounded.PlayArrow
+        val icon = if (isPlaying) R.drawable.icon_stop else R.drawable.icon_play_arrow
         val contentDescription = if (isPlaying)
             stringResource(R.string.playback_stop_button_description)
         else
@@ -75,7 +72,7 @@ fun BookPage(
         RoundIconButton(
             modifier = Modifier
                 .align(Alignment.Center),
-            iconImage = icon,
+            icon = icon,
             iconContentDescription = contentDescription,
             containerColor = buttonColor,
             onClick = { if (isPlaying) playerActions.onStop() else playerActions.onPlay(index) },

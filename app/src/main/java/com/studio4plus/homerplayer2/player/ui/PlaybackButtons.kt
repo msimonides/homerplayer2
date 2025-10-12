@@ -24,6 +24,7 @@
 
 package com.studio4plus.homerplayer2.player.ui
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -31,22 +32,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.VolumeDown
-import androidx.compose.material.icons.automirrored.rounded.VolumeUp
-import androidx.compose.material.icons.rounded.FastForward
-import androidx.compose.material.icons.rounded.FastRewind
-import androidx.compose.material.icons.rounded.Forward10
-import androidx.compose.material.icons.rounded.Replay30
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.base.ui.HomerHapticFeedbackType
@@ -71,7 +65,7 @@ data class PlayerActions(
 @Composable
 fun RoundIconButton(
     modifier: Modifier = Modifier,
-    iconImage: ImageVector,
+    @DrawableRes icon: Int,
     iconContentDescription: String?,
     containerColor: Color,
     hapticFeedbackType: HapticFeedbackType = HomerHapticFeedbackType.Click,
@@ -93,7 +87,7 @@ fun RoundIconButton(
         propagateMinConstraints = true
     ) {
         Icon(
-            iconImage,
+            painter = painterResource(icon),
             contentDescription = iconContentDescription,
             modifier = Modifier.fillMaxSize(0.9f),
             tint = Color.White // TODO: should this be configurable?
@@ -104,7 +98,7 @@ fun RoundIconButton(
 @Composable
 fun FlatIconButton(
     modifier: Modifier,
-    iconImage: ImageVector,
+    @DrawableRes icon: Int,
     iconContentDescription: String?,
     color: Color,
     hapticFeedbackType: HapticFeedbackType = HomerHapticFeedbackType.Click,
@@ -122,7 +116,7 @@ fun FlatIconButton(
             )
     ) {
         Icon(
-            iconImage,
+            painter = painterResource(icon),
             contentDescription = iconContentDescription,
             modifier = Modifier.fillMaxSize(),
             tint = color
@@ -136,7 +130,7 @@ fun ButtonVolumeUp(
     modifier: Modifier = Modifier,
 ) = FlatIconButton(
     modifier = modifier,
-    iconImage = Icons.AutoMirrored.Rounded.VolumeUp,
+    icon = R.drawable.icon_volume_up,
     iconContentDescription = stringResource(id = R.string.playback_volume_up_button_description),
     color = HomerTheme.colors.controlVolume,
     onClick = playerActions.onVolumeUp
@@ -148,7 +142,7 @@ fun ButtonVolumeDown(
     modifier: Modifier = Modifier,
 ) = FlatIconButton(
     modifier = modifier,
-    iconImage = Icons.AutoMirrored.Rounded.VolumeDown,
+    icon = R.drawable.icon_volume_down,
     iconContentDescription = stringResource(id = R.string.playback_volume_down_button_description),
     color = HomerTheme.colors.controlVolume,
     onClick = playerActions.onVolumeDown
@@ -160,7 +154,7 @@ fun ButtonFastRewind(
     modifier: Modifier = Modifier,
 ) = FlatIconButton(
     modifier = modifier,
-    iconImage = Icons.Rounded.FastRewind,
+    icon = R.drawable.icon_fast_rewind,
     iconContentDescription = stringResource(id = R.string.playback_fast_rewind_button_description),
     color = HomerTheme.colors.controlFast,
     hapticFeedbackType = HomerHapticFeedbackType.Back,
@@ -173,7 +167,7 @@ fun ButtonFastForward(
     modifier: Modifier = Modifier,
 ) = FlatIconButton(
     modifier = modifier,
-    iconImage = Icons.Rounded.FastForward,
+    icon = R.drawable.icon_fast_forward,
     iconContentDescription = stringResource(id = R.string.playback_fast_forward_button_description),
     color = HomerTheme.colors.controlFast,
     hapticFeedbackType = HomerHapticFeedbackType.Forward,
@@ -186,7 +180,7 @@ fun ButtonSeekBack(
     modifier: Modifier = Modifier,
 ) = FlatIconButton(
     modifier = modifier,
-    iconImage = Icons.Rounded.Replay30,
+    icon = R.drawable.icon_replay_30,
     iconContentDescription = stringResource(id = R.string.playback_replay30_rewind_button_description),
     color = HomerTheme.colors.controlSeek,
     onClick = playerActions.onSeekBack
@@ -198,7 +192,7 @@ fun ButtonSeekForward(
     modifier: Modifier = Modifier,
 ) = FlatIconButton(
     modifier = modifier,
-    iconImage = Icons.Rounded.Forward10,
+    icon = R.drawable.icon_forward_10,
     iconContentDescription = stringResource(id = R.string.playback_forward10_button_description),
     color = HomerTheme.colors.controlSeek,
     onClick = playerActions.onSeekForward

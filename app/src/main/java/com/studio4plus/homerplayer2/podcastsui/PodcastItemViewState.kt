@@ -25,12 +25,11 @@
 package com.studio4plus.homerplayer2.podcastsui
 
 import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Podcasts
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.studio4plus.homerplayer2.R
 import java.time.LocalDate
@@ -51,7 +50,7 @@ fun PodcastItemViewState.subLabel(dateFormatter: DateTimeFormatter) = when (late
 @Composable
 fun BoxScope.PodcastBadgeContent() {
     Icon(
-        Icons.Default.Podcasts,
+        painter = painterResource(R.drawable.icon_podcasts),
         contentDescription = null,
         modifier = Modifier.align(Alignment.Center)
     )

@@ -36,8 +36,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.RecordVoiceOver
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedButton
@@ -193,7 +191,7 @@ private fun ScreenContent(
             label = stringResource(R.string.settings_ui_tts_read_book_titles),
             value = readBookTitlesEnabled,
             onChange = { onTtsToggled() },
-            icon = Icons.Default.RecordVoiceOver,
+            icon = R.drawable.icon_record_voice_over,
             modifier = Modifier
                 .padding(vertical = 8.dp, horizontal = HomerTheme.dimensions.screenHorizPadding)
         )

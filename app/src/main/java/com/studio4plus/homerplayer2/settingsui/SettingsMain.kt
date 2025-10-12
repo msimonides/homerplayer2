@@ -24,6 +24,7 @@
 
 package com.studio4plus.homerplayer2.settingsui
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -36,16 +37,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CellWifi
-import androidx.compose.material.icons.filled.Contrast
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.LibraryMusic
-import androidx.compose.material.icons.filled.LockOpen
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.RateReview
-import androidx.compose.material.icons.filled.RecordVoiceOver
-import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
@@ -59,9 +50,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -82,6 +73,7 @@ import com.studio4plus.homerplayer2.settingsui.usecases.ContentDescriptionFlow
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 import java.time.format.DateTimeFormatter
+import com.studio4plus.homerplayer2.base.R as BaseR
 
 @Composable
 fun SettingsMainRoute(
@@ -150,26 +142,26 @@ private fun SettingsMain(
             SettingItem(
                 label = stringResource(R.string.settings_ui_player_ui_item),
                 onClick = navigatePlayerUiSettings,
-                icon = Icons.Default.Tune,
+                icon = R.drawable.icon_tune,
                 modifier = settingItemModifier,
             )
             SettingItem(
                 label = stringResource(R.string.settings_ui_playback_settings_item),
                 onClick = navigatePlaybackSettings,
-                icon = Icons.Default.PlayArrow,
+                icon = R.drawable.icon_play_arrow,
                 modifier = settingItemModifier,
             )
             SettingItem(
                 label = stringResource(R.string.settings_ui_content_item),
                 summary = viewState.content.summary(),
                 onClick = navigateFolders,
-                icon = Icons.Default.LibraryMusic,
+                icon = R.drawable.icon_library_music,
                 modifier = settingItemModifier
             )
             SettingItem(
                 label = stringResource(R.string.settings_ui_network_item),
                 onClick = navigateNetworkSettings,
-                icon = Icons.Default.CellWifi,
+                icon = R.drawable.icon_cell_wifi,
                 modifier = settingItemModifier
             )
             val ttsSummaryRes = when {
@@ -180,31 +172,32 @@ private fun SettingsMain(
                 label = stringResource(R.string.settings_ui_tts_settings_item),
                 summary = stringResource(ttsSummaryRes),
                 onClick = navigateTtsSettings,
-                icon = Icons.Default.RecordVoiceOver,
+                icon = R.drawable.icon_record_voice_over,
                 modifier = settingItemModifier,
             )
             SettingItem(
                 label = stringResource(R.string.settings_ui_mode_label),
                 summary = stringResource(viewState.uiMode.labelRes()),
                 onClick = { showUiModeDialog = SettingsMainDialogType.UiMode },
-                icon = Icons.Default.Contrast,
+                icon = R.drawable.icon_contrast,
                 modifier = settingItemModifier
             )
+            val lockdownEnabled = viewState.fullKioskMode == IsFullKioskEnabled.Enabled
             SettingItemWithSwitch(
                 label = stringResource(R.string.settings_ui_lockdown_settings_item),
                 onLabelClick = navigateLockdownSettings,
                 summary = viewState.fullKioskMode.toSummary(),
-                icon = Icons.Default.LockOpen,
+                icon = if (lockdownEnabled) R.drawable.icon_lock else R.drawable.icon_lock_open,
                 modifier = Modifier.heightIn(min = HomerTheme.dimensions.settingsRowMinHeight),
                 onSwitchChange = onSetFullKioskMode.takeIf { viewState.showFullKioskSwitch },
                 horizontalContentPadding = HomerTheme.dimensions.screenHorizPadding,
                 verticalContentPadding = 8.dp,
-                switchValue = viewState.fullKioskMode == IsFullKioskEnabled.Enabled,
+                switchValue = lockdownEnabled,
             )
             SettingItem(
                 label = stringResource(R.string.settings_ui_about_item),
                 onClick = navigateAbout,
-                icon = Icons.Default.Info,
+                icon = BaseR.drawable.icon_outlined_info,
                 modifier = settingItemModifier
             )
             if (viewState.rateAppIntent != null) {
@@ -212,7 +205,7 @@ private fun SettingsMain(
                 SettingItem(
                     label = stringResource(R.string.settings_ui_rate_app_item),
                     onClick = { context.startActivity(viewState.rateAppIntent) },
-                    icon = Icons.Default.RateReview,
+                    icon = R.drawable.icon_family_star,
                     modifier = settingItemModifier
                 )
             }
@@ -249,7 +242,7 @@ private fun ChooseUiModeDialog(
 @Composable
 private fun SettingItemWithSwitch(
     label: String,
-    icon: ImageVector,
+    @DrawableRes icon: Int,
     onLabelClick: () -> Unit,
     onSwitchChange: ((Boolean) -> Unit)?,
     switchValue: Boolean,
@@ -274,7 +267,7 @@ private fun SettingItemWithSwitch(
                 ),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(icon, contentDescription = null)
+            Icon(painterResource(icon), contentDescription = null)
             Column(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)

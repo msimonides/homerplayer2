@@ -24,6 +24,7 @@
 
 package com.studio4plus.homerplayer2.settingsui.composables
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -33,8 +34,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.toggleable
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -45,12 +44,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 import com.studio4plus.homerplayer2.utils.optional
@@ -59,13 +58,21 @@ import com.studio4plus.homerplayer2.utils.optional
 fun SettingSwitch(
     label: String,
     value: Boolean,
-    icon: ImageVector,
+    @DrawableRes icon: Int,
     onChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     summary: String? = null,
     multilineSummary: Boolean = false,
 ) {
-    SettingSwitch(label, value, rememberVectorPainter(icon), onChange, modifier, summary, multilineSummary)
+    SettingSwitch(
+        label,
+        value,
+        painterResource(icon),
+        onChange,
+        modifier,
+        summary,
+        multilineSummary
+    )
 }
 
 @Composable
@@ -95,13 +102,21 @@ fun SettingSwitch(
 fun SettingCheckbox(
     label: String,
     value: Boolean,
-    icon: ImageVector,
+    @DrawableRes icon: Int,
     onChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     summary: String? = null,
     multilineSummary: Boolean = false,
 ) {
-    SettingCheckbox(label, value, rememberVectorPainter(icon), onChange, modifier, summary, multilineSummary)
+    SettingCheckbox(
+        label,
+        value,
+        painterResource(icon),
+        onChange,
+        modifier,
+        summary,
+        multilineSummary
+    )
 }
 
 @Composable
@@ -123,7 +138,10 @@ fun SettingCheckbox(
         summary = summary,
         multilineSummary = multilineSummary,
     ) {
-        Checkbox(checked = value, onCheckedChange = null, modifier = Modifier.clearAndSetSemantics {})
+        Checkbox(
+            checked = value,
+            onCheckedChange = null,
+            modifier = Modifier.clearAndSetSemantics {})
     }
 }
 
@@ -168,12 +186,12 @@ fun SettingToggleable(
 fun SettingRadio(
     label: String,
     selected: Boolean,
-    icon: ImageVector,
+    @DrawableRes icon: Int,
     onSelected: () -> Unit,
     modifier: Modifier = Modifier,
     summary: String? = null,
 ) {
-    SettingRadio(label, selected, rememberVectorPainter(icon), onSelected, modifier, summary)
+    SettingRadio(label, selected, painterResource(icon), onSelected, modifier, summary)
 }
 
 @Composable
@@ -193,19 +211,22 @@ fun SettingRadio(
         summary = summary,
         icon = icon,
     ) {
-        RadioButton(selected = selected, onClick = null, modifier = Modifier.clearAndSetSemantics {})
+        RadioButton(
+            selected = selected,
+            onClick = null,
+            modifier = Modifier.clearAndSetSemantics {})
     }
 }
 
 @Composable
 fun SettingItem(
     label: String,
-    icon: ImageVector,
+    @DrawableRes icon: Int,
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
     summary: String? = null,
 ) {
-    SettingItem(label, rememberVectorPainter(icon), modifier, onClick, summary)
+    SettingItem(label, painterResource(icon), modifier, onClick, summary)
 }
 
 @Composable
@@ -315,7 +336,7 @@ private fun SettingItemPreview() {
     HomerPlayer2Theme {
         SettingItem(
             label = "Some setting",
-            icon = Icons.Default.Settings,
+            icon = R.drawable.icon_settings,
             summary = "Enabled",
             onClick = {}
         )
@@ -328,7 +349,7 @@ private fun SettingSwitchWithSummaryPreview() {
     HomerPlayer2Theme {
         SettingSwitch(
             "Some switch",
-            icon = Icons.Default.Settings,
+            icon = R.drawable.icon_settings,
             summary = "Description",
             value = false,
             onChange = {}
@@ -340,7 +361,7 @@ private fun SettingSwitchWithSummaryPreview() {
 @Composable
 private fun SettingSwitchWithoutSummaryPreview() {
     HomerPlayer2Theme {
-        SettingSwitch("Some switch", icon = Icons.Default.Settings, value = false, onChange = {})
+        SettingSwitch("Some switch", icon = R.drawable.icon_settings, value = false, onChange = {})
     }
 }
 
@@ -348,6 +369,6 @@ private fun SettingSwitchWithoutSummaryPreview() {
 @Composable
 private fun SettingCheckboxWithoutSummaryPreview() {
     HomerPlayer2Theme {
-        SettingCheckbox("Some switch", icon = Icons.Default.Settings, value = false, onChange = {})
+        SettingCheckbox("Some switch", icon = R.drawable.icon_settings, value = false, onChange = {})
     }
 }

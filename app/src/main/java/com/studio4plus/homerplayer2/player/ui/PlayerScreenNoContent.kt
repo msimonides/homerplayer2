@@ -24,6 +24,7 @@
 
 package com.studio4plus.homerplayer2.player.ui
 
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,9 +33,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MusicOff
-import androidx.compose.material.icons.filled.Podcasts
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -44,7 +42,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -57,7 +55,7 @@ fun PlayerScreenNoContent(
 ) {
     // TODO: add a button to open content settings.
     PlayerScreenInfoPanel(
-        iconVector = Icons.Default.MusicOff,
+        icon = R.drawable.icon_music_off,
         titleRes = R.string.player_no_books_title,
         messageRes = R.string.player_no_books_message,
         modifier = modifier,
@@ -70,7 +68,7 @@ fun PlayerScreenNoContentPendingPodcasts(
 ) {
     // TODO: add info about downloading only on WiFi (if relevant)
     PlayerScreenInfoPanel(
-        iconVector = Icons.Default.Podcasts,
+        icon = R.drawable.icon_podcasts,
         titleRes = R.string.player_no_books_podcasts_title,
         messageRes = R.string.player_no_books_podcasts_message,
         modifier = modifier,
@@ -79,7 +77,7 @@ fun PlayerScreenNoContentPendingPodcasts(
 
 @Composable
 private fun PlayerScreenInfoPanel(
-    iconVector: ImageVector,
+    @DrawableRes icon: Int,
     @StringRes titleRes: Int,
     @StringRes messageRes: Int,
     modifier: Modifier = Modifier,
@@ -93,7 +91,7 @@ private fun PlayerScreenInfoPanel(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Icon(
-                    imageVector = iconVector,
+                    painter = painterResource(icon),
                     contentDescription = null,
                     modifier = Modifier.size(56.dp)
                 )

@@ -34,12 +34,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.VolumeUp
-import androidx.compose.material.icons.filled.FastForward
-import androidx.compose.material.icons.filled.Forward10
-import androidx.compose.material.icons.filled.UTurnLeft
-import androidx.compose.material.icons.filled.Vibration
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -123,21 +117,21 @@ private fun SettingsPlayerUi(
                 label = stringResource(R.string.settings_ui_player_ui_volume_controls),
                 value = viewState.playerUiSettings.showVolumeControls,
                 onChange = onSetShowVolumeControls,
-                icon = Icons.AutoMirrored.Default.VolumeUp,
+                icon = R.drawable.icon_volume_up,
                 modifier = settingItemModifier,
             )
             SettingSwitch(
                 label = stringResource(R.string.settings_ui_player_ui_ff_rewind_controls),
                 value = viewState.playerUiSettings.showFfRewindControls,
                 onChange = onSetShowFfRewindControls,
-                icon = Icons.Default.FastForward,
+                icon = R.drawable.icon_fast_forward,
                 modifier = settingItemModifier,
             )
             SettingSwitch(
                 label = stringResource(R.string.settings_ui_player_ui_seek_controls),
                 value = viewState.playerUiSettings.showSeekControls,
                 onChange = onSetShowSeekControls,
-                icon = Icons.Default.Forward10,
+                icon = R.drawable.icon_forward_10,
                 modifier = settingItemModifier,
             )
             SettingSwitch(
@@ -145,7 +139,7 @@ private fun SettingsPlayerUi(
                 summary = stringResource(R.string.settings_ui_playback_flip_to_stop_summary),
                 value = viewState.flipToStop,
                 onChange = onSetFlipToStop,
-                icon = Icons.Default.UTurnLeft,
+                icon = R.drawable.icon_u_turn_left,
                 modifier = settingItemModifier,
             )
             if (viewState.hapticFeedback != null) {
@@ -153,7 +147,7 @@ private fun SettingsPlayerUi(
                     label = stringResource(R.string.settings_ui_haptic_feedback_label),
                     value = viewState.hapticFeedback,
                     onChange = onSetHapticFeedback,
-                    icon = Icons.Default.Vibration,
+                    icon = R.drawable.icon_mobile_vibrate,
                     modifier = settingItemModifier,
                 )
             }

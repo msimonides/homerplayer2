@@ -28,11 +28,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Bedtime
-import androidx.compose.material.icons.filled.Replay
-import androidx.compose.material.icons.filled.RestartAlt
-import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -97,27 +92,27 @@ private fun SettingsPlayback(
             label = stringResource(id = R.string.settings_ui_playback_rewind_on_resume_label),
             summary = rewindOnResumeSettingString(seconds = viewState.rewindOnResumeSeconds),
             onClick = { showDialog = SettingsPlaybackDialogType.PlaybackRewindOnResume },
-            icon = Icons.Default.Replay,
+            icon = R.drawable.icon_replay,
             modifier = settingItemModifier
         )
         SettingItem(
             label = stringResource(id = R.string.settings_ui_playback_rewind_on_end_item),
             onClick = navigateRewindOnEndSettings,
-            icon = Icons.Default.RestartAlt,
+            icon = R.drawable.icon_restart_alt,
             modifier = settingItemModifier
         )
         SettingItem(
             label = stringResource(id = R.string.settings_ui_playback_sleep_timer_label),
             summary = sleepTimerSettingString(seconds = viewState.sleepTimerSeconds),
             onClick = { showDialog = SettingsPlaybackDialogType.SleepTimer },
-            icon = Icons.Default.Bedtime,
+            icon = R.drawable.icon_bedtime,
             modifier = settingItemModifier
         )
         SettingItem(
             label = stringResource(id = R.string.settings_ui_playback_play_speed_title),
             summary = speedSettingString(viewState.playbackSpeed),
             onClick = { showDialog = SettingsPlaybackDialogType.PlaybackSpeed },
-            icon = Icons.Default.Speed,
+            icon = R.drawable.icon_speed,
             modifier = settingItemModifier
         )
     }

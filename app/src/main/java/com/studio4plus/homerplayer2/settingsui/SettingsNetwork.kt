@@ -28,8 +28,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CloudDownload
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -78,7 +76,7 @@ private fun SettingsNetwork(
             label = stringResource(R.string.settings_ui_network_podcasts_download_network_item),
             summary = viewState.podcastsDownloadNetworkType.label(),
             onClick = { showDialog = SettingsNetworkDialogType.PodcastsDownloadNetworkType },
-            icon = Icons.Default.CloudDownload,
+            icon = R.drawable.icon_podcasts,
             modifier = Modifier.defaultSettingsItem()
         )
     }

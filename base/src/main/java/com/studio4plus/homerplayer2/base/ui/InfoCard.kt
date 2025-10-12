@@ -30,8 +30,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -39,8 +37,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.studio4plus.homerplayer2.base.R
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 
 @Composable
@@ -60,7 +60,7 @@ fun InfoCard(
             verticalAlignment = Alignment.Top
         ) {
             Icon(
-                Icons.Outlined.Info,
+                painterResource(R.drawable.icon_outlined_info),
                 contentDescription = null,
             )
             Column(

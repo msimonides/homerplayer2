@@ -24,17 +24,9 @@
 
 package com.studio4plus.homerplayer2.battery
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Battery0Bar
-import androidx.compose.material.icons.filled.Battery1Bar
-import androidx.compose.material.icons.filled.Battery2Bar
-import androidx.compose.material.icons.filled.Battery3Bar
-import androidx.compose.material.icons.filled.Battery4Bar
-import androidx.compose.material.icons.filled.Battery5Bar
-import androidx.compose.material.icons.filled.Battery6Bar
-import androidx.compose.material.icons.filled.BatteryFull
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -47,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -61,14 +54,14 @@ import kotlin.math.floor
 import kotlin.math.roundToInt
 
 private val LevelIcons = arrayOf(
-    Icons.Default.Battery0Bar,
-    Icons.Default.Battery1Bar,
-    Icons.Default.Battery2Bar,
-    Icons.Default.Battery3Bar,
-    Icons.Default.Battery4Bar,
-    Icons.Default.Battery5Bar,
-    Icons.Default.Battery6Bar,
-    Icons.Default.BatteryFull
+    R.drawable.icon_battery_0_bar,
+    R.drawable.icon_battery_1_bar,
+    R.drawable.icon_battery_2_bar,
+    R.drawable.icon_battery_3_bar,
+    R.drawable.icon_battery_4_bar,
+    R.drawable.icon_battery_5_bar,
+    R.drawable.icon_battery_6_bar,
+    R.drawable.icon_battery_full,
 )
 
 private val LowBatteryThreshold = 1f / LevelIcons.size * 3
@@ -111,7 +104,7 @@ private fun DischargingBatteryIcon(
         else -> modifier
     }
     Icon(
-        imageVector = levelToIcon(level),
+        painter = painterResource(levelToIcon(level)),
         contentDescription = null,
         tint = color,
         modifier = effectiveModifier
@@ -134,14 +127,15 @@ private fun ChargingBatteryIcon(
         }
     }
     Icon(
-        imageVector = LevelIcons[iconIndex],
+        painter = painterResource(LevelIcons[iconIndex]),
         contentDescription = null,
         tint = HomerTheme.colors.batteryRegular,
         modifier = modifier
     )
 }
 
-private fun levelToIcon(level: Float): ImageVector =
+@DrawableRes
+private fun levelToIcon(level: Float): Int =
     LevelIcons[(LevelIcons.size * level).floorToInt().coerceAtMost(LevelIcons.size - 1)]
 
 fun Modifier.blink(delayMs: Long): Modifier = composed {

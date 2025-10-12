@@ -30,11 +30,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.TextSnippet
-import androidx.compose.material.icons.filled.Gavel
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Policy
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -49,6 +44,7 @@ import com.studio4plus.homerplayer2.settingsui.composables.SettingItem
 import com.studio4plus.homerplayer2.utils.openWebUrl
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
+import com.studio4plus.homerplayer2.base.R as BaseR
 
 @Composable
 fun SettingsAboutRoute(
@@ -89,25 +85,25 @@ private fun SettingsAbout(
                     context.startActivity(shareIntent)
                 }
             },
-            icon = Icons.AutoMirrored.Default.TextSnippet,
+            icon = R.drawable.icon_text_snippet,
             modifier = settingItemModifier
         )
         SettingItem(
             label = stringResource(R.string.settings_ui_privacy_policy_item),
             onClick = navigatePrivacyPolicy,
-            icon = Icons.Default.Policy,
+            icon = R.drawable.icon_shield,
             modifier = settingItemModifier
         )
         SettingItem(
             label = stringResource(R.string.settings_ui_licenses_item),
             onClick = navigateLicenses,
-            icon = Icons.Default.Gavel,
+            icon = R.drawable.icon_gavel,
             modifier = settingItemModifier
         )
         SettingItem(
             label = stringResource(R.string.settings_ui_version_item),
             summary = BuildConfig.VERSION_NAME,
-            icon = Icons.Default.Info,
+            icon = BaseR.drawable.icon_outlined_info,
             modifier = settingItemModifier
         )
     }

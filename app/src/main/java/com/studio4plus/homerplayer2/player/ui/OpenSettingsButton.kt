@@ -31,8 +31,6 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
@@ -41,6 +39,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.Dp
@@ -126,7 +125,7 @@ private fun CogWheelIconButton(
     ) {
         if (isVisible) {
             Icon(
-                imageVector = Icons.Default.Settings,
+                painter = painterResource(R.drawable.icon_settings),
                 contentDescription = stringResource(R.string.browse_settings_button_accessibility_label),
                 modifier = Modifier.size(iconSize).align(Alignment.Center)
             )
