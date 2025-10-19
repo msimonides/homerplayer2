@@ -34,7 +34,7 @@ img.locked:has(~ label #kiosk-toggle:not(:checked)) {
 <div class="kiosk-showcase">
 <img src="assets/img/kiosk_unlocked_framed.webp" width="1360" height="860" class="unlocked" />
 <img src="assets/img/kiosk_locked_framed.webp" width="1360" height="860" class="locked" />
-<label><input id="kiosk-toggle" type="checkbox" role="switch" checked> Lockdown mode</label>
+<label><input id="kiosk-toggle" type="checkbox" role="switch" onchange="sa_event('kiosk_toggled')" checked> Lockdown mode</label>
 </div>
 
 <p>

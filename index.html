@@ -42,7 +42,7 @@ Homer is an <b>audiobook</b> and <b>podcast</b> player designed for the elderly 
 With Homer you can repurpose an Android tablet to an easy to use dedicated player for audiobooks and podcasts.
 </p>
 
-<lite-youtube class="single-picture-landscape" videoid="JR14egcqfg8" params="cc_load_policy=1">
+<lite-youtube id="video" class="single-picture-landscape" videoid="JR14egcqfg8" params="cc_load_policy=1">
   <a class="lite-youtube-fallback" href="https://www.youtube.com/watch?v=JR14egcqfg8">Watch on YouTube: "Sample output of devtools-to-video cli tool"</a>
 </lite-youtube>
 
@@ -76,3 +76,29 @@ they don't need to worry about inadvertantly changing settings, switching to ano
 
 
 <script type="module" src="https://cdn.jsdelivr.net/npm/@justinribeiro/lite-youtube@1/lite-youtube.min.js"></script>
+<script>
+  // From https://developers.google.com/youtube/iframe_api_reference#Examples
+  const tag = document.createElement('script');
+  tag.id = 'iframe-demo';
+  tag.src = 'https://www.youtube.com/iframe_api';
+  const firstScriptTag = document.getElementsByTagName('script')[0];
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+  let player;
+
+  function onPlayerStateChange(event) {
+	const state = event.data
+	if (state == YT.PlayerState.PLAYING) {
+	  sa_event('video_showcase_started')
+	}
+  }
+
+  document.addEventListener('liteYoutubeIframeLoaded', () => {
+    player = new YT.Player(
+      document.querySelector('#video').shadowRoot.querySelector('iframe'),
+      {
+        events: { 'onStateChange': onPlayerStateChange }
+      }
+    );
+  }, false);
+</script>
