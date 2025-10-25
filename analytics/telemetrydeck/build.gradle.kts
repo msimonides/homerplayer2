@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2024 Marcin Simonides
+ * Copyright (c) 2025 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,17 +22,16 @@
  * SOFTWARE.
  */
 
-@Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlin.jvm)
-    alias(libs.plugins.ksp)
 }
 
 android {
-    namespace = "com.studio4plus.homerplayer2.base"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    namespace = "com.studio4plus.homerplayer2.telemetrydeck"
+    compileSdk {
+        version = release(libs.versions.android.compileSdk.get().toInt())
+    }
 
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
@@ -53,45 +52,16 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
-        isCoreLibraryDesugaringEnabled = true
     }
     kotlin {
         compilerOptions {
             jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
         }
     }
-    buildFeatures {
-        compose = true
-    }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
-
-    libraryVariants.configureEach {
-        kotlin.sourceSets {
-            getByName(name) { kotlin.srcDir("build/generated/ksp/${name}/kotlin") }
-        }
-    }
 }
 
 dependencies {
-    coreLibraryDesugaring(libs.desugarjdk)
-
-    ksp(libs.koin.compiler)
-
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.window)
-    implementation(libs.compose.material3)
-    implementation(libs.compose.ui.ui)
-    implementation(libs.compose.ui.tooling.preview)
-    implementation(libs.koin.android)
-    implementation(libs.koin.annotations)
-    implementation(libs.kotlinx.coroutines.android)
-
     testImplementation(libs.junit)
-
-    debugImplementation(libs.compose.ui.tooling)
-    debugImplementation(libs.compose.ui.test.manifest)
+    androidTestImplementation(libs.androidx.test.junit)
 }

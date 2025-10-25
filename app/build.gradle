@@ -14,7 +14,9 @@ def supportedTranslations = ["en", "pl"]
 
 android {
     namespace 'com.studio4plus.homerplayer2'
-    compileSdk libs.versions.android.compileSdk.get().toInteger()
+    compileSdk {
+        version = release(libs.versions.android.compileSdk.get().toInteger())
+    }
 
     defaultConfig {
         applicationId "com.studio4plus.homerplayer2"
