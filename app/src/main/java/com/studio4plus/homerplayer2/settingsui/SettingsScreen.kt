@@ -73,6 +73,8 @@ import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 import com.studio4plus.homerplayer2.podcastsui.PodcastEditNav
 import com.studio4plus.homerplayer2.podcastsui.PodcastEditRoute
 import com.studio4plus.homerplayer2.utils.composable
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @Composable
 fun Modifier.defaultSettingsItem(horizontalPadding: Dp = HomerTheme.dimensions.screenHorizPadding) =
@@ -258,7 +260,7 @@ private fun SettingsNavHost(
             label = podcastTitle,
             arguments = listOf(navArgument(PodcastEditNav.FeedUriKey) { NavType.StringType })
         ) { backStackEntry ->
-            PodcastEditRoute()
+            PodcastEditRoute(viewModel = koinViewModel { parametersOf("Settings") },)
         }
         composable("tts_settings", label = ttsTitle) {
             SettingsTtsRoute(snackbarHostState)

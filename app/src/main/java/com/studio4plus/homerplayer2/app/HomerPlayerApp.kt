@@ -36,6 +36,7 @@ import coil3.request.CachePolicy
 import com.studio4plus.homerplayer2.BuildConfig
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.logging.FileLoggerTreeProvider
+import com.studio4plus.homerplayer2.telemetrydeck.TelemetryDeckAnalytics
 import io.sentry.SentryLevel
 import io.sentry.android.core.SentryAndroid
 import io.sentry.android.timber.SentryTimberIntegration
@@ -49,6 +50,7 @@ import timber.log.Timber
 class HomerPlayerApp : Application(), SingletonImageLoader.Factory, Configuration.Provider {
 
     private val okHttpClient by inject<OkHttpClient>()
+    private val telemetryDeckAnalytics by inject<TelemetryDeckAnalytics>()
 
     override fun onCreate() {
         super.onCreate()
@@ -64,6 +66,7 @@ class HomerPlayerApp : Application(), SingletonImageLoader.Factory, Configuratio
         }
         val fileLoggerProvider: FileLoggerTreeProvider by inject()
         Timber.plant(fileLoggerProvider())
+        telemetryDeckAnalytics.initialize(this, getString(R.string.telemetry_deck_app))
 
         val appIsInForeground: AppIsInForeground by inject()
         registerActivityLifecycleCallbacks(appIsInForeground)

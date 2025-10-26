@@ -76,8 +76,8 @@ class SamplesInstallController(
         binder?.errorEvent?.receiveAsFlow() ?: flowOf()
     }
 
-    fun start() {
-        SamplesInstallerService.startInstall(appContext)
+    fun start(analyticsContext: String) {
+        SamplesInstallerService.startInstall(appContext, analyticsContext)
     }
 
     fun abort() {

@@ -30,6 +30,7 @@ import androidx.lifecycle.ViewModel
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.audiobookfolders.AudiobookFolderManager
 import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFolderViewState
+import com.studio4plus.homerplayer2.contentanalytics.ContentEvent
 import com.studio4plus.homerplayer2.podcasts.usecases.DeletePodcast
 import com.studio4plus.homerplayer2.podcastsui.PodcastItemViewState
 import com.studio4plus.homerplayer2.samplebooks.SamplesInstallController
@@ -71,28 +72,38 @@ abstract class ContentPanelViewModel(
 
     fun addFolder(folderUri: Uri) = mainScope.launch {
         val success = audiobookFolderManager.addFolder(folderUri)
+        onEvent(ContentEvent.Add.Folder)
         if (!success)
             eventAddFolderError.trySend(ErrorEvent.AddFolderExistsError)
     }
 
     fun removeFolder(folder: AudiobookFolderViewState) {
+        val event = if (folder.samplesFolderState != null) {
+            ContentEvent.Remove.Samples
+        } else {
+            ContentEvent.Remove.Folder
+        }
+        onEvent(event)
         audiobookFolderManager.removeFolder(folder.uri)
     }
 
     fun removePodcast(podcastItem: PodcastItemViewState) {
         mainScope.launch {
+            onEvent(ContentEvent.Remove.Podcast)
             deletePodcast(podcastItem.feedUri)
         }
     }
 
-    fun startSamplesInstall() {
+    fun startSamplesInstall(analyticsContext: String) {
         clearErrorSnack()
-        samplesInstaller.start()
+        samplesInstaller.start(analyticsContext)
     }
 
     fun clearErrorSnack() {
         clearErrorEvent.tryEmit(null)
     }
+
+    abstract fun onEvent(event: ContentEvent)
 
     companion object {
         fun errorEventMessage(context: Context, event: ErrorEvent): String = when (event) {

@@ -32,6 +32,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.studio4plus.homerplayer2.analytics.Analytics
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksDao
 import com.studio4plus.homerplayer2.battery.BatteryState
 import com.studio4plus.homerplayer2.battery.BatteryStateProvider
@@ -77,6 +78,7 @@ class PlayerViewModel(
     private val speaker: Speaker,
     batteryStateProvider: BatteryStateProvider,
     private val presentSwipeGesture: PresentSwipeGesture,
+    private val analytics: Analytics,
 ) : ViewModel(), PlaybackController by playbackState, DefaultLifecycleObserver {
 
     data class UiAudiobook(
@@ -227,6 +229,7 @@ class PlayerViewModel(
             val book = allUiBooks.first().books.getOrNull(bookIndex)
             if (book != null) {
                 playbackState.play(book)
+                analytics.event("Player.Play")
             }
         }
     }

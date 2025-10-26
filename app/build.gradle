@@ -91,6 +91,8 @@ sentry {
 
 dependencies {
     implementation project(':base')
+    implementation project(':analytics')
+    implementation project(':analytics:telemetrydeck')
 
     coreLibraryDesugaring libs.desugarjdk
 

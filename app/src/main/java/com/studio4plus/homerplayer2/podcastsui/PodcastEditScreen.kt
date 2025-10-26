@@ -89,7 +89,7 @@ private fun rememberDateFormatter() =
 
 @Composable
 fun PodcastEditRoute(
-    viewModel: PodcastEditViewModel = koinViewModel(),
+    viewModel: PodcastEditViewModel,
     modifier: Modifier = Modifier,
 ) {
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()

@@ -26,6 +26,7 @@ package com.studio4plus.homerplayer2.onboarding
 
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.ViewModel
+import com.studio4plus.homerplayer2.analytics.Analytics
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -33,7 +34,8 @@ import org.koin.android.annotation.KoinViewModel
 
 @KoinViewModel
 class OnboardingSpeechViewModel(
-    private val onboardingDelegate: OnboardingDelegate
+    private val onboardingDelegate: OnboardingDelegate,
+    private val analytics: Analytics,
 ) : ViewModel(), DefaultLifecycleObserver {
 
     data class ViewState(
@@ -52,10 +54,17 @@ class OnboardingSpeechViewModel(
     }
 
     fun confirmTtsChoice() {
-        onboardingDelegate.onReadBookTitlesSet(currentState.value.readBookTitlesEnabled)
+        val isTtsEnabled = currentState.value.readBookTitlesEnabled
+        analytics.event(
+            "Onboarding.Tts",
+            params = mapOf("enabled" to isTtsEnabled.toString()),
+            sendImmediately = true
+        )
+        onboardingDelegate.onReadBookTitlesSet(isTtsEnabled)
     }
 
     fun onFinished() {
+        analytics.event("Onboarding.Finished", sendImmediately = true)
         onboardingDelegate.onOnboardingFinished()
     }
 }

@@ -61,7 +61,10 @@ android {
 }
 
 dependencies {
+    implementation(project(":analytics"))
+
     implementation(libs.androidx.core.ktx)
+    implementation(libs.telemetrydeck)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.junit)
 }

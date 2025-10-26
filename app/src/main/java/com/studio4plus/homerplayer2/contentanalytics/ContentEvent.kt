@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2024 Marcin Simonides
+ * Copyright (c) 2025 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,33 +22,24 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.onboarding
+package com.studio4plus.homerplayer2.contentanalytics
 
-import androidx.compose.foundation.layout.consumeWindowInsets
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import com.studio4plus.homerplayer2.R
-import com.studio4plus.homerplayer2.podcastsui.PodcastEditRoute
-import org.koin.compose.viewmodel.koinViewModel
-import org.koin.core.parameter.parametersOf
+sealed class ContentEvent(event: String) {
+    protected open val name: String = "Content.$event"
+    fun name(prefix: String) = "$prefix.$name"
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun OnboardingAddPodcastRoute(
-    navigateBack: () -> Unit
-) {
-    OnboardingDetailsScaffold(
-        title = stringResource(R.string.onboarding_podcast_title),
-        navigateBack = navigateBack
-    ) { contentPadding ->
-        PodcastEditRoute(
-            viewModel = koinViewModel { parametersOf("Onboarding") },
-            modifier = Modifier
-                .padding(contentPadding)
-                .consumeWindowInsets(contentPadding)
-        )
+    abstract class Add(item: String) : ContentEvent("Add") {
+        override val name = "${super.name}.$item"
+
+        object Podcast : Add("Podcast")
+        object Folder : Add("Folder")
+        object Samples : Add("Samples")
+    }
+    abstract class Remove(item: String) : ContentEvent("Remove") {
+        override val name = "${super.name}.$item"
+
+        object Podcast : Remove("Podcast")
+        object Folder : Remove("Folder")
+        object Samples : Remove("Samples")
     }
 }

@@ -40,7 +40,7 @@ class AppOnboardingDelegate(
     private val mainScope: CoroutineScope,
     @Named(DATASTORE_APP_STATE) private val appStateStore: DataStore<StoredAppState>,
     @Named(SettingsDataModule.UI) private val uiSettingsStore: DataStore<UiSettings>,
-    private val localeProvider: LocaleProvider
+    private val localeProvider: LocaleProvider,
 ) : OnboardingDelegate {
 
     override fun onOnboardingFinished() {

@@ -30,6 +30,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.studio4plus.homerplayer2.R
+import com.studio4plus.homerplayer2.analytics.Analytics
+import com.studio4plus.homerplayer2.contentanalytics.ContentEvent
 import com.studio4plus.homerplayer2.podcasts.PodcastsTaskScheduler
 import com.studio4plus.homerplayer2.podcasts.data.Podcast
 import com.studio4plus.homerplayer2.podcasts.data.PodcastEpisode
@@ -65,6 +67,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
+import org.koin.core.annotation.InjectedParam
 import org.koin.core.annotation.Named
 import java.time.LocalDate
 import java.time.ZoneId
@@ -74,6 +77,7 @@ private const val DEFAULT_EPISODE_COUNT = 2
 @OptIn(ExperimentalCoroutinesApi::class)
 @KoinViewModel
 class PodcastEditViewModel(
+    @InjectedParam private val analyticsEventPrefix: String,
     private val savedStateHandle: SavedStateHandle,
     private val downloadPodcastFeed: DownloadPodcastFeed,
     private val searchPodcasts: SearchPodcasts,
@@ -84,6 +88,7 @@ class PodcastEditViewModel(
     private val updatePodcastNameConfig: UpdatePodcastNameConfig,
     @Named(SettingsDataModule.NETWORK) private val networkSettingsStore: DataStore<NetworkSettings>,
     private val currentNetworkType: CurrentNetworkType,
+    private val analytics: Analytics,
 ) : ViewModel() {
 
     data class EpisodeViewState(
@@ -221,7 +226,10 @@ class PodcastEditViewModel(
                         }
                     )
                 }
-                is Feed.Error -> AddPodcastDialogState.Error(feedResult.message)
+                is Feed.Error -> {
+                    analytics.sendErrorEvent("$analyticsEventPrefix.FeedError")
+                    AddPodcastDialogState.Error(feedResult.message)
+                }
             }
         }
     }
@@ -295,6 +303,10 @@ class PodcastEditViewModel(
                 downloadEpisodeCount = DEFAULT_EPISODE_COUNT,
             )
 
+            analytics.event(
+                ContentEvent.Add.Podcast.name(analyticsEventPrefix),
+                sendImmediately = true
+            )
             podcastsDao.upsert(newPodcast)
         }
     }

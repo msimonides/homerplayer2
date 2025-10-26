@@ -25,8 +25,10 @@
 package com.studio4plus.homerplayer2.samplebooks
 
 import android.net.Uri
+import com.studio4plus.homerplayer2.analytics.Analytics
 import com.studio4plus.homerplayer2.audiobookfolders.AudiobookFolderManager
 import com.studio4plus.homerplayer2.base.DispatcherProvider
+import com.studio4plus.homerplayer2.contentanalytics.ContentEvent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.BufferOverflow
@@ -49,6 +51,7 @@ class SamplesInstaller(
     private val downloadSamples: SamplesDownloader,
     private val unpackSamples: SamplesUnpacker,
     private val audiobookFolderManager: AudiobookFolderManager,
+    private val analytics: Analytics,
 ) {
     private val currentState = MutableStateFlow<SamplesInstallState>(SamplesInstallState.Idle)
     val state: StateFlow<SamplesInstallState> get() = currentState
@@ -59,7 +62,7 @@ class SamplesInstaller(
 
     private var installJob: Job? = null
 
-    fun install(cacheDir: File, filesDir: File) {
+    fun install(cacheDir: File, filesDir: File, analyticsContext: String) {
         if (installJob?.isActive == true) {
             Timber.w("Installation already in progress, aborting")
             installJob?.cancel()
@@ -67,7 +70,7 @@ class SamplesInstaller(
 
         currentState.value = SamplesInstallState.Downloading
         installJob = mainScope.launch {
-            doInstall(cacheDir, filesDir)
+            doInstall(cacheDir, filesDir, analyticsContext)
             currentState.value = SamplesInstallState.Idle
         }
     }
@@ -76,7 +79,7 @@ class SamplesInstaller(
         installJob?.cancel()
     }
 
-    private suspend fun doInstall(cacheDir: File, filesDir: File) {
+    private suspend fun doInstall(cacheDir: File, filesDir: File,  analyticsContext: String) {
         val tmpFile = runInterruptible(dispatcherProvider.Io) {
             File.createTempFile("samples", ".zip", cacheDir)
         }
@@ -92,10 +95,15 @@ class SamplesInstaller(
             currentState.value = SamplesInstallState.Installing
             unpackSamples(tmpFile, destinationFolder)
             audiobookFolderManager.addSamplesFolder(Uri.fromFile(destinationFolder))
+            analytics.event(
+                ContentEvent.Add.Samples.name(analyticsContext),
+                sendImmediately = true
+            )
         } catch (runtime: RuntimeException) {
             throw runtime
         } catch (e: Exception) {
             Timber.e(e, "Samples installation failed")
+            analytics.sendErrorEvent("SamplesInstall")
             val error = when (currentState.value) {
                 SamplesInstallState.Downloading -> SamplesInstallError.Download
                 SamplesInstallState.Installing -> SamplesInstallError.Install(e.message ?: "")

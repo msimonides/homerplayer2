@@ -22,32 +22,47 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.app
+package com.studio4plus.homerplayer2.telemetrydeck
 
-import androidx.datastore.core.DataStore
+import android.content.Context
 import com.studio4plus.homerplayer2.analytics.Analytics
-import com.studio4plus.homerplayer2.player.usecases.PresentSwipeGesture
-import com.studio4plus.homerplayer2.settingsui.launchUpdate
+import com.telemetrydeck.sdk.TelemetryDeck
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
-import org.koin.core.annotation.Factory
-import org.koin.core.annotation.Named
+import kotlinx.coroutines.launch
 
-@Factory
-class AppPresentSwipeGesture(
+class TelemetryDeckAnalytics(
     private val mainScope: CoroutineScope,
-    @Named(DATASTORE_APP_STATE) private val appStateStore: DataStore<StoredAppState>,
-    private val analytics: Analytics,
-) : PresentSwipeGesture {
-    override val shouldPresent: Flow<Boolean> = appStateStore.data.map { !it.hasPresentSwipeGesture }
+) : Analytics {
 
-    override fun onUserSwipeGesture() {
-        mainScope.launchUpdate(appStateStore) {
-            if (!it.hasPresentSwipeGesture) {
-                analytics.event("Onboarding.FirstSwipe")
+    fun initialize(appContext: Context, appId: String) {
+        val builder = TelemetryDeck.Builder()
+            .appID(appId)
+            .showDebugLogs(true)
+        TelemetryDeck.start(appContext, builder)
+    }
+
+    override fun event(name: String, params: Map<String, String>, sendImmediately: Boolean) {
+        if (sendImmediately) {
+            mainScope.launch {
+                TelemetryDeck.send(name, additionalPayload = params)
             }
-            it.copy(hasPresentSwipeGesture = true)
+        } else {
+            TelemetryDeck.signal(name, params = params)
         }
+    }
+
+    override suspend fun sendErrorEvent(name: String) {
+        TelemetryDeck.send(
+            "TelemetryDeck.Error.occurred",
+            additionalPayload = mapOf("TelemetryDeck.Error.id" to name)
+        )
+    }
+
+    override fun startDurationEvent(name: String) {
+        TelemetryDeck.startDurationSignal(name)
+    }
+
+    override fun stopAndSendDurationEvent(name: String) {
+        TelemetryDeck.stopAndSendDurationSignal(name)
     }
 }

@@ -56,7 +56,9 @@ class SamplesInstallerService : LifecycleService() {
         Timber.i("starting with action ${intent?.action}")
         return when (intent?.action) {
             ACTION_INSTALL -> {
-                samplesInstaller.install(cacheDir, filesDir)
+                val analyticsContext =
+                    requireNotNull(intent.getStringExtra(EXTRA_ANALYTICS_CONTEXT))
+                samplesInstaller.install(cacheDir, filesDir, analyticsContext)
                 lifecycleScope.launch {
                     samplesInstaller.state.first { it == SamplesInstallState.Idle }
                     stopSelf()
@@ -75,10 +77,12 @@ class SamplesInstallerService : LifecycleService() {
 
     companion object {
         private const val ACTION_INSTALL = "Install"
+        private const val EXTRA_ANALYTICS_CONTEXT = "AnalyticsContext"
 
-        fun startInstall(context: Context) {
+        fun startInstall(context: Context, analyticsContext: String) {
             val intent = Intent(context, SamplesInstallerService::class.java).apply {
                 action = ACTION_INSTALL
+                putExtra(EXTRA_ANALYTICS_CONTEXT, analyticsContext)
             }
             context.startService(intent)
         }

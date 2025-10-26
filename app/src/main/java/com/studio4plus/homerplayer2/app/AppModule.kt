@@ -33,6 +33,7 @@ import androidx.datastore.core.DataStore
 import androidx.room.Room
 import com.studio4plus.homerplayer2.BuildConfig
 import com.studio4plus.homerplayer2.R
+import com.studio4plus.homerplayer2.analytics.Analytics
 import com.studio4plus.homerplayer2.audiobookfolders.AudiobookFoldersDatabase
 import com.studio4plus.homerplayer2.audiobookfolders.AudiobookFoldersModule
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksDatabase
@@ -55,6 +56,7 @@ import com.studio4plus.homerplayer2.podcasts.data.PodcastsDatabase
 import com.studio4plus.homerplayer2.samplebooks.SamplesDownloader
 import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
 import com.studio4plus.homerplayer2.settingsui.SettingsUiModule
+import com.studio4plus.homerplayer2.telemetrydeck.TelemetryDeckAnalytics
 import com.studio4plus.homerplayer2.utils.Clock
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.serialization.json.Json
@@ -85,6 +87,13 @@ const val DATASTORE_APP_STATE = "appState"
 )
 @ComponentScan("com.studio4plus.homerplayer2.app")
 class AppModule {
+
+    @Single
+    fun analytics(telemetryDeck: TelemetryDeckAnalytics): Analytics = telemetryDeck
+
+    @Single
+    fun telemetryDeckAnalytics(mainScope: CoroutineScope): TelemetryDeckAnalytics =
+        TelemetryDeckAnalytics(mainScope)
 
     @Single
     @Named(DATASTORE_APP_STATE)

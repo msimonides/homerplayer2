@@ -25,6 +25,7 @@ androidx-activity-compose = 'androidx.activity:activity-compose:1.11.0'
 androidx-core-ktx = 'androidx.core:core-ktx:1.17.0'
 androidx-datastore-core = 'androidx.datastore:datastore:1.0.0'
 androidx-documentfile ='androidx.documentfile:documentfile:1.1.0'
+androidx-lifecycle-process = { module = 'androidx.lifecycle:lifecycle-process', version.ref = 'androidx-lifecycle' }
 androidx-lifecycle-runtime-compose = { module = 'androidx.lifecycle:lifecycle-runtime-compose', version.ref = 'androidx-lifecycle' }
 androidx-lifecycle-service = { module = 'androidx.lifecycle:lifecycle-service', version.ref = 'androidx-lifecycle' }
 androidx-lifecycle-viewmodel = { module = 'androidx.lifecycle:lifecycle-viewmodel', version.ref = 'androidx-lifecycle' }
@@ -79,6 +80,7 @@ sentry-android = { module = 'io.sentry:sentry-android', version.ref = 'sentry-an
 sentry-android-timber = { module = 'io.sentry:sentry-android-timber', version.ref = 'sentry-android' }
 
 timber = 'com.jakewharton.timber:timber:5.0.1'
+telemetrydeck = 'com.telemetrydeck:kotlin-sdk:6.2.2'
 treessence = 'com.github.bastienpaulfr:Treessence:1.1.2'
 
 junit = 'junit:junit:4.13.2'

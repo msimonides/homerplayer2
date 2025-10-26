@@ -33,6 +33,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import org.koin.core.annotation.Single
 
+// TODO: consider switching to ProcessLifecycleObserver
 @Single
 class AppIsInForeground : IsInForeground, Application.ActivityLifecycleCallbacks {
 

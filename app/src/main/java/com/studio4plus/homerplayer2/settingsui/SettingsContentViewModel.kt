@@ -25,7 +25,9 @@
 package com.studio4plus.homerplayer2.settingsui
 
 import androidx.lifecycle.viewModelScope
+import com.studio4plus.homerplayer2.analytics.Analytics
 import com.studio4plus.homerplayer2.audiobookfolders.AudiobookFolderManager
+import com.studio4plus.homerplayer2.contentanalytics.ContentEvent
 import com.studio4plus.homerplayer2.contentui.ContentPanelViewModel
 import com.studio4plus.homerplayer2.contentui.ContentPanelViewState
 import com.studio4plus.homerplayer2.contentui.ContentPanelViewStateFlow
@@ -36,6 +38,8 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import org.koin.android.annotation.KoinViewModel
 
+private const val ANALYTICS_CONTEXT = "Settings"
+
 @KoinViewModel
 class SettingsContentViewModel(
     mainScope: CoroutineScope,
@@ -43,8 +47,15 @@ class SettingsContentViewModel(
     audiobookFoldersManager: AudiobookFolderManager,
     deletePodcast: DeletePodcast,
     samplesInstaller: SamplesInstallController,
+    private val analytics: Analytics,
 ): ContentPanelViewModel(mainScope, audiobookFoldersManager, deletePodcast, samplesInstaller) {
 
     val viewState = contentPanelViewStateFlow
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
+
+    fun startSamplesInstall() = startSamplesInstall(ANALYTICS_CONTEXT)
+
+    override fun onEvent(event: ContentEvent) {
+        analytics.event(event.name(ANALYTICS_CONTEXT))
+    }
 }
