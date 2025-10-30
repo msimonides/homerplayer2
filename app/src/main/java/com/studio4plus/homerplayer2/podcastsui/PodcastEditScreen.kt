@@ -76,7 +76,6 @@ import com.studio4plus.homerplayer2.podcasts.MAX_PODCAST_EPISODE_COUNT
 import com.studio4plus.homerplayer2.podcastsui.usecases.PodcastSearchResult
 import com.studio4plus.homerplayer2.settingsdata.NetworkType
 import com.studio4plus.homerplayer2.settingsui.SelectPodcastsDownloadNetworkTypeDialog
-import org.koin.androidx.compose.koinViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle

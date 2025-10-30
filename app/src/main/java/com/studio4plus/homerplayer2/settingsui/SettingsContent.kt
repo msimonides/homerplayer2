@@ -34,6 +34,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studio4plus.homerplayer2.audiobookfoldersui.OpenAudiobooksTreeScreenWrapper
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
+import com.studio4plus.homerplayer2.contentanalytics.ContentEvent
 import com.studio4plus.homerplayer2.contentui.ContentManagementPanel
 import com.studio4plus.homerplayer2.contentui.ContentPanelViewModel
 import com.studio4plus.homerplayer2.speech.LaunchErrorSnackDisplay
@@ -61,15 +62,22 @@ fun SettingsContentRoute(
         ContentManagementPanel(
             state = viewState,
             onAddFolder = {
+                viewModel.onEvent(ContentEvent.StartAdd.Folder)
                 viewModel.clearErrorSnack()
                 openAudiobooksTree()
             },
             onEditFolder = onEditFolder,
             onRemoveFolder = viewModel::removeFolder,
-            onAddPodcast = onAddPodcast,
+            onAddPodcast = {
+                viewModel.onEvent(ContentEvent.StartAdd.Podcast)
+                onAddPodcast()
+            },
             onEditPodcast= onEditPodcast,
             onRemovePodcast = viewModel::removePodcast,
-            onDownloadSamples = viewModel::startSamplesInstall,
+            onDownloadSamples = {
+                viewModel.onEvent(ContentEvent.StartAdd.Samples)
+                viewModel.startSamplesInstall()
+            },
             horizontalPadding = HomerTheme.dimensions.screenHorizPadding,
             modifier = modifier,
             windowInsets = WindowInsets.navigationBars

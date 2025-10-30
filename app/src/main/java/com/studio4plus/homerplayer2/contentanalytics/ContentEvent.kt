@@ -28,6 +28,14 @@ sealed class ContentEvent(event: String) {
     protected open val name: String = "Content.$event"
     fun name(prefix: String) = "$prefix.$name"
 
+    abstract class StartAdd(item: String) : ContentEvent("StartAdd") {
+        override val name = "${super.name}.$item"
+
+        object Podcast : StartAdd("Podcast")
+        object Folder : StartAdd("Folder")
+        object Samples : StartAdd("Samples")
+    }
+
     abstract class Add(item: String) : ContentEvent("Add") {
         override val name = "${super.name}.$item"
 

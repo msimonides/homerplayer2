@@ -51,11 +51,13 @@ class TelemetryDeckAnalytics(
         }
     }
 
-    override suspend fun sendErrorEvent(name: String) {
-        TelemetryDeck.send(
-            "TelemetryDeck.Error.occurred",
-            additionalPayload = mapOf("TelemetryDeck.Error.id" to name)
-        )
+    override fun sendErrorEvent(name: String) {
+        mainScope.launch {
+            TelemetryDeck.send(
+                "TelemetryDeck.Error.occurred",
+                additionalPayload = mapOf("TelemetryDeck.Error.id" to name)
+            )
+        }
     }
 
     override fun startDurationEvent(name: String) {

@@ -66,6 +66,6 @@ class OnboardingContentViewModel(
     fun startSamplesInstall() = startSamplesInstall(ANALYTICS_CONTEXT)
 
     override fun onEvent(event: ContentEvent) {
-        analytics.event(event.name(ANALYTICS_CONTEXT))
+        analytics.event(event.name(ANALYTICS_CONTEXT), sendImmediately = true)
     }
 }

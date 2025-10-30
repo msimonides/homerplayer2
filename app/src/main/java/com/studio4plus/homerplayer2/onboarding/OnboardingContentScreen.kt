@@ -44,6 +44,7 @@ import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFolderViewState
 import com.studio4plus.homerplayer2.audiobookfoldersui.OpenAudiobooksTreeScreenWrapper
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
+import com.studio4plus.homerplayer2.contentanalytics.ContentEvent
 import com.studio4plus.homerplayer2.contentui.ContentManagementPanel
 import com.studio4plus.homerplayer2.contentui.ContentPanelViewModel
 import com.studio4plus.homerplayer2.contentui.ContentPanelViewState
@@ -79,15 +80,22 @@ fun OnboardingContentRoute(
             modifier = modifier,
             navigateNext = navigateNext,
             addFolder = {
+                viewModel.onEvent(ContentEvent.StartAdd.Folder)
                 viewModel.clearErrorSnack()
                 openAudiobooksTree()
             },
             editFolder = navigateEditFolder,
             removeFolder = viewModel::removeFolder,
-            addPodcast = navigateAddPodcast,
+            addPodcast = {
+                viewModel.onEvent(ContentEvent.StartAdd.Podcast)
+                navigateAddPodcast()
+            },
             editPodcast = navigateEditPodcast,
             removePodcast = viewModel::removePodcast,
-            downloadSamples = viewModel::startSamplesInstall,
+            downloadSamples = {
+                viewModel.onEvent(ContentEvent.StartAdd.Samples)
+                viewModel.startSamplesInstall()
+            },
         )
     }
 }

@@ -30,7 +30,7 @@ interface Analytics {
         params: Map<String, String> = emptyMap(),
         sendImmediately: Boolean = false
     )
-    suspend fun sendErrorEvent(name: String)
+    fun sendErrorEvent(name: String)
     fun startDurationEvent(name: String)
     fun stopAndSendDurationEvent(name: String)
 }

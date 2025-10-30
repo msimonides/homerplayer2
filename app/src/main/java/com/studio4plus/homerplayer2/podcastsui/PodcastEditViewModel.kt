@@ -226,10 +226,8 @@ class PodcastEditViewModel(
                         }
                     )
                 }
-                is Feed.Error -> {
-                    analytics.sendErrorEvent("$analyticsEventPrefix.FeedError")
+                is Feed.Error ->
                     AddPodcastDialogState.Error(feedResult.message)
-                }
             }
         }
     }
@@ -260,20 +258,34 @@ class PodcastEditViewModel(
         when {
             phrase.isBlank() -> emit(ViewState.Search.Blank)
             phrase.startsWith("https://") && phrase.length > 10 -> {
+                analytics.event("Podcast.Search.URL", sendImmediately = true)
                 podcastUri = phrase
             }
             else -> {
+                analytics.event("Podcast.Search.Phrase", sendImmediately = true)
                 val search = searchPodcasts(phrase.trim())
                 val newState = when (search) {
-                    is SearchPodcasts.Result.Success ->
+                    is SearchPodcasts.Result.Success -> {
+                        analytics.event(
+                            "Podcast.Search.Results",
+                            params = searchResultEventData(search.results.size),
+                            sendImmediately = true,
+                        )
                         ViewState.Search.Results(
                             results = search.results,
                             // We don't know if more results are available, but if max number is
                             // returned there's a chance there are.
                             moreResultsAvailable = search.results.size == PODCAST_SEARCH_MAX_RESULTS
                         )
-                    SearchPodcasts.Result.RateLimitError -> ViewState.SearchRateLimited
-                    SearchPodcasts.Result.RequestError -> ViewState.SearchFatalError
+                    }
+                    SearchPodcasts.Result.RateLimitError -> {
+                        analytics.sendErrorEvent("Podcast.Search.Error.RateLimit")
+                        ViewState.SearchRateLimited
+                    }
+                    SearchPodcasts.Result.RequestError -> {
+                        analytics.sendErrorEvent("Podcast.Search.Error.RequestError")
+                        ViewState.SearchFatalError
+                    }
                 }
                 emit(newState)
             }
@@ -281,6 +293,7 @@ class PodcastEditViewModel(
     }
 
     fun onSelectPodcastResult(podcast: PodcastSearchResult) {
+        analytics.event("Podcast.Search.SelectResult", sendImmediately = true)
         podcastUri = podcast.feedUri
     }
 
@@ -388,22 +401,46 @@ class PodcastEditViewModel(
         when (val download = downloadPodcastFeed(uri)) {
             is DownloadPodcastFeed.Result.Success ->
                 Feed.Parsed(download.feed)
-            is DownloadPodcastFeed.Result.ParseError ->
+            is DownloadPodcastFeed.Result.ParseError -> {
+                analytics.sendErrorEvent("Podcast.Add.FeedParse")
                 Feed.Error(R.string.podcast_feed_error_parse)
+            }
             is DownloadPodcastFeed.Result.Error -> {
+                analytics.sendErrorEvent("Podcast.Add.FeedDownload")
                 val errorRes = when(download.httpCode) {
                     404 -> R.string.podcast_feed_error_doesnt_exist
                     else -> R.string.podcast_feed_error_download
                 }
                 Feed.Error(errorRes)
             }
-            DownloadPodcastFeed.Result.UnknownAddress ->
+            DownloadPodcastFeed.Result.UnknownAddress -> {
+                analytics.sendErrorEvent("Podcast.Add.FeedUrl")
                 Feed.Error(R.string.podcast_feed_error_doesnt_exist)
+            }
 
-            DownloadPodcastFeed.Result.SslError ->
+            DownloadPodcastFeed.Result.SslError -> {
+                analytics.sendErrorEvent("Podcast.Add.FeedDownload")
                 Feed.Error(R.string.podcast_feed_error_ssl_error)
+            }
 
-            DownloadPodcastFeed.Result.IoError ->
+            DownloadPodcastFeed.Result.IoError -> {
+                analytics.sendErrorEvent("Podcast.Add.FeedDownload")
                 Feed.Error(R.string.podcast_feed_error_download)
+            }
         }
+}
+
+private fun searchResultEventData(count: Int): Map<String, String> {
+    val buckets = listOf(
+        0 .. 1 to "0",
+        1 .. 2 to "1",
+        2 .. 5 to "2-4",
+        5 .. 10 to "5-9",
+        10 .. Int.MAX_VALUE to "10+"
+    )
+    return buckets
+        .firstOrNull { (range, _) -> count in range }
+        ?.second
+        ?.let { mapOf("count" to it) }
+        ?: emptyMap()
 }
