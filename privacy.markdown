@@ -52,4 +52,4 @@ This policy was last modified on March 17, 2024.
 
 ## Contact
 
-marcin@studio4plus.com
+info@homeraudioplayer.app
