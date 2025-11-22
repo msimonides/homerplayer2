@@ -95,10 +95,7 @@ class SamplesInstaller(
             currentState.value = SamplesInstallState.Installing
             unpackSamples(tmpFile, destinationFolder)
             audiobookFolderManager.addSamplesFolder(Uri.fromFile(destinationFolder))
-            analytics.event(
-                ContentEvent.Add.Samples.name(analyticsContext),
-                sendImmediately = true
-            )
+            analytics.event(ContentEvent.Add.Samples.name(analyticsContext))
         } catch (runtime: RuntimeException) {
             throw runtime
         } catch (e: Exception) {

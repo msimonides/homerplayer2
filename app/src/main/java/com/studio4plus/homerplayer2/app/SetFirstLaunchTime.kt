@@ -22,18 +22,30 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.analytics
+package com.studio4plus.homerplayer2.app
 
-interface Analytics {
-    fun event(
-        name: String,
-        params: Map<String, String> = emptyMap(),
-    )
-    fun sendErrorEvent(name: String)
-    fun startDurationEvent(name: String)
-    fun stopAndSendDurationEvent(name: String)
-}
+import androidx.datastore.core.DataStore
+import com.studio4plus.homerplayer2.utils.Clock
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import org.koin.core.annotation.Named
+import org.koin.core.annotation.Single
 
-interface AnalyticsDelegate {
-    fun shouldSendImmediately(): Boolean
+@Single(createdAtStart = true)
+class SetFirstLaunchTime(
+    mainScope: CoroutineScope,
+    @Named(DATASTORE_APP_STATE) appState: DataStore<StoredAppState>,
+    clock: Clock,
+) {
+    init {
+        mainScope.launch {
+            appState.updateData { current ->
+                if (current.firstRunTimestampMs == 0L) {
+                    current.copy(firstRunTimestampMs = clock.wallTime())
+                } else {
+                    current
+                }
+            }
+        }
+    }
 }

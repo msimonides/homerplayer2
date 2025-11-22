@@ -22,47 +22,38 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.telemetrydeck
+package com.studio4plus.homerplayer2.app
 
-import android.content.Context
-import com.studio4plus.homerplayer2.analytics.Analytics
+import androidx.datastore.core.DataStore
 import com.studio4plus.homerplayer2.analytics.AnalyticsDelegate
-import com.telemetrydeck.sdk.TelemetryDeck
+import com.studio4plus.homerplayer2.utils.Clock
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import org.koin.core.annotation.Named
+import org.koin.core.annotation.Single
+import java.time.Duration
+import java.time.Instant
 
-class TelemetryDeckAnalytics(
-    private val mainScope: CoroutineScope,
-    private val delegate: AnalyticsDelegate,
-) : Analytics {
+private const val SEND_IMMEDIATELY_AGE_MINUTES = 60L
+private val UNSET = Instant.ofEpochMilli(StoredAppState.UNSET_TIMESTAMP_MS)
 
-    fun initialize(appContext: Context, appId: String) {
-        val builder = TelemetryDeck.Builder()
-            .appID(appId)
-            .showDebugLogs(true)
-        TelemetryDeck.start(appContext, builder)
-    }
+@Single
+class AppAnalyticsDelegate(
+    mainScope: CoroutineScope,
+    @Named(DATASTORE_APP_STATE) appState: DataStore<StoredAppState>,
+    private val clock: Clock,
+) : AnalyticsDelegate {
+    private var firstLaunchTimestamp: Instant = UNSET
 
-    override fun event(name: String, params: Map<String, String>) {
-        if (delegate.shouldSendImmediately()) {
-            mainScope.launch {
-                TelemetryDeck.send(name, additionalPayload = params)
-            }
-        } else {
-            TelemetryDeck.signal(name, params = params)
+    init {
+        mainScope.launch {
+            firstLaunchTimestamp = Instant.ofEpochMilli(appState.data.first().firstRunTimestampMs)
         }
     }
 
-    override fun sendErrorEvent(name: String) {
-        val errorSignal = "TelemetryDeck.Error.occurred"
-        event(errorSignal, params = mapOf("TelemetryDeck.Error.id" to name))
-    }
-
-    override fun startDurationEvent(name: String) {
-        TelemetryDeck.startDurationSignal(name)
-    }
-
-    override fun stopAndSendDurationEvent(name: String) {
-        TelemetryDeck.stopAndSendDurationSignal(name)
+    override fun shouldSendImmediately(): Boolean {
+        val base = firstLaunchTimestamp
+        return base == UNSET || base + Duration.ofMinutes(SEND_IMMEDIATELY_AGE_MINUTES) > clock.wallInstant()
     }
 }

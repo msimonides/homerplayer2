@@ -33,7 +33,12 @@ import org.koin.core.annotation.Factory
 data class StoredAppState(
     val onboardingCompleted: Boolean = false,
     val hasPresentSwipeGesture: Boolean = false,
-)
+    val firstRunTimestampMs: Long = UNSET_TIMESTAMP_MS,
+) {
+    companion object {
+        const val UNSET_TIMESTAMP_MS = 0L
+    }
+}
 
 @Factory
 class StoredAppStateMigration1_2(val versionUpdate: VersionUpdate) : DataMigration<StoredAppState> {

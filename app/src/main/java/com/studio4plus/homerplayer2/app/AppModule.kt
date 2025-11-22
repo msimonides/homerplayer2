@@ -59,6 +59,7 @@ import com.studio4plus.homerplayer2.settingsui.SettingsUiModule
 import com.studio4plus.homerplayer2.telemetrydeck.TelemetryDeckAnalytics
 import com.studio4plus.homerplayer2.utils.Clock
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.handleCoroutineException
 import kotlinx.serialization.json.Json
 import org.koin.core.annotation.ComponentScan
 import org.koin.core.annotation.Factory
@@ -92,8 +93,11 @@ class AppModule {
     fun analytics(telemetryDeck: TelemetryDeckAnalytics): Analytics = telemetryDeck
 
     @Single
-    fun telemetryDeckAnalytics(mainScope: CoroutineScope): TelemetryDeckAnalytics =
-        TelemetryDeckAnalytics(mainScope)
+    fun telemetryDeckAnalytics(
+        mainScope: CoroutineScope,
+        delegate: AppAnalyticsDelegate,
+    ): TelemetryDeckAnalytics =
+        TelemetryDeckAnalytics(mainScope, delegate)
 
     @Single
     @Named(DATASTORE_APP_STATE)

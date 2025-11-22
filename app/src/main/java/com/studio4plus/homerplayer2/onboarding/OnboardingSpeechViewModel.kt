@@ -58,13 +58,12 @@ class OnboardingSpeechViewModel(
         analytics.event(
             "Onboarding.Tts",
             params = mapOf("enabled" to isTtsEnabled.toString()),
-            sendImmediately = true
         )
         onboardingDelegate.onReadBookTitlesSet(isTtsEnabled)
     }
 
     fun onFinished() {
-        analytics.event("Onboarding.Finished", sendImmediately = true)
+        analytics.event("Onboarding.Finished")
         onboardingDelegate.onOnboardingFinished()
     }
 }

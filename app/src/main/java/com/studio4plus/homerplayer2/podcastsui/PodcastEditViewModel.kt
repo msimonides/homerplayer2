@@ -258,18 +258,17 @@ class PodcastEditViewModel(
         when {
             phrase.isBlank() -> emit(ViewState.Search.Blank)
             phrase.startsWith("https://") && phrase.length > 10 -> {
-                analytics.event("Podcast.Search.URL", sendImmediately = true)
+                analytics.event("Podcast.Search.URL")
                 podcastUri = phrase
             }
             else -> {
-                analytics.event("Podcast.Search.Phrase", sendImmediately = true)
+                analytics.event("Podcast.Search.Phrase")
                 val search = searchPodcasts(phrase.trim())
                 val newState = when (search) {
                     is SearchPodcasts.Result.Success -> {
                         analytics.event(
                             "Podcast.Search.Results",
                             params = searchResultEventData(search.results.size),
-                            sendImmediately = true,
                         )
                         ViewState.Search.Results(
                             results = search.results,
@@ -293,7 +292,7 @@ class PodcastEditViewModel(
     }
 
     fun onSelectPodcastResult(podcast: PodcastSearchResult) {
-        analytics.event("Podcast.Search.SelectResult", sendImmediately = true)
+        analytics.event("Podcast.Search.SelectResult")
         podcastUri = podcast.feedUri
     }
 
@@ -316,10 +315,7 @@ class PodcastEditViewModel(
                 downloadEpisodeCount = DEFAULT_EPISODE_COUNT,
             )
 
-            analytics.event(
-                ContentEvent.Add.Podcast.name(analyticsEventPrefix),
-                sendImmediately = true
-            )
+            analytics.event(ContentEvent.Add.Podcast.name(analyticsEventPrefix))
             podcastsDao.upsert(newPodcast)
         }
     }
