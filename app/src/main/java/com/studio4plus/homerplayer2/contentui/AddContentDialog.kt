@@ -24,31 +24,16 @@
 
 package com.studio4plus.homerplayer2.contentui
 
-import androidx.annotation.DrawableRes
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.base.ui.DefaultAlertDialog
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.base.R as BaseR
@@ -74,8 +59,8 @@ fun AddContentDialog(
             }
         }
     ) { horizontalPadding ->
-        AddContentSelection(
-            showSamples = showSamples,
+        AddContentCardsColumn(
+            showSamples = if (showSamples) SamplesCard.ShowLast else SamplesCard.Hide,
             onAddFolder = { onAddFolder(); onDismiss() },
             onAddPodcast = { onAddPodcast(); onDismiss() },
             onDownloadSamples = { onDownloadSamples(); onDismiss() },
@@ -85,96 +70,6 @@ fun AddContentDialog(
                 .fillMaxWidth()
                 .padding(horizontal = horizontalPadding),
         )
-    }
-}
-
-@Composable
-private fun AddContentSelection(
-    showSamples: Boolean,
-    onAddFolder: () -> Unit,
-    onAddPodcast: () -> Unit,
-    onDownloadSamples: () -> Unit,
-    onLearnMoreFolders: () -> Unit,
-    onLearnMorePodcasts: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        val cardModifier = Modifier.fillMaxWidth()
-        AddContentTypeCard(
-            stringResource(R.string.content_add_dialog_folder_card_title),
-            stringResource(R.string.content_add_dialog_folder_card_description),
-            icon = R.drawable.icon_folder,
-            onClick = onAddFolder,
-            onLearnMoreClick = onLearnMoreFolders,
-            modifier = cardModifier,
-        )
-
-        AddContentTypeCard(
-            stringResource(R.string.content_add_dialog_podcast_card_title),
-            stringResource(R.string.content_add_dialog_podcast_card_description),
-            icon = R.drawable.icon_podcasts,
-            onClick = onAddPodcast,
-            onLearnMoreClick = onLearnMorePodcasts,
-            modifier = cardModifier,
-        )
-
-        if (showSamples) {
-            AddContentTypeCard(
-                stringResource(R.string.content_add_dialog_samples_card_title),
-                stringResource(R.string.content_add_dialog_samples_card_description),
-                icon = R.drawable.icon_download,
-                onClick = onDownloadSamples,
-                modifier = cardModifier,
-            )
-        }
-    }
-}
-
-@Composable
-private fun AddContentTypeCard(
-    title: String,
-    description: String,
-    @DrawableRes icon: Int,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    onLearnMoreClick: (() -> Unit)? = null,
-) {
-    Surface(
-        modifier = modifier,
-        onClick = onClick,
-        shape = MaterialTheme.shapes.medium,
-        border = BorderStroke(Dp.Hairline, MaterialTheme.colorScheme.primary),
-    ) {
-        Row(
-            modifier = Modifier.padding(16.dp),
-        ) {
-            Icon(
-                painterResource(icon),
-                contentDescription = null,
-                modifier = Modifier.padding(end = 8.dp)
-            )
-            Column(
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-            ) {
-                Box(
-                    modifier = Modifier.heightIn(min = 24.dp), // Icon size.
-                    contentAlignment = Alignment.CenterStart,
-                ) {
-                    Text(title, style = MaterialTheme.typography.titleMedium)
-                }
-                Text(description)
-                if (onLearnMoreClick != null) {
-                    Text(
-                        stringResource(BaseR.string.generic_button_learn_more),
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.clickable(onClick = onLearnMoreClick)
-                    )
-                }
-            }
-        }
     }
 }
 

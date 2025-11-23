@@ -49,11 +49,6 @@
     <string name="content_add_folder_error_exists">This folder has already been added</string>
     <string name="content_dialog_remove_message">Are you sure?</string>
     <string name="content_dialog_remove_button_remove">Remove</string>
-    <string name="content_empty_list_message">Homer plays:</string>
-    <string name="content_empty_list_message_bullet_1">audiobooks and music from folders on this device</string>
-    <string name="content_empty_list_message_bullet_2">podcasts from the Internet</string>
-    <string name="content_empty_list_message_bullet_3">sample files for quickly testing the app</string>
-    <string name="content_empty_list_button_add">Add content…</string>
     <!-- Error message displayed when downloading sample audiobooks fails. -->
     <string name="content_samples_download_error">Samples download failed. Check your network connection and try again.</string>
     <!-- Error message displayed when installation of sample audiobooks fails.

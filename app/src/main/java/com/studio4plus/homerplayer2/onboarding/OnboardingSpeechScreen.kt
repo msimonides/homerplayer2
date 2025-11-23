@@ -178,13 +178,18 @@ private fun ScreenContent(
     onTtsToggled: () -> Unit,
     onOpenTtsSettings: () -> Unit,
 ) {
+    val horizontalPaddingModifier =
+        Modifier.padding(horizontal = HomerTheme.dimensions.screenHorizPadding)
+
     Column(modifier = modifier) {
         OnboardingHeader(
             titleRes = R.string.onboarding_speech_title,
-            descriptionRes = R.string.onboarding_speech_description,
-            modifier = Modifier
-                .padding(bottom = 16.dp)
-                .padding(horizontal = HomerTheme.dimensions.screenHorizPadding)
+            modifier = horizontalPaddingModifier
+        )
+
+        Text(
+            stringResource(R.string.onboarding_speech_description),
+            modifier = horizontalPaddingModifier.padding(bottom = 16.dp)
         )
 
         SettingSwitch(
@@ -192,8 +197,8 @@ private fun ScreenContent(
             value = readBookTitlesEnabled,
             onChange = { onTtsToggled() },
             icon = R.drawable.icon_record_voice_over,
-            modifier = Modifier
-                .padding(vertical = 8.dp, horizontal = HomerTheme.dimensions.screenHorizPadding)
+            modifier = horizontalPaddingModifier
+                .padding(vertical = 8.dp)
         )
 
         Spacer(Modifier.height(16.dp))

@@ -39,7 +39,10 @@ data class ContentPanelViewState(
     val folders: List<AudiobookFolderViewState>,
     val podcasts: List<PodcastItemViewState>,
     val samplesInstallState: SamplesInstallState?,
-)
+) {
+    val isEmpty =
+        folders.isEmpty() && podcasts.isEmpty() && samplesInstallState == SamplesInstallState.Idle
+}
 
 @Factory
 class ContentPanelViewStateFlow(

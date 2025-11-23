@@ -24,6 +24,7 @@
 
 package com.studio4plus.homerplayer2.onboarding
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -31,20 +32,24 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobookFolderViewState
 import com.studio4plus.homerplayer2.audiobookfoldersui.OpenAudiobooksTreeScreenWrapper
+import com.studio4plus.homerplayer2.base.Constants
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 import com.studio4plus.homerplayer2.contentanalytics.ContentEvent
+import com.studio4plus.homerplayer2.contentui.AddContentCardsColumn
 import com.studio4plus.homerplayer2.contentui.ContentManagementPanel
 import com.studio4plus.homerplayer2.contentui.ContentPanelViewModel
 import com.studio4plus.homerplayer2.contentui.ContentPanelViewState
@@ -52,6 +57,7 @@ import com.studio4plus.homerplayer2.contentui.PreviewData
 import com.studio4plus.homerplayer2.podcastsui.PodcastItemViewState
 import com.studio4plus.homerplayer2.samplebooks.SamplesInstallState
 import com.studio4plus.homerplayer2.speech.LaunchErrorSnackDisplay
+import com.studio4plus.homerplayer2.utils.openWebUrl
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -159,16 +165,21 @@ private fun ScreenContent(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
+        val horizontalPaddingModifier =
+            Modifier.padding(horizontal = HomerTheme.dimensions.screenHorizPadding)
         OnboardingHeader(
             titleRes = R.string.onboarding_content_title,
-            descriptionRes = R.string.onboarding_content_description,
-            modifier = Modifier
-                .padding(horizontal = HomerTheme.dimensions.screenHorizPadding)
-                .padding(bottom = 16.dp)
+            modifier = horizontalPaddingModifier
         )
 
         ContentManagementPanel(
             state = panelState,
+            header = {
+                Text(
+                    stringResource(R.string.onboarding_content_description),
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+            },
             onAddFolder = onAddFolder,
             onEditFolder = onEditFolder,
             onRemoveFolder = onRemoveFolder,

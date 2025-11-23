@@ -32,33 +32,24 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -87,67 +78,87 @@ fun ContentManagementPanel(
     onRemovePodcast: (PodcastItemViewState) -> Unit,
     onDownloadSamples: () -> Unit,
     modifier: Modifier = Modifier,
+    header: @Composable () -> Unit = {},
     horizontalPadding: Dp = 0.dp,
     windowInsets: WindowInsets = WindowInsets(0, 0, 0, 0),
 ) {
-    if (state == null) {
-        Box(modifier)
-        return
-    }
+    val insetsPadding = PaddingValues(
+        bottom = windowInsets.asPaddingValues().calculateBottomPadding()
+    )
 
-    Column(
-        modifier = modifier
-    ) {
-        var addDialog by rememberSaveable { mutableStateOf(false) }
-        var removeDialogAction by remember { mutableStateOf<(() -> Unit)?>(null) }
+    when {
+        state == null -> Box(modifier) {}
 
-        Spacer(modifier = Modifier.windowInsetsTopHeight(windowInsets))
-
-        if (state.folders.isEmpty() && state.podcasts.isEmpty()) {
-            EmptyState(
-                onAddContent = { addDialog = true },
-                modifier = Modifier
+        state.isEmpty -> {
+            Column(
+                modifier = modifier
+                    .consumeWindowInsets(insetsPadding)
+                    .padding(insetsPadding)
                     .padding(horizontal = horizontalPadding)
-                    .fillMaxSize()
-            )
-        } else {
-            Button(
-                onClick = { addDialog = true },
-                modifier = Modifier.padding(horizontal = horizontalPadding)
+                    .verticalScroll(rememberScrollState())
             ) {
-                Text(stringResource(R.string.content_add_button))
+                val context = LocalContext.current
+                header()
+
+                AddContentCardsColumn(
+                    onAddFolder = onAddFolder,
+                    onAddPodcast = onAddPodcast,
+                    onDownloadSamples = onDownloadSamples,
+                    onLearnMoreFolders = { openWebUrl(context, Constants.UrlLearnMoreAudiobooks) },
+                    onLearnMorePodcasts = { openWebUrl(context, Constants.UrlLearnMorePodcasts) },
+                    showSamples = SamplesCard.ShowFirst,
+                )
             }
-            val insetsPadding = PaddingValues(
-                bottom = windowInsets.asPaddingValues().calculateBottomPadding()
-            )
-            ContentColumn(
-                state = state,
-                onEditFolder = onEditFolder,
-                onRemoveFolder = { item -> removeDialogAction = { onRemoveFolder(item) } },
-                onEditPodcast = onEditPodcast,
-                onRemovePodcast = { item -> removeDialogAction = { onRemovePodcast(item) } },
-                contentPadding = insetsPadding,
-                horizontalItemPadding = horizontalPadding,
-                modifier = Modifier.consumeWindowInsets(insetsPadding)
-            )
         }
 
-        if (addDialog) {
-            val context = LocalContext.current
-            AddContentDialog(
-                showSamples = state.samplesInstallState is SamplesInstallState.Idle,
-                onDismiss = { addDialog = false },
-                onAddFolder = onAddFolder,
-                onAddPodcast = onAddPodcast,
-                onDownloadSamples = onDownloadSamples,
-                onLearnMoreFolders = { openWebUrl(context, Constants.UrlLearnMoreAudiobooks) },
-                onLearnMorePodcasts = { openWebUrl(context, Constants.UrlLearnMorePodcasts) },
-            )
-        }
-        if (removeDialogAction != null) {
-            ConfirmRemoveDialog(
-                onRemove = { removeDialogAction?.invoke() },
-                onDismiss = { removeDialogAction = null })
+        else -> {
+            Column(
+                modifier = modifier
+            ) {
+                var addDialog by rememberSaveable { mutableStateOf(false) }
+                var removeDialogAction by remember { mutableStateOf<(() -> Unit)?>(null) }
+
+                Spacer(modifier = Modifier.windowInsetsTopHeight(windowInsets))
+
+                Box(modifier = Modifier.padding(horizontal = horizontalPadding)) {
+                    header()
+                }
+
+                Button(
+                    onClick = { addDialog = true },
+                    modifier = Modifier.padding(horizontal = horizontalPadding)
+                ) {
+                    Text(stringResource(R.string.content_add_button))
+                }
+                ContentColumn(
+                    state = state,
+                    onEditFolder = onEditFolder,
+                    onRemoveFolder = { item -> removeDialogAction = { onRemoveFolder(item) } },
+                    onEditPodcast = onEditPodcast,
+                    onRemovePodcast = { item -> removeDialogAction = { onRemovePodcast(item) } },
+                    contentPadding = insetsPadding,
+                    horizontalItemPadding = horizontalPadding,
+                    modifier = Modifier.consumeWindowInsets(insetsPadding)
+                )
+
+                if (addDialog) {
+                    val context = LocalContext.current
+                    AddContentDialog(
+                        showSamples = state.samplesInstallState is SamplesInstallState.Idle,
+                        onDismiss = { addDialog = false },
+                        onAddFolder = onAddFolder,
+                        onAddPodcast = onAddPodcast,
+                        onDownloadSamples = onDownloadSamples,
+                        onLearnMoreFolders = { openWebUrl(context, Constants.UrlLearnMoreAudiobooks) },
+                        onLearnMorePodcasts = { openWebUrl(context, Constants.UrlLearnMorePodcasts) },
+                    )
+                }
+                if (removeDialogAction != null) {
+                    ConfirmRemoveDialog(
+                        onRemove = { removeDialogAction?.invoke() },
+                        onDismiss = { removeDialogAction = null })
+                }
+            }
         }
     }
 }
@@ -238,49 +249,6 @@ private fun ConfirmRemoveDialog(
     }
 }
 
-@Composable
-private fun EmptyState(
-    onAddContent: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Box(
-        modifier = modifier,
-        contentAlignment = BiasAlignment(0f, -0.4f),
-    ) {
-        CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurfaceVariant) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.widthIn(max = 480.dp)
-            ) {
-                Icon(
-                    painterResource(R.drawable.icon_music_note_add),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .padding(bottom = 24.dp)
-                        .size(56.dp)
-                )
-                val text = buildAnnotatedString {
-                    append(stringResource(R.string.content_empty_list_message))
-                    append('\n')
-                    listOf(
-                        R.string.content_empty_list_message_bullet_1,
-                        R.string.content_empty_list_message_bullet_2,
-                        R.string.content_empty_list_message_bullet_3,
-                    ).forEach {
-                        append(" \u2022 ")
-                        append(stringResource(it))
-                        append('\n')
-                    }
-                }
-                Text(text, style = MaterialTheme.typography.bodyLarge)
-                Button(onClick = onAddContent) {
-                    Text(stringResource(R.string.content_empty_list_button_add))
-                }
-            }
-        }
-    }
-}
-
 @Preview
 @Composable
 private fun PreviewContentManagementPanelPodcast() {
@@ -297,15 +265,6 @@ private fun PreviewContentManagementPanel50() {
     HomerPlayer2Theme {
         val viewState =
             ContentPanelViewState(PreviewData.folderItems50, emptyList(), SamplesInstallState.Idle)
-        ContentManagementPanel(viewState, {}, {}, {}, {}, {}, {}, {})
-    }
-}
-
-@Preview(widthDp = 360, heightDp = 480)
-@Composable
-private fun PreviewContentManagementPanelEmpty() {
-    HomerPlayer2Theme {
-        val viewState = ContentPanelViewState(emptyList(), emptyList(), SamplesInstallState.Idle)
         ContentManagementPanel(viewState, {}, {}, {}, {}, {}, {}, {})
     }
 }

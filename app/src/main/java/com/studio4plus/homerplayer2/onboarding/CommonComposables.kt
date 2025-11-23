@@ -47,17 +47,13 @@ object OnboardingNavigationButtonsDefaults {
 @Composable
 fun OnboardingHeader(
     @StringRes titleRes: Int,
-    @StringRes descriptionRes: Int,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier) {
-        Text(
-            text = stringResource(titleRes),
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-        Text(text = stringResource(descriptionRes))
-    }
+    Text(
+        text = stringResource(titleRes),
+        style = MaterialTheme.typography.headlineMedium,
+        modifier = modifier.padding(bottom = 8.dp)
+    )
 }
 
 @Composable
