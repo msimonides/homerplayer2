@@ -41,11 +41,6 @@
     <string name="content_add_folder_error_exists">Ten folder został już dodany</string>
     <string name="content_dialog_remove_button_remove">Usuń</string>
     <string name="content_dialog_remove_message">Na pewno?</string>
-    <string name="content_empty_list_button_add">Dodaj treść…</string>
-    <string name="content_empty_list_message">Homer odtwarza:</string>
-    <string name="content_empty_list_message_bullet_1">audiobooki i muzykę z folderów na tym urządzeniu</string>
-    <string name="content_empty_list_message_bullet_2">podkasty z Internetu</string>
-    <string name="content_empty_list_message_bullet_3">przykładowe pliki do przetestowania aplikacji</string>
     <string name="content_samples_download_error">Pobieranie przykładowych książek nie powiodło się. Sprawdź połączenie sieciowe i spróbuj ponownie.</string>
     <string name="content_samples_install_error">Instalacja przykładowych książek nie powiodła się. %1$s</string>
     <string name="content_section_title_audiobooks">Foldery z audiobookami</string>
