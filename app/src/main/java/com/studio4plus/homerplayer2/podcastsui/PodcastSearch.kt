@@ -177,6 +177,43 @@ fun PodcastSearch(
                         }
                     }
 
+                is PodcastEditViewModel.ViewState.Search.Popular -> {
+                    item {
+                        Text(
+                            text = stringResource(R.string.podcast_search_popular_title),
+                            style = MaterialTheme.typography.headlineMedium,
+                            modifier = Modifier
+                                .padding(horizontal = HomerTheme.dimensions.screenHorizPadding)
+                                .padding(top = 16.dp)
+                        )
+                    }
+                    items(viewState.results, key = { it.feedUri }) {
+                        PodcastSearchResultItem(
+                            it,
+                            modifier = Modifier
+                                .clickable { onSelectSearchResult(it) }
+                                .fillMaxWidth()
+                                .padding(
+                                    horizontal = HomerTheme.dimensions.screenHorizPadding,
+                                    vertical = 16.dp
+                                ),
+                        )
+                    }
+                    item {
+                        Text(
+                            text = stringResource(R.string.podcast_search_popular_search_for_more),
+                            color = MaterialTheme.colorScheme.secondary,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(
+                                    horizontal = HomerTheme.dimensions.screenHorizPadding,
+                                    vertical = HomerTheme.dimensions.screenVertPadding,
+                                )
+                        )
+                    }
+                }
+
                 is PodcastEditViewModel.ViewState.SearchError ->
                     item {
                         PodcastSearchError(

@@ -91,7 +91,9 @@ fun PodcastEditRoute(
     viewModel: PodcastEditViewModel,
     modifier: Modifier = Modifier,
 ) {
-    val viewState by viewModel.viewState.collectAsStateWithLifecycle()
+    val locale = LocalConfiguration.current.locales[0]
+    val viewStateFlow = remember(locale) { viewModel.viewState(locale) }
+    val viewState by viewStateFlow.collectAsStateWithLifecycle()
     val addDialogState = viewModel.addPodcastDialog.collectAsStateWithLifecycle(null).value
     PodcastEdit(
         viewState = viewState,

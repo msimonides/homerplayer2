@@ -43,7 +43,7 @@ data class PodcastSearchResult(
 
 @Factory
 class SearchPodcasts (
-    private val podcastIndex: PodcastIndexClient
+    private val podcastIndex: PodcastIndexClient,
 ) {
     sealed interface Result {
         data class Success(val results: List<PodcastSearchResult>) : Result

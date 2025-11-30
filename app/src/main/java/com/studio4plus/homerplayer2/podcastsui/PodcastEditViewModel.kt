@@ -43,6 +43,7 @@ import com.studio4plus.homerplayer2.podcasts.usecases.PodcastFeed
 import com.studio4plus.homerplayer2.podcasts.usecases.UpdatePodcastFromFeed
 import com.studio4plus.homerplayer2.podcasts.usecases.UpdatePodcastNameConfig
 import com.studio4plus.homerplayer2.podcastsui.usecases.CurrentNetworkType
+import com.studio4plus.homerplayer2.podcastsui.usecases.GetPopularPodcasts
 import com.studio4plus.homerplayer2.podcastsui.usecases.PodcastSearchResult
 import com.studio4plus.homerplayer2.podcastsui.usecases.SearchPodcasts
 import com.studio4plus.homerplayer2.settingsdata.NetworkSettings
@@ -71,6 +72,7 @@ import org.koin.core.annotation.InjectedParam
 import org.koin.core.annotation.Named
 import java.time.LocalDate
 import java.time.ZoneId
+import java.util.Locale
 
 private const val DEFAULT_EPISODE_COUNT = 2
 
@@ -81,6 +83,7 @@ class PodcastEditViewModel(
     private val savedStateHandle: SavedStateHandle,
     private val downloadPodcastFeed: DownloadPodcastFeed,
     private val searchPodcasts: SearchPodcasts,
+    private val getPopularPodcasts: GetPopularPodcasts,
     private val updatePodcastFromFeed: UpdatePodcastFromFeed,
     private val podcastsDao: PodcastsDao,
     private val podcastEpisodeName: PodcastEpisodeName,
@@ -109,6 +112,9 @@ class PodcastEditViewModel(
             data class Results(
                 val results: List<PodcastSearchResult>,
                 val moreResultsAvailable: Boolean
+            ) : Search
+            data class Popular(
+                val results: List<PodcastSearchResult>,
             ) : Search
         }
 
@@ -139,7 +145,7 @@ class PodcastEditViewModel(
         data class Error(@StringRes val message: Int) : Feed
     }
 
-    private val searchTrigger = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    private val searchTrigger = MutableSharedFlow<Unit>(replay = 1)
     private var searchPhrase: String
         get() = savedStateHandle["searchPhrase"] ?: ""
         set(value) { savedStateHandle["searchPhrase"] = value }
@@ -171,7 +177,7 @@ class PodcastEditViewModel(
         .stateIn(viewModelScope, SharingStarted.Eagerly, NetworkType.Unmetered)
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val viewState: StateFlow<ViewState> = podcastFlow
+    fun viewState(locale: Locale): StateFlow<ViewState> = podcastFlow
         .map { it != null }
         .distinctUntilChanged()
         .flatMapLatest { hasPodcast ->
@@ -196,7 +202,7 @@ class PodcastEditViewModel(
                     )
                 }
                 isNewPodcast ->
-                    searchTrigger.flatMapLatest(::searchFlow)
+                    searchTrigger.flatMapLatest { searchFlow(locale.country) }
                 else ->
                     flowOf(ViewState.Loading)
             }
@@ -252,18 +258,24 @@ class PodcastEditViewModel(
         searchTrigger.tryEmit(Unit) // Trigger search even if the phrase hasn't changed.
     }
 
-    private fun searchFlow(ignored: Unit) = flow {
-        emit(ViewState.Search.Loading)
-        val phrase = searchPhrase
+    private fun searchFlow(countryCode: String) = flow {
+        val phrase = searchPhrase.trim()
         when {
-            phrase.isBlank() -> emit(ViewState.Search.Blank)
+            phrase.isBlank() -> {
+                emit(ViewState.Search.Blank)
+                val results = getPopularPodcasts(countryCode)
+                val state: ViewState.Search =
+                    if (results.isEmpty()) ViewState.Search.Blank else ViewState.Search.Popular(results)
+                emit(state)
+            }
             phrase.startsWith("https://") && phrase.length > 10 -> {
                 analytics.event("Podcast.Search.URL")
                 podcastUri = phrase
             }
             else -> {
+                emit(ViewState.Search.Loading)
                 analytics.event("Podcast.Search.Phrase")
-                val search = searchPodcasts(phrase.trim())
+                val search = searchPodcasts(phrase)
                 val newState = when (search) {
                     is SearchPodcasts.Result.Success -> {
                         analytics.event(
@@ -426,7 +438,7 @@ class PodcastEditViewModel(
         }
 }
 
-private fun searchResultEventData(count: Int): Map<String, String> {
+private fun searchResultEventData(count: Int, hasPhrase: Boolean = true): Map<String, String> {
     val buckets = listOf(
         0 .. 1 to "0",
         1 .. 2 to "1",
@@ -437,6 +449,6 @@ private fun searchResultEventData(count: Int): Map<String, String> {
     return buckets
         .firstOrNull { (range, _) -> count in range }
         ?.second
-        ?.let { mapOf("count" to it) }
+        ?.let { mapOf("count" to it, "hasPhrase" to hasPhrase.toString()) }
         ?: emptyMap()
 }

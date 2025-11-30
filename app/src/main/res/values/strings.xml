@@ -138,7 +138,7 @@
          -->
     <string name="podcast_episode_name_date_format">d MMMM</string>
     <string name="podcast_search_label">Podcast search</string>
-    <string name="podcast_search_hint">Podcast title</string>
+    <string name="podcast_search_hint">Search by title and author or add RSS url</string>
     <string name="podcast_search_error_title">Error</string>
     <string name="podcast_search_error_message">Unable to fetch search results</string>
     <plurals name="podcast_search_first_results">
@@ -146,6 +146,8 @@
         <item quantity="other">Showing first %1$d results</item>
     </plurals>
     <string name="podcast_search_no_results">No results match the search phrase</string>
+    <string name="podcast_search_popular_title">Popular podcasts</string>
+    <string name="podcast_search_popular_search_for_more">Use search for more podcast results</string>
     <string name="podcast_search_ratelimit_title">Search service is busy, try later</string>
     <string name="podcast_search_ratelimit_message">The podcast search service is temporarily unavailable. Please try again later.</string>
     <string name="podcast_url_instructions_preface">In addition to search you can copy and paste address of the podcast\'s RSS feed into the search field to fetch it directly.</string>
