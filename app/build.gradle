@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.aboutlibraries)
+    id 'com.mikepenz.aboutlibraries.plugin.android'
     alias(libs.plugins.room)
     alias(libs.plugins.sentry)
 }
