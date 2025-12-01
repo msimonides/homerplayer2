@@ -65,6 +65,7 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
+import androidx.core.os.ConfigurationCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.base.ui.DefaultAlertDialog
@@ -91,7 +92,9 @@ fun PodcastEditRoute(
     viewModel: PodcastEditViewModel,
     modifier: Modifier = Modifier,
 ) {
-    val locale = LocalConfiguration.current.locales[0]
+    val locale = requireNotNull(
+        ConfigurationCompat.getLocales(LocalConfiguration.current).get(0)
+    )
     val viewStateFlow = remember(locale) { viewModel.viewState(locale) }
     val viewState by viewStateFlow.collectAsStateWithLifecycle()
     val addDialogState = viewModel.addPodcastDialog.collectAsStateWithLifecycle(null).value
