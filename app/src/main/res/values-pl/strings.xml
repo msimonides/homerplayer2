@@ -102,9 +102,11 @@ Może to potrwać kilka minut.</string>
         <item quantity="many">Pokazuję pierwsze %1$d wyników</item>
         <item quantity="other">Pokazuję pierwsze %1$d wyniki</item>
     </plurals>
-    <string name="podcast_search_hint">Tytuł podkastu</string>
+    <string name="podcast_search_hint">Szukaj wg tytułu i autora lub dodaj URL RSS</string>
     <string name="podcast_search_label">Szukaj podkastu</string>
     <string name="podcast_search_no_results">Brak wyników pasujących do frazy wyszukiwania</string>
+    <string name="podcast_search_popular_search_for_more">Skorzystaj z wyszukiwania, aby uzyskać więcej wyników</string>
+    <string name="podcast_search_popular_title">Popularne podcasty</string>
     <string name="podcast_search_ratelimit_message">Usługa wyszukiwania podkastów jest tymczasowo niedostępna. Spróbuj ponownie później.</string>
     <string name="podcast_search_ratelimit_title">Usługa wyszukiwania jest zajęta, spróbuj później</string>
     <string name="podcast_url_instructions_preface">Oprócz wyszukiwania możesz skopiować i wkleić adres kanału RSS podkastu do pola wyszukiwania, aby pobrać go bezpośrednio.</string>
