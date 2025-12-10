@@ -5,6 +5,10 @@ title: "Podcasts"
 
 <h3>Episode rotation</h3>
 
+<lite-youtube id="video" class="single-picture-landscape" videoid="kyCUNLu3ECs" params="cc_load_policy=1">
+  <a class="lite-youtube-fallback" href="https://www.youtube.com/watch?v=kyCUNLu3ECs">Watch on YouTube: "Setting up a podcast for seniors - Homer Audio Player"</a>
+</lite-youtube>
+
 <p>
 Podcasts are like radio shows but on the Internet. New episodes are published regularly, usually daily or
 weekly, and thus podcasts constantly provide new content. 
@@ -83,3 +87,10 @@ Network and downloads</code> to change this.
 <p>
 Make sure your data plan can handle the traffic.
 </p>
+
+<script type="module" src="https://cdn.jsdelivr.net/npm/@justinribeiro/lite-youtube@1/lite-youtube.min.js"></script>
+<script>
+  document.addEventListener('liteYoutubeIframeLoaded', () => {
+	sa_event('video_podcast_started')
+  }, false);
+</script>
