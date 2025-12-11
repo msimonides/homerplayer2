@@ -81,23 +81,31 @@ main img {
 
 #contact {
     grid-area: contact;
+    text-align: center;
 }
 
-#contact a {
+#contact .contact-list {
+    display: inline-block;
+    margin: 0 auto 2rem;
+}
+
+#contact .contact-list a {
     font-size: 90%;
     display: inline-block;
     padding-inline-end: 1rem;
 }
 
-#contact a:not(:hover) {
+#contact .contact-list a:not(:hover) {
     text-decoration: none;
 }
 
 @media (min-width: 768px) {
-    #contact a {
+    #contact .contact-list a {
         margin: 0 auto 0.5rem;
         display: block;
+        text-align: center;
         width: 6rem;
+        padding: 0rem;
     }
 }
 
