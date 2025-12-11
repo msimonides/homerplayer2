@@ -22,7 +22,7 @@ extra_css:
         {% assign node_array = site.pages | where:'url',nav_url %}
         {% assign node = node_array[0] %}
         <li>
-          <a href="{{ nav_url | relative_url }}">
+          <a href="{{ nav_url | relative_url | remove : '.html' }}">
             {% if node.nav_title %}
               {{ node.nav_title }}
             {% else %}
