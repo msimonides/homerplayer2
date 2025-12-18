@@ -16,7 +16,7 @@ extra_css:
 </header>
 <aside id="nav">
   <nav>
-    {% assign navigation = '/,/audiobooks.html,/podcasts.html,/dedicated_device.html,/contribute.html' | split: ',' %}
+    {% assign navigation = '/,/audiobooks.html,/podcasts.html,/dedicated_device.html,/contribute.html,/videos.html' | split: ',' %}
     <ul>
       {% for nav_url in navigation %}
         {% assign node_array = site.pages | where:'url',nav_url %}
