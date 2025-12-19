@@ -6,6 +6,7 @@ title: "Videos"
     dl > a {
         display: flex;
         flex-direction: row;
+        align-items: flex-start;
         border: 1px #000 solid;
         border-radius: 0.5rem;
         padding: 0.5rem 0.75em;
@@ -36,12 +37,19 @@ title: "Videos"
     }
 
     dl .thumbnail {
-        width: 7rem;
+        width: 5rem;
         border: 1px solid;
         border-radius: 5px;
         object-fit: cover;
         aspect-ratio: 161/90;
+        margin: 0;
         margin-right: 1rem;
+    }
+
+    @media (min-width: 768px) {
+        dl .thumbnail {
+            width: 7rem;
+        }
     }
 </style>
 
