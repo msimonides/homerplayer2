@@ -24,6 +24,16 @@ title: "Videos"
         font-size: 90%;
         margin: 0;
     }
+
+    dl .thumbnail {
+        width: 5rem;
+        border: 1px solid;
+        border-radius: 5px;
+        object-fit: cover;
+        aspect-ratio: 16/9;
+        float: left;
+        margin-right: 1rem;
+    }
 </style>
 
 <lite-youtube id="video" class="single-picture-landscape" videoid="JR14egcqfg8" params="cc_load_policy=1&rel=0">
@@ -32,20 +42,24 @@ title: "Videos"
 
 <dl>
     <a href="#" data-videoid="JR14egcqfg8" class="selected">
+        <img class="thumbnail"/>
         <dt>What is Homer Audio Player?</dt>
         <dd>Main functions of the app and dedicated device.</dd>
     </a>
     <a href="#" data-videoid="tbSkzbNBHNk">
+        <img class="thumbnail"/>
         <dt>Extra margins, large holding area</dt>
         <dd>Devices with small bezels may be difficult to hold by users with decreased motor skills.</dd>
     </a>
     <a href="#" data-videoid="kyCUNLu3ECs">
+        <img class="thumbnail"/>
         <dt>Setting up a podcast</dt>
         <dd>See how podcasts work with Homer Audio Player.</dd>
     </a>
     <a href="#" data-videoid="LubeUaM1OpU">
+        <img class="thumbnail"/>
         <dt>Grandpa uses tablet (silent film)</dt>
-        <dd>Older users need some accessories to help them use devices.</dd>
+        <dd>Older users need some accessories to help them operate devices.</dd>
     </a>
 </ul>
 
@@ -61,5 +75,9 @@ title: "Videos"
         video.addIframe();
     }
 
-    document.querySelectorAll("dl > a").forEach(element => element.addEventListener("click", selectVideo))
+    document.querySelectorAll("dl > a").forEach(element => {
+        element.addEventListener("click", selectVideo)
+        const videoid = element.dataset["videoid"];
+        element.querySelector("img").src = "https://i.ytimg.com/vi/" + videoid + "/hqdefault.jpg";
+    })
 </script>
