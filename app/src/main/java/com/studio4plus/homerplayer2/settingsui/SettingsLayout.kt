@@ -26,6 +26,7 @@ package com.studio4plus.homerplayer2.settingsui
 
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
@@ -65,6 +66,7 @@ import androidx.compose.ui.unit.coerceIn
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studio4plus.homerplayer2.R
+import com.studio4plus.homerplayer2.base.R as BaseR
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 import com.studio4plus.homerplayer2.fullkioskmode.statusBarsFixedPadding
@@ -77,7 +79,6 @@ import com.studio4plus.homerplayer2.settingsui.composables.LayoutSizeDragHandle
 import com.studio4plus.homerplayer2.settingsui.composables.rememberLayoutSizeDragHandleState
 import com.studio4plus.homerplayer2.utils.blockTouchEvents
 import org.koin.androidx.compose.koinViewModel
-import com.studio4plus.homerplayer2.base.R as BaseR
 
 @Composable
 fun SettingsLayoutRoute(
@@ -89,13 +90,16 @@ fun SettingsLayoutRoute(
         SettingsLayout(
             settings = settings,
             onSave = { portraitHorizontal, portraitBottom, lanscapeHorizontal, landscapeBottom ->
-                viewModel.save(portraitHorizontal, portraitBottom, lanscapeHorizontal, landscapeBottom)
+                viewModel.save(
+                    portraitHorizontal,
+                    portraitBottom,
+                    lanscapeHorizontal,
+                    landscapeBottom,
+                )
                 navigateBack()
             },
             onCancel = navigateBack,
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black)
+            modifier = Modifier.fillMaxSize().background(Color.Black),
         )
     } else {
         Box(modifier = Modifier.fillMaxSize())
@@ -105,9 +109,12 @@ fun SettingsLayoutRoute(
 @Composable
 fun SettingsLayout(
     settings: PlayerUiSettings,
-    onSave: (portraitHorizontal: Dp, portraitBottom: Dp, landscapeHorizontal: Dp, landscapeBottom: Dp) -> Unit,
+    onSave:
+        (
+            portraitHorizontal: Dp, portraitBottom: Dp, landscapeHorizontal: Dp, landscapeBottom: Dp,
+        ) -> Unit,
     onCancel: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     BoxWithConstraints(modifier) {
         val maxHorizontalPadding = this.maxWidth * MAX_PLAYER_MARGIN_HORIZ_FRACTION
@@ -118,139 +125,139 @@ fun SettingsLayout(
 
         val layout = settings.layout
         val portraitHorizontalDragState =
-            rememberLayoutSizeDragHandleState(layout.portraitMargins.horizontal.dp, maxHorizontalPadding)
+            rememberLayoutSizeDragHandleState(
+                layout.portraitMargins.horizontal.dp,
+                maxHorizontalPadding,
+            )
         val portraitVerticalDragState =
             rememberLayoutSizeDragHandleState(layout.portraitMargins.bottom.dp, maxBottomPadding)
         val landscapeHorizontalDragState =
-            rememberLayoutSizeDragHandleState(layout.landscapeMargins.horizontal.dp, maxHorizontalPadding)
+            rememberLayoutSizeDragHandleState(
+                layout.landscapeMargins.horizontal.dp,
+                maxHorizontalPadding,
+            )
         val landscapeVerticalDragState =
             rememberLayoutSizeDragHandleState(layout.landscapeMargins.bottom.dp, maxBottomPadding)
 
-        val horizontalDragState = if (isLandscape) landscapeHorizontalDragState else portraitHorizontalDragState
-        val verticalDragState = if (isLandscape) landscapeVerticalDragState else portraitVerticalDragState
+        val horizontalDragState =
+            if (isLandscape) landscapeHorizontalDragState else portraitHorizontalDragState
+        val verticalDragState =
+            if (isLandscape) landscapeVerticalDragState else portraitVerticalDragState
         val paddingHorizontal by horizontalDragState.valueDp
         val paddingBottom by verticalDragState.valueDp
-        Box(
-            modifier = Modifier
-                .absolutePadding(
-                    left = paddingHorizontal.coerceIn(0.dp, maxHorizontalPadding),
-                    right = paddingHorizontal.coerceIn(0.dp, maxHorizontalPadding),
-                    bottom = paddingBottom.coerceIn(0.dp, maxBottomPadding),
-                )
-                .background(MaterialTheme.colorScheme.background)
-        ) {
-            BookPage(
-                landscape = isLandscape,
-                displayName = stringResource(R.string.settings_ui_player_ui_book_title),
-                progress = 0.3f,
-                isPlaying = true,
-                index = 0,
-                playerActions = PlayerActions.EMPTY,
-                playerUiSettings = settings,
-                modifier = Modifier
-                    .statusBarsFixedPadding()
-                    .navigationBarsPadding()
-                    .padding(
-                        horizontal = HomerTheme.dimensions.screenHorizPadding,
-                        vertical = HomerTheme.dimensions.screenVertPadding,
-                    )
-                    .blockTouchEvents()
-            )
-
-            var isDragging by remember { mutableStateOf(false) }
-            AnimatedVisibility(!isDragging, enter = fadeIn(), exit = fadeOut()) {
-                Overlay(
-                    onSave = {
-                        onSave(
-                            portraitHorizontalDragState.valueDp.value,
-                            portraitVerticalDragState.valueDp.value,
-                            landscapeHorizontalDragState.valueDp.value,
-                            landscapeVerticalDragState.valueDp.value,
+        SharedTransitionScope { modifier ->
+            Box(
+                modifier =
+                    modifier
+                        .absolutePadding(
+                            left = paddingHorizontal.coerceIn(0.dp, maxHorizontalPadding),
+                            right = paddingHorizontal.coerceIn(0.dp, maxHorizontalPadding),
+                            bottom = paddingBottom.coerceIn(0.dp, maxBottomPadding),
                         )
-                    },
-                    onCancel = onCancel,
-                    modifier = Modifier.fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background)
+            ) {
+                BookPage(
+                    landscape = isLandscape,
+                    displayName = stringResource(R.string.settings_ui_player_ui_book_title),
+                    progress = 0.3f,
+                    isPlaying = true,
+                    index = 0,
+                    playerActions = PlayerActions.EMPTY,
+                    playerUiSettings = settings,
+                    sharedTransitionScope = this@SharedTransitionScope,
+                    modifier =
+                        Modifier.statusBarsFixedPadding()
+                            .navigationBarsPadding()
+                            .padding(
+                                horizontal = HomerTheme.dimensions.screenHorizPadding,
+                                vertical = HomerTheme.dimensions.screenVertPadding,
+                            )
+                            .blockTouchEvents(),
+                )
+
+                var isDragging by remember { mutableStateOf(false) }
+                AnimatedVisibility(!isDragging, enter = fadeIn(), exit = fadeOut()) {
+                    Overlay(
+                        onSave = {
+                            onSave(
+                                portraitHorizontalDragState.valueDp.value,
+                                portraitVerticalDragState.valueDp.value,
+                                landscapeHorizontalDragState.valueDp.value,
+                                landscapeVerticalDragState.valueDp.value,
+                            )
+                        },
+                        onCancel = onCancel,
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                }
+                val onDragChange = { dragging: Boolean -> isDragging = dragging }
+                LayoutSizeDragHandle(
+                    dragOrientation = Orientation.Horizontal,
+                    state = horizontalDragState,
+                    onDragChange = onDragChange,
+                    modifier =
+                        Modifier.align(AbsoluteAlignment.CenterLeft)
+                            .navigationBarsPadding()
+                            .mandatorySystemGesturesPadding(),
+                )
+                LayoutSizeDragHandle(
+                    dragOrientation = Orientation.Horizontal,
+                    state = horizontalDragState,
+                    reverse = true,
+                    onDragChange = onDragChange,
+                    modifier =
+                        Modifier.align(AbsoluteAlignment.CenterRight)
+                            .navigationBarsPadding()
+                            .mandatorySystemGesturesPadding(),
+                )
+                LayoutSizeDragHandle(
+                    dragOrientation = Orientation.Vertical,
+                    state = verticalDragState,
+                    reverse = true,
+                    onDragChange = onDragChange,
+                    modifier =
+                        Modifier.align(Alignment.BottomCenter)
+                            .navigationBarsPadding()
+                            .mandatorySystemGesturesPadding(),
                 )
             }
-            val onDragChange = { dragging: Boolean -> isDragging = dragging }
-            LayoutSizeDragHandle(
-                dragOrientation = Orientation.Horizontal,
-                state = horizontalDragState,
-                onDragChange = onDragChange,
-                modifier = Modifier
-                    .align(AbsoluteAlignment.CenterLeft)
-                    .navigationBarsPadding()
-                    .mandatorySystemGesturesPadding()
-            )
-            LayoutSizeDragHandle(
-                dragOrientation = Orientation.Horizontal,
-                state = horizontalDragState,
-                reverse = true,
-                onDragChange = onDragChange,
-                modifier = Modifier
-                    .align(AbsoluteAlignment.CenterRight)
-                    .navigationBarsPadding()
-                    .mandatorySystemGesturesPadding()
-            )
-            LayoutSizeDragHandle(
-                dragOrientation = Orientation.Vertical,
-                state = verticalDragState,
-                reverse = true,
-                onDragChange = onDragChange,
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .navigationBarsPadding()
-                    .mandatorySystemGesturesPadding()
-            )
         }
     }
 }
 
 @Composable
-private fun Overlay(
-    onSave: () -> Unit,
-    onCancel: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
+private fun Overlay(onSave: () -> Unit, onCancel: () -> Unit, modifier: Modifier = Modifier) {
     Box(
-        modifier = modifier
-            .background(color = MaterialTheme.colorScheme.scrim.copy(alpha = 0.3f))
-            .padding(32.dp)
+        modifier =
+            modifier
+                .background(color = MaterialTheme.colorScheme.scrim.copy(alpha = 0.3f))
+                .padding(32.dp)
     ) {
         Surface(
-            modifier = Modifier
-                .align(Alignment.Center),
+            modifier = Modifier.align(Alignment.Center),
             shape = MaterialTheme.shapes.medium,
             color = MaterialTheme.colorScheme.inverseSurface,
-            contentColor = MaterialTheme.colorScheme.inverseOnSurface
+            contentColor = MaterialTheme.colorScheme.inverseOnSurface,
         ) {
             Column(
-                modifier = Modifier
-                    .padding(horizontal = 24.dp, vertical = 16.dp)
-                    .width(IntrinsicSize.Max),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                modifier =
+                    Modifier.padding(horizontal = 24.dp, vertical = 16.dp).width(IntrinsicSize.Max),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Text(
                     stringResource(R.string.settings_ui_layout_dialog_message),
-                    modifier = Modifier.widthIn(max = 250.dp)
+                    modifier = Modifier.widthIn(max = 250.dp),
                 )
-                Button(
-                    onClick = onSave,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
+                Button(onClick = onSave, modifier = Modifier.fillMaxWidth()) {
                     Text(stringResource(BaseR.string.generic_dialog_save))
                 }
-                OutlinedButton(
-                    onClick = onCancel,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
+                OutlinedButton(onClick = onCancel, modifier = Modifier.fillMaxWidth()) {
                     Text(stringResource(BaseR.string.generic_dialog_cancel))
                 }
             }
         }
     }
 }
-
 
 @Preview
 @Composable
@@ -260,9 +267,7 @@ private fun PreviewSettingsLayout() {
             PlayerUiSettings(),
             { _, _, _, _ -> },
             {},
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black)
+            modifier = Modifier.fillMaxSize().background(Color.Black),
         )
     }
 }

@@ -25,6 +25,7 @@
 package com.studio4plus.homerplayer2.settingsui
 
 import android.content.res.Configuration
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -53,9 +54,7 @@ import com.studio4plus.homerplayer2.settingsui.composables.SettingSwitch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun SettingsPlayerUiRoute(
-    viewModel: SettingsPlayerUiViewModel = koinViewModel(),
-) {
+fun SettingsPlayerUiRoute(viewModel: SettingsPlayerUiViewModel = koinViewModel()) {
     val viewState = viewModel.viewState.collectAsStateWithLifecycle().value
     if (viewState != null) {
         SettingsPlayerUi(
@@ -77,42 +76,43 @@ private fun SettingsPlayerUi(
     onSetShowVolumeControls: (Boolean) -> Unit,
     onSetShowFfRewindControls: (Boolean) -> Unit,
     onSetShowSeekControls: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val configuration = LocalConfiguration.current
     val windowInfo = LocalWindowInfo.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     val screenAspectRatio = with(windowInfo.containerSize) { width.toFloat() / height }
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        HomerPlayer2Theme(
-            windowContentSize = DpSize.Unspecified,
-        ) {
-            BookPage(
-                landscape = isLandscape,
-                displayName = stringResource(R.string.settings_ui_player_ui_book_title),
-                progress = 0.3f,
-                isPlaying = true,
-                index = 0,
-                playerActions = PlayerActions.EMPTY,
-                playerUiSettings = viewState.playerUiSettings,
-                modifier = Modifier
-                    .weight(1f)
-                    .aspectRatio(screenAspectRatio)
-                    .border(1.dp, MaterialTheme.colorScheme.onSurface, MaterialTheme.shapes.medium)
-                    .padding(8.dp)
-            )
+    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+        HomerPlayer2Theme(windowContentSize = DpSize.Unspecified) {
+            SharedTransitionScope { modifier ->
+                BookPage(
+                    landscape = isLandscape,
+                    displayName = stringResource(R.string.settings_ui_player_ui_book_title),
+                    progress = 0.3f,
+                    isPlaying = true,
+                    index = 0,
+                    playerActions = PlayerActions.EMPTY,
+                    playerUiSettings = viewState.playerUiSettings,
+                    sharedTransitionScope = this,
+                    modifier =
+                        modifier
+                            .weight(1f)
+                            .aspectRatio(screenAspectRatio)
+                            .border(
+                                1.dp,
+                                MaterialTheme.colorScheme.onSurface,
+                                MaterialTheme.shapes.medium,
+                            )
+                            .padding(8.dp),
+                )
+            }
             Spacer(Modifier.height(HomerTheme.dimensions.screenVertPadding))
         }
         Column(
-            modifier = Modifier
-                .weight(1f)
-                .verticalScroll(rememberScrollState())
-                .navigationBarsPadding()
+            modifier =
+                Modifier.weight(1f).verticalScroll(rememberScrollState()).navigationBarsPadding()
         ) {
-            val settingItemModifier = Modifier.Companion.defaultSettingsItem()
+            val settingItemModifier = Modifier.defaultSettingsItem()
             SettingSwitch(
                 label = stringResource(R.string.settings_ui_player_ui_volume_controls),
                 value = viewState.playerUiSettings.showVolumeControls,

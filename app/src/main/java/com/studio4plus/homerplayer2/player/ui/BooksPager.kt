@@ -24,6 +24,7 @@
 
 package com.studio4plus.homerplayer2.player.ui
 
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -88,31 +89,34 @@ fun BooksPager(
     }
     val bookCollectionInfo = CollectionInfo(rowCount = 1, columnCount = books.size)
     ProvideTouchSlop(multiplier = 4f) {
-        HorizontalPager(
-            state = pagerState,
-            userScrollEnabled = !state.isPlaying,
-            modifier = Modifier.semantics {
-                collectionInfo = bookCollectionInfo
-            },
-            key = { index ->
-                val bookIndex = getBookIndex(index)
+        SharedTransitionLayout {
+            HorizontalPager(
+                state = pagerState,
+                userScrollEnabled = !state.isPlaying,
+                modifier = Modifier.semantics {
+                    collectionInfo = bookCollectionInfo
+                },
+                key = { index ->
+                    val bookIndex = getBookIndex(index)
+                    val book = books[bookIndex]
+                    val wrapNumber = (index - zeroPage).floorDiv(books.size)
+                    "${book.id}_$wrapNumber"
+                }
+            ) { pageIndex ->
+                val bookIndex = getBookIndex(pageIndex)
                 val book = books[bookIndex]
-                val wrapNumber = (index - zeroPage).floorDiv(books.size)
-                "${book.id}_$wrapNumber"
+                BookPage(
+                    index = bookIndex,
+                    displayName = book.displayName,
+                    progress = book.progress,
+                    isPlaying = state.isPlaying,
+                    playerActions = playerActions,
+                    playerUiSettings = playerUiSettings,
+                    landscape = landscape,
+                    sharedTransitionScope = this@SharedTransitionLayout,
+                    modifier = modifier.padding(itemPadding)
+                )
             }
-        ) { pageIndex ->
-            val bookIndex = getBookIndex(pageIndex)
-            val book = books[bookIndex]
-            BookPage(
-                index = bookIndex,
-                displayName = book.displayName,
-                progress = book.progress,
-                isPlaying = state.isPlaying,
-                playerActions = playerActions,
-                playerUiSettings = playerUiSettings,
-                landscape = landscape,
-                modifier = modifier.padding(itemPadding)
-            )
         }
     }
 }

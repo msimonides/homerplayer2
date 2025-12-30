@@ -24,12 +24,17 @@
 
 package com.studio4plus.homerplayer2.player.ui
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.LocalTextStyle
@@ -47,6 +52,7 @@ import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 import com.studio4plus.homerplayer2.settingsdata.PlayerUiSettings
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun BookPage(
     landscape: Boolean,
@@ -56,58 +62,54 @@ fun BookPage(
     index: Int,
     playerActions: PlayerActions,
     playerUiSettings: PlayerUiSettings,
-    modifier: Modifier = Modifier
+    sharedTransitionScope: SharedTransitionScope,
+    modifier: Modifier = Modifier,
 ) {
     val buttonInteractionSource = remember { MutableInteractionSource() }
-    val buttonColor by animateColorAsState(
-        if (isPlaying) HomerTheme.colors.controlStop else HomerTheme.colors.controlPlay,
-        animationSpec = tween()
-    )
-    val button: @Composable BoxScope.() -> Unit = {
-        val icon = if (isPlaying) R.drawable.icon_stop else R.drawable.icon_play_arrow
-        val contentDescription = if (isPlaying)
-            stringResource(R.string.playback_stop_button_description)
-        else
-            stringResource(R.string.playback_play_button_description)
-        RoundIconButton(
-            modifier = Modifier
-                .align(Alignment.Center),
-            icon = icon,
-            iconContentDescription = contentDescription,
-            containerColor = buttonColor,
-            onClick = { if (isPlaying) playerActions.onStop() else playerActions.onPlay(index) },
-            interactionSource = buttonInteractionSource
+    val buttonColor by
+        animateColorAsState(
+            if (isPlaying) HomerTheme.colors.controlStop else HomerTheme.colors.controlPlay,
+            animationSpec = tween(),
         )
-    }
-    val showControls = isPlaying && playerUiSettings.showAnyControls
-    val mainContent: @Composable BoxScope.() -> Unit = if (showControls) {
-        {
-            ControlButtonsLayout(
-                {
-                    if (playerUiSettings.showVolumeControls) {
-                        ButtonVolumeUp(playerActions = playerActions)
-                        ButtonVolumeDown(playerActions = playerActions)
-                    }
+    val button: @Composable (padding: PaddingValues) -> Unit = { padding ->
+        val icon = if (isPlaying) R.drawable.icon_stop else R.drawable.icon_play_arrow
+        val contentDescription =
+            if (isPlaying) {
+                stringResource(R.string.playback_stop_button_description)
+            } else {
+                stringResource(R.string.playback_play_button_description)
+            }
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxSize().padding(paddingValues = padding),
+        ) {
+            RoundIconButton(
+                modifier = Modifier.align(Alignment.Center),
+                icon = icon,
+                iconContentDescription = contentDescription,
+                containerColor = buttonColor,
+                onClick = {
+                    if (isPlaying) playerActions.onStop() else playerActions.onPlay(index)
                 },
-                {
-                    if (playerUiSettings.showFfRewindControls) {
-                        ButtonFastRewind(playerActions = playerActions)
-                        ButtonFastForward(playerActions = playerActions)
-                    }
-                    if (playerUiSettings.showSeekControls) {
-                        ButtonSeekBack(playerActions = playerActions)
-                        ButtonSeekForward(playerActions = playerActions)
-                    }
-                }
+                interactionSource = buttonInteractionSource,
             )
         }
-    } else {
-        {
-            AutosizeText(
-                text = displayName,
-                style = LocalTextStyle.current,
-                textAlign = TextAlign.Center,
-            )
+    }
+    val mainContent: @Composable () -> Unit = {
+        data class ContentState(val settings: PlayerUiSettings, val isPlaying: Boolean)
+        AnimatedContent(ContentState(playerUiSettings, isPlaying)) {
+            println("Animated content state: ${this}")
+            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                MainContent(
+                    displayName = displayName,
+                    pageIndex = index,
+                    isPlaying = it.isPlaying,
+                    playerUiSettings = it.settings,
+                    playerActions = playerActions,
+                    sharedTransitionScope = sharedTransitionScope,
+                    animatedContentScope = this@AnimatedContent,
+                )
+            }
         }
     }
     if (landscape) {
@@ -127,32 +129,87 @@ fun BookPage(
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+private fun MainContent(
+    pageIndex: Int,
+    displayName: String,
+    isPlaying: Boolean,
+    playerUiSettings: PlayerUiSettings,
+    playerActions: PlayerActions,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+    modifier: Modifier = Modifier,
+) {
+    val showControls = isPlaying && playerUiSettings.showAnyControls
+    with(sharedTransitionScope) {
+        with(animatedContentScope) {
+            @Composable
+            fun Modifier.pageSharedElement(key: String) =
+                sharedElement(rememberSharedContentState("$pageIndex - $key"), animatedContentScope)
+
+            if (showControls) {
+                ControlButtonsLayout(
+                    modifier = modifier,
+                    verticals = {
+                        if (playerUiSettings.showVolumeControls) {
+                            ButtonVolumeUp(
+                                playerActions = playerActions,
+                                modifier = Modifier.pageSharedElement("volumeUp"),
+                            )
+                            ButtonVolumeDown(
+                                playerActions = playerActions,
+                                modifier = Modifier.pageSharedElement("volumeDown"),
+                            )
+                        }
+                    },
+                    horizontals = {
+                        if (playerUiSettings.showFfRewindControls) {
+                            ButtonFastRewind(
+                                playerActions = playerActions,
+                                modifier =
+                                    Modifier.pageSharedElement("fastRewind").animateEnterExit(),
+                            )
+                            ButtonFastForward(
+                                playerActions = playerActions,
+                                modifier = Modifier.pageSharedElement("fastForward"),
+                            )
+                        }
+                        if (playerUiSettings.showSeekControls) {
+                            ButtonSeekBack(
+                                playerActions = playerActions,
+                                modifier = Modifier.pageSharedElement("seekBack"),
+                            )
+                            ButtonSeekForward(
+                                playerActions = playerActions,
+                                modifier = Modifier.pageSharedElement("seekForward"),
+                            )
+                        }
+                    },
+                )
+            } else {
+                AutosizeText(
+                    text = displayName,
+                    style = LocalTextStyle.current,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.pageSharedElement("title"),
+                )
+            }
+        }
+    }
+}
+
 @Composable
 private fun VerticalBookPage(
-    mainContent: @Composable BoxScope.() -> Unit,
-    button: @Composable BoxScope.() -> Unit,
+    mainContent: @Composable () -> Unit,
+    button: @Composable (padding: PaddingValues) -> Unit,
     progress: Float,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-    ) {
-        BookPageLayout(
-            modifier = Modifier.weight(1f)
-        ) {
-            Box(
-                contentAlignment = Alignment.Center,
-                content = mainContent,
-                modifier = Modifier.fillMaxSize()
-            )
-            Box(
-                contentAlignment = Alignment.Center,
-                content = button,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(vertical = 16.dp)
-            )
+    Column(modifier = modifier.fillMaxSize()) {
+        BookPageLayout(modifier = Modifier.weight(1f)) {
+            mainContent()
+            button(PaddingValues(vertical = 16.dp))
         }
         HorizontalBookProgressIndicator(progress, Modifier.padding(top = 4.dp))
     }
@@ -160,30 +217,15 @@ private fun VerticalBookPage(
 
 @Composable
 private fun HorizontalBookPage(
-    mainContent: @Composable BoxScope.() -> Unit,
-    button: @Composable BoxScope.() -> Unit,
+    mainContent: @Composable () -> Unit,
+    button: @Composable (padding: PaddingValues) -> Unit,
     progress: Float,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-    ) {
-        BookPageLayout(
-            Modifier.weight(1f)
-        ) {
-            Box(
-                contentAlignment = Alignment.Center,
-                content = mainContent,
-                modifier = Modifier.fillMaxSize()
-            )
-            Box(
-                contentAlignment = Alignment.Center,
-                content = button,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 16.dp)
-            )
+    Column(modifier = modifier.fillMaxSize()) {
+        BookPageLayout(Modifier.weight(1f)) {
+            mainContent()
+            button(PaddingValues(horizontal = 16.dp))
         }
         HorizontalBookProgressIndicator(progress, Modifier.padding(top = 8.dp))
     }
@@ -193,62 +235,74 @@ private fun HorizontalBookPage(
 @Composable
 private fun VerticalBookPagePreview() =
     HomerPlayer2Theme {
-        BookPage(
-            landscape = false,
-            index = 0,
-            displayName = "Macbeth",
-            progress = 0.3f,
-            isPlaying = false,
-            playerActions = PlayerActions.EMPTY,
-            playerUiSettings = PlayerUiSettings(true, true, true),
-            modifier = Modifier.padding(16.dp)
-        )
+        SharedTransitionLayout {
+            BookPage(
+                landscape = false,
+                index = 0,
+                displayName = "Macbeth",
+                progress = 0.3f,
+                isPlaying = false,
+                playerActions = PlayerActions.EMPTY,
+                playerUiSettings = PlayerUiSettings(true, true, true),
+                sharedTransitionScope = this,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
     }
 
 @Preview(widthDp = 800, heightDp = 300)
 @Composable
 private fun HorizontalBookPagePreview() =
     HomerPlayer2Theme {
-        BookPage(
-            landscape = true,
-            index = 0,
-            displayName = "Macbeth",
-            progress = 0.3f,
-            isPlaying = false,
-            playerActions = PlayerActions.EMPTY,
-            playerUiSettings = PlayerUiSettings(true, true, true),
-            modifier = Modifier.padding(16.dp)
-        )
+        SharedTransitionLayout {
+            BookPage(
+                landscape = true,
+                index = 0,
+                displayName = "Macbeth",
+                progress = 0.3f,
+                isPlaying = false,
+                playerActions = PlayerActions.EMPTY,
+                playerUiSettings = PlayerUiSettings(true, true, true),
+                sharedTransitionScope = this,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
     }
 
 @Preview
 @Composable
 private fun VerticalPlayingBookPagePreview() =
     HomerPlayer2Theme {
-        BookPage(
-            landscape = false,
-            index = 0,
-            displayName = "Macbeth",
-            progress = 0.3f,
-            isPlaying = true,
-            playerActions = PlayerActions.EMPTY,
-            playerUiSettings = PlayerUiSettings(true, true, true),
-            modifier = Modifier.padding(16.dp)
-        )
+        SharedTransitionLayout {
+            BookPage(
+                landscape = false,
+                index = 0,
+                displayName = "Macbeth",
+                progress = 0.3f,
+                isPlaying = true,
+                playerActions = PlayerActions.EMPTY,
+                playerUiSettings = PlayerUiSettings(true, true, true),
+                sharedTransitionScope = this,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
     }
 
 @Preview(widthDp = 800, heightDp = 300)
 @Composable
 private fun HorizontalPlayingBookPagePreview() =
     HomerPlayer2Theme {
-        BookPage(
-            landscape = true,
-            index = 0,
-            displayName = "Macbeth",
-            progress = 0.3f,
-            isPlaying = true,
-            playerActions = PlayerActions.EMPTY,
-            playerUiSettings = PlayerUiSettings(false, false, false),
-            modifier = Modifier.padding(16.dp)
-        )
+        SharedTransitionLayout {
+            BookPage(
+                landscape = true,
+                index = 0,
+                displayName = "Macbeth",
+                progress = 0.3f,
+                isPlaying = true,
+                playerActions = PlayerActions.EMPTY,
+                playerUiSettings = PlayerUiSettings(false, false, false),
+                sharedTransitionScope = this,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
     }
