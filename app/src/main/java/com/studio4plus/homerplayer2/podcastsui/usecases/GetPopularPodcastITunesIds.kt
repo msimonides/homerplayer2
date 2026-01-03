@@ -24,8 +24,10 @@
 
 package com.studio4plus.homerplayer2.podcastsui.usecases
 
+import com.studio4plus.homerplayer2.base.DispatcherProvider
 import com.studio4plus.homerplayer2.net.executeAwait
 import io.sentry.Sentry
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -41,6 +43,7 @@ private val JSON = Json { ignoreUnknownKeys = true }
 @Factory
 class GetPopularPodcastITunesIds(
     private val okHttpClient: OkHttpClient,
+    private val dispatcherProvider: DispatcherProvider,
 ) {
     @Serializable
     private data class ITunesSearchResults(
@@ -65,7 +68,9 @@ class GetPopularPodcastITunesIds(
             val body = response.body
             return if (response.isSuccessful && body != null) {
                 val results: List<ITunesCollection> = try {
-                    JSON.decodeFromStream<ITunesSearchResults>(body.byteStream()).results
+                    withContext(dispatcherProvider.Io) {
+                        JSON.decodeFromStream<ITunesSearchResults>(body.byteStream()).results
+                    }
                 } catch (e: IllegalArgumentException) {
                     Sentry.captureException(e)
                     emptyList()
