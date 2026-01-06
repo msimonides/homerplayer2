@@ -63,7 +63,9 @@ android {
         isCoreLibraryDesugaringEnabled = true
     }
     kotlinOptions {
-        jvmTarget = "17"
+        compileOptions {
+            targetCompatibility = JavaVersion.VERSION_17
+        }
     }
     buildFeatures {
         compose = true

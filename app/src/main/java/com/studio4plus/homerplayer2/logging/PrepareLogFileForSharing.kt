@@ -47,7 +47,7 @@ class PrepareLogFileForSharing(
     private fun createFileForSharing(logsFolder: File, outputFolder: File): File {
         // Writing to private folder, createTempFile is good enough.
         outputFolder.mkdirs()
-        val resultFile = createTempFile(directory = outputFolder, prefix = "homer_", suffix = ".log")
+        val resultFile = File.createTempFile("homer_", ".log", outputFolder)
         resultFile.bufferedWriter().use { writer ->
             writer.appendDeviceInfo()
             logsFolder.listFiles()

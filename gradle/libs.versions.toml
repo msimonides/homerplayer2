@@ -1,6 +1,6 @@
 [versions]
-about-libraries = "13.1.0"
-android-gradle-plugin = "8.13.1"
+about-libraries = "13.2.1"
+android-gradle-plugin = "8.13.2"
 android-compileSdk = '36'
 android-minSdk = '23'
 androidx-lifecycle = '2.10.0'
@@ -9,11 +9,11 @@ compose = '1.10.0'
 coil = '3.3.0'
 koin = '4.1.1'
 koin-annotation= "2.3.1"
-kotlin = '2.2.21'
+kotlin = '2.3.0'
 kotlinx-coroutines = '1.10.2'
-ksp-compiler = '2.3.3'
+ksp-compiler = '2.3.4'
 ktor = '3.2.3' # Version 3.3+ requires OkHttp 5+
-media3 = '1.9.0-beta01'
+media3 = '1.9.0'
 okhttp = '4.12.0'
 room = '2.8.4'
 sentry-android = '7.22.6'
@@ -22,7 +22,7 @@ workmanager = '2.11.0'
 [libraries]
 
 aboutlibraries-compose = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "about-libraries" }
-androidx-activity-compose = 'androidx.activity:activity-compose:1.12.1'
+androidx-activity-compose = 'androidx.activity:activity-compose:1.12.2'
 androidx-core-ktx = 'androidx.core:core-ktx:1.17.0'
 androidx-datastore-core = 'androidx.datastore:datastore:1.0.0'
 androidx-documentfile ='androidx.documentfile:documentfile:1.1.0'
@@ -78,13 +78,13 @@ okhttp = { module = 'com.squareup.okhttp3:okhttp', version.ref = 'okhttp' }
 okhttp-tls = { module = 'com.squareup.okhttp3:okhttp-tls', version.ref = 'okhttp' }
 
 podcastindex = 'io.github.mr3y-the-programmer:podcastindex-sdk-ktor3:0.4.0'
-rssparser = 'com.prof18.rssparser:rssparser:6.0.12'
+rssparser = 'com.prof18.rssparser:rssparser:6.1.1'
 
 sentry-android = { module = 'io.sentry:sentry-android', version.ref = 'sentry-android' }
 sentry-android-timber = { module = 'io.sentry:sentry-android-timber', version.ref = 'sentry-android' }
 
 timber = 'com.jakewharton.timber:timber:5.0.1'
-telemetrydeck = 'com.telemetrydeck:kotlin-sdk:6.2.2'
+telemetrydeck = 'com.telemetrydeck:kotlin-sdk:6.3.0'
 treessence = 'com.github.bastienpaulfr:Treessence:1.1.2'
 
 junit = 'junit:junit:4.13.2'
