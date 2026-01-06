@@ -45,6 +45,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
@@ -251,7 +252,11 @@ private fun Overlay(onSave: () -> Unit, onCancel: () -> Unit, modifier: Modifier
                 Button(onClick = onSave, modifier = Modifier.fillMaxWidth()) {
                     Text(stringResource(BaseR.string.generic_dialog_save))
                 }
-                OutlinedButton(onClick = onCancel, modifier = Modifier.fillMaxWidth()) {
+                OutlinedButton(
+                    onClick = onCancel,
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.inverseOnSurface),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
                     Text(stringResource(BaseR.string.generic_dialog_cancel))
                 }
             }
