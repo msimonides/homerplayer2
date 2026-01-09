@@ -35,7 +35,6 @@ androidx-media3-exoplayer = { module = 'androidx.media3:media3-exoplayer', versi
 androidx-media3-session = { module = 'androidx.media3:media3-session', version.ref = 'media3' }
 androidx-media3-test-utils = { module = 'androidx.media3:media3-test-utils', version.ref = 'media3' }
 androidx-media3-test-utils-robolectric = { module = 'androidx.media3:media3-test-utils-robolectric', version.ref = 'media3' }
-androidx-navigation-compose = "androidx.navigation:navigation-compose:2.9.6"
 androidx-navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "androidx-navigation3" }
 androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "androidx-navigation3" }
 androidx-room-compiler = { module = 'androidx.room:room-compiler', version.ref = 'room' }
