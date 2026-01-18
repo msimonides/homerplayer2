@@ -23,7 +23,7 @@ email: info@homeraudioplayer.app
 description: >- # this means to ignore newlines until "baseurl:"
   Audiobook and podcast player for the elderly and visually impaired
 baseurl: "/"
-url: "homeraudioplayer.app"
+url: "https://homeraudioplayer.app"
 repository: "msimonides/homerplayer2"
 #twitter_username: jekyllrb
 #github_username:  jekyll
