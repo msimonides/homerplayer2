@@ -6,20 +6,27 @@
     <meta name="color-scheme" content="light dark">
     <meta name="theme-color" content="#0c6032">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
-    <title>
-      {% if page.meta_title %}
+    {%- capture title -%}
+      {%- if page.meta_title -%}
         {{ page.meta_title }}
-      {% else %}
+      {%- else -%}
         {{ page.title }}
-      {% endif %}
-       - Homer Audio Player
+      {%- endif -%}
+      {{ " - Homer Audio Player" }}
+    {%- endcapture %}
+    <title>
+      {{- title -}}
     </title>
-    {% if page.meta_description %}
+    <meta property="og:title" content="{{ title }}" />
+    <meta property="og:image" content="{{ "/assets/img/banner-og.webp" | absolute_url }}" />
+    <meta property="og:image" content="{{ "/assets/img/logo-og.webp" | absolute_url }}" />
+    {% if page.meta_description -%}
     <meta name="description" content="{{ page.meta_description }}">
-    {% endif %}
-    {% for css in layout.extra_css %}
+    <meta property="og:description" content="{{ page.meta_description }}" />
+    {% endif -%}
+    {% for css in layout.extra_css -%}
     <link rel="stylesheet" href="{{ 'assets/css/' | relative_url }}{{ css }}">
-    {% endfor %}
+    {% endfor -%}
     <link rel="icon" href="{{ "/favicon.ico" | prepend: site.baseurl }}" sizes="32 64 128" type="image/vnd.microsoft.icon">
   </head>
   <body class="container">
