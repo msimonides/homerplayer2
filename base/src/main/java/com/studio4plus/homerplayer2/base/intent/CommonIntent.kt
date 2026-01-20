@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2024 Marcin Simonides
+ * Copyright (c) 2026 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,15 +22,8 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.base
+package com.studio4plus.homerplayer2.base.intent
 
-object Constants {
-    const val PlayerAppPackage = "com.studio4plus.homerplayer2"
-    const val KioskSetupPackage = "com.studio4plus.homerplayer2.kiosk"
-    const val PlayerHomeActivityClass = "com.studio4plus.homerplayer2.app.HomeActivity"
-    const val PlayerMainActivityClass = "com.studio4plus.homerplayer2.app.MainActivity"
-    const val UrlKioskSetupInstructions = "https://msimonides.github.io/homerplayer2/dedicated_device"
-    const val UrlLearnMoreAudiobooks = "https://msimonides.github.io/homerplayer2/audiobooks"
-    const val UrlLearnMorePodcasts = "https://msimonides.github.io/homerplayer2/podcasts"
-    const val UrlPrivacyPolicy = "https://msimonides.github.io/homerplayer2/privacy"
+object CommonIntent {
+    const val ACTION_KIOSK_RESUME = "com.studio4plus.homerplayer2.action.KIOSK_RESUME"
 }

@@ -66,7 +66,7 @@ private fun BasicDefaultAlertDialog(
     BasicAlertDialog(
         onDismissRequest = onDismissRequest,
         modifier = modifier.padding(vertical = 24.dp, horizontal = 16.dp),
-        properties = DialogProperties(usePlatformDefaultWidth = usePlatformDefaultWidth)
+        properties = DialogProperties(usePlatformDefaultWidth = usePlatformDefaultWidth),
     ) {
         Surface(
             Modifier.wrapContentSize(),

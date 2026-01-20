@@ -26,6 +26,21 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- The kiosk setup and player apps can be signed by different keys (the kiosk setup app
+         cannot be distributed through Play Store) and therefore the "signature" permissionLevel
+         cannot be used.
+         Starting with API31 it's possible to use "knownSigner" but there's no easy way to fall
+         back to "normal" on older platforms.
+         Therefore let's stick to "normal" for now - this means the permission is effectively
+         not needed as it adds no protection - I hope to address this at some point.
+         The functionality that uses this permission is just a plain action to bring the Homer
+         Player to foreground - I don't think this can be used to achieve anything malicious.
+         -->
+    <permission android:name="com.studio4plus.homerplayer2.kiosk.permission.KIOSK_RESUME"
+        android:label="@string/permission_kiosk_resume_label"
+        android:description="@string/permission_kiosk_resume_description"
+        android:protectionLevel="normal" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -63,6 +78,15 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
+        <receiver
+            android:name=".kioskresume.KioskResumeBroadcastReceiver"
+            android:permission="com.studio4plus.homerplayer2.kiosk.permission.KIOSK_RESUME"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.studio4plus.homerplayer2.action.KIOSK_RESUME"/>
+            </intent-filter>
+        </receiver>
 
         <receiver
             android:name=".deviceadmin.DeviceAdminReceiver"

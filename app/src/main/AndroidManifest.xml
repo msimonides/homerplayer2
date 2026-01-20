@@ -7,6 +7,8 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.VIBRATE"/>
 
+    <uses-permission android:name="com.studio4plus.homerplayer2.kiosk.permission.KIOSK_RESUME"/>
+
     <queries>
         <intent>
             <action

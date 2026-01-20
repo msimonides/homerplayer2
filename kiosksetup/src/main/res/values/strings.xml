@@ -14,4 +14,7 @@
     <string name="drop_privilege_confirm_message">This action cannot be easily undone.\nReturn the device to regular use, it will no longer be possible to use kiosk mode in Homer Player.\n\nUse Factory Reset instead of (or in addition to) using this function.</string>
     <string name="drop_privilege_confirm_confirm_button">Remove privilege</string>
     <string name="drop_privilege_confirm_cancel_button">Cancel</string>
+
+    <string name="permission_kiosk_resume_label">Resume lockdown mode</string>
+    <string name="permission_kiosk_resume_description">Allows to automatically re-enable lockdown mode after it has been temporarily disabled.</string>
 </resources>

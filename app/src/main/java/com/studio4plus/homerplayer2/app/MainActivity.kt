@@ -25,6 +25,7 @@ package com.studio4plus.homerplayer2.app
 
 import android.app.ActivityManager
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -37,10 +38,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.studio4plus.homerplayer2.app.ui.HomerPLayerUi
+import com.studio4plus.homerplayer2.base.intent.CommonIntent
 import com.studio4plus.homerplayer2.fullkioskmode.LocalLockTaskEnabled
 import io.sentry.Sentry
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.transformLatest
@@ -50,6 +53,7 @@ import timber.log.Timber
 class MainActivity : ComponentActivity() {
 
     private val activityViewModel: MainActivityViewModel by viewModel()
+    private val eventNavigateToPlayer = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,9 +66,17 @@ class MainActivity : ComponentActivity() {
         setContent {
             val lockTaskEnabled = activityViewModel.lockTask.collectAsStateWithLifecycle().value
             CompositionLocalProvider(LocalLockTaskEnabled provides lockTaskEnabled) {
-                HomerPLayerUi()
+                HomerPLayerUi(eventNavigateToPlayer)
             }
         }
+        if (savedInstanceState == null) {
+            processIntent(intent)
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        processIntent(intent)
     }
 
     override fun onResume() {
@@ -122,6 +134,10 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    private fun processIntent(intent: Intent?) {
+        if (intent?.action == CommonIntent.ACTION_KIOSK_RESUME) {
+            eventNavigateToPlayer.tryEmit(Unit)
+        }
+    }
 }
-
-

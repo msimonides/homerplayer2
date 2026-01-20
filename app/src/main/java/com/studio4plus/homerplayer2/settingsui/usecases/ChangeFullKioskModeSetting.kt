@@ -25,6 +25,7 @@
 package com.studio4plus.homerplayer2.settingsui.usecases
 
 import androidx.datastore.core.DataStore
+import com.studio4plus.homerplayer2.fullkioskmode.KioskResumeScheduler
 import com.studio4plus.homerplayer2.settingsdata.FullKioskModeSetting
 import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
 import com.studio4plus.homerplayer2.settingsdata.UiSettings
@@ -42,8 +43,8 @@ class ChangeFullKioskModeSetting(
     private val mainScope: CoroutineScope,
     @Named(SettingsDataModule.UI) private val uiSettingsStore: DataStore<UiSettings>,
     private val clock: Clock,
+    private val kioskResumeScheduler: KioskResumeScheduler
 ) {
-
     enum class FullKioskModeSetValue {
         Enable, Disable, DisableTemporarily
     }
@@ -51,10 +52,19 @@ class ChangeFullKioskModeSetting(
     operator fun invoke(value: FullKioskModeSetValue) {
         mainScope.launchUpdate(uiSettingsStore) {
             val enableTimestamp = when (value) {
-                FullKioskModeSetValue.Enable -> FullKioskModeSetting.ENABLED
-                FullKioskModeSetValue.Disable -> FullKioskModeSetting.DISABLED
-                FullKioskModeSetValue.DisableTemporarily ->
-                    clock.wallTime() + TEMPORARY_KIOSK_MODE_DISABLE_DURATION.inWholeMilliseconds
+                FullKioskModeSetValue.Enable -> {
+                    kioskResumeScheduler.cancel()
+                    FullKioskModeSetting.ENABLED
+                }
+                FullKioskModeSetValue.Disable -> {
+                    kioskResumeScheduler.cancel()
+                    FullKioskModeSetting.DISABLED
+                }
+                FullKioskModeSetValue.DisableTemporarily -> {
+                    val duration = TEMPORARY_KIOSK_MODE_DISABLE_DURATION
+                    kioskResumeScheduler.schedule(duration)
+                    clock.wallTime() + duration.inWholeMilliseconds
+                }
             }
             it.copy(fullKioskModeEnableTimestamp = enableTimestamp)
         }

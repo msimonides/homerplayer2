@@ -29,7 +29,6 @@ import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.fadeIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.unveilIn
 import androidx.compose.foundation.layout.fillMaxSize
@@ -38,6 +37,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSerializable
 import androidx.compose.ui.Modifier
@@ -63,24 +63,41 @@ import com.studio4plus.homerplayer2.player.ui.PlayerRoute
 import com.studio4plus.homerplayer2.settingsui.nav.SettingsDestination
 import com.studio4plus.homerplayer2.settingsui.nav.SettingsSceneStrategy
 import com.studio4plus.homerplayer2.settingsui.nav.settingsEntries
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun HomerPLayerUi(viewModel: HomerPlayerUiVM = koinViewModel()) {
+fun HomerPLayerUi(
+    eventNavigateToPlayer: SharedFlow<Unit>,
+    viewModel: HomerPlayerUiVM = koinViewModel()
+) {
     HomerPlayer2Theme {
         val viewState = viewModel.viewState.collectAsStateWithLifecycle().value
 
         Surface(color = MaterialTheme.colorScheme.background, modifier = Modifier.fillMaxSize()) {
             if (viewState != null) {
+                val defaultDestination =
+                    if (viewState.needsOnboarding) OnboardingDestination.Default else PlayerDestination
+                val navBackStack = rememberNavBackStack(defaultDestination)
+
+                if (!viewState.needsOnboarding) {
+                    LaunchedEffect(eventNavigateToPlayer, navBackStack) {
+                        eventNavigateToPlayer.collect {
+                            navBackStack.clear()
+                            navBackStack.add(PlayerDestination)
+                        }
+                    }
+                }
+
                 CompositionLocalProvider(
                     LocalHapticFeedback provides
                         rememberHapticFeedback(viewState.hapticFeedbackEnabled)
                 ) {
                     MainNavDisplay(
-                        needsOnboarding = viewState.needsOnboarding,
+                        navBackStack = navBackStack,
                         modifier = Modifier.fillMaxSize(),
                     )
                 }
@@ -111,10 +128,10 @@ private fun rememberNavBackStack(initialDestination: NavKey): NavBackStack<NavKe
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-private fun MainNavDisplay(needsOnboarding: Boolean, modifier: Modifier = Modifier) {
-    val defaultDestination =
-        if (needsOnboarding) OnboardingDestination.Default else PlayerDestination
-    val navBackStack = rememberNavBackStack(defaultDestination)
+private fun MainNavDisplay(
+    navBackStack: NavBackStack<NavKey>,
+    modifier: Modifier = Modifier
+) {
     val snackbarHostState = remember { SnackbarHostState() }
 
     SharedTransitionLayout(modifier = modifier) {
