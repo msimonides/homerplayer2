@@ -168,7 +168,7 @@ private fun MainContent(
                             ButtonFastRewind(
                                 playerActions = playerActions,
                                 modifier =
-                                    Modifier.pageSharedElement("fastRewind").animateEnterExit(),
+                                    Modifier.pageSharedElement("fastRewind"),
                             )
                             ButtonFastForward(
                                 playerActions = playerActions,
