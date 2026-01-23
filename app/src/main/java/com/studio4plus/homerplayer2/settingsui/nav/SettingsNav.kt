@@ -340,7 +340,7 @@ fun EntryProviderScope<NavKey>.settingsEntries(
     }
     entry<SettingsPlayerUi>(R.string.settings_ui_player_ui_title) { SettingsPlayerUiRoute() }
     entry<SettingsPodcastEdit>(R.string.settings_ui_podcast_title) { key ->
-        PodcastEditRoute(viewModel = koinViewModel { parametersOf(key.feedUri) })
+        PodcastEditRoute(viewModel = koinViewModel { parametersOf("Settings", key.feedUri) })
     }
     entry<SettingsTts>(R.string.settings_ui_tts_settings_title) {
         SettingsTtsRoute(snackbarHostState)
