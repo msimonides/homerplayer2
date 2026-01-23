@@ -143,16 +143,15 @@ private data class SettingsPodcastEdit(val feedUri: UriAsText? = null) : Setting
 
 @Serializable private object SettingsTts : SettingsDestination()
 
-@Composable
 private inline fun <reified K : SettingsDestination> EntryProviderScope<NavKey>.entry(
     @StringRes titleRes: Int,
     metadata: Map<String, Any> = emptyMap(),
     noinline content: @Composable (K) -> Unit,
 ) {
-    entry<K>(metadata = regularSettings(stringResource(titleRes)) + metadata, content = content)
+    entry<K>(metadata = regularSettings(titleRes) + metadata, content = content)
 }
 
-private fun regularSettings(title: String) = mapOf(SettingsKey to true, TitleKey to title)
+private fun regularSettings(@StringRes title: Int) = mapOf(SettingsKey to true, TitleKey to title)
 
 private fun fullscreenSettings() = mapOf(SettingsKey to true, FullscreenKey to true)
 
@@ -205,7 +204,7 @@ private class SettingsScene(
 
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
     override val content: @Composable (() -> Unit) = {
-        val toolbarTitle = entry.metadata[TitleKey] as String? ?: ""
+        val toolbarTitle = entry.metadata[TitleKey] as Int? ?: 0
         with(sharedTransitionScope) {
             // Bottom insets are being handled in scroll containers on each settings screen.
             val windowInsets =
@@ -219,7 +218,7 @@ private class SettingsScene(
                             title =
                                 @Composable {
                                     Text(
-                                        text = toolbarTitle,
+                                        text = stringResource(toolbarTitle),
                                         maxLines = 1,
                                         overflow = TextOverflow.Ellipsis,
                                     )
@@ -273,7 +272,6 @@ private fun defaultTransitionSpec() =
 private fun defaultPopTransitionSpec(): AnimatedContentTransitionScope<Scene<*>>.() -> ContentTransform? =
     androidx.navigation3.ui.defaultPopTransitionSpec<NavKey>() as AnimatedContentTransitionScope<Scene<*>>.() -> ContentTransform?
 
-@Composable
 fun EntryProviderScope<NavKey>.settingsEntries(
     navBackStack: MutableList<NavKey>,
     snackbarHostState: SnackbarHostState,
