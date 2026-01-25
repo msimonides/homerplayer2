@@ -37,7 +37,6 @@ import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.analytics.Analytics
 import com.studio4plus.homerplayer2.crash.CrashReporting
 import com.studio4plus.homerplayer2.logging.FileLoggerTreeProvider
-import com.studio4plus.homerplayer2.analytics.TelemetryDeckAnalytics
 import okhttp3.OkHttpClient
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext

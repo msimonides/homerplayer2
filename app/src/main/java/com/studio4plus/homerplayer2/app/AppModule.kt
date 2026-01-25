@@ -56,7 +56,6 @@ import com.studio4plus.homerplayer2.podcasts.data.PodcastsDatabase
 import com.studio4plus.homerplayer2.samplebooks.SamplesDownloader
 import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
 import com.studio4plus.homerplayer2.settingsui.SettingsUiModule
-import com.studio4plus.homerplayer2.analytics.TelemetryDeckAnalytics
 import com.studio4plus.homerplayer2.analytics.createAnalytics
 import com.studio4plus.homerplayer2.utils.Clock
 import kotlinx.coroutines.CoroutineScope
@@ -90,10 +89,7 @@ const val DATASTORE_APP_STATE = "appState"
 class AppModule {
 
     @Single
-    fun analytics(telemetryDeck: TelemetryDeckAnalytics): Analytics = telemetryDeck
-
-    @Single
-    fun telemetryDeckAnalytics(
+    fun analytics(
         mainScope: CoroutineScope,
         delegate: AppAnalyticsDelegate,
     ): Analytics = createAnalytics(mainScope, delegate)

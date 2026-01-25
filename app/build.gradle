@@ -71,6 +71,16 @@ android {
             getByName(name) { kotlin.srcDir("build/generated/ksp/${variant.name}/kotlin") }
         }
     }
+
+    flavorDimensions += "distribution"
+    productFlavors {
+        create("openSource") {
+            dimension = "distribution"
+        }
+        create("google") {
+            dimension = "distribution"
+        }
+    }
 }
 
 room {
@@ -93,9 +103,10 @@ sentry {
 
 dependencies {
     implementation project(':base')
-    implementation project(':analytics')
-    implementation project(':analytics:telemetrydeck')
-    implementation project(':crash:sentry')
+    googleImplementation project(':analytics:telemetrydeck')
+    openSourceImplementation project(":analytics:noop")
+    googleImplementation project(':crash:sentry')
+    openSourceImplementation project(':crash:noop')
 
     coreLibraryDesugaring libs.desugarjdk
 

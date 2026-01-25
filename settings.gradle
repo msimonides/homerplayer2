@@ -20,9 +20,11 @@ dependencyResolutionManagement {
 }
 rootProject.name = "homerplayer2"
 include ':analytics'
+include ':analytics:noop'
 include ':analytics:telemetrydeck'
 include ':app'
 include ':base'
 include ':crash'
+include ':crash:noop'
 include ':crash:sentry'
 include ':kiosksetup'
