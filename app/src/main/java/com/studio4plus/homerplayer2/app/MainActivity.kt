@@ -23,10 +23,13 @@
  */
 package com.studio4plus.homerplayer2.app
 
+import android.Manifest
 import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -104,6 +107,7 @@ class MainActivity : ComponentActivity() {
                 if (isEnabled) {
                     windowInsetsControllerCompat.hide(WindowInsetsCompat.Type.statusBars())
                     startLockTaskWithRetry()
+                    disableSafeVolumeWarningsIfPossible()
                 } else {
                     windowInsetsControllerCompat.show(WindowInsetsCompat.Type.statusBars())
                     if (activityManager.isInLockTaskMode()) {
@@ -132,6 +136,17 @@ class MainActivity : ComponentActivity() {
                     delay(100)
                 }
             }
+        }
+    }
+
+    private fun disableSafeVolumeWarningsIfPossible() {
+        val permission = checkSelfPermission(Manifest.permission.WRITE_SECURE_SETTINGS)
+        if (PackageManager.PERMISSION_GRANTED == permission) {
+            // Homer is often used by elderly, non-tech-savvy users for whome the safe volume
+            // warnings are distracting or confusing and they often need higher volume due to loss
+            // of hearing.
+            Timber.i("Disabling safe volume exceeded warnings.")
+            Settings.Global.putInt(contentResolver, "audio_safe_volume_state", 2)
         }
     }
 
