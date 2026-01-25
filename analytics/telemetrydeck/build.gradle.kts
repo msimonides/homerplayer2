@@ -28,7 +28,7 @@ plugins {
 }
 
 android {
-    namespace = "com.studio4plus.homerplayer2.telemetrydeck"
+    namespace = "com.studio4plus.homerplayer2.analytics"
     compileSdk {
         version = release(libs.versions.android.compileSdk.get().toInt())
     }
@@ -61,7 +61,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":analytics"))
+    api(project(":analytics"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.telemetrydeck)

@@ -34,9 +34,10 @@ import coil3.network.okhttp.OkHttpNetworkFetcherFactory
 import coil3.request.CachePolicy
 import com.studio4plus.homerplayer2.BuildConfig
 import com.studio4plus.homerplayer2.R
+import com.studio4plus.homerplayer2.analytics.Analytics
 import com.studio4plus.homerplayer2.crash.CrashReporting
 import com.studio4plus.homerplayer2.logging.FileLoggerTreeProvider
-import com.studio4plus.homerplayer2.telemetrydeck.TelemetryDeckAnalytics
+import com.studio4plus.homerplayer2.analytics.TelemetryDeckAnalytics
 import okhttp3.OkHttpClient
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
@@ -47,7 +48,7 @@ import timber.log.Timber
 class HomerPlayerApp : Application(), SingletonImageLoader.Factory, Configuration.Provider {
 
     private val okHttpClient by inject<OkHttpClient>()
-    private val telemetryDeckAnalytics by inject<TelemetryDeckAnalytics>()
+    private val analytics by inject<Analytics>()
 
     override fun onCreate() {
         super.onCreate()
@@ -65,7 +66,7 @@ class HomerPlayerApp : Application(), SingletonImageLoader.Factory, Configuratio
         }
         val fileLoggerProvider: FileLoggerTreeProvider by inject()
         Timber.plant(fileLoggerProvider())
-        telemetryDeckAnalytics.initialize(this, getString(R.string.telemetry_deck_app))
+        analytics.initialize(this, getString(R.string.telemetry_deck_app))
 
         val appIsInForeground: AppIsInForeground by inject()
         registerActivityLifecycleCallbacks(appIsInForeground)

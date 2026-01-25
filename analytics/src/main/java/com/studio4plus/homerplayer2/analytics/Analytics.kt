@@ -24,7 +24,10 @@
 
 package com.studio4plus.homerplayer2.analytics
 
+import android.content.Context
+
 interface Analytics {
+    fun initialize(appContext: Context, appId: String)
     fun event(
         name: String,
         params: Map<String, String> = emptyMap(),
