@@ -25,7 +25,7 @@
 package com.studio4plus.homerplayer2.samplebooks
 
 import com.studio4plus.homerplayer2.base.LocaleProvider
-import io.sentry.Sentry
+import com.studio4plus.homerplayer2.crash.CrashReporting
 import org.json.JSONObject
 import org.koin.core.annotation.Factory
 import timber.log.Timber
@@ -58,7 +58,7 @@ class SamplesUnpacker(
                 val title = getTitle(it)
                 it.renameTo(File(folder, title))
             } catch (e: IOException) {
-                Sentry.captureException(e)
+                CrashReporting.captureException(e)
                 Timber.e(e, "Error localizing files")
             }
         }

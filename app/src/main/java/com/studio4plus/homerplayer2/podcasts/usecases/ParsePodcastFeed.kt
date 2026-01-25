@@ -28,8 +28,8 @@ import androidx.annotation.VisibleForTesting
 import com.prof18.rssparser.RssParser
 import com.prof18.rssparser.exception.RssParsingException
 import com.prof18.rssparser.model.RssItem
+import com.studio4plus.homerplayer2.crash.CrashReporting
 import com.studio4plus.homerplayer2.podcasts.MAX_PODCAST_EPISODE_COUNT
-import io.sentry.Sentry
 import org.koin.core.annotation.Factory
 import timber.log.Timber
 import java.time.DateTimeException
@@ -162,7 +162,7 @@ class ParsePodcastFeed(
                     parsed.toInstant()
                 } catch (e: DateTimeException) {
                     Timber.w(e, "Failed to parse RSS date: '$dateString'")
-                    Sentry.captureException(e)
+                    CrashReporting.captureException(e)
                     null
                 }
             }

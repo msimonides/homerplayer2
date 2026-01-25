@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2024 Marcin Simonides
+ * Copyright (c) 2026 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,18 +22,40 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.utils
+plugins {
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.jvm)
+}
 
-import io.sentry.Sentry
+android {
+    namespace = "com.studio4plus.homerplayer2.telemetrydeck"
+    compileSdk {
+        version = release(libs.versions.android.compileSdk.get().toInt())
+    }
 
-object SentryHelper {
+    defaultConfig {
+        minSdk = libs.versions.android.minSdk.get().toInt()
 
-    private val reportedAlready = HashSet<String>()
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
+    }
 
-    fun reportOnce(key: String, eventBuilder: () -> Throwable) {
-        if (reportedAlready.contains(key)) return
-
-        reportedAlready.add(key)
-        Sentry.captureException(eventBuilder())
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+    kotlin {
+        compilerOptions {
+            jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
+        }
     }
 }

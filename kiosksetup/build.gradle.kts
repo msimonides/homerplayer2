@@ -92,6 +92,7 @@ dependencies {
     ksp(libs.koin.compiler)
 
     implementation(project(":base"))
+    implementation(project(":crash:sentry"))
 
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.ktx)
@@ -104,7 +105,6 @@ dependencies {
     implementation(libs.koin.androidx.compose)
     implementation(libs.koin.annotations)
     implementation(libs.kotlinx.coroutines.android)
-    implementation(libs.sentry.android)
 
     testImplementation(libs.junit)
 }

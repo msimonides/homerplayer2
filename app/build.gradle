@@ -95,6 +95,7 @@ dependencies {
     implementation project(':base')
     implementation project(':analytics')
     implementation project(':analytics:telemetrydeck')
+    implementation project(':crash:sentry')
 
     coreLibraryDesugaring libs.desugarjdk
 
@@ -132,8 +133,6 @@ dependencies {
     implementation libs.okhttp.tls
     implementation libs.podcastindex
     implementation libs.rssparser
-    implementation libs.sentry.android
-    implementation libs.sentry.android.timber
     implementation libs.timber
     implementation libs.treessence
 

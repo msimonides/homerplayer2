@@ -39,13 +39,13 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkRequest
 import androidx.work.WorkerParameters
+import com.studio4plus.homerplayer2.crash.CrashReporting
 import com.studio4plus.homerplayer2.podcasts.data.PodcastsDao
 import com.studio4plus.homerplayer2.podcasts.usecases.DeleteStalePodcastFiles
 import com.studio4plus.homerplayer2.podcasts.usecases.DownloadPendingPodcastEpisodes
 import com.studio4plus.homerplayer2.podcasts.usecases.DownloadPodcastFeed
 import com.studio4plus.homerplayer2.podcasts.usecases.UpdatePodcastFromFeed
 import com.studio4plus.homerplayer2.settingsdata.NetworkType
-import io.sentry.Sentry
 import kotlinx.coroutines.guava.await
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -176,7 +176,7 @@ class PodcastsRefreshWork(
         } catch (e: Throwable) {
             if (e is CancellationException) throw e
             Timber.w(e, "Error while updating podcasts")
-            Sentry.captureException(e)
+            CrashReporting.captureException(e)
             Result.failure()
         } finally {
             wifiLock.release()

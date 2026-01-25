@@ -26,9 +26,9 @@ package com.studio4plus.homerplayer2.podcastsui.usecases
 
 import com.mr3y.podcastindex.PodcastIndexClient
 import com.mr3y.podcastindex.model.SinglePodcastResult
+import com.studio4plus.homerplayer2.crash.CrashReporting
 import com.studio4plus.homerplayer2.net.toHttps
 import com.studio4plus.homerplayer2.podcastsui.PODCAST_SEARCH_MAX_RESULTS
-import io.sentry.Sentry
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -90,7 +90,7 @@ class GetPopularPodcasts(
         } catch(e: CancellationException) {
             throw e
         } catch(e: Exception) {
-            Sentry.captureException(e)
+            CrashReporting.captureException(e)
             null
         }
 }

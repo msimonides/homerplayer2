@@ -25,7 +25,6 @@
 package com.studio4plus.homerplayer2.app
 
 import android.app.Application
-import android.os.Build
 import androidx.work.Configuration
 import coil3.ImageLoader
 import coil3.PlatformContext
@@ -35,11 +34,9 @@ import coil3.network.okhttp.OkHttpNetworkFetcherFactory
 import coil3.request.CachePolicy
 import com.studio4plus.homerplayer2.BuildConfig
 import com.studio4plus.homerplayer2.R
+import com.studio4plus.homerplayer2.crash.CrashReporting
 import com.studio4plus.homerplayer2.logging.FileLoggerTreeProvider
 import com.studio4plus.homerplayer2.telemetrydeck.TelemetryDeckAnalytics
-import io.sentry.SentryLevel
-import io.sentry.android.core.SentryAndroid
-import io.sentry.android.timber.SentryTimberIntegration
 import okhttp3.OkHttpClient
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
@@ -54,7 +51,9 @@ class HomerPlayerApp : Application(), SingletonImageLoader.Factory, Configuratio
 
     override fun onCreate() {
         super.onCreate()
-        initCrashReporting()
+        if (!BuildConfig.DEBUG) {
+            CrashReporting.init(this, getString(R.string.sentry_dsn))
+        }
 
         startKoin {
             androidContext(this@HomerPlayerApp)
@@ -91,26 +90,4 @@ class HomerPlayerApp : Application(), SingletonImageLoader.Factory, Configuratio
 
     override val workManagerConfiguration: Configuration
         get() = Configuration.Builder().build()
-
-    // Try to share Sentry configuration between app and kiosksetup.
-    private fun initCrashReporting() {
-        if (!BuildConfig.DEBUG) {
-            SentryAndroid.init(this) { options ->
-                options.dsn = getString(R.string.sentry_dsn)
-                options.isAnrEnabled = Build.VERSION.SDK_INT >= 30
-                options.isEnableAppLifecycleBreadcrumbs = true
-                options.isEnableAppComponentBreadcrumbs = true
-
-                options.isEnableUserInteractionBreadcrumbs = false
-                options.isEnableActivityLifecycleBreadcrumbs = false
-                options.isEnableNetworkEventBreadcrumbs = false
-
-                val timber = SentryTimberIntegration(
-                    minEventLevel = SentryLevel.FATAL,
-                    minBreadcrumbLevel = SentryLevel.INFO,
-                )
-                options.addIntegration(timber)
-            }
-        }
-    }
 }

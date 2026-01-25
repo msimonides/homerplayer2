@@ -24,7 +24,7 @@
 
 package com.studio4plus.homerplayer2.samplebooks
 
-import io.sentry.Sentry
+import com.studio4plus.homerplayer2.crash.CrashReporting
 import okio.buffer
 import okio.sink
 import okio.source
@@ -62,7 +62,7 @@ fun unzip(zipStream: InputStream, destinationFolder: File) {
             }
         }
     } catch (e: IllegalArgumentException) {
-        Sentry.captureException(e)
+        CrashReporting.captureException(e)
         Timber.e(e, "Invalid file")
         throw e
     } catch (e: IOException) {

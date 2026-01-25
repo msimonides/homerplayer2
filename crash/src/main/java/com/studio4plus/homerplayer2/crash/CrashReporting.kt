@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Marcin Simonides
+ * Copyright (c) 2026 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,25 +22,14 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.kiosk
+package com.studio4plus.homerplayer2.crash
 
-import android.app.Application
-import com.studio4plus.homerplayer2.crash.CrashReporting
-import org.koin.android.ext.koin.androidContext
-import org.koin.core.context.GlobalContext.startKoin
-import org.koin.ksp.generated.*
+import android.content.Context
 
-class KioskSetupApp : Application() {
-
-    override fun onCreate() {
-        super.onCreate()
-        if (!BuildConfig.DEBUG) {
-            CrashReporting.init(this, getString(R.string.sentry_dsn))
-        }
-
-        startKoin {
-            androidContext(this@KioskSetupApp)
-            modules(AppModule().module)
-        }
-    }
+interface CrashReportingInterface {
+    fun init(appContext: Context, key: String)
+    fun captureException(e: Throwable)
+    fun captureExceptionOnce(key: String, builder: () -> Throwable)
+    fun setContext(key: String, value: String)
+    fun removeContext(key: String)
 }

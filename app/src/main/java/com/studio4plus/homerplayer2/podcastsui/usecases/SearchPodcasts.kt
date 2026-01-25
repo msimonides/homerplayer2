@@ -26,9 +26,9 @@ package com.studio4plus.homerplayer2.podcastsui.usecases
 
 import com.mr3y.podcastindex.PodcastIndexClient
 import com.mr3y.podcastindex.model.RateLimitExceededException
+import com.studio4plus.homerplayer2.crash.CrashReporting
 import com.studio4plus.homerplayer2.net.toHttps
 import com.studio4plus.homerplayer2.podcastsui.PODCAST_SEARCH_MAX_RESULTS
-import io.sentry.Sentry
 import org.koin.core.annotation.Factory
 import timber.log.Timber
 import java.util.concurrent.CancellationException
@@ -72,10 +72,10 @@ class SearchPodcasts (
         } catch (e: CancellationException) {
             throw e
         } catch (e: RateLimitExceededException) {
-            Sentry.captureException(e)
+            CrashReporting.captureException(e)
             Result.RateLimitError
         } catch (e: Exception) {
-            Sentry.captureException(e)
+            CrashReporting.captureException(e)
             Timber.e(e, "search request error")
             Result.RequestError
         }

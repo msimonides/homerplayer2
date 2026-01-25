@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Marcin Simonides
+ * Copyright (c) 2026 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,25 +22,47 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.kiosk
+plugins {
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.jvm)
+}
 
-import android.app.Application
-import com.studio4plus.homerplayer2.crash.CrashReporting
-import org.koin.android.ext.koin.androidContext
-import org.koin.core.context.GlobalContext.startKoin
-import org.koin.ksp.generated.*
+android {
+    namespace = "com.studio4plus.homerplayer2.crash"
+    compileSdk {
+        version = release(libs.versions.android.compileSdk.get().toInt())
+    }
 
-class KioskSetupApp : Application() {
+    defaultConfig {
+        minSdk = libs.versions.android.minSdk.get().toInt()
 
-    override fun onCreate() {
-        super.onCreate()
-        if (!BuildConfig.DEBUG) {
-            CrashReporting.init(this, getString(R.string.sentry_dsn))
-        }
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
+    }
 
-        startKoin {
-            androidContext(this@KioskSetupApp)
-            modules(AppModule().module)
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+    kotlin {
+        compilerOptions {
+            jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
+        }
+    }
+}
+
+dependencies {
+    api(project(":crash"))
+
+    implementation(libs.sentry.android)
+    implementation(libs.sentry.android.timber)
 }

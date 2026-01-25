@@ -31,8 +31,8 @@ import android.provider.DocumentsContract
 import androidx.annotation.WorkerThread
 import com.studio4plus.homerplayer2.audiobooks.Audiobook
 import com.studio4plus.homerplayer2.base.DispatcherProvider
+import com.studio4plus.homerplayer2.crash.CrashReporting
 import com.studio4plus.homerplayer2.utils.hasFileScheme
-import io.sentry.Sentry
 import kotlinx.coroutines.withContext
 import org.koin.core.annotation.Single
 import timber.log.Timber
@@ -68,7 +68,7 @@ class Scanner(
                     else -> scanDocumentFolder(it)
                 }
             }.also {
-                Sentry.removeExtra(SENTRY_SCAN_INFO)
+                CrashReporting.removeContext(SENTRY_SCAN_INFO)
             }
         }
 
@@ -141,7 +141,7 @@ class Scanner(
     private fun scanAudiobookFiles(
         rootUri: Uri, folderDocumentId: String, path: String
     ): List<Uri> {
-        Sentry.setExtra(SENTRY_SCAN_INFO, "path '$path', rootUri '$rootUri'")
+        CrashReporting.setContext(SENTRY_SCAN_INFO, "path '$path', rootUri '$rootUri'")
         val childrenUri =
             DocumentsContract.buildChildDocumentsUriUsingTree(rootUri, folderDocumentId)
         val cursor = contentResolver.query(

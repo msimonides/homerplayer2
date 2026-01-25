@@ -42,8 +42,8 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.studio4plus.homerplayer2.app.ui.HomerPLayerUi
 import com.studio4plus.homerplayer2.base.intent.CommonIntent
+import com.studio4plus.homerplayer2.crash.CrashReporting
 import com.studio4plus.homerplayer2.fullkioskmode.LocalLockTaskEnabled
-import io.sentry.Sentry
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -131,7 +131,7 @@ class MainActivity : ComponentActivity() {
                     throw e
                 Timber.e(e, "Error enabling lock task, retrying")
                 if (index == retries) {
-                    Sentry.captureException(e)
+                    CrashReporting.captureException(e)
                 } else {
                     delay(100)
                 }

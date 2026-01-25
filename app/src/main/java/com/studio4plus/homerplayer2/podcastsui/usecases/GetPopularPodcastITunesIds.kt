@@ -25,8 +25,8 @@
 package com.studio4plus.homerplayer2.podcastsui.usecases
 
 import com.studio4plus.homerplayer2.base.DispatcherProvider
+import com.studio4plus.homerplayer2.crash.CrashReporting
 import com.studio4plus.homerplayer2.net.executeAwait
-import io.sentry.Sentry
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
@@ -72,7 +72,7 @@ class GetPopularPodcastITunesIds(
                         JSON.decodeFromStream<ITunesSearchResults>(body.byteStream()).results
                     }
                 } catch (e: IllegalArgumentException) {
-                    Sentry.captureException(e)
+                    CrashReporting.captureException(e)
                     emptyList()
                 }
                 results

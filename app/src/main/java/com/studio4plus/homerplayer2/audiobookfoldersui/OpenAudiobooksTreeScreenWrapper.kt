@@ -41,7 +41,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.base.ui.DefaultAlertDialog
-import io.sentry.Sentry
+import com.studio4plus.homerplayer2.crash.CrashReporting
 import com.studio4plus.homerplayer2.base.R as BaseR
 
 @Composable
@@ -81,7 +81,7 @@ fun OpenAudiobooksTreeScreenWrapper(
     var openAudiobooksTreeError by rememberSaveable { mutableStateOf(false) }
     fun onOpenAudiobooksTreeError(e: Throwable) {
         openAudiobooksTreeError = true
-        Sentry.captureException(e)
+        CrashReporting.captureException(e)
     }
 
     val openAudiobooksTreeAction: () -> Unit = {

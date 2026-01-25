@@ -30,7 +30,7 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.studio4plus.homerplayer2.utils.SentryHelper
+import com.studio4plus.homerplayer2.crash.CrashReporting
 import kotlin.math.roundToInt
 
 private const val VERTICAL = 0
@@ -78,7 +78,7 @@ fun ControlButtonsLayout(
         if (buttonSizePx <= 0) {
             // Apparently this is being laid out in a very small space.
             // Report some details and don't place anything.
-            SentryHelper.reportOnce("ControlButtonsLayout.measure") {
+            CrashReporting.captureExceptionOnce("ControlButtonsLayout.measure") {
                 IllegalStateException("Button size too small ${buttonSizePx}; constraints: ${constraints.maxWidth} x ${constraints.maxHeight}")
             }
             return@Layout layout(constraints.maxWidth, constraints.maxWidth) {}
