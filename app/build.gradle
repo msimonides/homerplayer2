@@ -99,6 +99,7 @@ sentry {
     }
 
     ignoredBuildTypes = ["debug"]
+    ignoredFlavors = ["openSource"]
 }
 
 dependencies {
