@@ -62,7 +62,6 @@ import com.studio4plus.homerplayer2.settingsui.composables.SettingItem
 import com.studio4plus.homerplayer2.settingsui.composables.SettingSwitch
 import com.studio4plus.homerplayer2.speech.LaunchErrorSnackDisplay
 import com.studio4plus.homerplayer2.speech.SpeechTestViewModel
-import com.studio4plus.homerplayer2.speech.TtsCheckContract
 import org.koin.compose.viewmodel.koinViewModel
 import com.studio4plus.homerplayer2.base.R as BaseR
 
@@ -75,14 +74,6 @@ fun SettingsTtsRoute(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val testPhrase = stringResource(id = R.string.speech_test_phrase)
-
-    val ttsCheckLauncher = rememberLauncherForActivityResult(
-        contract = TtsCheckContract(),
-        onResult = { success ->
-            if (success) speechTestViewModel.say(testPhrase)
-            else speechTestViewModel.onTtsCheckFailed()
-        }
-    )
 
     DisposableEffect(lifecycleOwner.lifecycle) {
         lifecycleOwner.lifecycle.addObserver(speechTestViewModel)
@@ -101,10 +92,7 @@ fun SettingsTtsRoute(
             settingsViewState = settingsViewState,
             speechTestViewState = speechTestViewState,
             onSetReadBookTitles = viewModel::setReadBookTitles,
-            onPlayTestPhrase = {
-                speechTestViewModel.onTtsCheckStarted()
-                ttsCheckLauncher.launch(Unit)
-            },
+            onPlayTestPhrase = { speechTestViewModel.say(testPhrase) },
             onOpenTtsSettings = { speechTestViewModel.openTtsSettings(context) },
             onSetAnnounceNewSettings = viewModel::setAnnounceNewTitles,
             onTestAnnouncePhrase = { new ->

@@ -24,7 +24,6 @@
 
 package com.studio4plus.homerplayer2.onboarding
 
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.RowScope
@@ -61,7 +60,6 @@ import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
 import com.studio4plus.homerplayer2.settingsui.composables.SettingSwitch
 import com.studio4plus.homerplayer2.speech.LaunchErrorSnackDisplay
 import com.studio4plus.homerplayer2.speech.SpeechTestViewModel
-import com.studio4plus.homerplayer2.speech.TtsCheckContract
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -80,13 +78,6 @@ fun OnboardingSpeechRoute(
 
     val snackbarHostState = remember { SnackbarHostState() }
 
-    val ttsCheckLauncher = rememberLauncherForActivityResult(
-        contract = TtsCheckContract(),
-        onResult = { success ->
-            if (success) speechTestViewModel.say(testPhrase)
-            else speechTestViewModel.onTtsCheckFailed()
-        }
-    )
     DisposableEffect(lifecycleOwner.lifecycle) {
         lifecycleOwner.lifecycle.addObserver(speechTestViewModel)
         onDispose {
@@ -110,10 +101,7 @@ fun OnboardingSpeechRoute(
         snackbarHostState = snackbarHostState,
         navigateNext = navigateNextAndConfirm,
         navigateSkip = navigateNextAndFinish,
-        onSayTestPhrase = {
-            speechTestViewModel.onTtsCheckStarted()
-            ttsCheckLauncher.launch(Unit)
-        },
+        onSayTestPhrase = { speechTestViewModel.say(testPhrase) },
         onTtsToggled = viewModel::onTtsToggled,
         onOpenTtsSettings = { speechTestViewModel.openTtsSettings(context) },
         modifier = modifier

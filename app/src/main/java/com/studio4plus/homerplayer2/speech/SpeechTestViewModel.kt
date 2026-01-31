@@ -31,19 +31,17 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.studio4plus.homerplayer2.R
+import kotlin.time.Duration
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeoutOrNull
 import org.koin.android.annotation.KoinViewModel
 
 @KoinViewModel
-class SpeechTestViewModel(
-    appContext: Context,
-    private val speaker: Speaker,
-) : ViewModel(), DefaultLifecycleObserver {
+class SpeechTestViewModel(appContext: Context, private val speaker: Speaker) :
+    ViewModel(), DefaultLifecycleObserver {
 
     data class ViewState(
         val showTtsSettings: Boolean,
@@ -53,7 +51,8 @@ class SpeechTestViewModel(
 
     private val ttsSettingsIntent: Intent?
     private val currentState: MutableStateFlow<ViewState>
-    val viewState: StateFlow<ViewState> get() = currentState
+    val viewState: StateFlow<ViewState>
+        get() = currentState
 
     val errorEvent = Channel<Int?>()
 
@@ -61,27 +60,26 @@ class SpeechTestViewModel(
         val intent = Intent("com.android.settings.TTS_SETTINGS")
         val resolveInfo = appContext.packageManager.resolveActivity(intent, 0)
         ttsSettingsIntent = intent.takeIf { resolveInfo != null }
-        val initialState = ViewState(
-            ttsSettingsIntent != null,
-            isSpeaking = false,
-            ttsTestSuccessful = false
-        )
+        val initialState =
+            ViewState(ttsSettingsIntent != null, isSpeaking = false, ttsTestSuccessful = false)
         currentState = MutableStateFlow(initialState)
-    }
-
-    fun onTtsCheckStarted() {
-        errorEvent.trySend(null)
-        currentState.update { it.copy(isSpeaking = true) }
-    }
-
-    fun onTtsCheckFailed() {
-        errorEvent.trySend(R.string.speech_init_tts_error)
     }
 
     fun say(text: CharSequence) {
         currentState.update { it.copy(isSpeaking = true) }
         viewModelScope.launch {
-            val errorMessage = sayInternal(text)
+            val status = speaker.speakAndWait(text, initTimeout = Duration.INFINITE)
+            val errorMessage =
+                when (status) {
+                    SpeakResult.SUCCESS -> null
+                    SpeakResult.ERROR_TTS_INIT,
+                    SpeakResult.ERROR_TTS_INIT_TIMEOUT -> R.string.speech_init_tts_error
+
+                    SpeakResult.ERROR_LANG_MISSING_DATA -> R.string.speech_init_lang_data_missing
+                    SpeakResult.ERROR_LANG_NOT_SUPPORTED -> R.string.speech_init_lang_not_supported
+                    SpeakResult.ERROR_SAY -> R.string.speech_init_say_failed
+                }
+
             if (errorMessage != null) {
                 errorEvent.trySend(errorMessage)
             }
@@ -103,21 +101,5 @@ class SpeechTestViewModel(
     override fun onCleared() {
         super.onCleared()
         speaker.shutdown()
-    }
-
-    private suspend fun sayInternal(text: CharSequence): Int? {
-        val initResult = withTimeoutOrNull(2000) { speaker.initIfNeeded() }
-        val errorMessage = when(initResult) {
-            Speaker.TtsInitResult.READY -> {
-                val success = speaker.speakAndWait(text)
-                if (success) null else R.string.speech_init_say_failed
-            }
-            Speaker.TtsInitResult.INIT_ERROR -> R.string.speech_init_tts_error
-            Speaker.TtsInitResult.LANGUAGE_DATA_MISSING -> R.string.speech_init_lang_data_missing
-            Speaker.TtsInitResult.LANGUAGE_NOT_SUPPORTED -> R.string.speech_init_lang_not_supported
-            Speaker.TtsInitResult.INIT_CANCELLED -> null
-            null -> R.string.speech_init_tts_error
-        }
-        return errorMessage
     }
 }

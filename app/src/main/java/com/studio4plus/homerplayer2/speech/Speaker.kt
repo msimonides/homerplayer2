@@ -28,108 +28,162 @@ import android.content.Context
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import com.studio4plus.homerplayer2.base.LocaleProvider
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.first
-import org.koin.core.annotation.Factory
-import timber.log.Timber
 import java.util.UUID
 import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withTimeoutOrNull
+import org.koin.core.annotation.Factory
+import timber.log.Timber
 
 interface Speaker {
-    enum class TtsInitResult {
-        READY,
-        LANGUAGE_DATA_MISSING,
-        LANGUAGE_NOT_SUPPORTED,
-        INIT_ERROR,
-        INIT_CANCELLED
-    }
+    suspend fun warmUp()
 
-    suspend fun initIfNeeded(): TtsInitResult
-    suspend fun speakAndWait(text: CharSequence): Boolean
+    suspend fun speakAndWait(
+        text: CharSequence,
+        initTimeout: Duration = 2.seconds,
+    ): SpeakResult
+
     fun stop()
+
     fun shutdown()
 }
 
-@Factory
-class SpeakerTts(
-    private val appContext: Context,
-    private val getLocale: LocaleProvider
-) : Speaker {
+enum class SpeakResult {
+    SUCCESS,
+    ERROR_TTS_INIT,
+    ERROR_TTS_INIT_TIMEOUT,
+    ERROR_LANG_MISSING_DATA,
+    ERROR_LANG_NOT_SUPPORTED,
+    ERROR_SAY,
+}
 
-    private var speech: TextToSpeech? = null
-    private var ttsInitialized: Deferred<Boolean>? = null
+enum class TtsInitError {
+    TtsError,
+    LanguageDataMissing,
+    LanguageNotSupported,
+}
+
+class TtsInitException(val error: TtsInitError, cause: Throwable? = null) : Exception(cause)
+
+@Factory
+class SpeakerTts(private val appContext: Context, private val getLocale: LocaleProvider) : Speaker {
+
+    private var tts: TextToSpeech? = null
+    private val ttsInitMutex = Mutex()
 
     private val utteranceListener = UtteranceListener()
-    private val utteranceEvents: Flow<UtteranceListener.Event> get() = utteranceListener.events
+    private val utteranceEvents: Flow<UtteranceListener.Event>
+        get() = utteranceListener.events
 
-    override suspend fun initIfNeeded(): Speaker.TtsInitResult {
-        val initSuccessful: Boolean = ttsInitialized?.await()
-            ?: coroutineScope {
-                async { initTts() }
-            }.run {
-                ttsInitialized = this
-                await().also {
-                    ttsInitialized = null
-                }
-            }
-
-        return if (initSuccessful) {
-            when(speech?.isLanguageAvailable(getLocale())) {
-                TextToSpeech.LANG_NOT_SUPPORTED -> {
-                    Timber.w("TTS language not supported.")
-                    Speaker.TtsInitResult.LANGUAGE_NOT_SUPPORTED
-                }
-                TextToSpeech.LANG_MISSING_DATA -> {
-                    Timber.w("TTS language data missing.")
-                    Speaker.TtsInitResult.LANGUAGE_DATA_MISSING
-                }
-                null -> Speaker.TtsInitResult.INIT_CANCELLED
-                else -> Speaker.TtsInitResult.READY
-            }
-        } else {
-            Speaker.TtsInitResult.INIT_ERROR
+    override suspend fun warmUp() {
+        try {
+            getTts()
+        } catch (e: TtsInitException) {
+            Timber.w(e, "TTS warmup failed.")
         }
     }
 
-    override suspend fun speakAndWait(text: CharSequence): Boolean {
-        if (speech != null) {
+    override suspend fun speakAndWait(text: CharSequence, initTimeout: Duration): SpeakResult {
+        try {
+            val localTts =
+                withTimeoutOrNull(2.seconds) { getTts() }
+                    ?: return SpeakResult.ERROR_TTS_INIT_TIMEOUT
+
             val id = UUID.randomUUID().toString()
-            speech?.speak(text, TextToSpeech.QUEUE_FLUSH, null, id)
-            val event = utteranceEvents.first { it.utteranceId == id }
+
+            val result = localTts.speak(text, TextToSpeech.QUEUE_FLUSH, null, id)
+            if (result == TextToSpeech.ERROR) {
+                Timber.w("TTS speak failed.")
+                return SpeakResult.ERROR_SAY
+            }
+
+            val event = utteranceEvents.filter { it.utteranceId == id }.first()
             if (event is UtteranceListener.Event.Error) {
                 Timber.w("Utterance error: %d.", event.errorCode)
+                return SpeakResult.ERROR_SAY
             }
-            return event is UtteranceListener.Event.Success
-        } else {
-            return false
+            return SpeakResult.SUCCESS
+        } catch (e: TtsInitException) {
+            return e.error.toSpeakResult()
         }
     }
 
     override fun stop() {
-        speech?.stop()
+        tts?.stop()
     }
 
     override fun shutdown() {
-        speech?.shutdown()
-        speech = null
+        tts?.shutdown()
+        tts = null
     }
 
-    private suspend fun initTts(): Boolean = suspendCoroutine { continuation ->
-        speech = TextToSpeech(appContext) {
-            continuation.resume(it == TextToSpeech.SUCCESS)
+    private suspend fun getTts(): TextToSpeech {
+        tts?.let {
+            return it
         }
-        speech?.setOnUtteranceProgressListener(utteranceListener)
+        return ttsInitMutex.withLock {
+            // Another coroutine might have initialized it while we were waiting for the lock.
+            tts?.let {
+                return it
+            }
+
+            val newTts = suspendCoroutine { continuation ->
+                var tts: TextToSpeech? = null
+                tts =
+                    TextToSpeech(appContext) { status ->
+                        if (status == TextToSpeech.SUCCESS) {
+                            continuation.resume(tts!!)
+                        } else {
+                            Timber.e("TTS init failed with status: $status")
+                            continuation.resumeWithException(
+                                TtsInitException(TtsInitError.TtsError)
+                            )
+                        }
+                    }
+            }
+            newTts.setOnUtteranceProgressListener(utteranceListener)
+
+            when (val langResult = newTts.isLanguageAvailable(getLocale())) {
+                TextToSpeech.LANG_NOT_SUPPORTED,
+                TextToSpeech.LANG_MISSING_DATA -> {
+                    val error =
+                        if (langResult == TextToSpeech.LANG_NOT_SUPPORTED) {
+                            TtsInitError.LanguageNotSupported
+                        } else {
+                            TtsInitError.LanguageDataMissing
+                        }
+                    Timber.w("TTS language not available: $error")
+                    newTts.shutdown()
+                    throw TtsInitException(error)
+                }
+            }
+
+            this.tts = newTts
+            newTts
+        }
     }
+
+    private fun TtsInitError.toSpeakResult(): SpeakResult =
+        when (this) {
+            TtsInitError.TtsError -> SpeakResult.ERROR_TTS_INIT
+            TtsInitError.LanguageDataMissing -> SpeakResult.ERROR_LANG_MISSING_DATA
+            TtsInitError.LanguageNotSupported -> SpeakResult.ERROR_LANG_NOT_SUPPORTED
+        }
 
     private class UtteranceListener : UtteranceProgressListener() {
 
         sealed class Event(val utteranceId: String) {
             class Success(utteranceId: String) : Event(utteranceId)
+
             class Error(utteranceId: String, val errorCode: Int) : Event(utteranceId)
         }
 
@@ -152,7 +206,7 @@ class SpeakerTts(
 
         @Deprecated("Deprecated in SDK")
         override fun onError(utteranceId: String) {
-            throw UnsupportedOperationException() // The other onError should be called instead.
+            events.tryEmit(Event.Error(utteranceId, -1))
         }
     }
 }

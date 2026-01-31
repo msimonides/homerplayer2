@@ -29,7 +29,6 @@ import android.media.AudioManager
 import android.net.Uri
 import androidx.datastore.core.DataStore
 import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.studio4plus.homerplayer2.analytics.Analytics
@@ -44,6 +43,7 @@ import com.studio4plus.homerplayer2.player.usecases.bookTitleTtsPhrase
 import com.studio4plus.homerplayer2.podcasts.data.PodcastsDao
 import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
 import com.studio4plus.homerplayer2.settingsdata.UiSettings
+import com.studio4plus.homerplayer2.speech.SpeakResult
 import com.studio4plus.homerplayer2.speech.Speaker
 import com.studio4plus.homerplayer2.utils.combineTransformLatest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -65,6 +65,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
 import org.koin.core.annotation.Named
+import timber.log.Timber
 
 @KoinViewModel
 class PlayerViewModel(
@@ -207,19 +208,14 @@ class PlayerViewModel(
             .filter { it is PlaybackState.MediaState.Playing }
             .onEach { speaker.stop() }
             .launchIn(viewModelScope)
-    }
 
-    override fun onStart(owner: LifecycleOwner) {
         viewModelScope.launch {
-            speaker.initIfNeeded()
+            speaker.warmUp()
         }
     }
 
-    override fun onStop(owner: LifecycleOwner) {
-        speaker.shutdown()
-    }
-
     override fun onCleared() {
+        speaker.shutdown()
         playbackState.shutdown()
         super.onCleared()
     }
@@ -248,7 +244,9 @@ class PlayerViewModel(
                 val settings = uiSettings.first()
                 if (settings.readBookTitles && !isPlaying()) {
                     viewModelScope.launch {
-                        speaker.speakAndWait(bookTitleTtsPhrase(appContext, settings, book))
+                        val status = speaker.speakAndWait(bookTitleTtsPhrase(appContext, settings, book))
+                        if (status != SpeakResult.SUCCESS)
+                            Timber.w("Read book title failed: $status")
                     }
                 }
                 playbackUiStateRepository.updateLastSelectedBookId(book.id)
