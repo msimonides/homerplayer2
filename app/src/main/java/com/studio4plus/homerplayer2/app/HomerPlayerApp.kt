@@ -33,7 +33,6 @@ import coil3.memory.MemoryCache
 import coil3.network.okhttp.OkHttpNetworkFetcherFactory
 import coil3.request.CachePolicy
 import com.studio4plus.homerplayer2.BuildConfig
-import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.analytics.Analytics
 import com.studio4plus.homerplayer2.crash.CrashReporting
 import com.studio4plus.homerplayer2.logging.FileLoggerTreeProvider
@@ -52,7 +51,7 @@ class HomerPlayerApp : Application(), SingletonImageLoader.Factory, Configuratio
     override fun onCreate() {
         super.onCreate()
         if (!BuildConfig.DEBUG) {
-            CrashReporting.init(this, getString(R.string.sentry_dsn))
+            CrashReporting.init(this)
         }
 
         startKoin {
@@ -65,7 +64,7 @@ class HomerPlayerApp : Application(), SingletonImageLoader.Factory, Configuratio
         }
         val fileLoggerProvider: FileLoggerTreeProvider by inject()
         Timber.plant(fileLoggerProvider())
-        analytics.initialize(this, getString(R.string.telemetry_deck_app))
+        analytics.initialize(this)
 
         val appIsInForeground: AppIsInForeground by inject()
         registerActivityLifecycleCallbacks(appIsInForeground)

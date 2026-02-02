@@ -27,7 +27,7 @@ package com.studio4plus.homerplayer2.crash
 import android.content.Context
 
 interface CrashReportingInterface {
-    fun init(appContext: Context, key: String)
+    fun init(appContext: Context)
     fun captureException(e: Throwable)
     fun captureExceptionOnce(key: String, builder: () -> Throwable)
     fun setContext(key: String, value: String)

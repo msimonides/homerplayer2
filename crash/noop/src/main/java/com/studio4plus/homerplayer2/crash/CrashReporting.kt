@@ -28,7 +28,7 @@ import android.content.Context
 
 object CrashReporting : CrashReportingInterface {
 
-    override fun init(appContext: Context, key: String) = Unit
+    override fun init(appContext: Context) = Unit
     override fun captureException(e: Throwable) = Unit
     override fun captureExceptionOnce(key: String, builder: () -> Throwable) = Unit
     override fun setContext(key: String, value: String) = Unit

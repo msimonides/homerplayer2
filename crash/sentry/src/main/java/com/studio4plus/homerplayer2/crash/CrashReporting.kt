@@ -36,9 +36,9 @@ object CrashReporting : CrashReportingInterface {
 
     private val reportedAlready = ConcurrentHashMap<String, Unit>()
 
-    override fun init(appContext: Context, key: String) {
+    override fun init(appContext: Context) {
         SentryAndroid.init(appContext) { options ->
-            options.dsn = key
+            options.dsn = appContext.getString(R.string.sentry_dsn)
             options.isAnrEnabled = Build.VERSION.SDK_INT >= 30
             options.isEnableAppLifecycleBreadcrumbs = true
             options.isEnableAppComponentBreadcrumbs = true

@@ -33,7 +33,7 @@ fun createAnalytics(
 ) : Analytics = NoAnalytics()
 
 class NoAnalytics : Analytics {
-    override fun initialize(appContext: Context, appId: String) = Unit
+    override fun initialize(appContext: Context) = Unit
 
     override fun event(
         name: String,

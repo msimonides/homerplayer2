@@ -39,9 +39,9 @@ class TelemetryDeckAnalytics(
     private val delegate: AnalyticsDelegate,
 ) : Analytics {
 
-    override fun initialize(appContext: Context, appId: String) {
+    override fun initialize(appContext: Context) {
         val builder = TelemetryDeck.Builder()
-            .appID(appId)
+            .appID(appContext.getString(R.string.telemetry_deck_app))
             .showDebugLogs(true)
         TelemetryDeck.start(appContext, builder)
     }
