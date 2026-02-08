@@ -64,6 +64,7 @@ import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobooksFolderEditRoute
 import com.studio4plus.homerplayer2.base.serialization.UriAsText
 import com.studio4plus.homerplayer2.base.ui.IconButtonNavigateBack
+import com.studio4plus.homerplayer2.nav.NavBackStackState
 import com.studio4plus.homerplayer2.podcastsui.PodcastEditRoute
 import com.studio4plus.homerplayer2.settingsui.SettingsAboutRoute
 import com.studio4plus.homerplayer2.settingsui.SettingsContentRoute
@@ -273,11 +274,10 @@ private fun defaultPopTransitionSpec(): AnimatedContentTransitionScope<Scene<*>>
     androidx.navigation3.ui.defaultPopTransitionSpec<NavKey>() as AnimatedContentTransitionScope<Scene<*>>.() -> ContentTransform?
 
 fun EntryProviderScope<NavKey>.settingsEntries(
-    navBackStack: MutableList<NavKey>,
+    navBackStack: NavBackStackState<NavKey>,
     snackbarHostState: SnackbarHostState,
 ) {
-    fun onBack() = navBackStack.removeLastOrNull()
-    fun closeSettings() = navBackStack.removeAll { it is SettingsDestination }
+    fun closeSettings() = navBackStack.goBackUntil { it !is SettingsDestination }
 
     entry<SettingsMain>(
         titleRes = R.string.settings_ui_settings_title,
@@ -287,17 +287,17 @@ fun EntryProviderScope<NavKey>.settingsEntries(
     ) {
         SettingsMainRoute(
             snackbarHostState,
-            navigateFolders = { navBackStack.add(SettingsContent) },
-            navigateLockdownSettings = { navBackStack.add(SettingsLockdown) },
-            navigateNetworkSettings = { navBackStack.add(SettingsNetwork) },
-            navigatePlaybackSettings = { navBackStack.add(SettingsPlayback) },
-            navigatePlayerUiSettings = { navBackStack.add(SettingsPlayerUi) },
-            navigateTtsSettings = { navBackStack.add(SettingsTts) },
-            navigateAbout = { navBackStack.add(SettingsAbout) },
+            navigateFolders = { navBackStack.go(SettingsContent) },
+            navigateLockdownSettings = { navBackStack.go(SettingsLockdown) },
+            navigateNetworkSettings = { navBackStack.go(SettingsNetwork) },
+            navigatePlaybackSettings = { navBackStack.go(SettingsPlayback) },
+            navigatePlayerUiSettings = { navBackStack.go(SettingsPlayerUi) },
+            navigateTtsSettings = { navBackStack.go(SettingsTts) },
+            navigateAbout = { navBackStack.go(SettingsAbout) },
         )
     }
     entry<SettingsAbout>(R.string.settings_ui_about_title) {
-        SettingsAboutRoute(navigateLicenses = { navBackStack.add(SettingsLicenses) })
+        SettingsAboutRoute(navigateLicenses = { navBackStack.go(SettingsLicenses) })
     }
     entry<SettingsAudiobooksFolderEdit>(R.string.settings_ui_folder_title) { key ->
         AudiobooksFolderEditRoute(viewModel = koinViewModel { parametersOf(key.folderUri) })
@@ -305,21 +305,21 @@ fun EntryProviderScope<NavKey>.settingsEntries(
     entry<SettingsContent>(R.string.settings_ui_content_title) {
         SettingsContentRoute(
             snackbarHostState,
-            onAddPodcast = { navBackStack.add(SettingsPodcastEdit()) },
-            onEditPodcast = { feedUri -> navBackStack.add(SettingsPodcastEdit(feedUri)) },
+            onAddPodcast = { navBackStack.go(SettingsPodcastEdit()) },
+            onEditPodcast = { feedUri -> navBackStack.go(SettingsPodcastEdit(feedUri)) },
             onEditFolder = { folderUri ->
-                navBackStack.add(SettingsAudiobooksFolderEdit(folderUri))
+                navBackStack.go(SettingsAudiobooksFolderEdit(folderUri))
             },
         )
     }
     entry<SettingsLayout>(metadata = fullscreenSettings()) {
-        SettingsLayoutRoute(navigateBack = ::onBack)
+        SettingsLayoutRoute(navigateBack = navBackStack::goBack)
     }
     entry<SettingsLicenses>(R.string.settings_ui_licenses_title) { SettingsLicenses() }
     entry<SettingsLockdown>(R.string.settings_ui_lockdown_settings_title) {
         SettingsLockdownRoute(
-            navigateKioskModeSettings = { navBackStack.add(SettingsLockdownModeSetup) },
-            navigateLayoutSettings = { navBackStack.add(SettingsLayout) },
+            navigateKioskModeSettings = { navBackStack.go(SettingsLockdownModeSetup) },
+            navigateLayoutSettings = { navBackStack.go(SettingsLayout) },
             closeSettings = ::closeSettings,
         )
     }
@@ -330,7 +330,7 @@ fun EntryProviderScope<NavKey>.settingsEntries(
     entry<SettingsNetwork>(R.string.settings_ui_network_title) { SettingsNetworkRoute() }
     entry<SettingsPlayback>(R.string.settings_ui_playback_settings_title) {
         SettingsPlaybackRoute(
-            navigateRewindOnEndSettings = { navBackStack.add(SettingsPlaybackRewindOnEnd) }
+            navigateRewindOnEndSettings = { navBackStack.go(SettingsPlaybackRewindOnEnd) }
         )
     }
     entry<SettingsPlaybackRewindOnEnd>(R.string.settings_ui_playback_rewind_on_end_title) {

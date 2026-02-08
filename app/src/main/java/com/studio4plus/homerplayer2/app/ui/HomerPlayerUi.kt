@@ -39,24 +39,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSerializable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
-import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.runtime.serialization.NavBackStackSerializer
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
+import com.studio4plus.homerplayer2.app.DefaultClock
 import com.studio4plus.homerplayer2.base.ui.HomerHapticFeedback
 import com.studio4plus.homerplayer2.base.ui.NoHapticFeedback
 import com.studio4plus.homerplayer2.base.ui.VibratorProvider
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
+import com.studio4plus.homerplayer2.nav.NavBackStackState
+import com.studio4plus.homerplayer2.nav.rememberNavBackStackState
 import com.studio4plus.homerplayer2.onboarding.OnboardingDestination
 import com.studio4plus.homerplayer2.onboarding.onboardingEntries
 import com.studio4plus.homerplayer2.player.ui.PlayerRoute
@@ -87,7 +88,7 @@ fun HomerPLayerUi(
                     LaunchedEffect(eventNavigateToPlayer, navBackStack) {
                         eventNavigateToPlayer.collect {
                             navBackStack.clear()
-                            navBackStack.add(PlayerDestination)
+                            navBackStack.go(PlayerDestination)
                         }
                     }
                 }
@@ -107,8 +108,10 @@ fun HomerPLayerUi(
 }
 
 @Composable
-private fun rememberNavBackStack(initialDestination: NavKey): NavBackStack<NavKey> =
-    rememberSerializable(
+private fun rememberNavBackStack(initialDestination: NavKey): NavBackStackState<NavKey> =
+    rememberNavBackStackState(
+        DefaultClock(),
+        initialDestination,
         configuration =
             SavedStateConfiguration {
                 serializersModule = SerializersModule {
@@ -119,25 +122,23 @@ private fun rememberNavBackStack(initialDestination: NavKey): NavBackStack<NavKe
                     }
                 }
             },
-        serializer = NavBackStackSerializer<NavKey>(),
-    ) {
-        NavBackStack(initialDestination)
-    }
+        navBackStackSerializer = NavBackStackSerializer<NavKey>(),
+    )
 
 @Serializable object PlayerDestination : NavKey
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun MainNavDisplay(
-    navBackStack: NavBackStack<NavKey>,
+    navBackStack: NavBackStackState<NavKey>,
     modifier: Modifier = Modifier
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
     SharedTransitionLayout(modifier = modifier) {
         NavDisplay(
-            backStack = navBackStack,
-            onBack = { navBackStack.removeLastOrNull() },
+            backStack = navBackStack.navBackStack,
+            onBack = navBackStack::goBack,
             entryDecorators =
                 listOf(
                     rememberSaveableStateHolderNavEntryDecorator(),
@@ -147,16 +148,16 @@ private fun MainNavDisplay(
             entryProvider =
                 entryProvider {
                     onboardingEntries(
-                        navigate = { navBackStack.add(it) },
-                        navigateBack = { navBackStack.removeLastOrNull() },
+                        navigate = navBackStack::go,
+                        navigateBack = navBackStack::goBack,
                         onFinished = {
                             navBackStack.clear()
-                            navBackStack.add(PlayerDestination)
+                            navBackStack.go(PlayerDestination)
                         },
                     )
                     entry<PlayerDestination> {
                         PlayerRoute(
-                            onOpenSettings = { navBackStack.add(SettingsDestination.Default) }
+                            onOpenSettings = { navBackStack.go(SettingsDestination.Default) }
                         )
                     }
                     settingsEntries(
