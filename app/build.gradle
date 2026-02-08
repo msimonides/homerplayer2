@@ -36,6 +36,9 @@ android {
             }
         }
     }
+    dependenciesInfo {
+        includeInApk = false // Avoid dependecies info for F-Droid APKs.
+    }
 
     buildTypes {
         release {
