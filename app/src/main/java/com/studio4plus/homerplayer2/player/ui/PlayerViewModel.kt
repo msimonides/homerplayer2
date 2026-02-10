@@ -224,6 +224,7 @@ class PlayerViewModel(
         viewModelScope.launch {
             val book = allUiBooks.first().books.getOrNull(bookIndex)
             if (book != null) {
+                Timber.i("Play ${book.displayName}, currentUri: ${book.currentUri}")
                 playbackState.play(book)
                 analytics.event("Player.Play")
             }

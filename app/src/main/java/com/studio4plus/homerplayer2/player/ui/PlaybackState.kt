@@ -91,12 +91,8 @@ class PlaybackState(
                 object : Player.Listener {
                     override fun onPlayerError(error: PlaybackException) {
                         super.onPlayerError(error)
-                        Timber.w(error, "Player error")
-                    }
-
-                    override fun onPlayerErrorChanged(error: PlaybackException?) {
-                        super.onPlayerErrorChanged(error)
-                        Timber.w(error, "Player error")
+                        val uri = mediaController?.currentMediaItem?.localConfiguration?.uri
+                        Timber.w(error, "Player error: ${error.errorCodeName}, $uri")
                     }
 
                     override fun onPlaybackStateChanged(playbackState: Int) {
