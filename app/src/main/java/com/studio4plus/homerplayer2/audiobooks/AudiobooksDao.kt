@@ -44,7 +44,7 @@ abstract class AudiobooksDao {
         @Relation(parentColumn = "id", entityColumn = "book_id")
         val playbackState: AudiobookPlaybackState?,
         @Relation(parentColumn = "id", entityColumn = "book_id")
-        val files: List<AudiobookFileWithDuration>
+        val files: List<AudiobookFileWithDuration>,
     )
 
     @Transaction
@@ -80,11 +80,20 @@ abstract class AudiobooksDao {
     @Transaction
     open suspend fun replaceBooksFromFolders(
         newAudiobooks: List<Audiobook>,
-        newFiles: List<AudiobookFile>
+        newFiles: List<AudiobookFile>,
     ) {
+        // Folders may have changed during scanning, validate that new books and files are added
+        // only for existing folders, remove audiobooks for folders that no longer exist.
+        val validUris = getAudiobookFolderUris()
+        val (validAudiobooks, invalidAudiobooks) =
+            newAudiobooks.partition { validUris.contains(it.rootFolderUri) }
+        val validFiles =
+            newFiles.filter { file -> validAudiobooks.any { book -> file.bookId == book.id } }
+
         deleteAudiobooksFromFolders()
-        insertAudiobooks(newAudiobooks)
-        insertAudiobookFiles(newFiles)
+        invalidAudiobooks.forEach { deleteAudiobookById(it.id) }
+        insertAudiobooks(validAudiobooks)
+        insertAudiobookFiles(validFiles)
         deleteOrphanedDurations()
         deleteOrphanedPlaybackStates()
     }
@@ -142,7 +151,7 @@ abstract class AudiobooksDao {
         bookId: String,
         mayBeNew: Boolean,
         currentUri: Uri,
-        currentPositionMs: Long
+        currentPositionMs: Long,
     )
 
     @Upsert
@@ -150,6 +159,9 @@ abstract class AudiobooksDao {
 
     @Upsert
     protected abstract suspend fun insertAudiobookFiles(audiobookFiles: List<AudiobookFile>)
+
+    @Query("SELECT audiobooks_folders.uri FROM audiobooks_folders")
+    protected abstract suspend fun getAudiobookFolderUris(): List<Uri>
 
     @Query("SELECT * FROM audiobook_files WHERE uri IN (:uris)")
     protected abstract suspend fun getAudiobookFiles(uris: List<Uri>): List<AudiobookFile>
