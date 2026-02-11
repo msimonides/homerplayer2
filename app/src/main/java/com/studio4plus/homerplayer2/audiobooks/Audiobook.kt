@@ -110,6 +110,7 @@ data class AudiobookPlaybackState(
 @DatabaseView("""
     SELECT files.*, durations.duration_ms FROM audiobook_files AS files
         JOIN audiobook_file_durations AS durations ON files.uri = durations.uri
+        WHERE durations.duration_ms <> -1
         ORDER BY files.uri""")
 data class AudiobookFileWithDuration(
     @ColumnInfo(name = "book_id")
