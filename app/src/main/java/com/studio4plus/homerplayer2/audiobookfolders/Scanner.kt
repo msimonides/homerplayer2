@@ -156,7 +156,10 @@ class Scanner(
             emptyList()
         } else {
             cursor.flatMap {
-                val filePath = path + "/" + cursor.getString(COLUMN_DISPLAY_NAME)
+                val fileName = cursor.getString(COLUMN_DISPLAY_NAME)
+                if (fileName.startsWith(".")) return@flatMap null
+
+                val filePath = "$path/$fileName"
                 val documentId = cursor.getString(COLUMN_ID)
                 val mimeType = cursor.getString(COLUMN_MIME_TYPE)
                 if (isFolder(mimeType)) {
