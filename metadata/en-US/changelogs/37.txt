@@ -1,0 +1,2 @@
+Ignore non-audio files. Fixes issues with some books not playing or not being able to rewind after reaching the end.
+Don't scan files with name starting with a "." dot.
