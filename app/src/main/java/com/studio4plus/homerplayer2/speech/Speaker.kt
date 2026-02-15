@@ -95,7 +95,7 @@ class SpeakerTts(private val appContext: Context, private val getLocale: LocaleP
     override suspend fun speakAndWait(text: CharSequence, initTimeout: Duration): SpeakResult {
         try {
             val localTts =
-                withTimeoutOrNull(2.seconds) { getTts() }
+                withTimeoutOrNull(initTimeout) { getTts() }
                     ?: return SpeakResult.ERROR_TTS_INIT_TIMEOUT
 
             val id = UUID.randomUUID().toString()
