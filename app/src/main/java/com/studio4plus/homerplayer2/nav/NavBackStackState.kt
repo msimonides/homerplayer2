@@ -70,7 +70,7 @@ class NavBackStackState<T : NavKey>(val navBackStack: NavBackStack<T>, private v
     }
 
     fun clear() {
-        goBackIfPossible { navBackStack.clear() }
+        navBackStack.clear()
     }
 
     fun go(destination: T) {
