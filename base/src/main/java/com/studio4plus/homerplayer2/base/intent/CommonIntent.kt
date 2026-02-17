@@ -26,4 +26,5 @@ package com.studio4plus.homerplayer2.base.intent
 
 object CommonIntent {
     const val ACTION_KIOSK_RESUME = "com.studio4plus.homerplayer2.action.KIOSK_RESUME"
+    const val EXTRA_RESUME_KIOSK = "resume_kiosk"
 }

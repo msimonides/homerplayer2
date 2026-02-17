@@ -151,7 +151,9 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun processIntent(intent: Intent?) {
-        if (intent?.action == CommonIntent.ACTION_KIOSK_RESUME) {
+        if (intent?.action == Intent.ACTION_MAIN &&
+            intent.getBooleanExtra(CommonIntent.EXTRA_RESUME_KIOSK, false)
+        ) {
             eventNavigateToPlayer.tryEmit(Unit)
         }
     }

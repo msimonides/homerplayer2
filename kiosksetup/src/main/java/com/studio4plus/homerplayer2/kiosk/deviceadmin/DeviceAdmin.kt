@@ -54,6 +54,7 @@ class DeviceAdmin(
                 dpm,
                 ComponentName(Constants.PlayerAppPackage, Constants.PlayerHomeActivityClass)
             )
+            dpm.setKeyguardDisabled(DeviceAdminReceiver.component(appContext), true)
             deviceAdminStatus.setIsDeviceOwner(true)
         }
     }

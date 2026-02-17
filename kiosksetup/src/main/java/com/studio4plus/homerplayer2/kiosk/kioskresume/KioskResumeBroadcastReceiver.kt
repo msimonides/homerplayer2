@@ -27,18 +27,25 @@ package com.studio4plus.homerplayer2.kiosk.kioskresume
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import com.studio4plus.homerplayer2.base.Constants
 import com.studio4plus.homerplayer2.base.intent.CommonIntent
 
 class KioskResumeBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action == CommonIntent.ACTION_KIOSK_RESUME) {
-            val intent = Intent().apply {
-                setClassName(Constants.PlayerAppPackage, Constants.PlayerMainActivityClass)
-                action = CommonIntent.ACTION_KIOSK_RESUME
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            val intent =
+                context.packageManager.getLaunchIntentForPackage(Constants.PlayerAppPackage)
+            if (intent != null) {
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                intent.putExtra(CommonIntent.EXTRA_RESUME_KIOSK, true)
+                context.startActivity(intent)
+            } else {
+                Log.w(
+                    "KioskResumeBroadcastReceiver",
+                    "No intent for the player app ${Constants.PlayerAppPackage}"
+                )
             }
-            context.startActivity(intent)
         }
     }
 }
