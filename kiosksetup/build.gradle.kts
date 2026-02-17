@@ -1,5 +1,6 @@
 import com.android.build.gradle.api.ApplicationVariant
 import com.studio4plus.homerplayer2.GenerateProvisioningDataTask
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 /*
  * MIT License
@@ -62,9 +63,9 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
         isCoreLibraryDesugaringEnabled = true
     }
-    kotlinOptions {
-        compileOptions {
-            targetCompatibility = JavaVersion.VERSION_17
+    kotlin {
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_17
         }
     }
     buildFeatures {

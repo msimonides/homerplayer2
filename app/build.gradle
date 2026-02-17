@@ -53,8 +53,12 @@ android {
         coreLibraryDesugaringEnabled true
     }
     kotlinOptions {
-        jvmTarget = '17'
         freeCompilerArgs = ['-XXLanguage:+ContextParameters']
+    }
+    kotlin {
+        compilerOptions {
+            jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
+        }
     }
     buildFeatures {
         compose true

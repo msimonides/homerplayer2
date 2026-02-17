@@ -65,4 +65,5 @@ dependencies {
 
     implementation(libs.sentry.android)
     implementation(libs.sentry.android.timber)
+    implementation(libs.timber)
 }

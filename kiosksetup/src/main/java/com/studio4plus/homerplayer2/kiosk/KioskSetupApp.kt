@@ -35,7 +35,7 @@ class KioskSetupApp : Application() {
     override fun onCreate() {
         super.onCreate()
         if (!BuildConfig.DEBUG) {
-            CrashReporting.init(this, getString(R.string.sentry_dsn))
+            CrashReporting.init(this)
         }
 
         startKoin {
