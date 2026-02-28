@@ -108,3 +108,10 @@ repeating the setup procedure above). You can use it if there are some issues wi
 It is best to perform a factory reset afterwards anyway to make sure the device is fully reverted to
 its original state.
 </p>
+
+<script type="module" src="https://cdn.jsdelivr.net/npm/@justinribeiro/lite-youtube@1/lite-youtube.min.js"></script>
+<script>
+  document.addEventListener('liteYoutubeIframeLoaded', () => {
+	sa_event('video_kiosk_started')
+  }, false);
+</script>
