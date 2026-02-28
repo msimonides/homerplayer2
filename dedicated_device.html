@@ -8,34 +8,15 @@ meta_title: "Dedicated device setup"
 <link rel="preload" as="image" href="assets/img/kiosk_unlocked_framed.webp" />
 
 <style>
-.kiosk-showcase {
-    max-width: 42rem;
-    margin: 0 auto;
-}
-
-.kiosk-showcase > label {
-    margin: 1rem auto 2rem;
-}
-
-img.unlocked:has(~ label #kiosk-toggle:checked) {
-    display: none;
-}
-
-img.locked:has(~ label #kiosk-toggle:not(:checked)) {
-    display: none;
-}
-
 #kiosk_qr_code {
     border: solid 1rem #ffffff;
     border-radius: 2px;
 }
 </style>
 
-<div class="kiosk-showcase">
-<img src="assets/img/kiosk_unlocked_framed.webp" width="1360" height="860" class="unlocked" />
-<img src="assets/img/kiosk_locked_framed.webp" width="1360" height="860" class="locked" />
-<label><input id="kiosk-toggle" type="checkbox" role="switch" onchange="sa_event('kiosk_toggled')" checked> Lockdown mode</label>
-</div>
+<lite-youtube id="video" class="single-picture-landscape" videoid="mGDVdl5mI1w" params="cc_load_policy=1&rel=0">
+  <a class="lite-youtube-fallback" href="https://www.youtube.com/watch?v=mGDVdl5mI1w">Watch on YouTube: "Audio player lockdown mode explained"</a>
+</lite-youtube>
 
 <p>
 With Homer you can easily make an audiobook device for the elderly. All you need is an inexpensive
