@@ -133,7 +133,13 @@ class Scanner(
 
     private fun scanAudiobook(bookId: String, rootFolderUri: Uri, displayName: String, fileUris: List<Uri>): ScanResult {
         return ScanResult(
-            Audiobook(id = bookId, displayName = displayName, rootFolderUri = rootFolderUri),
+            Audiobook(
+                id = bookId,
+                displayName = displayName,
+                primarySortKey = displayName,
+                secondarySortKey = null,
+                rootFolderUri = rootFolderUri,
+            ),
             fileUris,
         )
     }

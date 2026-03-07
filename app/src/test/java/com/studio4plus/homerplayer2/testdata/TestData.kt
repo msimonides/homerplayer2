@@ -34,6 +34,8 @@ object TestData {
     val audiobook = Audiobook(
         id = "audiobook1",
         displayName = "Audiobook 1",
+        primarySortKey = "Audiobook 1",
+        secondarySortKey = null,
         rootFolderUri = Uri.parse("content://audiobook1")
     )
     val audiobookFile1 = AudiobookFile(

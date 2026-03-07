@@ -37,6 +37,10 @@ data class Audiobook(
     val id: String,
     @ColumnInfo(name = "display_name")
     val displayName: String,
+    @ColumnInfo(name = "primary_sort_key", defaultValue = "")
+    val primarySortKey: String,
+    @ColumnInfo(name = "secondary_sort_key")
+    val secondarySortKey: String?,
     @ColumnInfo(name = "root_folder_uri")
     val rootFolderUri: Uri
 )

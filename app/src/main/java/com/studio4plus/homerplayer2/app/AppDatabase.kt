@@ -78,7 +78,7 @@ abstract class AppDatabase :
 {
 
     companion object {
-        const val VERSION = 8
+        const val VERSION = 9
 
         val MIGRATION_2_3 = object : Migration(2, 3) {
             override fun migrate(db: SupportSQLiteDatabase) {
@@ -99,7 +99,44 @@ abstract class AppDatabase :
             }
         }
 
-        val migrations = arrayOf(MIGRATION_2_3)
+        val MIGRATION_8_9 = object : Migration(8, 9) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "ALTER TABLE `audiobooks` " +
+                        "ADD COLUMN `primary_sort_key` TEXT NOT NULL DEFAULT ''"
+                )
+                db.execSQL(
+                    "ALTER TABLE `audiobooks` " +
+                        "ADD COLUMN `secondary_sort_key` TEXT"
+                )
+
+                db.execSQL(
+                    """
+                    UPDATE audiobooks
+                       SET primary_sort_key = display_name,
+                           secondary_sort_key = NULL
+                    """.trimIndent()
+                )
+
+                db.execSQL(
+                    """
+                    UPDATE audiobooks
+                       SET primary_sort_key =
+                               (SELECT COALESCE(p.title_override, p.title)
+                                  FROM podcast_episodes e
+                                  JOIN podcasts p ON p.feed_uri = e.feed_uri
+                                 WHERE e.file_id = audiobooks.id),
+                           secondary_sort_key =
+                               (SELECT e.pub_time
+                                  FROM podcast_episodes e
+                                 WHERE e.file_id = audiobooks.id)
+                     WHERE EXISTS (SELECT 1 FROM podcast_episodes e WHERE e.file_id = audiobooks.id)
+                    """.trimIndent()
+                )
+            }
+        }
+
+        val migrations = arrayOf(MIGRATION_2_3, MIGRATION_8_9)
     }
 
     @RenameColumn(

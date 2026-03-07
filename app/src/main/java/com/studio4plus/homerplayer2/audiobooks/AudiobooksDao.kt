@@ -25,6 +25,7 @@
 package com.studio4plus.homerplayer2.audiobooks
 
 import android.net.Uri
+import androidx.annotation.VisibleForTesting
 import androidx.room.Dao
 import androidx.room.Embedded
 import androidx.room.Insert
@@ -48,8 +49,17 @@ abstract class AudiobooksDao {
     )
 
     @Transaction
-    @Query("SELECT * FROM audiobooks ORDER BY display_name COLLATE LOCALIZED")
+    @Query(
+        """SELECT * FROM audiobooks
+           ORDER BY primary_sort_key COLLATE LOCALIZED,
+                    secondary_sort_key ASC,
+                    display_name COLLATE LOCALIZED"""
+    )
     abstract fun getAll(): Flow<List<AudiobookWithState>>
+
+    @VisibleForTesting
+    @Query("SELECT * FROM audiobooks ORDER BY id")
+    abstract fun getAllForDebug(): List<Audiobook>
 
     @Transaction
     @Query("SELECT * FROM audiobooks WHERE id = :id")

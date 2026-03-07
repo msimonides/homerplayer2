@@ -75,8 +75,16 @@ class DownloadPendingPodcastEpisodes(
     private suspend fun addAudiobook(podcast: Podcast, episode: PodcastEpisode, file: File) {
         val displayName = podcastEpisodeName(podcast, episode)
         val bookId = episode.fileId
+        val podcastTitle = podcast.titleOverride ?: podcast.title
+        val secondarySortKey = episode.publicationTime?.toString()
         val audiobook =
-            Audiobook(bookId, displayName = displayName, rootFolderUri = Uri.parse(podcast.feedUri))
+            Audiobook(
+                id = bookId,
+                displayName = displayName,
+                primarySortKey = podcastTitle,
+                secondarySortKey = secondarySortKey,
+                rootFolderUri = Uri.parse(podcast.feedUri),
+            )
         val audiobookFile = AudiobookFile(bookId = bookId, uri = Uri.fromFile(file))
         audiobooksDao.insertAudiobook(audiobook, listOf(audiobookFile))
         Timber.i("Added episode ${episode.uri} to audiobooks '$displayName'")
