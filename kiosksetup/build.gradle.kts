@@ -43,8 +43,8 @@ android {
         applicationId = "com.studio4plus.homerplayer2.kiosk"
         minSdk = 24
         targetSdk = 35
-        versionCode = 6
-        versionName = "1.5.1"
+        versionCode = 7
+        versionName = "1.5.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
