@@ -7,32 +7,9 @@
    viewBox="0 0 135.46666 135.46667"
    version="1.1"
    id="svg5"
-   sodipodi:docname="homer2.svg"
-   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
-  <sodipodi:namedview
-     id="namedview25"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:showpageshadow="2"
-     inkscape:pageopacity="0.0"
-     inkscape:pagecheckerboard="0"
-     inkscape:deskcolor="#d1d1d1"
-     showgrid="false"
-     inkscape:zoom="2.6074563"
-     inkscape:cx="322.53657"
-     inkscape:cy="337.30192"
-     inkscape:window-width="3840"
-     inkscape:window-height="2054"
-     inkscape:window-x="-11"
-     inkscape:window-y="-11"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="svg5" />
   <defs
      id="defs2">
     <linearGradient
@@ -96,8 +73,7 @@
        y1="355.25458"
        x2="356.5"
        y2="355.25458"
-       gradientUnits="userSpaceOnUse"
-       xlink:href="#linearGradient6255">
+       gradientUnits="userSpaceOnUse">
       <stop
          style="stop-color:#2bd67d;stop-opacity:1;"
          offset="0"
@@ -110,28 +86,6 @@
          style="stop-color:#118846;stop-opacity:1;"
          offset="1"
          id="stop3274" />
-    </linearGradient>
-    <linearGradient
-       id="linearGradient32340"
-       gradientUnits="userSpaceOnUse"
-       x1="179.50002"
-       y1="355.25458"
-       x2="356.5"
-       y2="355.25458"
-       gradientTransform="matrix(-0.75000002,0,0,0.75000002,459.00003,348)"
-       spreadMethod="pad">
-      <stop
-         style="stop-color:#0d9b84;stop-opacity:1;"
-         offset="0"
-         id="stop32346" />
-      <stop
-         style="stop-color:#1bb09d;stop-opacity:1;"
-         offset="0.60272872"
-         id="stop32344" />
-      <stop
-         style="stop-color:#29c2af;stop-opacity:1;"
-         offset="1"
-         id="stop32342" />
     </linearGradient>
     <linearGradient
        id="linearGradient2817"
@@ -168,16 +122,26 @@
          id="stop6249" />
     </linearGradient>
     <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient28870-1"
        id="linearGradient4008"
        x1="192.00002"
        y1="613.45538"
        x2="324"
        y2="613.45538"
-       gradientUnits="userSpaceOnUse" />
+       gradientUnits="userSpaceOnUse">
+      <stop
+         style="stop-color:#2bd67d;stop-opacity:1;"
+         offset="0"
+         id="stop4008-1" />
+      <stop
+         style="stop-color:#23a45d;stop-opacity:1;"
+         offset="0.39594841"
+         id="stop4008-2" />
+      <stop
+         style="stop-color:#118846;stop-opacity:1;"
+         offset="1"
+         id="stop4008-3" />
+    </linearGradient>
     <linearGradient
-       inkscape:collect="always"
        xlink:href="#linearGradient6235"
        id="linearGradient6229"
        gradientUnits="userSpaceOnUse"
@@ -189,9 +153,6 @@
   </defs>
   <g
      id="layer1-8"
-     inkscape:export-filename="fg2.svg"
-     inkscape:export-xdpi="96"
-     inkscape:export-ydpi="96"
      style="display:inline">
     <path
        d="M -2.0000002e-6,0 H 135.46666 V 135.46667 H -2.0000002e-6 Z"
@@ -215,10 +176,9 @@
          id="path17621"
          transform="matrix(0.75000002,0,0,0.75000002,-75.000009,348)" />
       <path
-         style="fill:url(#linearGradient4008);fill-opacity:1;stroke:none;stroke-width:0.75px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         style="display:inline;fill:url(#linearGradient4008);fill-opacity:1;stroke:none;stroke-width:0.75px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
          d="m 324.00001,699.00002 c -113.625,36.75 -132,-6 -132,-6 V 513.00001 c 0,0 30,30 132,12 z"
-         id="path32338"
-         inkscape:label="path32338" />
+         id="path32338" />
     </g>
     <path
        style="display:inline;fill:url(#linearGradient2817);fill-opacity:1;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
