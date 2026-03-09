@@ -203,7 +203,11 @@ class PodcastsRefreshWork(
         }
 
         isSuccess = isSuccess && downloadedAll
-        return if (isSuccess) Result.success() else Result.failure()
+        return when {
+            isSuccess -> Result.success()
+            runAttemptCount < 5 -> Result.retry()
+            else -> Result.failure()
+        }
     }
 
     private fun createWifiLock(): WifiManager.WifiLock {
