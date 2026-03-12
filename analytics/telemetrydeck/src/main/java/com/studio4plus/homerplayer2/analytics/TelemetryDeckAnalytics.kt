@@ -25,9 +25,19 @@
 package com.studio4plus.homerplayer2.analytics
 
 import android.content.Context
+import com.telemetrydeck.sdk.PersistentSignalCache
+import com.telemetrydeck.sdk.Signal
+import com.telemetrydeck.sdk.SignalCache
 import com.telemetrydeck.sdk.TelemetryDeck
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
+import java.util.concurrent.Executors
 
 fun createAnalytics(
     mainScope: CoroutineScope,
@@ -36,23 +46,37 @@ fun createAnalytics(
 
 class TelemetryDeckAnalytics(
     private val mainScope: CoroutineScope,
-    private val delegate: AnalyticsDelegate,
+    delegate: AnalyticsDelegate,
 ) : Analytics {
 
+    private val singleThreadDispatcher = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
+    private val scope = mainScope + singleThreadDispatcher
+    private val mutex = Mutex() // Needed to synchronize initialization with events.
+
     override fun initialize(appContext: Context) {
-        val builder = TelemetryDeck.Builder()
-            .appID(appContext.getString(R.string.telemetry_deck_app))
-            .showDebugLogs(true)
-        TelemetryDeck.start(appContext, builder)
+        mainScope.launch(start = CoroutineStart.UNDISPATCHED) {
+            mutex.withLock {
+                val cache = withContext(singleThreadDispatcher) {
+                    // PersistentSignalCache does I/O in constructor, create it on a background thread.
+                    PersistentSignalCache(appContext.cacheDir, null)
+                }
+                val builder = TelemetryDeck.Builder()
+                    .appID(appContext.getString(R.string.telemetry_deck_app))
+                    .signalCache(cache)
+                // start needs to be called on the main thread to register with LifecycleRegistry.
+                TelemetryDeck.start(appContext, builder)
+            }
+        }
     }
 
     override fun event(name: String, params: Map<String, String>) {
-        if (delegate.shouldSendImmediately()) {
-            mainScope.launch {
-                TelemetryDeck.send(name, additionalPayload = params)
+        // signal writes to disk cache with blocking I/O.
+        scope.launch(singleThreadDispatcher) {
+            mutex.withLock {
+                // delegate.shouldSendImmediately() can be ignored, TelemetryDeck sends data with max
+                // 10s delay which should be good enough.
+                TelemetryDeck.signal(name, params = params)
             }
-        } else {
-            TelemetryDeck.signal(name, params = params)
         }
     }
 
