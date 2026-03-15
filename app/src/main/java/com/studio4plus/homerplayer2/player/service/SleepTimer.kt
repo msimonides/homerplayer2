@@ -38,6 +38,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -58,7 +59,7 @@ class SleepTimer(
     private val deviceMotionDetector: DeviceMotionDetector,
     private val clock: Clock,
     private val wakeLock: WakeLock,
-    @Named(SettingsDataModule.PLAYBACK) playbackSettings: DataStore<PlaybackSettings>
+    @Named(SettingsDataModule.PLAYBACK) private val playbackSettings: DataStore<PlaybackSettings>,
 ) : Player.Listener {
 
     private var motionDetectionJob: Job? = null
@@ -94,7 +95,6 @@ class SleepTimer(
                 motionDetectionJob?.cancel()
             }
         }
-        Unit
     }
 
     init {
@@ -106,8 +106,11 @@ class SleepTimer(
         isPlayingFlow.value = isPlaying
     }
 
-    private fun onSignificantMotion(sleepTimerSeconds: Int) {
+    private suspend fun onSignificantMotion(sleepTimerSeconds: Int) {
         if (!player.isPlaying) {
+            val rewindOnResumeSeconds = playbackSettings.data.first().rewindOnResumeSeconds
+            val rewindSeconds = maxOf(rewindOnResumeSeconds, sleepTimerSeconds)
+            player.seekTo((player.currentPosition - rewindSeconds).coerceAtLeast(0))
             player.play()
         }
         extendSleepTimer(sleepTimerSeconds)
