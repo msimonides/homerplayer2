@@ -85,7 +85,8 @@ private fun SettingsPlayback(
     var showDialog by rememberSaveable { mutableStateOf<SettingsPlaybackDialogType?>(null) }
     val settingItemModifier = Modifier.defaultSettingsItem()
     Column(
-        modifier = modifier.verticalScroll(rememberScrollState())
+        modifier = modifier
+            .verticalScroll(rememberScrollState())
             .navigationBarsPadding()
     ) {
         SettingItem(
@@ -176,6 +177,7 @@ private fun SelectSleepTimerDialog(
             TimeUnit.MINUTES.toSeconds(5).toInt(),
             TimeUnit.MINUTES.toSeconds(15).toInt(),
             TimeUnit.MINUTES.toSeconds(30).toInt(),
+            TimeUnit.MINUTES.toSeconds(60).toInt(),
         ),
         produceLabel = { sleepTimerSettingString(it) },
         title = stringResource(id = R.string.settings_ui_playback_sleep_timer_label),
