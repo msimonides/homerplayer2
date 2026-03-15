@@ -28,6 +28,7 @@ import android.os.PowerManager.WakeLock
 import androidx.datastore.core.DataStore
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
+import com.studio4plus.homerplayer2.player.usecases.SetRelativePositionForCurrentBook
 import com.studio4plus.homerplayer2.settingsdata.PlaybackSettings
 import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
 import com.studio4plus.homerplayer2.utils.Clock
@@ -60,6 +61,7 @@ class SleepTimer(
     private val clock: Clock,
     private val wakeLock: WakeLock,
     @Named(SettingsDataModule.PLAYBACK) private val playbackSettings: DataStore<PlaybackSettings>,
+    private val setRelativePositionForCurrentBook: SetRelativePositionForCurrentBook,
 ) : Player.Listener {
 
     private var motionDetectionJob: Job? = null
@@ -125,6 +127,7 @@ class SleepTimer(
             wakeLock.acquire(RESUME_AFTER_STOP_TIME_MS)
             delay(RESUME_AFTER_STOP_TIME_MS)
             motionDetectionJob?.cancel()
+            setRelativePositionForCurrentBook(-(sleepTimerSeconds / 2 * 1000L))
         }
     }
 
@@ -141,6 +144,10 @@ class SleepTimer(
         } finally {
             player.volume = 1f
         }
+    }
+
+    private fun rewindByHalfSleepTimer(sleepTimerSeconds: Long) {
+
     }
 
     private fun <T> Flow<T>.withPrevious(initialValue: T): Flow<Pair<T, T>> =
