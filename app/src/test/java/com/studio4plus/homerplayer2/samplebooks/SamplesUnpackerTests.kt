@@ -25,8 +25,12 @@
 package com.studio4plus.homerplayer2.samplebooks
 
 import android.app.Application
+import com.studio4plus.homerplayer2.testutils.TestDispatcherProvider
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -41,9 +45,19 @@ class SamplesUnpackerTests {
     @get:Rule
     val rule = SampleBooksTestRule()
 
+    private lateinit var testDispatcherProvider: TestDispatcherProvider
+    private lateinit var testScope: TestScope
+
+    @Before
+    fun setup() {
+        val dispatcher = StandardTestDispatcher()
+        testScope = TestScope(dispatcher)
+        testDispatcherProvider = TestDispatcherProvider(dispatcher)
+    }
+
     @Test
-    fun `when translation is missing then default is used`() = runTest {
-        val installer = SamplesUnpacker({ Locale.US })
+    fun `when translation is missing then default is used`() = testScope.runTest {
+        val installer = SamplesUnpacker({ Locale.US }, testDispatcherProvider)
         installer(rule.inputStream("book_samples.zip"), rule.outputFolder)
 
         val expected = setOf(
@@ -54,9 +68,9 @@ class SamplesUnpackerTests {
     }
 
     @Test
-    fun `when MX Spanish is missing then use generic Spanish`() = runTest {
+    fun `when MX Spanish is missing then use generic Spanish`() = testScope.runTest {
         val locale = Locale("es", "mx")
-        val installer = SamplesUnpacker({ locale })
+        val installer = SamplesUnpacker({ locale }, testDispatcherProvider)
         installer(rule.inputStream("book_samples.zip"), rule.outputFolder)
 
         val expected = setOf("[es_MX] Sample Book 1", "[es] Sample Book 2")

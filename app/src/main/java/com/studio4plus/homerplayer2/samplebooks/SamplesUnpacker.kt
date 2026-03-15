@@ -24,8 +24,10 @@
 
 package com.studio4plus.homerplayer2.samplebooks
 
+import com.studio4plus.homerplayer2.base.DispatcherProvider
 import com.studio4plus.homerplayer2.base.LocaleProvider
 import com.studio4plus.homerplayer2.crash.CrashReporting
+import kotlinx.coroutines.runInterruptible
 import org.json.JSONObject
 import org.koin.core.annotation.Factory
 import timber.log.Timber
@@ -40,15 +42,18 @@ private const val FALLBACK_LANG = "default"
 @Factory
 class SamplesUnpacker(
     private val getLocale: LocaleProvider,
+    private val dispatcherProvider: DispatcherProvider,
 ) {
     @Throws(IOException::class, IllegalArgumentException::class)
-    operator fun invoke(zipFile: File, destinationFolder: File) =
+    suspend operator fun invoke(zipFile: File, destinationFolder: File) =
         invoke(zipFile.inputStream(), destinationFolder)
 
     @Throws(IOException::class, IllegalArgumentException::class)
-    operator fun invoke(inputStream: InputStream, destinationFolder: File) {
-        unzip(inputStream, destinationFolder)
-        localizeTitles(destinationFolder)
+    suspend operator fun invoke(inputStream: InputStream, destinationFolder: File) {
+        runInterruptible(dispatcherProvider.Io) {
+            unzip(inputStream, destinationFolder)
+            localizeTitles(destinationFolder)
+        }
     }
 
     @Throws(IOException::class)
