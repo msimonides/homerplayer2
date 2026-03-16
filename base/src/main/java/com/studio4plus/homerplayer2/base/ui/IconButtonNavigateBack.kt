@@ -30,6 +30,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.dropUnlessResumed
 import com.studio4plus.homerplayer2.base.R
 
 @Composable
@@ -38,7 +39,7 @@ fun IconButtonNavigateBack(
     modifier: Modifier = Modifier
 ) {
     IconButton(
-        onClick = onBack,
+        onClick = dropUnlessResumed { onBack() },
         modifier = modifier,
     ) {
         Icon(
