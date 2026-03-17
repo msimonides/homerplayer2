@@ -1,11 +1,9 @@
 Homer turns any Android tablet into a dedicated, easy-to-use audio player for seniors. Caregivers configure the app and manage content, while loved ones enjoy audiobooks and podcasts independently - without confusion or mistakes.
 
 <b>Two user roles</b>
-<ul>
-<li><b>caregiver (you)</b> - access settings to customize the interface, manage content, and configure everything to your loved one's needs,</li>
-<li><b>the listener</b> - uses a simple interface to select and play audiobooks and podcasts, with lockdown mode enabled there's nothing to accidentally change or break.</li>
+- <b>caregiver (you)</b> - access settings to customize the interface, manage content, and configure everything to your loved one's needs,
+- <b>the listener</b> - uses a simple interface to select and play audiobooks and podcasts, with lockdown mode enabled there's nothing to accidentally change or break.
 </ul>
-
 
 <b>Unique features</b>
 
@@ -18,7 +16,7 @@ Add audiobooks and podcasts and adjust the interface in the settings panel. The 
 <b>Easy handling</b>
 Add extra screen margins to prevent accidental taps when holding the tablet.
 
-<b>Distraction-free experience<b>
+<b>Distraction-free experience</b>
 No ads, notifications or pop-ups to confuse the user.
 
 <b>Designed for independence</b>
@@ -27,26 +25,22 @@ All configuration, settings and content management is done in the settings secti
 This allows independence for those who struggle with smartphones, regular MP3 players or other mainstream devices.
 
 <b>Perfect for:</b>
-<ul>
-<li>elderly, visually impaired users,</li>
-<li>people with cognitive impairment (recovering from a stroke, learning disorders etc.),</li>
-<li>dementia patients who benefit from listening to familiar audiobooks,</li>
-<li>other non-tech-savvy users who need a simple, foolproof audio device.</li>
-</ul>
+- elderly, visually impaired users,
+- people with cognitive impairment (recovering from a stroke, learning disorders etc.),
+- dementia patients who benefit from listening to familiar audiobooks,
+- other non-tech-savvy users who need a simple, foolproof audio device.
 
 <b>How it works</b>
-<ol>
-<li>Install Homer on any Android 7+ phone or tablet.
-<li>Configure as caregiver - add content, customize the interface for your loved one's needs.
-<li>Hide the settings button and lock down the interface.</li>
-<li>Hand to listener for simple, independent listening.</li>
-</ol>
+1. Install Homer on any Android 7+ phone or tablet.
+2. Configure as caregiver - add content, customize the interface for your loved one's needs.
+3. Hide the settings button and lock down the interface.
+4. Hand to listener for simple, independent listening.
 
 Use an older Android tablet you already own or buy a budget model. Homer will transform it into a purpose-built audio player that's easier to use than expensive alternatives.
 
 <b>Additional details</b>
 
-<b>Simple interface</h2>
+<b>Simple interface</b>
 - Large buttons - Swipe left and right to change audiobooks and podcasts
 - No nested content structure - all audiobooks and podcast episodes are on a single list
 - Reads titles aloud for visually impaired users
