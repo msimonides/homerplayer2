@@ -100,7 +100,9 @@ fun SettingsLayoutRoute(
                 navigateBack()
             },
             onCancel = navigateBack,
-            modifier = Modifier.fillMaxSize().background(Color.Black),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black),
         )
     } else {
         Box(modifier = Modifier.fillMaxSize())
@@ -166,8 +168,10 @@ fun SettingsLayout(
                     playerActions = PlayerActions.EMPTY,
                     playerUiSettings = settings,
                     sharedTransitionScope = this@SharedTransitionScope,
+                    shouldPresentPlayButton = false,
                     modifier =
-                        Modifier.statusBarsFixedPadding()
+                        Modifier
+                            .statusBarsFixedPadding()
                             .navigationBarsPadding()
                             .padding(
                                 horizontal = HomerTheme.dimensions.screenHorizPadding,
@@ -197,7 +201,8 @@ fun SettingsLayout(
                     state = horizontalDragState,
                     onDragChange = onDragChange,
                     modifier =
-                        Modifier.align(AbsoluteAlignment.CenterLeft)
+                        Modifier
+                            .align(AbsoluteAlignment.CenterLeft)
                             .navigationBarsPadding()
                             .mandatorySystemGesturesPadding(),
                 )
@@ -207,7 +212,8 @@ fun SettingsLayout(
                     reverse = true,
                     onDragChange = onDragChange,
                     modifier =
-                        Modifier.align(AbsoluteAlignment.CenterRight)
+                        Modifier
+                            .align(AbsoluteAlignment.CenterRight)
                             .navigationBarsPadding()
                             .mandatorySystemGesturesPadding(),
                 )
@@ -217,7 +223,8 @@ fun SettingsLayout(
                     reverse = true,
                     onDragChange = onDragChange,
                     modifier =
-                        Modifier.align(Alignment.BottomCenter)
+                        Modifier
+                            .align(Alignment.BottomCenter)
                             .navigationBarsPadding()
                             .mandatorySystemGesturesPadding(),
                 )
@@ -242,7 +249,9 @@ private fun Overlay(onSave: () -> Unit, onCancel: () -> Unit, modifier: Modifier
         ) {
             Column(
                 modifier =
-                    Modifier.padding(horizontal = 24.dp, vertical = 16.dp).width(IntrinsicSize.Max),
+                    Modifier
+                        .padding(horizontal = 24.dp, vertical = 16.dp)
+                        .width(IntrinsicSize.Max),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Text(
@@ -272,7 +281,9 @@ private fun PreviewSettingsLayout() {
             PlayerUiSettings(),
             { _, _, _, _ -> },
             {},
-            modifier = Modifier.fillMaxSize().background(Color.Black),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black),
         )
     }
 }

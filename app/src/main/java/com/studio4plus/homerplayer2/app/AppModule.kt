@@ -112,7 +112,8 @@ class AppModule {
             StoredAppState(),
             StoredAppState.serializer(),
             migrations = listOf(
-                StoredAppStateMigration1_2(versionUpdate)
+                StoredAppStateMigration1_2(versionUpdate),
+                StoredAppStateMigration2_3(versionUpdate)
             )
         )
 

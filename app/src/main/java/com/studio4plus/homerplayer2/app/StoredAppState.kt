@@ -33,6 +33,7 @@ import org.koin.core.annotation.Factory
 data class StoredAppState(
     val onboardingCompleted: Boolean = false,
     val hasPresentSwipeGesture: Boolean = false,
+    val hasPresentPlayButton: Boolean = false,
     val firstRunTimestampMs: Long = UNSET_TIMESTAMP_MS,
 ) {
     companion object {
@@ -50,4 +51,16 @@ class StoredAppStateMigration1_2(val versionUpdate: VersionUpdate) : DataMigrati
 
     override suspend fun migrate(currentData: StoredAppState): StoredAppState =
         currentData.copy(hasPresentSwipeGesture = true)
+}
+
+@Factory
+class StoredAppStateMigration2_3(val versionUpdate: VersionUpdate) : DataMigration<StoredAppState> {
+
+    override suspend fun shouldMigrate(currentData: StoredAppState): Boolean =
+        versionUpdate.updatingFromVersion <= 38
+
+    override suspend fun cleanUp() = Unit
+
+    override suspend fun migrate(currentData: StoredAppState): StoredAppState =
+        currentData.copy(hasPresentPlayButton = true)
 }

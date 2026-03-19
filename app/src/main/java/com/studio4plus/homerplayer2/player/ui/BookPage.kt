@@ -30,6 +30,12 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.InfiniteTransition
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.keyframesWithSpline
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -43,6 +49,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -63,6 +70,7 @@ fun BookPage(
     playerActions: PlayerActions,
     playerUiSettings: PlayerUiSettings,
     sharedTransitionScope: SharedTransitionScope,
+    shouldPresentPlayButton: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val buttonInteractionSource = remember { MutableInteractionSource() }
@@ -71,6 +79,14 @@ fun BookPage(
             if (isPlaying) HomerTheme.colors.controlStop else HomerTheme.colors.controlPlay,
             animationSpec = tween(),
         )
+
+    val buttonScaleTransition = rememberInfiniteTransition()
+    val buttonScale = if (shouldPresentPlayButton && !isPlaying) {
+        buttonScaleTransition.animateButtonPulse().value
+    } else {
+        1f
+    }
+
     val button: @Composable (padding: PaddingValues) -> Unit = { padding ->
         val icon = if (isPlaying) R.drawable.icon_stop else R.drawable.icon_play_arrow
         val contentDescription =
@@ -81,10 +97,14 @@ fun BookPage(
             }
         Box(
             contentAlignment = Alignment.Center,
-            modifier = Modifier.fillMaxSize().padding(paddingValues = padding),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues = padding),
         ) {
             RoundIconButton(
-                modifier = Modifier.align(Alignment.Center),
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .graphicsLayer(scaleX = buttonScale, scaleY = buttonScale),
                 icon = icon,
                 iconContentDescription = contentDescription,
                 containerColor = buttonColor,
@@ -231,6 +251,24 @@ private fun HorizontalBookPage(
     }
 }
 
+@Composable
+private fun InfiniteTransition.animateButtonPulse() = animateFloat(
+    1f,
+    1f,
+    infiniteRepeatable(
+        keyframesWithSpline {
+            durationMillis = 10_000
+            1f at 0
+            1f at 4_000
+            0.95f at 4_200
+            1.08f at 4_600
+            0.99f at 4_850
+            1f at 5_000 using LinearOutSlowInEasing
+            1f at 9_999
+        }
+    )
+)
+
 @Preview
 @Composable
 private fun VerticalBookPagePreview() =
@@ -245,6 +283,7 @@ private fun VerticalBookPagePreview() =
                 playerActions = PlayerActions.EMPTY,
                 playerUiSettings = PlayerUiSettings(true, true, true),
                 sharedTransitionScope = this,
+                shouldPresentPlayButton = false,
                 modifier = Modifier.padding(16.dp)
             )
         }
@@ -264,6 +303,7 @@ private fun HorizontalBookPagePreview() =
                 playerActions = PlayerActions.EMPTY,
                 playerUiSettings = PlayerUiSettings(true, true, true),
                 sharedTransitionScope = this,
+                shouldPresentPlayButton = false,
                 modifier = Modifier.padding(16.dp)
             )
         }
@@ -283,6 +323,7 @@ private fun VerticalPlayingBookPagePreview() =
                 playerActions = PlayerActions.EMPTY,
                 playerUiSettings = PlayerUiSettings(true, true, true),
                 sharedTransitionScope = this,
+                shouldPresentPlayButton = false,
                 modifier = Modifier.padding(16.dp)
             )
         }
@@ -302,6 +343,7 @@ private fun HorizontalPlayingBookPagePreview() =
                 playerActions = PlayerActions.EMPTY,
                 playerUiSettings = PlayerUiSettings(false, false, false),
                 sharedTransitionScope = this,
+                shouldPresentPlayButton = false,
                 modifier = Modifier.padding(16.dp)
             )
         }

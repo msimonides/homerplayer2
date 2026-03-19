@@ -67,3 +67,15 @@ inline fun <reified T1, T2, T3, R> combineTransformLatest(
     @Suppress("UNCHECKED_CAST")
     transform(v1 as T1, v2 as T2, v3 as T3)
 }
+
+@OptIn(ExperimentalTypeInference::class)
+inline fun <reified T1, T2, T3, T4, R> combineTransformLatest(
+    flow1: Flow<T1>,
+    flow2: Flow<T2>,
+    flow3: Flow<T3>,
+    flow4: Flow<T4>,
+    @BuilderInference noinline transform: suspend FlowCollector<R>.(T1, T2, T3, T4) -> Unit
+): Flow<R> = combineTransformLatest(flow1, flow2, flow3, flow4) { (v1, v2, v3, v4) ->
+    @Suppress("UNCHECKED_CAST")
+    transform(v1 as T1, v2 as T2, v3 as T3, v4 as T4)
+}

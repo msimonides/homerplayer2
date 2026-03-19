@@ -39,6 +39,7 @@ import com.studio4plus.homerplayer2.player.Audiobook
 import com.studio4plus.homerplayer2.player.PlaybackUiStateRepository
 import com.studio4plus.homerplayer2.player.toAudiobook
 import com.studio4plus.homerplayer2.player.usecases.PresentSwipeGesture
+import com.studio4plus.homerplayer2.player.usecases.PresentPlayButton
 import com.studio4plus.homerplayer2.player.usecases.bookTitleTtsPhrase
 import com.studio4plus.homerplayer2.podcasts.data.PodcastsDao
 import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
@@ -79,6 +80,7 @@ class PlayerViewModel(
     private val speaker: Speaker,
     batteryStateProvider: BatteryStateProvider,
     private val presentSwipeGesture: PresentSwipeGesture,
+    private val presentPlayButton: PresentPlayButton,
     private val analytics: Analytics,
 ) : ViewModel(), PlaybackController by playbackState, DefaultLifecycleObserver {
 
@@ -103,6 +105,7 @@ class PlayerViewModel(
             val selectedIndex: Int,
             val isPlaying: Boolean,
             val shouldPresentSwipeGesture: Boolean,
+            val shouldPresentPlayButton: Boolean,
         ) : BooksState
     }
 
@@ -122,9 +125,10 @@ class PlayerViewModel(
         allUiBooks,
         playbackStateFlow,
         presentSwipeGesture.shouldPresent,
-    ) { booksState, mediaState, shouldPresentSwipeGesture ->
+        presentPlayButton.shouldPresent,
+    ) { booksState, mediaState, shouldPresentSwipeGesture, shouldPresentPlayButton ->
         when (mediaState) {
-            is PlaybackState.MediaState.Initializing -> BooksState.Initializing
+            is PlaybackState.MediaState.Initializing -> emit(BooksState.Initializing)
             is PlaybackState.MediaState.Ready -> when {
                 booksState.books.isEmpty() -> {
                     emit(BooksState.Initializing)
@@ -139,14 +143,19 @@ class PlayerViewModel(
                     )
                 }
 
-                else -> emit(
-                    BooksState.Books(
-                        booksState.bookStates,
-                        booksState.selectedIndex,
-                        isPlaying = false,
-                        shouldPresentSwipeGesture = shouldPresentSwipeGesture,
+                else -> {
+                    val presentSwipe = shouldPresentSwipeGesture && booksState.books.size > 1
+                    val presentPlay = !presentSwipe && shouldPresentPlayButton
+                    emit(
+                        BooksState.Books(
+                            booksState.bookStates,
+                            booksState.selectedIndex,
+                            isPlaying = false,
+                            shouldPresentSwipeGesture = presentSwipe,
+                            shouldPresentPlayButton = presentPlay,
+                        )
                     )
-                )
+                }
             }
 
             is PlaybackState.MediaState.Playing -> {
@@ -173,7 +182,8 @@ class PlayerViewModel(
                     b,
                     booksState.selectedIndex,
                     isPlaying = true,
-                    shouldPresentSwipeGesture = false
+                    shouldPresentSwipeGesture = false,
+                    shouldPresentPlayButton = false
                 )
                 emit(state)
             }
@@ -225,6 +235,7 @@ class PlayerViewModel(
             val book = allUiBooks.first().books.getOrNull(bookIndex)
             if (book != null) {
                 Timber.i("Play ${book.displayName}, currentUri: ${book.currentUri}")
+                presentPlayButton.onUserPlayButton()
                 playbackState.play(book)
                 analytics.event("Player.Play")
             }

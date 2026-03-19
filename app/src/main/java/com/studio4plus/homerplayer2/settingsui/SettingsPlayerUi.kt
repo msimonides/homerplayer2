@@ -94,6 +94,7 @@ private fun SettingsPlayerUi(
                     playerActions = PlayerActions.EMPTY,
                     playerUiSettings = viewState.playerUiSettings,
                     sharedTransitionScope = this,
+                    shouldPresentPlayButton = false,
                     modifier =
                         modifier
                             .weight(1f)
@@ -110,7 +111,10 @@ private fun SettingsPlayerUi(
         }
         Column(
             modifier =
-                Modifier.weight(1f).verticalScroll(rememberScrollState()).navigationBarsPadding()
+                Modifier
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState())
+                    .navigationBarsPadding()
         ) {
             val settingItemModifier = Modifier.defaultSettingsItem()
             SettingSwitch(

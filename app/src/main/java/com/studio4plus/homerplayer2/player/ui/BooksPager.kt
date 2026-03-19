@@ -113,6 +113,7 @@ fun BooksPager(
                     playerActions = playerActions,
                     playerUiSettings = playerUiSettings,
                     landscape = landscape,
+                    shouldPresentPlayButton = state.shouldPresentPlayButton,
                     sharedTransitionScope = this@SharedTransitionLayout,
                     modifier = modifier.padding(itemPadding)
                 )
@@ -174,6 +175,7 @@ fun DefaultPreview() {
                 selectedIndex = 1,
                 isPlaying = false,
                 shouldPresentSwipeGesture = false,
+                shouldPresentPlayButton = false,
             ),
             itemPadding = HomerTheme.dimensions.screenHorizPadding,
             landscape = false,
