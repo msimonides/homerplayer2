@@ -1,0 +1,2 @@
+Improved sleep timer: when playback is stopped by timer, position is rewound by
+half of the timer setting.
