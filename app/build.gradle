@@ -40,11 +40,21 @@ android {
         includeInApk = false // Avoid dependecies info for F-Droid APKs.
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = project.hasProperty("keystorePath") ? file(project.property("keystorePath")) : null
+            storePassword = project.hasProperty("keystorePassword") ? project.property("keystorePassword") : null
+            keyAlias = project.hasProperty("keyAlias") ? project.property("keyAlias") : null
+            keyPassword = project.hasProperty("keyPassword") ? project.property("keyPassword") : null
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
     compileOptions {
