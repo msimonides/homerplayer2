@@ -72,8 +72,12 @@ main img {
     }
 }
 
-#google_play_badge {
-    margin: 1rem auto 0;
+.app_store_badges {
+    margin: 0.5rem auto 1rem;
+}
+
+.app_store_badge {
+    margin: 0rem auto;
     display: block;
     width: 10rem;
 }
