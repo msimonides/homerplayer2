@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="button_install_homerplayer">安装 Homer Audio Player</string>
+    <string name="button_open_homerplayer">打开 Homer Audio Player</string>
+    <string name="button_setup_instructions_website">打开操作指南</string>
+    <string name="drop_privilege_button">放弃展台模式权限</string>
+    <string name="drop_privilege_confirm_cancel_button">取消</string>
+    <string name="drop_privilege_confirm_confirm_button">删除权限</string>
+    <string name="drop_privilege_confirm_message">此操作无法轻易撤销。
+将设备返回到正常使用，无法再在 Homer Player 中使用展台模式。
+
+使用出场重置而不是本功能（或者将本功能和出场重置一起使用）</string>
+    <string name="kiosk_mode_available_description">可以在 Homer Audio Player 锁定设置中启用或禁用展台模式。</string>
+    <string name="kiosk_mode_available_title">展台模式可用</string>
+    <string name="kiosk_mode_unavailable_description">要启用展台模式，需将 Homer Kiosk Setup 安装为设备管理者应用。</string>
+    <string name="kiosk_mode_unavailable_title">展台模式不可用</string>
+    <string name="permission_kiosk_resume_description">临时禁用展台模式后允许自动重新启用它</string>
+    <string name="permission_kiosk_resume_label">恢复锁定模式</string>
+</resources>
