@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="generic_button_learn_more">了解更多</string>
+    <string name="generic_dialog_cancel">取消</string>
+    <string name="generic_dialog_confirm">好</string>
+    <string name="generic_dialog_save">保存</string>
+    <string name="generic_navigate_back">返回</string>
+    <string name="generic_text_field_clear_content_description">清除</string>
+    <string name="generic_website_alternative">或前往：
+%1$s</string>
+</resources>

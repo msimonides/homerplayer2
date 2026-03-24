@@ -14,4 +14,6 @@ Zrób reset fabryczny zamiast (lub dodatkowo) użycia tej funkcji.</string>
     <string name="kiosk_mode_available_title">Tryb kiosku jest dostępny</string>
     <string name="kiosk_mode_unavailable_description">Aby włączyć tryb kiosku, musisz zainstalować Homer Kiosk Setup jako właściciela urządzenia.</string>
     <string name="kiosk_mode_unavailable_title">Tryb kiosku jest niedostępny</string>
+    <string name="permission_kiosk_resume_description">Pozwala automatycznie ponownie włączyć blokadę po tym, jak została tymczasowo wyłączona.</string>
+    <string name="permission_kiosk_resume_label">Przywróć tryb blokady</string>
 </resources>
