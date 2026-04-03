@@ -72,7 +72,7 @@ abstract class PodcastsDao {
     abstract fun observePodcasts(): Flow<List<PodcastWithEpisodes>>
 
     @Query("""SELECT * FROM podcasts ORDER BY title ASC""")
-    abstract fun getPodcasts(): List<Podcast>
+    abstract suspend fun getPodcasts(): List<Podcast>
 
     @Query("""SELECT EXISTS (SELECT * FROM podcasts)""")
     abstract fun observeHasAnyPodcast(): Flow<Boolean>
@@ -85,10 +85,10 @@ abstract class PodcastsDao {
     abstract fun observePodcast(feedUri: String): Flow<PodcastWithEpisodes?>
 
     @Query("""SELECT * FROM podcasts WHERE feed_uri = :feedUri""")
-    abstract fun getPodcast(feedUri: String): Podcast?
+    abstract suspend fun getPodcast(feedUri: String): Podcast?
 
     @Query("""SELECT EXISTS (SELECT * FROM podcast_episodes WHERE file_id = :fileId)""")
-    abstract fun hasEpisodeForFile(fileId: String): Boolean
+    abstract suspend fun hasEpisodeForFile(fileId: String): Boolean
 
     @Query("""SELECT EXISTS (SELECT * FROM podcast_episodes)""")
     abstract fun hasAnyPodcastEpisode(): Flow<Boolean>
