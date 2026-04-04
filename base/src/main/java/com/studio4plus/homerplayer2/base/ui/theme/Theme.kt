@@ -1,6 +1,5 @@
 package com.studio4plus.homerplayer2.base.ui.theme
 
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -10,7 +9,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 
 @Immutable
@@ -144,7 +142,7 @@ private val ExtendedLightColors = ExtendedColors(
 
 @Composable
 fun HomerPlayer2Theme(
-    darkTheme: Boolean = isNightMode(),
+    darkTheme: Boolean = isSystemInDarkTheme(),
     windowContentSize: DpSize = windowContentSize(),
     content: @Composable () -> Unit
 ) {
@@ -164,12 +162,6 @@ fun HomerPlayer2Theme(
     }
 }
 
-@Composable
-private fun isNightMode() = when (AppCompatDelegate.getDefaultNightMode()) {
-    AppCompatDelegate.MODE_NIGHT_NO -> false
-    AppCompatDelegate.MODE_NIGHT_YES -> true
-    else -> isSystemInDarkTheme()
-}
 
 object HomerTheme {
     val colors: ExtendedColors
