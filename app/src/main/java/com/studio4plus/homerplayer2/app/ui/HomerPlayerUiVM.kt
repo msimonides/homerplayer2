@@ -31,6 +31,7 @@ import com.studio4plus.homerplayer2.app.DATASTORE_APP_STATE
 import com.studio4plus.homerplayer2.app.StoredAppState
 import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
 import com.studio4plus.homerplayer2.settingsdata.UiSettings
+import com.studio4plus.homerplayer2.settingsdata.UiThemeMode
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -51,6 +52,7 @@ class HomerPlayerUiVM(
         HomerPlayerViewState(
             needsOnboarding = !appState.onboardingCompleted,
             hapticFeedbackEnabled = uiSettings.enableHapticFeedback,
+            uiThemeMode = uiSettings.uiThemeMode,
         )
     }.stateIn(viewModelScope, SharingStarted.Eagerly, null)
 }
@@ -58,4 +60,5 @@ class HomerPlayerUiVM(
 data class HomerPlayerViewState(
     val needsOnboarding: Boolean,
     val hapticFeedbackEnabled: Boolean,
+    val uiThemeMode: UiThemeMode,
 )

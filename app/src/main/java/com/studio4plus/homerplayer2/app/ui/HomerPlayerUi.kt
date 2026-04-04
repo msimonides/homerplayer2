@@ -25,6 +25,7 @@
 package com.studio4plus.homerplayer2.app.ui
 
 import android.content.Context
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.SharedTransitionLayout
@@ -32,6 +33,7 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.unveilIn
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
@@ -61,6 +63,7 @@ import com.studio4plus.homerplayer2.nav.rememberNavBackStackState
 import com.studio4plus.homerplayer2.onboarding.OnboardingDestination
 import com.studio4plus.homerplayer2.onboarding.onboardingEntries
 import com.studio4plus.homerplayer2.player.ui.PlayerRoute
+import com.studio4plus.homerplayer2.settingsdata.UiThemeMode
 import com.studio4plus.homerplayer2.settingsui.nav.SettingsDestination
 import com.studio4plus.homerplayer2.settingsui.nav.SettingsSceneStrategy
 import com.studio4plus.homerplayer2.settingsui.nav.settingsEntries
@@ -75,8 +78,8 @@ fun HomerPLayerUi(
     eventNavigateToPlayer: SharedFlow<Unit>,
     viewModel: HomerPlayerUiVM = koinViewModel()
 ) {
-    HomerPlayer2Theme {
-        val viewState = viewModel.viewState.collectAsStateWithLifecycle().value
+    val viewState = viewModel.viewState.collectAsStateWithLifecycle().value
+    HomerPlayer2Theme(darkTheme = getIsDarkTheme(viewState)) {
 
         Surface(color = MaterialTheme.colorScheme.background, modifier = Modifier.fillMaxSize()) {
             if (viewState != null) {
@@ -190,3 +193,16 @@ private fun rememberHapticFeedback(isEnabled: Boolean): HapticFeedback {
     val context = LocalContext.current
     return remember(isEnabled) { create(context) }
 }
+
+@Composable
+private fun getIsDarkTheme(viewState: HomerPlayerViewState?): Boolean =
+    when (viewState?.uiThemeMode) {
+        UiThemeMode.SYSTEM -> isSystemInDarkTheme()
+        UiThemeMode.LIGHT -> false
+        UiThemeMode.DARK -> true
+        null -> when (AppCompatDelegate.getDefaultNightMode()) {
+            AppCompatDelegate.MODE_NIGHT_NO -> false
+            AppCompatDelegate.MODE_NIGHT_YES -> true
+            else -> isSystemInDarkTheme()
+        }
+    }
