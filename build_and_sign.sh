@@ -186,9 +186,9 @@ fi
 print_success "openSourceRelease build completed!"
 echo ""
 
-# Build googleRelease as a separate gradle command to avoid interference
-print_info "Building googleRelease variant..."
-./gradlew assembleGoogleRelease \
+# Build googleRelease AAB as a separate gradle command to avoid interference
+print_info "Building googleRelease AAB variant..."
+./gradlew bundleGoogleRelease \
     -PkeystorePath="$KEYSTORE_PATH" \
     -PkeystorePassword="$KEYSTORE_PASSWORD" \
     -PkeyPassword="$KEY_PASSWORD" \
@@ -204,14 +204,37 @@ fi
 print_success "googleRelease build completed!"
 echo ""
 
+# Build kiosksetup release
+print_info "Building kiosksetup release..."
+./gradlew :kiosksetup:assembleRelease \
+    -PkeystorePath="$KEYSTORE_PATH" \
+    -PkeystorePassword="$KEYSTORE_PASSWORD" \
+    -PkeyPassword="$KEY_PASSWORD" \
+    -PkeyAlias="$KEY_ALIAS"
+
+KIOSK_RESULT=$?
+
+if [ $KIOSK_RESULT -ne 0 ]; then
+    print_error "kiosksetup release build failed"
+    exit 1
+fi
+
+print_success "kiosksetup release build completed!"
+echo ""
+
 # Clear passwords from memory (not foolproof, but better than nothing)
 KEYSTORE_PASSWORD=""
 KEY_PASSWORD=""
 
+# Stop the daemon to release open files (important on Windows).
+./gradlew --stop
+
 print_success "All builds completed successfully!"
 echo ""
-echo "Signed APK locations:"
+echo "Signed output locations:"
 echo "  OpenSource:"
 echo "    app/build/outputs/apk/openSource/release/app-openSource-release.apk"
-echo "  Google:"
-echo "    app/build/outputs/apk/google/release/app-google-release.apk"
+echo "  Google (AAB):"
+echo "    app/build/outputs/bundle/googleRelease/app-google-release.aab"
+echo "  Kiosk Setup:"
+echo "    kiosksetup/build/outputs/apk/release/kiosksetup-release.apk"

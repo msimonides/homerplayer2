@@ -49,6 +49,15 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = if (project.hasProperty("keystorePath")) file(project.property("keystorePath") as String) else null
+            storePassword = if (project.hasProperty("keystorePassword")) project.property("keystorePassword") as String else null
+            keyAlias = if (project.hasProperty("keyAlias")) project.property("keyAlias") as String else null
+            keyPassword = if (project.hasProperty("keyPassword")) project.property("keyPassword") as String else null
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -56,6 +65,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {
