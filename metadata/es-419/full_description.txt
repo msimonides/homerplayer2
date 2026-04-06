@@ -1,0 +1,50 @@
+Reproductor de audiolibros y podcasts diseñado para adultos mayores, personas con discapacidad visual y oyentes que no están familiarizados con la tecnología y necesitan una forma simple de reproducir audio. En lugar de menús complejos y características innecesarias, Homer ofrece una interfaz clara y minimalista enfocada en una sola cosa: la reproducción fácil de audiolibros y podcasts.
+
+Usa el especial "modo de bloqueo" para convertir una tablet Android en un dispositivo dedicado y de un solo propósito para reproducir audiolibros y podcasts.
+
+Diseñado para:
+- Adultos mayores que desean una escucha simple e independiente
+- Usuarios con discapacidad visual que se benefician de botones grandes y títulos leídos en voz alta
+- Usuarios sin experiencia técnica que encuentran las aplicaciones estándar abrumadoras
+- Personas con dificultades cognitivas que necesitan funcionalidad básica
+
+Fácil de usar:
+- Botones grandes y fáciles de tocar
+- Navegación simple con deslizamientos izquierda/derecha
+- Estructura de contenido plana (sin carpetas profundamente anidadas)
+- Sin anuncios, ventanas emergentes ni distracciones
+- Lectura en voz alta de títulos opcional para accesibilidad
+- Detener con volteo: coloca el dispositivo con la pantalla hacia abajo para pausar la reproducción
+
+Modo de bloqueo:
+- solo funcionalidad de reproducción
+- bloquea la salida de la aplicación
+- oculta configuración
+- sin acceso a otras aplicaciones, notificaciones ni configuración
+
+Audiolibros:
+- Reproduce audiolibros sin DRM desde el almacenamiento del dispositivo
+- Posición de reanudación guardada por separado para cada libro
+
+Podcasts:
+- Se actualiza automáticamente para mostrar los últimos 1-5 episodios
+- Descarga episodios completos para reproducción confiable sin conexión
+
+Configuración administrada por cuidador (rol secundario):
+- Un cuidador configura el contenido y la configuración con anticipación
+- El modo de bloqueo opcional oculta todas las aplicaciones y funcionalidades excepto el reproductor
+- El dispositivo se prepara una sola vez y luego lo usa de forma independiente el oyente
+
+Características adicionales:
+- Temas claros y oscuros de alto contraste
+- Controles personalizables: volumen, saltar capítulos, avance rápido, retroceso
+- Velocidad de reproducción ajustable
+- Temporizador de sueño con función de continuar al agitar
+
+Cómo funciona:
+1. Instala Homer en un teléfono o tablet Android 7 o superior.
+2. Añade audiolibros/podcasts y ajusta la interfaz según sea necesario.
+3. Opcionalmente bloquea u oculta la configuración.
+4. Entrega el dispositivo al oyente para un uso simple e independiente diario.
+
+Homer hace que la escucha de audiolibros y podcasts sea accesible para personas que no pueden usar cómodamente las aplicaciones estándar para teléfonos inteligentes.

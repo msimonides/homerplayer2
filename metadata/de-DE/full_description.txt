@@ -1,0 +1,51 @@
+Hörbuch- und Podcast-Player für Senioren, sehbehinderte und technisch weniger versierte Hörer, die eine einfache Möglichkeit zum Abspielen von Audio benötigen. Statt komplizierter Menüs und unnötiger Funktionen bietet Homer eine klare, minimalistische Oberfläche mit Fokus auf eine Sache: einfaches Abspielen von Hörbüchern und Podcasts.
+
+Verwenden Sie den speziellen „Sperrmodus", um ein Android-Tablet in ein spezialisiertes Gerät zum Abspielen von Hörbüchern und Podcasts umzuwandeln.
+
+Gedacht für:
+- Ältere Menschen, die einfaches, unabhängiges Hören möchten
+- Sehbehinderte Benutzer, die von großen Schaltflächen und vorgelesenen Titeln profitieren
+- Benutzer ohne technische Erfahrung, denen Standard-Apps überwältigend wirken
+- Menschen mit kognitiven Beeinträchtigungen, die nur grundlegende Funktionen benötigen
+
+Einfach zu bedienen:
+- Große, leicht zu bedienende Schaltflächen
+- Einfache Navigation mit Wischen nach links/rechts
+- Flache Inhaltsstruktur (keine tief verschachtelten Ordner)
+- Keine Anzeigen, Pop-ups oder ablenkende Unordnung
+- Optionales Vorlesen von Titeln zur Barrierefreiheit
+- Flip-to-Stop: Gerät mit dem Bildschirm nach unten legen, um die Wiedergabe zu pausieren
+
+Sperrmodus:
+- Nur Wiedergabefunktion
+- Blockiert das Beenden der App
+- Versteckt Einstellungen
+- Kein Zugriff auf andere Apps, Benachrichtigungen oder Einstellungen
+
+Hörbücher:
+- Spielen Sie DRM-freie Hörbücher vom Gerätespeicher ab
+- Die Wiedergabeposition wird für jedes Buch separat gespeichert
+
+Podcasts:
+- Aktualisiert sich automatisch, um die neuesten 1-5 Episoden anzuzeigen
+- Lädt vollständige Episoden für zuverlässige Offline-Wiedergabe herunter
+
+Vom Betreuer verwaltete Einrichtung (Nebenrolle):
+- Ein Betreuer konfiguriert Inhalte und Einstellungen im Voraus
+- Der optionale Sperrmodus verbirgt alle Apps und Funktionen außer dem Player
+- Das Gerät wird einmal vorbereitet und dann unabhängig vom Hörer verwendet
+
+Zusätzliche Funktionen:
+- Helles und dunkles Design mit hohem Kontrast
+- Anpassbare Steuerelemente: Lautstärke, Kapitelsprung, Vorspulen, Zurückspulen
+- Verstellbare Wiedergabegeschwindigkeit
+- Schlaf-Timer mit Schüttel-Fortsetzungsfunktion
+
+So funktioniert es:
+1. Installieren Sie Homer auf einem Android 7+-Telefon oder -Tablet.
+2. Fügen Sie Hörbücher/Podcasts hinzu und passen Sie die Oberfläche nach Bedarf an.
+3. Sperren oder verstecken Sie optional die Einstellungen.
+4. Übergeben Sie das Gerät dem Hörer für einfache, unabhängige tägliche Nutzung.
+
+Homer macht das Hören von Hörbüchern und Podcasts für Menschen zugänglich, die Standard-Smartphone-Apps nicht komfortabel nutzen können.
+
