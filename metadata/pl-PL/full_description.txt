@@ -1,0 +1,50 @@
+Odtwarzacz audiobooków i podkastów stworzony z myślą o seniorach, osobach niedowidzących i słuchaczach nieobeznanych z technologią, którzy potrzebują prostego sposobu odtwarzania audiobooków. Zamiast skomplikowanych menu i zbędnych funkcji, Homer oferuje przejrzysty, minimalistyczny interfejs skupiony na jednym celu: łatwym odtwarzaniu audiobooków i podkastów.
+
+Użyj specjalnego „trybu blokady”, aby przekształcić tablet z Androidem w dedykowane, jednofunkcyjne urządzenie do odtwarzania audiobooków i podkastów.
+
+Przeznaczony dla:
+- Osób starszych, które chcą prostego, samodzielnego słuchania
+- Użytkowników z wadami wzroku, którym odpowiadają duże przyciski i czytane tytuły
+- Użytkowników bez doświadczenia w technologii, dla których standardowe aplikacje są przytłaczające
+- Osób z problemami poznawczymi, które potrzebują podstawowych funkcji
+
+Łatwość obsługi:
+- Duże, łatwe w obsłudze przyciski
+- Prosta nawigacja poprzez przesuwanie palcem w lewo/prawo
+- Płaska struktura treści (bez głęboko osadzonych folderów)
+- Bez reklam, wyskakujących okienek i rozpraszającego bałaganu
+- Opcjonalne czytanie tytułów na głos
+- Zatrzymaj odtwarzanie, obracając urządzenie ekranem w dół
+
+Tryb blokady:
+- tylko funkcja odtwarzania
+- blokuje wyjście z aplikacji
+- ukrywa ustawienia
+- brak dostępu do innych aplikacji, powiadomień i ustawień
+
+Audiobooki:
+- Odtwarzaj audiobooki bez DRM z pamięci urządzenia
+- Pozycja wznawiania zapisana osobno dla każdej książki
+
+Podkasty:
+- Automatycznie aktualizuje, aby wyświetlić od 1 do 5 najnowszych odcinków
+- Pobiera pełne odcinki dla niezawodnego odtwarzania offline
+
+Konfiguracja zarządzana przez opiekuna (rola drugorzędna):
+- Opiekun konfiguruje treści i ustawienia z wyprzedzeniem
+- Opcjonalny tryb blokady ukrywa wszystkie aplikacje i funkcje poza odtwarzaczem
+- Urządzenie jest przygotowywane raz, a następnie używane samodzielnie przez słuchacza
+
+Dodatkowe funkcje:
+- Jasne i ciemne motywy o wysokim kontraście
+- Konfigurowalne sterowanie: głośność, pomijanie rozdziałów, przewijanie do przodu i do tyłu
+- Regulowana prędkość odtwarzania
+- Wyłącznik czasowy z funkcją kontynuacji po potrząśnięciu
+
+Jak to działa:
+1. Zainstaluj Homera na telefonie lub tablecie z systemem Android 7 lub nowszym.
+2. Dodaj audiobooki/podkasty i dostosuj interfejs w razie potrzeby.
+3. Opcjonalnie zablokuj lub ukryj ustawienia.
+4. Przekaż urządzenie słuchaczowi, aby mógł z niego korzystać samodzielnie i na co dzień.
+
+Homer umożliwia słuchanie audiobooków i podkastów osobom, które nie mogą komfortowo korzystać ze standardowych aplikacji na smartfony.

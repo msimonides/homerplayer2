@@ -1,63 +1,50 @@
-Homer turns any Android tablet into a dedicated, easy-to-use audio player for seniors. Caregivers configure the app and manage content, while loved ones enjoy audiobooks and podcasts independently - without confusion or mistakes.
+Audiobook and podcast player built for seniors, visually impaired and non-tech-savvy listeners who need an easy way to play audio. Instead of complex menus and unnecessary features, Homer offers a clear, minimal interface focused on one thing: easy audiobook and podcast playback.
 
-<b>Two user roles</b>
-- <b>caregiver (you)</b> - access settings to customize the interface, manage content, and configure everything to your loved one's needs,
-- <b>the listener</b> - uses a simple interface to select and play audiobooks and podcasts, with lockdown mode enabled there's nothing to accidentally change or break.
-</ul>
+Use the special "lockdown mode" to turn an Android tablet into a dedicated, single-purpose audiobook and podcast device.
 
-<b>Unique features</b>
+Designed for:
+- Elderly who want simple, independent listening
+- Visually impaired users who benefit from large controls and spoken titles
+- Non-tech-savvy users who find standard apps overwhelming
+- People with cognitive challenges who need basic functionality
 
-<b>Lockdown mode</b>
-Disable exiting the app and the settings button to transform any tablet into a dedicated audio device. Your loved one doesn't have to worry about accidentally changing something or being unable to launch the app.
+Easy to use:
+- Large, easy-to-tap buttons
+- Simple navigation with swipe left/right
+- Flat content structure (no deep nested folders)
+- No ads, no pop-ups, no distracting clutter
+- Optional title read-aloud for accessibility
+- Flip-to-stop: place device screen-down to pause playback
 
-<b>Caregiver-controlled</b>
-Add audiobooks and podcasts and adjust the interface in the settings panel. The listener gets a minimal UI that is only for playback. They can use it independently on their own.
+Lockdown mode:
+- only playback functionality
+- blocks exiting the app
+- hides settings
+- no access to other apps, notifications nor settings
 
-<b>Easy handling</b>
-Add extra screen margins to prevent accidental taps when holding the tablet.
+Audiobooks:
+- Play DRM-free audiobooks from device storage
+- Resume position saved separately for each book
 
-<b>Distraction-free experience</b>
-No ads, notifications or pop-ups to confuse the user.
+Podcasts:
+- Automatically updates to show the latest 1-5 episodes
+- Downloads full episodes for reliable offline playback
 
-<b>Designed for independence</b>
+Caregiver-managed setup (secondary role):
+- A caregiver configures content and settings in advance
+- Optional lockdown mode hides all apps and functionality except the player
+- Device is prepared once, then used independently by the listener
 
-All configuration, settings and content management is done in the settings section. The listener only uses the simple interface to select what to play and start/stop playback.
-This allows independence for those who struggle with smartphones, regular MP3 players or other mainstream devices.
+Additional features:
+- High-contrast light and dark themes
+- Customizable controls: volume, chapter skip, forward, rewind
+- Adjustable playback speed
+- Sleep timer with shake-to-continue
 
-<b>Perfect for:</b>
-- elderly, visually impaired users,
-- people with cognitive impairment (recovering from a stroke, learning disorders etc.),
-- dementia patients who benefit from listening to familiar audiobooks,
-- other non-tech-savvy users who need a simple, foolproof audio device.
+How it works:
+1. Install Homer on an Android 7+ phone or tablet.
+2. Add audiobooks/podcasts and adjust the interface as needed.
+3. Optionally lock or hide settings.
+4. Hand the device to the listener for simple, independent daily use.
 
-<b>How it works</b>
-1. Install Homer on any Android 7+ phone or tablet.
-2. Configure as caregiver - add content, customize the interface for your loved one's needs.
-3. Hide the settings button and lock down the interface.
-4. Hand to listener for simple, independent listening.
-
-Use an older Android tablet you already own or buy a budget model. Homer will transform it into a purpose-built audio player that's easier to use than expensive alternatives.
-
-<b>Additional details</b>
-
-<b>Simple interface</b>
-- Large buttons - Swipe left and right to change audiobooks and podcasts
-- No nested content structure - all audiobooks and podcast episodes are on a single list
-- Reads titles aloud for visually impaired users
-- Flip-to-stop - put the device screen down to pause playback
-
-<b>Audiobooks</b>
-- Play audiobooks from your device
-- Position saved individually for each book
-- Only DRM-free audiobooks are supported
-
-<b>Podcasts</b>
-- Automatically updated to show the latest 1-5 episodes for each podcast (you configure the number)
-- Fully downloads episodes for uninterrupted playback
-
-<b>Other features</b>
-- High contrast dark and light themes
-- Customize controls: volume, chapter skip, forward, rewind
-- Adjust playback speed: slow down for those hard of hearing
-- Sleep timer: playback stops unless the device is shaken periodically
-- Kiosk capability: hide settings to create a dedicated device Give your loved ones the independence they deserve.
+Homer makes audiobook and podcast listening accessible for people who cannot comfortably use standard smartphone apps.
