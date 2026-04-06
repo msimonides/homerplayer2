@@ -1,0 +1,2 @@
+Added new language: Chinese Simplified
+Fixed dark/light theme occasionally being incorrect
