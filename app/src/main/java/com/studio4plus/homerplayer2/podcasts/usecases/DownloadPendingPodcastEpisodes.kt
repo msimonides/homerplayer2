@@ -30,11 +30,13 @@ import com.studio4plus.homerplayer2.app.AppDatabase
 import com.studio4plus.homerplayer2.audiobooks.Audiobook
 import com.studio4plus.homerplayer2.audiobooks.AudiobookFile
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksDao
+import com.studio4plus.homerplayer2.crash.CrashReporting
 import com.studio4plus.homerplayer2.net.FileDownloader
 import com.studio4plus.homerplayer2.podcasts.PodcastsFileStorage
 import com.studio4plus.homerplayer2.podcasts.data.Podcast
 import com.studio4plus.homerplayer2.podcasts.data.PodcastEpisode
 import com.studio4plus.homerplayer2.podcasts.data.PodcastsDao
+import io.ktor.utils.io.CancellationException
 import org.koin.core.annotation.Single
 import timber.log.Timber
 import java.io.File
@@ -67,6 +69,11 @@ class DownloadPendingPodcastEpisodes(
                 }
             } catch (e: IOException) {
                 failure = true
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Throwable) {
+                CrashReporting.captureException(e)
+                Timber.e(e, "Error while fetching episode from: ${episode.feedUri}")
             }
         }
         return !failure

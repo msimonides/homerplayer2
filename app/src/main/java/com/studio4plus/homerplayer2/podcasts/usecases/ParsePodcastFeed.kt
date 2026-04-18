@@ -68,7 +68,8 @@ class ParsePodcastFeed(
                 val latestEpisodes = feed.items
                     .mapNotNull {
                         when {
-                            it.audio != null -> PodcastFeedEpisode(it, it.pubDate?.parseRssDate())
+                            !it.audio.isNullOrBlank() ->
+                                PodcastFeedEpisode(it, it.pubDate?.parseRssDate())
                             else -> null
                         }
                     }

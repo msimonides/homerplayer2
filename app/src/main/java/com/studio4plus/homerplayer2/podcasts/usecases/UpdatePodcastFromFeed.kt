@@ -39,7 +39,7 @@ class UpdatePodcastFromFeed(
     suspend operator fun invoke(podcast: Podcast, feed: PodcastFeed): Boolean {
         val latestEpisodes = feed.latestEpisodes.take(podcast.downloadEpisodeCount)
         val now = clock.wallInstant()
-        val episodes = latestEpisodes.mapIndexed { index, (episode, pubTime) ->
+        val episodes = latestEpisodes.map { (episode, pubTime) ->
             val uri = requireNotNull(episode.audio) // Filtered above
             PodcastEpisode(
                 uri = uri.toHttps(),
