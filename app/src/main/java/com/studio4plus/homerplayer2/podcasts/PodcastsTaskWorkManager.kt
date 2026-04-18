@@ -133,8 +133,8 @@ class PodcastTaskWorkManager(
             .setRequiredNetworkType(networkType.toWorkRequest())
             .build()
         return PeriodicWorkRequestBuilder<PodcastsRefreshWork>(
-            repeatInterval = 8, repeatIntervalTimeUnit = TimeUnit.HOURS,
-            flexTimeInterval = 4, flexTimeIntervalUnit = TimeUnit.HOURS
+            repeatInterval = 4, repeatIntervalTimeUnit = TimeUnit.HOURS,
+            flexTimeInterval = 3, flexTimeIntervalUnit = TimeUnit.HOURS
         ).setConstraints(constraints)
 
     }
