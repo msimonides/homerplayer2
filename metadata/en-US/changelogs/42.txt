@@ -1,0 +1,1 @@
+Fix crash on Android 15+ devices with certain language settings.
