@@ -25,6 +25,7 @@
 package com.studio4plus.homerplayer2.audiobooks
 
 import android.net.Uri
+import androidx.media3.common.C.TRACK_TYPE_AUDIO
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
@@ -78,7 +79,13 @@ class MediaDurationExtractor(
                 override fun onPlaybackStateChanged(playbackState: Int) {
                     super.onPlaybackStateChanged(playbackState)
                     when (playbackState) {
-                        Player.STATE_READY -> result(this@extractDuration.duration)
+                        Player.STATE_READY -> {
+                            if (currentTracks.containsType(TRACK_TYPE_AUDIO)) {
+                                result(this@extractDuration.duration)
+                            } else {
+                                result(AudiobookFileDuration.INVALID)
+                            }
+                        }
                         Player.STATE_ENDED -> result(AudiobookFileDuration.INVALID)
                         Player.STATE_BUFFERING -> Unit
                         Player.STATE_IDLE -> Unit

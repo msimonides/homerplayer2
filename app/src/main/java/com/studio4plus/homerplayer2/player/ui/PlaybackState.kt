@@ -104,6 +104,7 @@ class PlaybackState(
 
                     override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
                         super.onPlayWhenReadyChanged(playWhenReady, reason)
+                        Timber.d("playWhenReady changed %b; %d", playWhenReady, reason)
                         mediaState.value = mediaController!!.getMediaState()
                     }
                 }
@@ -127,6 +128,11 @@ class PlaybackState(
                 controller.setMediaItems(mediaItems)
                 controller.seekTo(startIndex, startPositionMs)
             }
+            Timber.d(
+                "Play '%s'; media item: %s",
+                book.displayName,
+                with(mediaItemsWithStartPosition) { mediaItems[startIndex].mediaId }
+            )
             controller.playWhenReady = true
             controller.prepare()
         }
