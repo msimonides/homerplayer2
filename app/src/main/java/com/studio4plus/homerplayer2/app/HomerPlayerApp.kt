@@ -66,8 +66,6 @@ class HomerPlayerApp : Application(), SingletonImageLoader.Factory, Configuratio
         Timber.plant(fileLoggerProvider())
         analytics.initialize(this)
 
-        val appIsInForeground: AppIsInForeground by inject()
-        registerActivityLifecycleCallbacks(appIsInForeground)
     }
 
     override fun newImageLoader(context: PlatformContext): ImageLoader =

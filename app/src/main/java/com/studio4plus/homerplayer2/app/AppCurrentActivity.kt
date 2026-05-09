@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2024 Marcin Simonides
+ * Copyright (c) 2026 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,30 +24,45 @@
 
 package com.studio4plus.homerplayer2.app
 
-import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ProcessLifecycleOwner
-import com.studio4plus.homerplayer2.lifecycle.IsInForeground
+import android.app.Activity
+import android.app.Application
+import android.content.Context
+import android.os.Bundle
+import com.studio4plus.homerplayer2.lifecycle.CurrentActivity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.core.annotation.Single
 
 @Single(createdAtStart = true)
-class AppIsInForeground : IsInForeground, DefaultLifecycleObserver {
+class AppCurrentActivity(appContext: Context) : CurrentActivity,
+    Application.ActivityLifecycleCallbacks {
 
-    private val _isInForeground = MutableStateFlow(false)
+    private val foregroundActivity = MutableStateFlow<Activity?>(null)
 
     init {
-        ProcessLifecycleOwner.get().lifecycle.addObserver(this)
+        (appContext as Application).registerActivityLifecycleCallbacks(this)
     }
 
-    override fun invoke(): Flow<Boolean> = _isInForeground
+    override fun invoke(): Flow<Activity?> = foregroundActivity
 
-    override fun onStart(owner: LifecycleOwner) {
-        _isInForeground.value = true
+    override fun onActivityStarted(activity: Activity) {
+        foregroundActivity.value = activity
     }
 
-    override fun onStop(owner: LifecycleOwner) {
-        _isInForeground.value = false
+    override fun onActivityStopped(activity: Activity) {
+        if (foregroundActivity.value == activity) {
+            foregroundActivity.value = null
+        }
     }
+
+    override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
+
+    override fun onActivityResumed(activity: Activity) {}
+
+    override fun onActivityPaused(activity: Activity) {}
+
+    override fun onActivitySaveInstanceState(activity: Activity, savedInstanceState: Bundle) {}
+
+    override fun onActivityDestroyed(activity: Activity) {}
 }
+

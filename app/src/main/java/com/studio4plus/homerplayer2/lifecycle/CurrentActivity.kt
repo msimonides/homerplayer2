@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2024 Marcin Simonides
+ * Copyright (c) 2026 Marcin Simonides
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,32 +22,12 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.app
+package com.studio4plus.homerplayer2.lifecycle
 
-import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ProcessLifecycleOwner
-import com.studio4plus.homerplayer2.lifecycle.IsInForeground
+import android.app.Activity
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import org.koin.core.annotation.Single
 
-@Single(createdAtStart = true)
-class AppIsInForeground : IsInForeground, DefaultLifecycleObserver {
-
-    private val _isInForeground = MutableStateFlow(false)
-
-    init {
-        ProcessLifecycleOwner.get().lifecycle.addObserver(this)
-    }
-
-    override fun invoke(): Flow<Boolean> = _isInForeground
-
-    override fun onStart(owner: LifecycleOwner) {
-        _isInForeground.value = true
-    }
-
-    override fun onStop(owner: LifecycleOwner) {
-        _isInForeground.value = false
-    }
+fun interface CurrentActivity {
+    operator fun invoke(): Flow<Activity?>
 }
+

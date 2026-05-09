@@ -133,6 +133,7 @@ dependencies {
     implementation libs.androidx.core.ktx
     implementation libs.androidx.datastore.core
     implementation libs.androidx.documentfile
+    implementation libs.androidx.lifecycle.process
     implementation libs.androidx.lifecycle.runtime.compose
     implementation libs.androidx.lifecycle.service
     implementation libs.androidx.lifecycle.viewmodel
