@@ -39,4 +39,5 @@ interface Analytics {
 
 interface AnalyticsDelegate {
     fun shouldSendImmediately(): Boolean
+    fun defaultParams(): Map<String, String>
 }

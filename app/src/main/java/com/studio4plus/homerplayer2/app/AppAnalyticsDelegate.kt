@@ -26,6 +26,7 @@ package com.studio4plus.homerplayer2.app
 
 import androidx.datastore.core.DataStore
 import com.studio4plus.homerplayer2.analytics.AnalyticsDelegate
+import com.studio4plus.homerplayer2.fullkioskmode.IsFullKioskAvailable
 import com.studio4plus.homerplayer2.utils.Clock
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.first
@@ -34,6 +35,7 @@ import org.koin.core.annotation.Named
 import org.koin.core.annotation.Single
 import java.time.Duration
 import java.time.Instant
+import kotlin.reflect.KProperty
 
 private const val SEND_IMMEDIATELY_AGE_MINUTES = 60L
 private val UNSET = Instant.ofEpochMilli(StoredAppState.UNSET_TIMESTAMP_MS)
@@ -43,8 +45,14 @@ class AppAnalyticsDelegate(
     mainScope: CoroutineScope,
     @Named(DATASTORE_APP_STATE) appState: DataStore<StoredAppState>,
     private val clock: Clock,
+    fullKioskAvailable: IsFullKioskAvailable,
 ) : AnalyticsDelegate {
     private var firstLaunchTimestamp: Instant = UNSET
+    private val isFullKioskAvailable by CachingDelegate(
+        clock,
+        fullKioskAvailable::invoke,
+        Duration.ofHours(1)
+    )
 
     init {
         mainScope.launch {
@@ -55,5 +63,26 @@ class AppAnalyticsDelegate(
     override fun shouldSendImmediately(): Boolean {
         val base = firstLaunchTimestamp
         return base == UNSET || base + Duration.ofMinutes(SEND_IMMEDIATELY_AGE_MINUTES) > clock.wallInstant()
+    }
+
+    override fun defaultParams(): Map<String, String> =
+        mapOf("Settings.FullKioskAvailable" to isFullKioskAvailable.toString())
+}
+
+private class CachingDelegate<T : Any>(
+    private val clock: Clock,
+    private val provider: () -> T,
+    private val cacheDuration: Duration,
+) {
+    private lateinit var value: T
+    private var lastUpdatedMs: Long = 0
+
+    operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
+        val now = clock.elapsedRealTime()
+        if (lastUpdatedMs == 0L || lastUpdatedMs + cacheDuration.toMillis() < now) {
+            value = provider()
+            lastUpdatedMs = now
+        }
+        return value
     }
 }

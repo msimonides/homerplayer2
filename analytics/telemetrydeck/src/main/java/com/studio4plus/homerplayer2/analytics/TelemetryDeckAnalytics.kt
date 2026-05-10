@@ -26,9 +26,9 @@ package com.studio4plus.homerplayer2.analytics
 
 import android.content.Context
 import com.telemetrydeck.sdk.PersistentSignalCache
-import com.telemetrydeck.sdk.Signal
-import com.telemetrydeck.sdk.SignalCache
 import com.telemetrydeck.sdk.TelemetryDeck
+import com.telemetrydeck.sdk.TelemetryDeckProvider
+import com.telemetrydeck.sdk.TelemetryDeckSignalProcessor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.asCoroutineDispatcher
@@ -46,7 +46,7 @@ fun createAnalytics(
 
 class TelemetryDeckAnalytics(
     private val mainScope: CoroutineScope,
-    delegate: AnalyticsDelegate,
+    private val delegate: AnalyticsDelegate,
 ) : Analytics {
 
     private val singleThreadDispatcher = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
@@ -62,6 +62,7 @@ class TelemetryDeckAnalytics(
                 }
                 val builder = TelemetryDeck.Builder()
                     .appID(appContext.getString(R.string.telemetry_deck_app))
+                    .addProvider(DefaultParamsProvider(delegate))
                     .signalCache(cache)
                 // start needs to be called on the main thread to register with LifecycleRegistry.
                 TelemetryDeck.start(appContext, builder)
@@ -92,4 +93,24 @@ class TelemetryDeckAnalytics(
     override fun stopAndSendDurationEvent(name: String) {
         TelemetryDeck.stopAndSendDurationSignal(name)
     }
+}
+
+private class DefaultParamsProvider(
+    private val delegate: AnalyticsDelegate,
+) : TelemetryDeckProvider {
+
+    override fun register(
+        ctx: Context?,
+        client: TelemetryDeckSignalProcessor
+    ) = Unit
+
+    override fun enrich(
+        signalType: String,
+        clientUser: String?,
+        additionalPayload: Map<String, String>
+    ): Map<String, String> {
+        return additionalPayload + delegate.defaultParams()
+    }
+
+    override fun stop() = Unit
 }
