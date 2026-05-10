@@ -26,8 +26,10 @@ package com.studio4plus.homerplayer2.app
 
 import android.app.Application
 import com.studio4plus.homerplayer2.testutils.FakeDataStore
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.plus
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -36,6 +38,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(RobolectricTestRunner::class)
 @Config(application = Application::class)
 class AppPresentPlayButtonTests {
@@ -55,6 +58,7 @@ class AppPresentPlayButtonTests {
             AppPresentPlayButton(backgroundScope, FakeDataStore(StoredAppState()))
 
         presentPlayButton.onUserPlayButton()
+        runCurrent()
 
         val shouldPresent = presentPlayButton.shouldPresent.first()
         assertFalse("shouldPresent should be false after onUserPlayButton", shouldPresent)
@@ -67,6 +71,7 @@ class AppPresentPlayButtonTests {
 
         // Call onUserPlayButton
         presentPlayButton1.onUserPlayButton()
+        runCurrent()
 
         // Check the datastore directly to see if the value persisted
         val state = dataStore.data.first()
