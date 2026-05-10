@@ -34,6 +34,7 @@ import androidx.room.Room
 import com.studio4plus.homerplayer2.BuildConfig
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.analytics.Analytics
+import com.studio4plus.homerplayer2.appreview.AppReviewModule
 import com.studio4plus.homerplayer2.audiobookfolders.AudiobookFoldersDatabase
 import com.studio4plus.homerplayer2.audiobookfolders.AudiobookFoldersModule
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksDatabase
@@ -70,6 +71,7 @@ const val DATASTORE_APP_STATE = "appState"
 
 @Module(
     includes = [
+        AppReviewModule::class,
         AudiobookFoldersModule::class,
         AudiobooksModule::class,
         BaseModule::class,

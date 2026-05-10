@@ -120,6 +120,8 @@ dependencies {
     implementation project(':base')
     googleImplementation project(':analytics:telemetrydeck')
     openSourceImplementation project(":analytics:noop")
+    googleImplementation project(':appreview:google')
+    openSourceImplementation project(":appreview:noop")
     googleImplementation project(':crash:sentry')
     openSourceImplementation project(':crash:noop')
 

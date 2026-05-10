@@ -35,6 +35,7 @@ data class StoredAppState(
     val hasPresentSwipeGesture: Boolean = false,
     val hasPresentPlayButton: Boolean = false,
     val firstRunTimestampMs: Long = UNSET_TIMESTAMP_MS,
+    val reviewLastRequestedTimestampMs: Long = UNSET_TIMESTAMP_MS,
 ) {
     companion object {
         const val UNSET_TIMESTAMP_MS = 0L

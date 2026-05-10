@@ -26,12 +26,13 @@ package com.studio4plus.homerplayer2.settingsui.usecases
 
 import androidx.datastore.core.DataStore
 import com.studio4plus.homerplayer2.fullkioskmode.KioskResumeScheduler
+import com.studio4plus.homerplayer2.fullkioskmode.UserEnabledFullKioskModeEvents
 import com.studio4plus.homerplayer2.settingsdata.FullKioskModeSetting
 import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
 import com.studio4plus.homerplayer2.settingsdata.UiSettings
-import com.studio4plus.homerplayer2.settingsui.launchUpdate
 import com.studio4plus.homerplayer2.utils.Clock
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import org.koin.core.annotation.Factory
 import org.koin.core.annotation.Named
 import kotlin.time.Duration.Companion.minutes
@@ -43,30 +44,39 @@ class ChangeFullKioskModeSetting(
     private val mainScope: CoroutineScope,
     @Named(SettingsDataModule.UI) private val uiSettingsStore: DataStore<UiSettings>,
     private val clock: Clock,
-    private val kioskResumeScheduler: KioskResumeScheduler
+    private val kioskResumeScheduler: KioskResumeScheduler,
+    private val userEnabledFullKioskModeEvents: UserEnabledFullKioskModeEvents,
 ) {
     enum class FullKioskModeSetValue {
         Enable, Disable, DisableTemporarily
     }
 
     operator fun invoke(value: FullKioskModeSetValue) {
-        mainScope.launchUpdate(uiSettingsStore) {
-            val enableTimestamp = when (value) {
-                FullKioskModeSetValue.Enable -> {
-                    kioskResumeScheduler.cancel()
-                    FullKioskModeSetting.ENABLED
+        mainScope.launch {
+            uiSettingsStore.updateData {
+                val enableTimestamp = when (value) {
+                    FullKioskModeSetValue.Enable -> {
+                        kioskResumeScheduler.cancel()
+                        FullKioskModeSetting.ENABLED
+                    }
+
+                    FullKioskModeSetValue.Disable -> {
+                        kioskResumeScheduler.cancel()
+                        FullKioskModeSetting.DISABLED
+                    }
+
+                    FullKioskModeSetValue.DisableTemporarily -> {
+                        val duration = TEMPORARY_KIOSK_MODE_DISABLE_DURATION
+                        kioskResumeScheduler.schedule(duration)
+                        clock.wallTime() + duration.inWholeMilliseconds
+                    }
                 }
-                FullKioskModeSetValue.Disable -> {
-                    kioskResumeScheduler.cancel()
-                    FullKioskModeSetting.DISABLED
-                }
-                FullKioskModeSetValue.DisableTemporarily -> {
-                    val duration = TEMPORARY_KIOSK_MODE_DISABLE_DURATION
-                    kioskResumeScheduler.schedule(duration)
-                    clock.wallTime() + duration.inWholeMilliseconds
-                }
+                it.copy(fullKioskModeEnableTimestamp = enableTimestamp)
             }
-            it.copy(fullKioskModeEnableTimestamp = enableTimestamp)
+
+            if (value == FullKioskModeSetValue.Enable) {
+                userEnabledFullKioskModeEvents.emit()
+            }
         }
     }
 }
