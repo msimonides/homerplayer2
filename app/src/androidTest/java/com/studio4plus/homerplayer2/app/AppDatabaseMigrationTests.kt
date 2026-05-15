@@ -29,6 +29,7 @@ import androidx.room.testing.MigrationTestHelper
 import androidx.test.platform.app.InstrumentationRegistry
 import com.studio4plus.homerplayer2.audiobooks.Audiobook
 import com.studio4plus.homerplayer2.podcasts.data.Podcast
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Rule
@@ -60,7 +61,7 @@ class AppDatabaseMigrationTests {
     }
 
     @Test
-    fun episode_name_number_migrated_to_date() {
+    fun episode_name_number_migrated_to_date() = runTest {
         val initSql = listOf(
             """INSERT INTO podcasts (feed_uri,   title, include_episode_number, include_podcast_title, include_episode_title, download_episode_count)
                              VALUES ('feed1', 'title1',                      1,                     1,                     0,                      2)

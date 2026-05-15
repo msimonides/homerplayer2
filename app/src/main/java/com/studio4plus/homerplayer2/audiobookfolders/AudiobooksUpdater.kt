@@ -48,17 +48,14 @@ class AudiobooksUpdater(
         MutableSharedFlow(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
     private val _isScanning = MutableStateFlow(false)
-    val isScanning: StateFlow<Boolean> get() = _isScanning
+    val isScanning: StateFlow<Boolean>
+        get() = _isScanning
 
     init {
-        combine(
-            triggerFlow,
-            audiobookFoldersDao.getAll()
-        ) { _, audiobooksFolders ->
-            advertiseBusy(_isScanning) {
-                scan(audiobooksFolders)
+        combine(triggerFlow, audiobookFoldersDao.getAll()) { _, audiobooksFolders ->
+            advertiseBusy(_isScanning) { scan(audiobooksFolders) }
             }
-        }.launchIn(mainScope)
+            .launchIn(mainScope)
     }
 
     fun trigger() {
@@ -71,11 +68,16 @@ class AudiobooksUpdater(
 
     private suspend fun scan(folders: List<AudiobooksFolder>) {
         val scannedItems = scanner.scan(folders.map { it.uri }).map { item ->
-            Pair(item.audiobook, item.uris.map { AudiobookFile(it, item.audiobook.id) })
+            Pair(
+                item.audiobook,
+                item.uris.mapIndexed { index, uri ->
+                    AudiobookFile(uri, index + 1, item.audiobook.id)
+                },
+            )
         }
         audiobooksDao.replaceBooksFromFolders(
             scannedItems.map { it.first },
-            scannedItems.flatMap { it.second }
+            scannedItems.flatMap { it.second },
         )
     }
 }

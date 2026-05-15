@@ -40,10 +40,12 @@ object TestData {
     )
     val audiobookFile1 = AudiobookFile(
         bookId = audiobook.id,
+        position = 1,
         uri = Uri.parse("content://audiobook1/1")
     )
     val audiobookFile2 = AudiobookFile(
         bookId = audiobook.id,
+        position = 2,
         uri = Uri.parse("content://audiobook1/2")
     )
     val audiobookFileDuration1 = AudiobookFileDuration(audiobookFile1.uri, 60_000)

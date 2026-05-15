@@ -92,7 +92,7 @@ class DownloadPendingPodcastEpisodes(
                 secondarySortKey = secondarySortKey,
                 rootFolderUri = Uri.parse(podcast.feedUri),
             )
-        val audiobookFile = AudiobookFile(bookId = bookId, uri = Uri.fromFile(file))
+        val audiobookFile = AudiobookFile(bookId = bookId, position = 1, uri = Uri.fromFile(file))
         audiobooksDao.insertAudiobook(audiobook, listOf(audiobookFile))
         Timber.i("Added episode ${episode.uri} to audiobooks '$displayName'")
     }

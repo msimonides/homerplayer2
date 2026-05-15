@@ -49,8 +49,6 @@ private const val COLUMN_ID = 0
 private const val COLUMN_DISPLAY_NAME = 1
 private const val COLUMN_MIME_TYPE = 2
 
-private const val SORT_BY_DISPLAY_NAME = DocumentsContract.Document.COLUMN_DISPLAY_NAME + " ASC"
-
 private const val SENTRY_SCAN_INFO = "Scan info"
 
 @Single
@@ -89,6 +87,7 @@ class Scanner(
                 val fileName = cursor.getString(COLUMN_DISPLAY_NAME)
                 if (fileName.startsWith(".")) return@mapNotNull null
 
+                Timber.d("Scanning file: $fileName")
                 val bookId = "$folderUri/$fileName"
                 val documentId = cursor.getString(COLUMN_ID)
                 if (isFolder(cursor.getString(COLUMN_MIME_TYPE))) {
@@ -123,15 +122,22 @@ class Scanner(
 
     private fun scanAudiobook(bookId: String, rootFolderUri: Uri, folderDocumentId: String, folderName: String): ScanResult {
         val files = scanAudiobookFiles(rootFolderUri, folderDocumentId, folderName)
-        return scanAudiobook(bookId, rootFolderUri, folderName, files)
+            .sortedBy { it.first } // Can't rely on content provider sorting.
+            .map { it.second }
+        return scanResult(bookId, rootFolderUri, folderName, files)
     }
 
     private fun scanAudiobook(bookId: String, rootFolderUri: Uri, folder: File): ScanResult {
-        val files = scanAudiobookFiles(folder)
-        return scanAudiobook(bookId, rootFolderUri, folder.name, files)
+        val files = scanAudiobookFiles(folder).sorted()
+        return scanResult(bookId, rootFolderUri, folder.name, files)
     }
 
-    private fun scanAudiobook(bookId: String, rootFolderUri: Uri, displayName: String, fileUris: List<Uri>): ScanResult {
+    private fun scanResult(
+        bookId: String,
+        rootFolderUri: Uri,
+        displayName: String,
+        fileUris: List<Uri>
+    ): ScanResult {
         return ScanResult(
             Audiobook(
                 id = bookId,
@@ -146,7 +152,7 @@ class Scanner(
 
     private fun scanAudiobookFiles(
         rootUri: Uri, folderDocumentId: String, path: String
-    ): List<Uri> {
+    ): List<Pair<String, Uri>> {
         CrashReporting.setContext(SENTRY_SCAN_INFO, "path '$path', rootUri '$rootUri'")
         val childrenUri =
             DocumentsContract.buildChildDocumentsUriUsingTree(rootUri, folderDocumentId)
@@ -155,7 +161,7 @@ class Scanner(
             DOCUMENTS_PROJECTION,
             null,
             null,
-            SORT_BY_DISPLAY_NAME
+            null,
         )
         return if (cursor == null) {
             Timber.w("null cursor returned for query %s", childrenUri.toString())
@@ -171,7 +177,8 @@ class Scanner(
                 if (isFolder(mimeType)) {
                     scanAudiobookFiles(rootUri, documentId, filePath)
                 } else {
-                    listOf(DocumentsContract.buildDocumentUriUsingTree(rootUri, documentId))
+                    val uri = DocumentsContract.buildDocumentUriUsingTree(rootUri, documentId)
+                    listOf(filePath to uri)
                 }
             }
         }
@@ -196,7 +203,7 @@ class Scanner(
     ): ScanResult {
         val fileUri = DocumentsContract.buildDocumentUriUsingTree(rootFolderUri, documentId)
         val displayName = fileName.substringBeforeLast(".")
-        return scanAudiobook(bookId, rootFolderUri, displayName, listOf(fileUri))
+        return scanResult(bookId, rootFolderUri, displayName, listOf(fileUri))
     }
 
     private fun isFolder(mimeType: String?): Boolean {

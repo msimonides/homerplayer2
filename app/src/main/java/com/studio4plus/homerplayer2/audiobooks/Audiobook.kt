@@ -59,6 +59,8 @@ data class Audiobook(
 data class AudiobookFile(
     @PrimaryKey
     val uri: Uri,
+    @ColumnInfo(name = "position", index = true, defaultValue = "-1")
+    val position: Int,
     @ColumnInfo(name = "book_id", index = true)
     val bookId: String,
 )
@@ -115,7 +117,8 @@ data class AudiobookPlaybackState(
     SELECT files.*, durations.duration_ms FROM audiobook_files AS files
         JOIN audiobook_file_durations AS durations ON files.uri = durations.uri
         WHERE durations.duration_ms <> -1
-        ORDER BY files.uri""")
+        ORDER BY files.position, files.uri"""
+)
 data class AudiobookFileWithDuration(
     @ColumnInfo(name = "book_id")
     val bookId: String,
