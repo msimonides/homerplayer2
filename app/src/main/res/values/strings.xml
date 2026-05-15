@@ -8,7 +8,14 @@
     <!-- Header about the list of contents of audiobooks folder. -->
     <string name="audiobook_folder_contents_title">Contents</string>
     <string name="audiobook_folder_content_scanning">Scanning…</string>
+    <!-- Content description for accessibility services.
+         Indicates that content is being scanned and more information will be available in a moment. -->
     <string name="audiobook_folder_content_scanning_content_description">Scanning</string>
+    <!-- Current position and total time of an audiobook.
+         %1$s - current position, e.g. 1:02:45,
+         %2$s - total time, e.g. 2:30:10.
+
+         Example: 1:02:45 / 2:30:10 -->
     <string name="audiobook_folder_content_time_format">%1$s / %2$s</string>
     <string name="audiobook_folder_samples_folder_name">Sample books</string>
     <string name="audiobook_folder_samples_downloading_label">Downloading…</string>
@@ -23,7 +30,6 @@
         <item quantity="one">%1$d book: %2$s</item>
         <item quantity="other">%1$d books starting with: %2$s</item>
     </plurals>
-    <string name="audiobook_folder_scanning_content_description">scanning</string>
 
     <plurals name="battery_level_content_description">
         <item quantity="one">battery %1$d percent</item>
@@ -52,7 +58,7 @@
     <!-- Error message displayed when downloading sample audiobooks fails. -->
     <string name="content_samples_download_error">Samples download failed. Check your network connection and try again.</string>
     <!-- Error message displayed when installation of sample audiobooks fails.
-         %1$d - komunikat błędu.
+         %1$s - error message.
     -->
     <string name="content_samples_install_error">Samples installation failed. %1$s</string>
     <string name="content_section_title_audiobooks">Audiobooks folders</string>
@@ -96,7 +102,7 @@
     <string name="podcast_add_dialog_add_button">Add podcast</string>
     <string name="podcast_download_info_in_background">Podcast episodes will show up among audiobooks once they are fully downloaded.\nThis may take several minutes.</string>
     <string name="podcast_download_info_unmetered_network">Podcasts are configured to download only on WiFi networks.</string>
-    <string name="podcast_download_info_change_network_settings">Change</string>
+    <string name="podcast_download_info_change_network_settings_button">Change</string>
     <string name="podcast_edit_episode_count">Episode count</string>
     <!-- Header above list of switches for configuring episode display name in browse screen. -->
     <string name="podcast_edit_title_episode_display_name">Episode display name</string>
@@ -268,7 +274,11 @@
     <string name="settings_ui_share_diagnostic_log_title">Share diagnostic log</string>
     <string name="settings_ui_share_diagnostic_log_summary">Send diagnostic log to developer to report an issue</string>
     <string name="settings_ui_tts_settings_item">Text-to-speech…</string>
+    <!-- State of Text-to-speech setting: enabled.
+         Displayed below settings_ui_tts_settings_item -->
     <string name="settings_ui_tts_settings_enabled">Enabled</string>
+    <!-- State of Text-to-speech setting: disabled.
+     Displayed below settings_ui_tts_settings_item -->
     <string name="settings_ui_tts_settings_disabled">Disabled</string>
     <string name="settings_ui_tts_settings_title">Text-to-speech</string>
     <string name="settings_ui_tts_read_book_titles">Read book titles</string>
@@ -276,7 +286,7 @@
     %1$s - the phrase for labeling new content.
 
     Example: Say "New" for new content…
--->
+    -->
     <string name="settings_ui_tts_read_book_titles_announce_new_item">Say \"%1$s\" for new content…</string>
     <!-- Description for the functionality of announcing new content by adding the phrase "New" to the title.
          The word "New" in this description must match "content_tts_new_title". -->
@@ -287,7 +297,11 @@
         Example: Say "New" for new content
     -->
     <string name="settings_ui_tts_read_book_titles_announce_new_switch">Say \"%1$s\" for new content</string>
+    <!-- State of 'Say "new" for new content' setting: enabled.
+         Displayed below settings_ui_tts_read_book_titles_announce_new_switch -->
     <string name="settings_ui_tts_read_book_titles_announce_new_enabled">Enabled</string>
+    <!-- State of 'Say "new" for new content' setting: disabled.
+         Displayed below settings_ui_tts_read_book_titles_announce_new_switch -->
     <string name="settings_ui_tts_read_book_titles_announce_new_disabled">Disabled</string>
     <!-- Button that plays the user's phrase for announcing "New" book. -->
     <string name="settings_ui_tts_read_book_titles_announce_new_test">Test</string>

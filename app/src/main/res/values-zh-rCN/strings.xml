@@ -14,7 +14,6 @@
     <string name="audiobook_folder_samples_downloading_content_description">下载中</string>
     <string name="audiobook_folder_samples_downloading_label">下载中…</string>
     <string name="audiobook_folder_samples_folder_name">有声书示例</string>
-    <string name="audiobook_folder_scanning_content_description">扫描中</string>
     <plurals name="battery_level_charging_content_description">
         <item quantity="other">充电中， %1$d %</item>
     </plurals>
@@ -65,7 +64,7 @@
     <string name="podcast_accessibility_action_edit">编辑</string>
     <string name="podcast_add_dialog_add_button">添加播客</string>
     <string name="podcast_add_dialog_latest_episode">最新节目：</string>
-    <string name="podcast_download_info_change_network_settings">更改</string>
+    <string name="podcast_download_info_change_network_settings_button">更改</string>
     <string name="podcast_download_info_in_background">播客节目下载好后会出现在有声书内容中。
 这可能要花上几分钟。</string>
     <string name="podcast_download_info_unmetered_network">按照配置，应用只在 WiFi 网络连接时下载播客节目。</string>

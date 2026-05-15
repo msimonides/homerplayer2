@@ -229,7 +229,7 @@ private fun PodcastEdit(
                             onClick = { showNetworkTypeDialog = true },
                             modifier = Modifier.align(Alignment.End)
                         ) {
-                            Text(stringResource(R.string.podcast_download_info_change_network_settings))
+                            Text(stringResource(R.string.podcast_download_info_change_network_settings_button))
                         }
                     }
                 } else {

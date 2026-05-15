@@ -17,7 +17,6 @@
     <string name="audiobook_folder_samples_downloading_content_description">Pobieranie</string>
     <string name="audiobook_folder_samples_downloading_label">Pobieranie…</string>
     <string name="audiobook_folder_samples_folder_name">Przykładowe książki</string>
-    <string name="audiobook_folder_scanning_content_description">skanuję</string>
     <plurals name="battery_level_charging_content_description">
         <item quantity="one">ładowanie baterii, %1$d procent</item>
         <item quantity="few">ładowanie baterii, %1$d procent</item>
@@ -74,7 +73,7 @@ Możesz go teraz przetestować i dostosować ustawienia.</string>
     <string name="podcast_accessibility_action_edit">Edytuj</string>
     <string name="podcast_add_dialog_add_button">Dodaj podkast</string>
     <string name="podcast_add_dialog_latest_episode">Najnowszy odcinek:</string>
-    <string name="podcast_download_info_change_network_settings">Zmień</string>
+    <string name="podcast_download_info_change_network_settings_button">Zmień</string>
     <string name="podcast_download_info_in_background">Odcinki podkastów pojawią się wśród audiobooków, gdy zostaną w pełni pobrane.
 Może to potrwać kilka minut.</string>
     <string name="podcast_download_info_unmetered_network">Pobieranie podkastów jest włączone tylko na sieciach WiFi.</string>
