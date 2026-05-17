@@ -25,8 +25,8 @@
 package com.studio4plus.homerplayer2.settingsui.usecases
 
 import androidx.datastore.core.DataStore
+import com.studio4plus.homerplayer2.appreview.AppReviewOpportunity
 import com.studio4plus.homerplayer2.fullkioskmode.KioskResumeScheduler
-import com.studio4plus.homerplayer2.fullkioskmode.UserEnabledFullKioskModeEvents
 import com.studio4plus.homerplayer2.settingsdata.FullKioskModeSetting
 import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
 import com.studio4plus.homerplayer2.settingsdata.UiSettings
@@ -45,7 +45,7 @@ class ChangeFullKioskModeSetting(
     @Named(SettingsDataModule.UI) private val uiSettingsStore: DataStore<UiSettings>,
     private val clock: Clock,
     private val kioskResumeScheduler: KioskResumeScheduler,
-    private val userEnabledFullKioskModeEvents: UserEnabledFullKioskModeEvents,
+    private val appReviewOpportunity: AppReviewOpportunity,
 ) {
     enum class FullKioskModeSetValue {
         Enable, Disable, DisableTemporarily
@@ -75,7 +75,7 @@ class ChangeFullKioskModeSetting(
             }
 
             if (value == FullKioskModeSetValue.Enable) {
-                userEnabledFullKioskModeEvents.emit()
+                appReviewOpportunity.emit(AppReviewOpportunity.Reason.KIOSK_ENABLED)
             }
         }
     }

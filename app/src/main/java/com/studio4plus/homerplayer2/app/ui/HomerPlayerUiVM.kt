@@ -29,6 +29,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.studio4plus.homerplayer2.app.DATASTORE_APP_STATE
 import com.studio4plus.homerplayer2.app.StoredAppState
+import com.studio4plus.homerplayer2.appreview.AppReviewOpportunity
 import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
 import com.studio4plus.homerplayer2.settingsdata.UiSettings
 import com.studio4plus.homerplayer2.settingsdata.UiThemeMode
@@ -44,6 +45,7 @@ import org.koin.core.annotation.Named
 class HomerPlayerUiVM(
     @Named(DATASTORE_APP_STATE) appState: DataStore<StoredAppState>,
     @Named(SettingsDataModule.UI) uiSettings: DataStore<UiSettings>,
+    private val appReviewOpportunity: AppReviewOpportunity,
 ) : ViewModel() {
     val viewState: StateFlow<HomerPlayerViewState?> = combine(
         appState.data,
@@ -55,6 +57,10 @@ class HomerPlayerUiVM(
             uiThemeMode = uiSettings.uiThemeMode,
         )
     }.stateIn(viewModelScope, SharingStarted.Eagerly, null)
+
+    fun onExitSettingsToPlayer() {
+        appReviewOpportunity.emit(AppReviewOpportunity.Reason.RETURNED_FROM_SETTINGS_TO_PLAYER)
+    }
 }
 
 data class HomerPlayerViewState(

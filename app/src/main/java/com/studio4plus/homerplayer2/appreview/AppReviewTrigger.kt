@@ -25,9 +25,10 @@
 package com.studio4plus.homerplayer2.appreview
 
 import androidx.datastore.core.DataStore
+import com.studio4plus.homerplayer2.analytics.Analytics
 import com.studio4plus.homerplayer2.app.DATASTORE_APP_STATE
 import com.studio4plus.homerplayer2.app.StoredAppState
-import com.studio4plus.homerplayer2.fullkioskmode.UserEnabledFullKioskModeEvents
+import com.studio4plus.homerplayer2.fullkioskmode.IsFullKioskAvailable
 import com.studio4plus.homerplayer2.lifecycle.CurrentActivity
 import com.studio4plus.homerplayer2.utils.Clock
 import kotlinx.coroutines.CoroutineScope
@@ -45,35 +46,47 @@ private val REVIEW_COOLDOWN_MS = 90.days.inWholeMilliseconds
 class AppReviewTrigger(
     mainScope: CoroutineScope,
     @Named(DATASTORE_APP_STATE) private val appStateStore: DataStore<StoredAppState>,
-    userEnabledFullKioskModeEvents: UserEnabledFullKioskModeEvents,
+    appReviewOpportunity: AppReviewOpportunity,
     private val currentActivity: CurrentActivity,
     private val reviewRequester: ReviewRequester,
+    private val isFullKioskAvailable: IsFullKioskAvailable,
     private val clock: Clock,
+    private val analytics: Lazy<Analytics>,
 ) {
     init {
-        userEnabledFullKioskModeEvents.events()
-            .onEach { maybeRequestReview() }
+        appReviewOpportunity.events()
+            .onEach { maybeRequestReview(it) }
             .launchIn(mainScope)
     }
 
-    private suspend fun maybeRequestReview() {
+    private suspend fun maybeRequestReview(reason: AppReviewOpportunity.Reason) {
         val now = clock.wallTime()
         val appState = appStateStore.data.first()
-        if (!appState.isEligibleForReview(now)) return
+        if (!appState.isEligibleForReview(now, reason)) return
 
         val activity = currentActivity().first() ?: return
 
-        appStateStore.updateData {
-            it.copy(reviewLastRequestedTimestampMs = now)
-        }
+        appStateStore.updateData { it.copy(reviewLastRequestedTimestampMs = now) }
 
+        analytics.value.event("InAppReview.Request", mapOf("reason" to reason.name))
         reviewRequester.requestReview(activity)
     }
 
-    private fun StoredAppState.isEligibleForReview(nowMs: Long): Boolean {
+    private fun StoredAppState.isEligibleForReview(
+        nowMs: Long,
+        reason: AppReviewOpportunity.Reason,
+    ): Boolean {
         if (firstRunTimestampMs == StoredAppState.UNSET_TIMESTAMP_MS) return false
         if (nowMs - firstRunTimestampMs < MIN_APP_AGE_MS) return false
-        if (reviewLastRequestedTimestampMs == StoredAppState.UNSET_TIMESTAMP_MS) return true
-        return nowMs - reviewLastRequestedTimestampMs >= REVIEW_COOLDOWN_MS
+        val needsCooldown =
+            reviewLastRequestedTimestampMs != StoredAppState.UNSET_TIMESTAMP_MS &&
+                nowMs - reviewLastRequestedTimestampMs < REVIEW_COOLDOWN_MS
+        if (needsCooldown) return false
+        val isFullKioskAvailable = isFullKioskAvailable()
+
+        return when (reason) {
+            AppReviewOpportunity.Reason.KIOSK_ENABLED -> isFullKioskAvailable
+            AppReviewOpportunity.Reason.RETURNED_FROM_SETTINGS_TO_PLAYER -> !isFullKioskAvailable
+        }
     }
 }

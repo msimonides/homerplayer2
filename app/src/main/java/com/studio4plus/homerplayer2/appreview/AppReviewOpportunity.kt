@@ -22,22 +22,31 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.fullkioskmode
+package com.studio4plus.homerplayer2.appreview
 
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import org.koin.core.annotation.Single
+import timber.log.Timber
 
 @Single
-class UserEnabledFullKioskModeEvents {
+class AppReviewOpportunity {
 
-    private val events = MutableSharedFlow<Unit>(
+    enum class Reason {
+        KIOSK_ENABLED,
+        RETURNED_FROM_SETTINGS_TO_PLAYER,
+    }
+
+    private val opportunities = MutableSharedFlow<Reason>(
         extraBufferCapacity = 1,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST
+        onBufferOverflow = BufferOverflow.DROP_OLDEST,
     )
 
-    fun events(): Flow<Unit> = events
+    fun events(): Flow<Reason> = opportunities
 
-    fun emit() = events.tryEmit(Unit)
+    fun emit(reason: Reason) {
+        Timber.d("App review opportunity: $reason")
+        opportunities.tryEmit(reason)
+    }
 }

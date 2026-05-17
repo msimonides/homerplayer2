@@ -25,15 +25,14 @@
 package com.studio4plus.homerplayer2.app.ui
 
 import android.content.Context
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.unveilIn
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
@@ -76,7 +75,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun HomerPLayerUi(
     eventNavigateToPlayer: SharedFlow<Unit>,
-    viewModel: HomerPlayerUiVM = koinViewModel()
+    viewModel: HomerPlayerUiVM = koinViewModel(),
 ) {
     val viewState = viewModel.viewState.collectAsStateWithLifecycle().value
     HomerPlayer2Theme(darkTheme = getIsDarkTheme(viewState)) {
@@ -86,6 +85,11 @@ fun HomerPLayerUi(
                 val defaultDestination =
                     if (viewState.needsOnboarding) OnboardingDestination.Default else PlayerDestination
                 val navBackStack = rememberNavBackStack(defaultDestination)
+                navBackStack.onNavigateBack = { old, new ->
+                    if (old is SettingsDestination && new == PlayerDestination) {
+                        viewModel.onExitSettingsToPlayer()
+                    }
+                }
 
                 if (!viewState.needsOnboarding) {
                     LaunchedEffect(eventNavigateToPlayer, navBackStack) {

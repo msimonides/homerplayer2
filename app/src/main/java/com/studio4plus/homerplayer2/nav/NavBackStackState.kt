@@ -54,8 +54,13 @@ fun rememberNavBackStackState(
 
 // Note: consider moving to base.
 @OptIn(ExperimentalAtomicApi::class)
-class NavBackStackState<T : NavKey>(val navBackStack: NavBackStack<T>, private val clock: Clock) {
+class NavBackStackState<T : NavKey>(
+    val navBackStack: NavBackStack<T>,
+    private val clock: Clock,
+) {
     private var lastRemoveTime: Long = 0
+
+    var onNavigateBack: ((oldDst: T?, newDst: T?) -> Unit)? = null
 
     fun goBack() {
         goBackIfPossible { navBackStack.removeLastOrNull() }
@@ -81,7 +86,10 @@ class NavBackStackState<T : NavKey>(val navBackStack: NavBackStack<T>, private v
         val now = clock.elapsedRealTime()
         val canGoBack = now - lastRemoveTime > BACK_NAVIGATION_DELAY_MS
         if (canGoBack) {
+            val oldDst = navBackStack.lastOrNull()
             stackAction()
+            val newDst = navBackStack.lastOrNull()
+            onNavigateBack?.invoke(oldDst, newDst)
             lastRemoveTime = now
         }
     }
