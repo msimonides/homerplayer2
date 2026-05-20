@@ -42,7 +42,7 @@ android {
     defaultConfig {
         applicationId = "com.studio4plus.homerplayer2.kiosk"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 8
         versionName = "1.5.7"
 

@@ -29,7 +29,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.HomerPlayer2"
         android:name=".app.HomerPlayerApp"
-        tools:targetApi="34">
+        tools:targetApi="36">
         <activity
             android:name=".app.MainActivity"
             android:windowSoftInputMode="adjustResize"

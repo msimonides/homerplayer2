@@ -22,7 +22,7 @@ android {
     defaultConfig {
         applicationId "com.studio4plus.homerplayer2"
         minSdk libs.versions.android.minSdk.get().toInteger()
-        targetSdk 35
+        targetSdk 36
         versionCode 45
         versionName "1.5.10"
 
