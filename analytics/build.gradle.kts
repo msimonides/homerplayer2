@@ -28,7 +28,7 @@ plugins {
 }
 
 android {
-    namespace = "com.studio4plus.homerplayer2.analytics"
+    namespace = "com.studio4plus.homerplayer2.analytics.api"
     compileSdk {
         version = release(libs.versions.android.compileSdk.get().toInt())
     }
