@@ -64,6 +64,7 @@ import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobooksFolderEditRoute
 import com.studio4plus.homerplayer2.base.serialization.UriAsText
 import com.studio4plus.homerplayer2.base.ui.IconButtonNavigateBack
+import com.studio4plus.homerplayer2.base.ui.theme.unveilPredictivePopTransitionSpecAny
 import com.studio4plus.homerplayer2.nav.NavBackStackState
 import com.studio4plus.homerplayer2.podcastsui.PodcastEditRoute
 import com.studio4plus.homerplayer2.settingsui.SettingsAboutRoute
@@ -194,6 +195,7 @@ private class FullscreenScene(
     override val content: @Composable (() -> Unit) = { entry.Content() }
 }
 
+// Note: look into SceneDecoratorStrategy.
 private class SettingsScene(
     override val key: Any,
     val entry: NavEntry<NavKey>,
@@ -263,13 +265,25 @@ private class SettingsScene(
                         slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween())
                 }
             )
+            putAll(
+                NavDisplay.predictivePopTransitionSpec {
+                    slideInHorizontally(
+                        initialOffsetX = { -it },
+                        animationSpec = tween(),
+                    ) togetherWith
+                        slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween())
+                }
+            )
             // Last, allows entries to override the scene metadata.
             putAll(this@SettingsScene.entries.lastOrNull()?.metadata ?: emptyMap())
         }
 }
 
+@Suppress("UNCHECKED_CAST")
 private fun defaultTransitionSpec() =
     androidx.navigation3.ui.defaultTransitionSpec<NavKey>() as AnimatedContentTransitionScope<Scene<*>>.() -> ContentTransform?
+
+@Suppress("UNCHECKED_CAST")
 private fun defaultPopTransitionSpec(): AnimatedContentTransitionScope<Scene<*>>.() -> ContentTransform? =
     androidx.navigation3.ui.defaultPopTransitionSpec<NavKey>() as AnimatedContentTransitionScope<Scene<*>>.() -> ContentTransform?
 
@@ -283,7 +297,8 @@ fun EntryProviderScope<NavKey>.settingsEntries(
         titleRes = R.string.settings_ui_settings_title,
         metadata =
             NavDisplay.transitionSpec(defaultTransitionSpec()) +
-                NavDisplay.popTransitionSpec(defaultPopTransitionSpec()),
+                NavDisplay.popTransitionSpec(defaultPopTransitionSpec()) +
+                NavDisplay.predictivePopTransitionSpec(unveilPredictivePopTransitionSpecAny()),
     ) {
         SettingsMainRoute(
             snackbarHostState,

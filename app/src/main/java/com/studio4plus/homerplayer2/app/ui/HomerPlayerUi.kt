@@ -25,12 +25,8 @@
 package com.studio4plus.homerplayer2.app.ui
 
 import android.content.Context
-import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.SharedTransitionLayout
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.scaleOut
-import androidx.compose.animation.unveilIn
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
@@ -57,6 +53,7 @@ import com.studio4plus.homerplayer2.base.ui.HomerHapticFeedback
 import com.studio4plus.homerplayer2.base.ui.NoHapticFeedback
 import com.studio4plus.homerplayer2.base.ui.VibratorProvider
 import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
+import com.studio4plus.homerplayer2.base.ui.theme.unveilPredictivePopTransitionSpec
 import com.studio4plus.homerplayer2.nav.NavBackStackState
 import com.studio4plus.homerplayer2.nav.rememberNavBackStackState
 import com.studio4plus.homerplayer2.onboarding.OnboardingDestination
@@ -151,7 +148,7 @@ private fun MainNavDisplay(
                     rememberSaveableStateHolderNavEntryDecorator(),
                     rememberViewModelStoreNavEntryDecorator(),
                 ),
-            sceneStrategy = SettingsSceneStrategy(this@SharedTransitionLayout),
+            sceneStrategies = listOf(SettingsSceneStrategy(this@SharedTransitionLayout)),
             entryProvider =
                 entryProvider {
                     onboardingEntries(
@@ -172,17 +169,7 @@ private fun MainNavDisplay(
                         snackbarHostState = snackbarHostState,
                     )
                 },
-            predictivePopTransitionSpec = {
-                ContentTransform(
-                    unveilIn(
-                        spring(
-                            dampingRatio = 1.0f, // reflects material3 motionScheme.defaultEffectsSpec()
-                            stiffness = 1600.0f, // reflects material3 motionScheme.defaultEffectsSpec()
-                        )
-                    ),
-                    scaleOut(targetScale = 0.7f),
-                )
-            }
+            predictivePopTransitionSpec = unveilPredictivePopTransitionSpec()
         )
     }
 }

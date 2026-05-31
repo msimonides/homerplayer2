@@ -86,6 +86,7 @@ dependencies {
     implementation(libs.compose.material3)
     implementation(libs.compose.ui.ui)
     implementation(libs.compose.ui.tooling.preview)
+    implementation(libs.androidx.navigation3.ui)
     implementation(libs.koin.android)
     implementation(libs.koin.annotations)
     implementation(libs.kotlinx.coroutines.android)

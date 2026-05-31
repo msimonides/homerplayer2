@@ -4,8 +4,9 @@ android-gradle-plugin = "8.13.2"
 android-compileSdk = '36'
 android-minSdk = '23'
 androidx-lifecycle = '2.10.0'
-androidx-navigation3 = '1.0.0'
-compose = '1.10.1'
+androidx-navigation3 = '1.1.2'
+navigationevent = "1.1.1"
+compose = '1.11.2'
 coil = '3.3.0'
 koin = '4.1.1'
 koin-annotation= "2.3.1"
@@ -22,8 +23,8 @@ workmanager = '2.11.1'
 [libraries]
 
 aboutlibraries-compose = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "about-libraries" }
-androidx-activity-compose = 'androidx.activity:activity-compose:1.12.2'
-androidx-core-ktx = 'androidx.core:core-ktx:1.17.0'
+androidx-activity-compose = 'androidx.activity:activity-compose:1.13.0'
+androidx-core-ktx = 'androidx.core:core-ktx:1.18.0'
 androidx-datastore-core = 'androidx.datastore:datastore:1.0.0'
 androidx-documentfile ='androidx.documentfile:documentfile:1.1.0'
 androidx-lifecycle-process = { module = 'androidx.lifecycle:lifecycle-process', version.ref = 'androidx-lifecycle' }
@@ -37,6 +38,7 @@ androidx-media3-test-utils = { module = 'androidx.media3:media3-test-utils', ver
 androidx-media3-test-utils-robolectric = { module = 'androidx.media3:media3-test-utils-robolectric', version.ref = 'media3' }
 androidx-navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "androidx-navigation3" }
 androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "androidx-navigation3" }
+androidx-navigationevent = { group = "androidx.navigationevent", name = "navigationevent", version.ref = "navigationevent" }
 androidx-room-compiler = { module = 'androidx.room:room-compiler', version.ref = 'room' }
 androidx-room-ktx = { module = 'androidx.room:room-ktx', version.ref = 'room' }
 androidx-room-testing = { module = 'androidx.room:room-testing', version.ref = 'room' }
