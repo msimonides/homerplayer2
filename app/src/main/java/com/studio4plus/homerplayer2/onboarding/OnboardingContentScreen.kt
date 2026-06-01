@@ -27,8 +27,8 @@ package com.studio4plus.homerplayer2.onboarding
 import android.net.Uri
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.consumeWindowInsets
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -36,6 +36,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -75,7 +76,7 @@ fun OnboardingContentRoute(
     }
 
     OpenAudiobooksTreeScreenWrapper(
-        onFolderSelected =  { uri -> viewModel.addFolder(uri)}
+        onFolderSelected = { uri -> viewModel.addFolder(uri) }
     ) { openAudiobooksTree ->
         OnboardingContentScreen(
             viewState = viewState,
@@ -119,73 +120,54 @@ fun OnboardingContentScreen(
 ) {
     Scaffold(
         modifier = modifier,
-        bottomBar = {
-            OnboardingNavigationButtons(
-                nextEnabled = viewState.canProceed,
-                nextLabel = R.string.onboarding_step_next,
-                onNext = navigateNext,
-                modifier = Modifier
-                    .padding(OnboardingNavigationButtonsDefaults.paddingValues)
-                    .navigationBarsPadding(),
-            )
-        },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     ) { paddingValues ->
-        ScreenContent(
+        Column(
             modifier = Modifier
                 .padding(paddingValues)
                 .consumeWindowInsets(paddingValues)
-                .padding(horizontal = HomerTheme.dimensions.screenHorizExtraPadding)
-                .padding(top = HomerTheme.dimensions.screenVertPadding),
-            panelState = viewState.panelState,
-            onAddFolder = addFolder,
-            onEditFolder = editFolder,
-            onRemoveFolder = removeFolder,
-            onAddPodcast = addPodcast,
-            onEditPodcast = editPodcast,
-            onRemovePodcast = removePodcast,
-            onDownloadSamples = downloadSamples,
-        )
-    }
-}
+                .padding(
+                    horizontal = HomerTheme.dimensions.screenHorizExtraPadding,
+                    vertical = HomerTheme.dimensions.screenVertPadding
+                ),
+        ) {
+            val horizontalPaddingModifier =
+                Modifier.padding(horizontal = HomerTheme.dimensions.screenHorizPadding)
+            OnboardingHeader(
+                titleRes = R.string.onboarding_content_title,
+                modifier = horizontalPaddingModifier
+            )
 
-@Composable
-private fun ScreenContent(
-    panelState: ContentPanelViewState?,
-    onAddFolder: () -> Unit,
-    onEditFolder: (folderUri: Uri) -> Unit,
-    onRemoveFolder: (AudiobookFolderViewState) -> Unit,
-    onAddPodcast: () -> Unit,
-    onEditPodcast: (feedUri: Uri) -> Unit,
-    onRemovePodcast: (PodcastItemViewState) -> Unit,
-    onDownloadSamples: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Column(modifier = modifier) {
-        val horizontalPaddingModifier =
-            Modifier.padding(horizontal = HomerTheme.dimensions.screenHorizPadding)
-        OnboardingHeader(
-            titleRes = R.string.onboarding_content_title,
-            modifier = horizontalPaddingModifier
-        )
+            ContentManagementPanel(
+                state = viewState.panelState,
+                modifier = Modifier.weight(1f, fill = false),
+                header = {
+                    Text(
+                        stringResource(R.string.onboarding_content_description),
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+                },
+                onAddFolder = addFolder,
+                onEditFolder = editFolder,
+                onRemoveFolder = removeFolder,
+                onAddPodcast = addPodcast,
+                onEditPodcast = editPodcast,
+                onRemovePodcast = removePodcast,
+                onDownloadSamples = downloadSamples,
+                horizontalPadding = HomerTheme.dimensions.screenHorizPadding,
+            )
 
-        ContentManagementPanel(
-            state = panelState,
-            header = {
-                Text(
-                    stringResource(R.string.onboarding_content_description),
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
-            },
-            onAddFolder = onAddFolder,
-            onEditFolder = onEditFolder,
-            onRemoveFolder = onRemoveFolder,
-            onAddPodcast = onAddPodcast,
-            onEditPodcast = onEditPodcast,
-            onRemovePodcast = onRemovePodcast,
-            onDownloadSamples = onDownloadSamples,
-            horizontalPadding = HomerTheme.dimensions.screenHorizPadding,
-        )
+            if (viewState.canProceed) {
+                Button(
+                    onClick = navigateNext,
+                    modifier = Modifier
+                        .padding(top = 8.dp)
+                        .align(Alignment.CenterHorizontally)
+                ) {
+                    Text(stringResource(R.string.onboarding_step_next))
+                }
+            }
+        }
     }
 }
 
@@ -194,7 +176,11 @@ private fun ScreenContent(
 private fun PreviewOnboardingAudiobookFoldersScreen1() {
     HomerPlayer2Theme {
         val state = OnboardingContentViewModel.ViewState(
-            ContentPanelViewState(PreviewData.folderItems1, PreviewData.podcasts1, SamplesInstallState.Idle),
+            ContentPanelViewState(
+                PreviewData.folderItems1,
+                PreviewData.podcasts1,
+                SamplesInstallState.Idle
+            ),
             canProceed = true
         )
         OnboardingContentScreen(state, SnackbarHostState(), {}, {}, {}, {}, {}, {}, {}, {})

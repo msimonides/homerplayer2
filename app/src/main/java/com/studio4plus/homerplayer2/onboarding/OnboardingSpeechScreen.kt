@@ -31,8 +31,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
@@ -46,7 +44,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -56,8 +54,8 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.base.ui.SmallCircularProgressIndicator
+import com.studio4plus.homerplayer2.base.ui.theme.HomerPlayer2Theme
 import com.studio4plus.homerplayer2.base.ui.theme.HomerTheme
-import com.studio4plus.homerplayer2.settingsui.composables.SettingSwitch
 import com.studio4plus.homerplayer2.speech.LaunchErrorSnackDisplay
 import com.studio4plus.homerplayer2.speech.SpeechTestViewModel
 import org.koin.compose.viewmodel.koinViewModel
@@ -69,7 +67,6 @@ fun OnboardingSpeechRoute(
     viewModel: OnboardingSpeechViewModel = koinViewModel(),
     speechTestViewModel: SpeechTestViewModel = koinViewModel(),
 ) {
-    val viewState by viewModel.viewState.collectAsStateWithLifecycle()
     val speechTestViewState by speechTestViewModel.viewState.collectAsStateWithLifecycle()
 
     val testPhrase = stringResource(id = R.string.speech_test_phrase)
@@ -92,17 +89,15 @@ fun OnboardingSpeechRoute(
         navigateNext()
     }
     val navigateNextAndConfirm = {
-        viewModel.confirmTtsChoice()
+        viewModel.enableTts()
         navigateNextAndFinish()
     }
     OnboardingSpeechScreen(
-        viewState = viewState,
         speechTestViewState = speechTestViewState,
         snackbarHostState = snackbarHostState,
         navigateNext = navigateNextAndConfirm,
         navigateSkip = navigateNextAndFinish,
         onSayTestPhrase = { speechTestViewModel.say(testPhrase) },
-        onTtsToggled = viewModel::onTtsToggled,
         onOpenTtsSettings = { speechTestViewModel.openTtsSettings(context) },
         modifier = modifier
     )
@@ -110,106 +105,95 @@ fun OnboardingSpeechRoute(
 
 @Composable
 fun OnboardingSpeechScreen(
-    viewState: OnboardingSpeechViewModel.ViewState,
     speechTestViewState: SpeechTestViewModel.ViewState,
     snackbarHostState: SnackbarHostState,
     navigateNext: () -> Unit,
     navigateSkip: () -> Unit,
     onSayTestPhrase: () -> Unit,
-    onTtsToggled: () -> Unit,
     onOpenTtsSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val canProceed = !viewState.readBookTitlesEnabled || speechTestViewState.ttsTestSuccessful
+    val canProceed = speechTestViewState.ttsTestSuccessful
     Scaffold(
         modifier = modifier,
-        bottomBar = {
-            OnboardingNavigationButtons(
-                nextEnabled = canProceed,
-                nextLabel = R.string.onboarding_step_done,
-                onNext = navigateNext,
-                secondaryLabel = R.string.onboarding_step_skip,
-                onSecondary = navigateSkip,
-                modifier = Modifier
-                    .padding(OnboardingNavigationButtonsDefaults.paddingValues)
-                    .navigationBarsPadding(),
-            )
-        },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     ) { paddingValues ->
-        ScreenContent(
+        val horizontalPaddingModifier =
+            Modifier.padding(horizontal = HomerTheme.dimensions.screenHorizPadding)
+
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
                 .consumeWindowInsets(paddingValues)
-                .padding(horizontal = HomerTheme.dimensions.screenHorizExtraPadding)
-                .padding(top = HomerTheme.dimensions.screenVertPadding),
-            showTtsSettings = speechTestViewState.showTtsSettings,
-            readBookTitlesEnabled = viewState.readBookTitlesEnabled,
-            speechInProgress = speechTestViewState.isSpeaking,
-            playTestPhraseIsCta = !canProceed,
-            onSayTestPhrase = onSayTestPhrase,
-            onTtsToggled = onTtsToggled,
-            onOpenTtsSettings = onOpenTtsSettings,
-        )
-    }
-}
-
-@Composable
-private fun ScreenContent(
-    modifier: Modifier = Modifier,
-    showTtsSettings: Boolean,
-    readBookTitlesEnabled: Boolean,
-    speechInProgress: Boolean,
-    playTestPhraseIsCta: Boolean,
-    onSayTestPhrase: () -> Unit,
-    onTtsToggled: () -> Unit,
-    onOpenTtsSettings: () -> Unit,
-) {
-    val horizontalPaddingModifier =
-        Modifier.padding(horizontal = HomerTheme.dimensions.screenHorizPadding)
-
-    Column(modifier = modifier) {
-        OnboardingHeader(
-            titleRes = R.string.onboarding_speech_title,
-            modifier = horizontalPaddingModifier
-        )
-
-        Text(
-            stringResource(R.string.onboarding_speech_description),
-            modifier = horizontalPaddingModifier.padding(bottom = 16.dp)
-        )
-
-        SettingSwitch(
-            label = stringResource(R.string.settings_ui_tts_read_book_titles),
-            value = readBookTitlesEnabled,
-            onChange = { onTtsToggled() },
-            icon = R.drawable.icon_record_voice_over,
-            modifier = horizontalPaddingModifier
-                .padding(vertical = 8.dp)
-        )
-
-        Spacer(Modifier.height(16.dp))
-
-        Column(
-            modifier = Modifier
-                .align(CenterHorizontally)
-                .width(IntrinsicSize.Max),
+                .padding(
+                    horizontal = HomerTheme.dimensions.screenHorizExtraPadding,
+                    vertical = HomerTheme.dimensions.screenVertPadding,
+                ),
         ) {
-            ButtonWithLoadingState(
-                onClick = onSayTestPhrase,
-                modifier = Modifier.fillMaxWidth(),
-                isLoading = speechInProgress,
-                isFilled = playTestPhraseIsCta,
-                enabled = readBookTitlesEnabled
-            ) { Text(text = stringResource(id = R.string.speech_play_test_phrase)) }
-            if (showTtsSettings) {
+            OnboardingHeader(
+                titleRes = R.string.onboarding_speech_title,
+                modifier = horizontalPaddingModifier
+            )
+
+            Text(
+                stringResource(R.string.onboarding_speech_description),
+                modifier = horizontalPaddingModifier.padding(bottom = 16.dp)
+            )
+
+            Column(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .width(IntrinsicSize.Max)
+                    .padding(bottom = 32.dp)
+            ) {
+                val buttonModifier = Modifier
+                    .fillMaxWidth()
+                if (canProceed) {
+                    ButtonWithLoadingState(
+                        onClick = onSayTestPhrase,
+                        isFilled = false,
+                        modifier = buttonModifier,
+                    ) {
+                        Text(stringResource(R.string.speech_play_test_phrase))
+                    }
+
+                    Button(
+                        onClick = navigateNext,
+                        modifier = buttonModifier,
+                    ) {
+                        Text(stringResource(R.string.onboarding_step_done))
+                    }
+                } else {
+                    ButtonWithLoadingState(
+                        onClick = onSayTestPhrase,
+                        isLoading = speechTestViewState.isSpeaking,
+                        modifier = buttonModifier,
+                    ) {
+                        Text(stringResource(R.string.speech_play_test_phrase))
+                    }
+
+                    OutlinedButton(
+                        onClick = navigateSkip,
+                        modifier = buttonModifier,
+                    ) {
+                        Text(stringResource(R.string.onboarding_speech_skip))
+                    }
+                }
+            }
+
+            if (speechTestViewState.ttsTested) {
+                Text(
+                    stringResource(R.string.onboarding_speech_open_settings_description),
+                    modifier = horizontalPaddingModifier.padding(bottom = 16.dp)
+                )
+
                 OutlinedButton(
                     onClick = onOpenTtsSettings,
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = readBookTitlesEnabled
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally),
                 ) {
-                    Text(text = stringResource(id = R.string.onboarding_speech_open_settings))
+                    Text(stringResource(R.string.onboarding_speech_open_settings))
                 }
             }
         }
@@ -235,20 +219,56 @@ private fun ButtonWithLoadingState(
             Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing + ButtonDefaults.IconSize))
         }
     }
-    if (isFilled) Button(onClick = onClick, modifier = modifier, enabled = enabled, content = buttonContent)
-    else OutlinedButton(onClick = onClick, modifier = modifier, enabled = enabled, content = buttonContent)
+    if (isFilled) Button(
+        onClick = onClick,
+        modifier = modifier,
+        enabled = enabled,
+        content = buttonContent
+    )
+    else OutlinedButton(
+        onClick = onClick,
+        modifier = modifier,
+        enabled = enabled,
+        content = buttonContent
+    )
 }
 
 @Preview
 @Composable
-private fun ScreenContentPreview() {
-    ScreenContent(
-        showTtsSettings = true,
-        readBookTitlesEnabled = true,
-        speechInProgress = false,
-        playTestPhraseIsCta = false,
-        onSayTestPhrase = {},
-        onTtsToggled = {},
-        onOpenTtsSettings = {}
-    )
+private fun ScreenContentPreviewBeforeTest() {
+    HomerPlayer2Theme {
+        OnboardingSpeechScreen(
+            speechTestViewState = SpeechTestViewModel.ViewState(
+                showTtsSettings = true,
+                isSpeaking = false,
+                ttsTestSuccessful = false,
+                ttsTested = false,
+            ),
+            snackbarHostState = SnackbarHostState(),
+            navigateNext = {},
+            navigateSkip = {},
+            onSayTestPhrase = {},
+            onOpenTtsSettings = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun ScreenContentPreviewAfterTest() {
+    HomerPlayer2Theme {
+        OnboardingSpeechScreen(
+            speechTestViewState = SpeechTestViewModel.ViewState(
+                showTtsSettings = true,
+                isSpeaking = false,
+                ttsTestSuccessful = true,
+                ttsTested = true,
+            ),
+            snackbarHostState = SnackbarHostState(),
+            navigateNext = {},
+            navigateSkip = {},
+            onSayTestPhrase = {},
+            onOpenTtsSettings = {},
+        )
+    }
 }

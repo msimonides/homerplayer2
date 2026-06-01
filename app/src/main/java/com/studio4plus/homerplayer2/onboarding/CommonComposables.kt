@@ -25,11 +25,10 @@
 package com.studio4plus.homerplayer2.onboarding
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -54,26 +53,4 @@ fun OnboardingHeader(
         style = MaterialTheme.typography.headlineMedium,
         modifier = modifier.padding(bottom = 8.dp)
     )
-}
-
-@Composable
-fun OnboardingNavigationButtons(
-    modifier: Modifier = Modifier,
-    nextEnabled: Boolean,
-    @StringRes nextLabel: Int,
-    onNext: () -> Unit,
-    @StringRes secondaryLabel: Int? = null,
-    onSecondary: (() -> Unit)? = null,
-) {
-    Row(modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-        if (onSecondary != null && secondaryLabel != null) {
-            TextButton(onClick = onSecondary) {
-                Text(text = stringResource(id = secondaryLabel))
-            }
-        }
-        Spacer(modifier = Modifier.width(HomerTheme.dimensions.labelSpacing))
-        Button(onClick = onNext, enabled = nextEnabled) {
-            Text(text = stringResource(id = nextLabel))
-        }
-    }
 }

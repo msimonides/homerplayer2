@@ -31,13 +31,13 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.studio4plus.homerplayer2.R
-import kotlin.time.Duration
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
+import kotlin.time.Duration
 
 @KoinViewModel
 class SpeechTestViewModel(appContext: Context, private val speaker: Speaker) :
@@ -47,6 +47,7 @@ class SpeechTestViewModel(appContext: Context, private val speaker: Speaker) :
         val showTtsSettings: Boolean,
         val isSpeaking: Boolean,
         val ttsTestSuccessful: Boolean,
+        val ttsTested: Boolean, // Regardless of success.
     )
 
     private val ttsSettingsIntent: Intent?
@@ -61,7 +62,7 @@ class SpeechTestViewModel(appContext: Context, private val speaker: Speaker) :
         val resolveInfo = appContext.packageManager.resolveActivity(intent, 0)
         ttsSettingsIntent = intent.takeIf { resolveInfo != null }
         val initialState =
-            ViewState(ttsSettingsIntent != null, isSpeaking = false, ttsTestSuccessful = false)
+            ViewState(ttsSettingsIntent != null, isSpeaking = false, ttsTestSuccessful = false, ttsTested = false)
         currentState = MutableStateFlow(initialState)
     }
 
@@ -84,7 +85,7 @@ class SpeechTestViewModel(appContext: Context, private val speaker: Speaker) :
                 errorEvent.trySend(errorMessage)
             }
             currentState.update {
-                it.copy(isSpeaking = false, ttsTestSuccessful = errorMessage == null)
+                it.copy(isSpeaking = false, ttsTested = true, ttsTestSuccessful = errorMessage == null)
             }
         }
     }

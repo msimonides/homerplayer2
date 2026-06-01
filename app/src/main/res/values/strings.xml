@@ -75,10 +75,10 @@
     <string name="onboarding_folder_title">Audiobooks folder</string>
     <string name="onboarding_podcast_title">Podcast</string>
     <string name="onboarding_speech_title">Speak book titles</string>
-    <string name="onboarding_speech_description">Homer uses text-to-speech engine to read book titles.\nYou can now test it and adjust configuration settings.</string>
+    <string name="onboarding_speech_description">Homer can read book titles aloud.\nYou can test the voice now or change it later.</string>
+    <string name="onboarding_speech_open_settings_description">Want a different voice or language?</string>
     <string name="onboarding_speech_open_settings">Open text-to-speech settings</string>
-    <string name="onboarding_speech_tts_checkbox_label">Speak book titles</string>
-    <string name="onboarding_speech_tts_checkbox_note">Disable if already using a screen reader</string>
+    <string name="onboarding_speech_skip">Skip for now</string>
     <string name="onboarding_step_done">Done</string>
     <string name="onboarding_step_next">Next</string>
     <string name="onboarding_step_skip">Skip</string>
@@ -321,6 +321,6 @@
     <string name="speech_init_tts_error">Unable to initialize text-to-speech. Try a different TTS engine.</string>
     <string name="speech_init_lang_data_missing">Language data is missing. Please install your language in text-to-speech settings.</string>
     <string name="speech_init_lang_not_supported">Language not supported. Please install a text-to-speech engine that supports your langauge.</string>
-    <string name="speech_play_test_phrase">Play test phrase</string>
+    <string name="speech_play_test_phrase">Test voice</string>
     <string name="speech_test_phrase">Alice\'s Adventures in Wonderland</string>
 </resources>
