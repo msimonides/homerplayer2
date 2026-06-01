@@ -35,7 +35,7 @@ class AppReviewOpportunity {
 
     enum class Reason {
         KIOSK_ENABLED,
-        RETURNED_FROM_SETTINGS_TO_PLAYER,
+        OPENED_SETTINGS,
     }
 
     private val opportunities = MutableSharedFlow<Reason>(

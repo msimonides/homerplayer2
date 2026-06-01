@@ -28,7 +28,6 @@ import androidx.datastore.core.DataStore
 import com.studio4plus.homerplayer2.analytics.Analytics
 import com.studio4plus.homerplayer2.app.DATASTORE_APP_STATE
 import com.studio4plus.homerplayer2.app.StoredAppState
-import com.studio4plus.homerplayer2.fullkioskmode.IsFullKioskAvailable
 import com.studio4plus.homerplayer2.lifecycle.CurrentActivity
 import com.studio4plus.homerplayer2.utils.Clock
 import kotlinx.coroutines.CoroutineScope
@@ -39,7 +38,6 @@ import org.koin.core.annotation.Named
 import org.koin.core.annotation.Single
 import kotlin.time.Duration.Companion.days
 
-private val MIN_APP_AGE_MS = 7.days.inWholeMilliseconds
 private val REVIEW_COOLDOWN_MS = 90.days.inWholeMilliseconds
 
 @Single(createdAtStart = true)
@@ -49,7 +47,6 @@ class AppReviewTrigger(
     appReviewOpportunity: AppReviewOpportunity,
     private val currentActivity: CurrentActivity,
     private val reviewRequester: ReviewRequester,
-    private val isFullKioskAvailable: IsFullKioskAvailable,
     private val clock: Clock,
     private val analytics: Lazy<Analytics>,
 ) {
@@ -77,16 +74,17 @@ class AppReviewTrigger(
         reason: AppReviewOpportunity.Reason,
     ): Boolean {
         if (firstRunTimestampMs == StoredAppState.UNSET_TIMESTAMP_MS) return false
-        if (nowMs - firstRunTimestampMs < MIN_APP_AGE_MS) return false
+        if (nowMs - firstRunTimestampMs < minAppAge(reason)) return false
         val needsCooldown =
             reviewLastRequestedTimestampMs != StoredAppState.UNSET_TIMESTAMP_MS &&
                 nowMs - reviewLastRequestedTimestampMs < REVIEW_COOLDOWN_MS
         if (needsCooldown) return false
-        val isFullKioskAvailable = isFullKioskAvailable()
 
-        return when (reason) {
-            AppReviewOpportunity.Reason.KIOSK_ENABLED -> isFullKioskAvailable
-            AppReviewOpportunity.Reason.RETURNED_FROM_SETTINGS_TO_PLAYER -> !isFullKioskAvailable
-        }
+        return true
+    }
+
+    private fun minAppAge(reason: AppReviewOpportunity.Reason): Long = when (reason) {
+        AppReviewOpportunity.Reason.KIOSK_ENABLED -> 0
+        AppReviewOpportunity.Reason.OPENED_SETTINGS -> 7.days.inWholeMilliseconds
     }
 }

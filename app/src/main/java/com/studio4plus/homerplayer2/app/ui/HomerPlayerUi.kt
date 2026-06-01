@@ -82,11 +82,6 @@ fun HomerPLayerUi(
                 val defaultDestination =
                     if (viewState.needsOnboarding) OnboardingDestination.Default else PlayerDestination
                 val navBackStack = rememberNavBackStack(defaultDestination)
-                navBackStack.onNavigateBack = { old, new ->
-                    if (old is SettingsDestination && new == PlayerDestination) {
-                        viewModel.onExitSettingsToPlayer()
-                    }
-                }
 
                 if (!viewState.needsOnboarding) {
                     LaunchedEffect(eventNavigateToPlayer, navBackStack) {

@@ -62,14 +62,12 @@ class AppReviewTriggerTests {
     private lateinit var fakeCurrentActivity: FakeCurrentActivity
     private lateinit var fakeReviewRequester: FakeReviewRequester
     private lateinit var analytics: TestAnalytics
-    private var isFullKioskAvailable: Boolean = false
 
     @Before
     fun setup() {
         testScope = TestScope()
-        testScope.advanceTimeBy(1_000) // 0 is used as an unset timestamp sentinel.
+        testScope.advanceTimeBy(100.days) // 0 is used as an unset timestamp sentinel.
 
-        isFullKioskAvailable = false
         opportunities = AppReviewOpportunity()
         analytics = TestAnalytics()
         fakeReviewRequester = FakeReviewRequester()
@@ -78,9 +76,8 @@ class AppReviewTriggerTests {
     }
 
     @Test
-    fun `requests review after kiosk enabled when full kiosk is available and conditions are satisfied`() =
+    fun `requests review after kiosk enabled when conditions are satisfied`() =
         testScope.runTest {
-            isFullKioskAvailable = true
             val now = currentTime
             val appStateStore = setupTrigger(
                 firstRunTimestampMs = now - 8.days.inWholeMilliseconds,
@@ -99,88 +96,74 @@ class AppReviewTriggerTests {
         }
 
     @Test
-    fun `does not request review after kiosk enabled when full kiosk is not available`() =
-        testScope.runTest {
-            isFullKioskAvailable = false
-            val now = currentTime
-            setupTrigger(
-                firstRunTimestampMs = now - 8.days.inWholeMilliseconds,
-                reviewLastRequestedTimestampMs = 0L,
-            )
-
-            opportunities.emit(AppReviewOpportunity.Reason.KIOSK_ENABLED)
-            advanceUntilIdle()
-
-            assertEquals(0, fakeReviewRequester.requestCount)
-        }
-
-    @Test
-    fun `requests review after returning from settings to player when full kiosk not available and conditions are satisfied`() =
-        testScope.runTest {
-            isFullKioskAvailable = false
-            val now = currentTime
-            val appStateStore = setupTrigger(
-                firstRunTimestampMs = now - 8.days.inWholeMilliseconds,
-                reviewLastRequestedTimestampMs = 0L,
-            )
-
-            opportunities.emit(AppReviewOpportunity.Reason.RETURNED_FROM_SETTINGS_TO_PLAYER)
-            advanceUntilIdle()
-
-            assertEquals(1, fakeReviewRequester.requestCount)
-            assertTrue(appStateStore.data.first().reviewLastRequestedTimestampMs > 0L)
-            assertEquals(
-                listOf(
-                    TestAnalytics.RecordedEvent.Event(
-                        "InAppReview.Request",
-                        mapOf("reason" to "RETURNED_FROM_SETTINGS_TO_PLAYER"),
-                    ),
-                ),
-                analytics.recordedEvents,
-            )
-        }
-
-    @Test
-    fun `does not request review after returning from settings to player when full kiosk is available`() =
-        testScope.runTest {
-            isFullKioskAvailable = true
-            val now = currentTime
-            setupTrigger(
-                firstRunTimestampMs = now - 8.days.inWholeMilliseconds,
-                reviewLastRequestedTimestampMs = 0L,
-            )
-
-            opportunities.emit(AppReviewOpportunity.Reason.RETURNED_FROM_SETTINGS_TO_PLAYER)
-            advanceUntilIdle()
-
-            assertEquals(0, fakeReviewRequester.requestCount)
-        }
-
-    @Test
-    fun `does not request review when app is younger than required`() = testScope.runTest {
-        isFullKioskAvailable = true
-        val now = currentTime
-        setupTrigger(
-            firstRunTimestampMs = now - 2.days.inWholeMilliseconds,
-            reviewLastRequestedTimestampMs = 0L,
-        )
-
-        opportunities.emit(AppReviewOpportunity.Reason.KIOSK_ENABLED)
-        advanceUntilIdle()
-
-        assertEquals(0, fakeReviewRequester.requestCount)
-    }
-
-    @Test
     fun `does not request review during cooldown`() = testScope.runTest {
-        isFullKioskAvailable = false
         val now = currentTime
         setupTrigger(
             firstRunTimestampMs = now - 120.days.inWholeMilliseconds,
             reviewLastRequestedTimestampMs = now - 14.days.inWholeMilliseconds,
         )
 
-        opportunities.emit(AppReviewOpportunity.Reason.RETURNED_FROM_SETTINGS_TO_PLAYER)
+        opportunities.emit(AppReviewOpportunity.Reason.OPENED_SETTINGS)
+        advanceUntilIdle()
+
+        assertEquals(0, fakeReviewRequester.requestCount)
+    }
+
+    @Test
+    fun `requests review when settings opened and app is old enough`() = testScope.runTest {
+        val now = currentTime
+        setupTrigger(
+            firstRunTimestampMs = now - 8.days.inWholeMilliseconds,
+            reviewLastRequestedTimestampMs = 0L,
+        )
+
+        opportunities.emit(AppReviewOpportunity.Reason.OPENED_SETTINGS)
+        advanceUntilIdle()
+
+        assertEquals(1, fakeReviewRequester.requestCount)
+        assertEquals(
+            listOf(TestAnalytics.RecordedEvent.Event("InAppReview.Request", mapOf("reason" to "OPENED_SETTINGS"))),
+            analytics.recordedEvents,
+        )
+    }
+
+    @Test
+    fun `does not request review when settings opened but app is too young`() = testScope.runTest {
+        val now = currentTime
+        setupTrigger(
+            firstRunTimestampMs = now - 6.days.inWholeMilliseconds,
+            reviewLastRequestedTimestampMs = 0L,
+        )
+
+        opportunities.emit(AppReviewOpportunity.Reason.OPENED_SETTINGS)
+        advanceUntilIdle()
+
+        assertEquals(0, fakeReviewRequester.requestCount)
+    }
+
+    @Test
+    fun `does not request review when first run timestamp is not set`() = testScope.runTest {
+        setupTrigger(
+            firstRunTimestampMs = StoredAppState.UNSET_TIMESTAMP_MS,
+            reviewLastRequestedTimestampMs = 0L,
+        )
+
+        opportunities.emit(AppReviewOpportunity.Reason.OPENED_SETTINGS)
+        advanceUntilIdle()
+
+        assertEquals(0, fakeReviewRequester.requestCount)
+    }
+
+    @Test
+    fun `does not request review when no current activity is available`() = testScope.runTest {
+        val now = currentTime
+        setupTrigger(
+            firstRunTimestampMs = now - 8.days.inWholeMilliseconds,
+            reviewLastRequestedTimestampMs = 0L,
+        )
+        fakeCurrentActivity.setActivity(null)
+
+        opportunities.emit(AppReviewOpportunity.Reason.OPENED_SETTINGS)
         advanceUntilIdle()
 
         assertEquals(0, fakeReviewRequester.requestCount)
@@ -202,7 +185,6 @@ class AppReviewTriggerTests {
             appReviewOpportunity = opportunities,
             currentActivity = fakeCurrentActivity,
             reviewRequester = fakeReviewRequester,
-            isFullKioskAvailable = { isFullKioskAvailable },
             clock = TestScopeClock(testScope),
             analytics = lazyOf(analytics),
         )
@@ -213,6 +195,10 @@ class AppReviewTriggerTests {
         private val state = MutableStateFlow(initialActivity)
 
         override fun invoke(): Flow<Activity?> = state
+
+        fun setActivity(activity: Activity?) {
+            state.value = activity
+        }
     }
 
     private class FakeReviewRequester : ReviewRequester {
