@@ -137,11 +137,11 @@ private suspend fun presentSwipeGesture(pagerState: PagerState) {
     fun animSpec(durationMs: Int) = tween<Float>(durationMs, easing = easeInOut)
 
     while (true) {
-        delay(1000)
+        delay(4_000)
         pagerState.animateScrollToPage(pagerState.settledPage, 0.15f, animSpec(500))
         pagerState.animateScrollToPage(pagerState.settledPage, -0.15f, animSpec(750))
         pagerState.animateScrollToPage(pagerState.settledPage, 0f, animSpec(500))
-        delay(9_000)
+        delay(11_000)
     }
 }
 
