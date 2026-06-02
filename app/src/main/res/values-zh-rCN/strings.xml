@@ -44,8 +44,6 @@
 你可以立即测试它并调整配置设置。</string>
     <string name="onboarding_speech_open_settings">打开文本转语音设置</string>
     <string name="onboarding_speech_title">读出有声书标题</string>
-    <string name="onboarding_speech_tts_checkbox_label">读出有声书标题</string>
-    <string name="onboarding_speech_tts_checkbox_note">如果已经在使用读屏软件就禁用它</string>
     <string name="onboarding_step_done">完成</string>
     <string name="onboarding_step_next">下一步</string>
     <string name="onboarding_step_skip">跳过</string>
@@ -64,7 +62,6 @@
     <string name="podcast_accessibility_action_edit">编辑</string>
     <string name="podcast_add_dialog_add_button">添加播客</string>
     <string name="podcast_add_dialog_latest_episode">最新节目：</string>
-    <string name="podcast_download_info_change_network_settings_button">更改</string>
     <string name="podcast_download_info_in_background">播客节目下载好后会出现在有声书内容中。
 这可能要花上几分钟。</string>
     <string name="podcast_download_info_unmetered_network">按照配置，应用只在 WiFi 网络连接时下载播客节目。</string>
