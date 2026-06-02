@@ -1,0 +1,2 @@
+Improved TTS step in onboarding, it should be now easier to understand.
+Updated targetSdk to 36 (Android 16).
