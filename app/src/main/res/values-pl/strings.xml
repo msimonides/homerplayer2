@@ -52,9 +52,9 @@
     <string name="onboarding_speech_description">Homer używa mechanizmu zamiany tekstu na mowę, aby czytać tytuły książek.
 Możesz go teraz przetestować i dostosować ustawienia.</string>
     <string name="onboarding_speech_open_settings">Otwórz ustawienia zamiany tekstu na mowę</string>
+    <string name="onboarding_speech_open_settings_description">Wolisz inny głos lub język?</string>
+    <string name="onboarding_speech_skip">Pomiń na razie</string>
     <string name="onboarding_speech_title">Wymawiaj tytuły książek</string>
-    <string name="onboarding_speech_tts_checkbox_label">Wymawiaj tytuły książek</string>
-    <string name="onboarding_speech_tts_checkbox_note">Wyłącz, jeśli używasz czytnika ekranu</string>
     <string name="onboarding_step_done">Gotowe</string>
     <string name="onboarding_step_next">Dalej</string>
     <string name="onboarding_step_skip">Pomiń</string>
