@@ -25,9 +25,7 @@
 package com.studio4plus.homerplayer2.settingsui
 
 
-import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -37,6 +35,7 @@ import com.studio4plus.homerplayer2.settingsdata.UiSettings
 import com.studio4plus.homerplayer2.settingsdata.UiThemeMode
 import com.studio4plus.homerplayer2.settingsui.usecases.ChangeFullKioskModeSetting
 import com.studio4plus.homerplayer2.settingsui.usecases.ContentDescriptionFlow
+import com.studio4plus.homerplayer2.settingsui.usecases.GetRateAppIntent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -46,8 +45,6 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import org.koin.android.annotation.KoinViewModel
@@ -55,12 +52,12 @@ import org.koin.core.annotation.Named
 
 @KoinViewModel
 class SettingsMainViewModel(
-    private val appContext: Context,
     private val mainScope: CoroutineScope,
     contentDescription: ContentDescriptionFlow,
     isFullKioskEnabled: IsFullKioskEnabled,
     private val changeFullKioskModeSetting: ChangeFullKioskModeSetting,
-    @Named(SettingsDataModule.UI) private val uiSettingsStore: DataStore<UiSettings>
+    getRateAppIntent: GetRateAppIntent,
+    @Named(SettingsDataModule.UI) private val uiSettingsStore: DataStore<UiSettings>,
 ) : ViewModel() {
 
     data class ViewState(
@@ -73,8 +70,7 @@ class SettingsMainViewModel(
     )
 
     private val rateAppIntent = flow {
-        val intent = playStorePageIntent()
-        emit(intent.takeIf { it.resolveActivity(appContext.packageManager) != null })
+        emit(getRateAppIntent())
     }
 
     val viewState = combine(
@@ -109,16 +105,8 @@ class SettingsMainViewModel(
         val value = if (enabled) {
             ChangeFullKioskModeSetting.FullKioskModeSetValue.Enable
         } else {
-            ChangeFullKioskModeSetting.FullKioskModeSetValue.DisableTemporarily
+            ChangeFullKioskModeSetting.FullKioskModeSetValue.DisableTemporarily 
         }
         changeFullKioskModeSetting(value)
-    }
-
-    private fun playStorePageIntent() = Intent(Intent.ACTION_VIEW).apply {
-        val packageName = appContext.packageName
-        data = Uri.parse("https://play.google.com/store/apps/details?id=$packageName")
-        flags = Intent.FLAG_ACTIVITY_NEW_TASK and Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED
-        // https://developer.android.com/distribute/marketing-tools/linking-to-google-play#android-app
-        setPackage("com.android.vending")
     }
 }
