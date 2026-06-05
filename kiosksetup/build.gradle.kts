@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.compose.compiler)
-    alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.ksp)
     alias(libs.plugins.sentry)
 }
@@ -95,6 +94,20 @@ android {
 
         registerProvisioningInfoTask()
     }
+}
+
+sentry {
+    tracingInstrumentation {
+        enabled = false
+        logcat {
+            enabled = false
+        }
+    }
+    autoInstallation {
+        enabled = false
+    }
+
+    ignoredBuildTypes = listOf("debug")
 }
 
 dependencies {
