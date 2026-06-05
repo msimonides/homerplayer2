@@ -131,7 +131,7 @@ class PlaybackState(
             Timber.d(
                 "Play '%s'; media item: %s",
                 book.displayName,
-                with(mediaItemsWithStartPosition) { mediaItems[startIndex].mediaId }
+                with(mediaItemsWithStartPosition) { mediaItems.getOrNull(startIndex)?.mediaId }
             )
             controller.playWhenReady = true
             controller.prepare()
