@@ -24,26 +24,20 @@
 
 package com.studio4plus.homerplayer2.podcastsui.usecases
 
-import com.studio4plus.homerplayer2.base.DispatcherProvider
 import com.studio4plus.homerplayer2.crash.CrashReporting
-import com.studio4plus.homerplayer2.net.executeAwait
-import kotlinx.coroutines.withContext
+import com.studio4plus.homerplayer2.net.NetworkClient
+import com.studio4plus.homerplayer2.net.NetworkResult
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
-import okhttp3.OkHttpClient
-import okhttp3.Request
 import org.koin.core.annotation.Factory
-import java.io.IOException
-import java.net.UnknownHostException
 
 private val JSON = Json { ignoreUnknownKeys = true }
 
 @Factory
 class GetPopularPodcastITunesIds(
-    private val okHttpClient: OkHttpClient,
-    private val dispatcherProvider: DispatcherProvider,
+    private val networkClient: NetworkClient,
 ) {
     @Serializable
     private data class ITunesSearchResults(
@@ -60,35 +54,26 @@ class GetPopularPodcastITunesIds(
 
     @OptIn(ExperimentalSerializationApi::class)
     suspend operator fun invoke(countryCode: String, limit: Int): List<Long> {
-        try {
-            val request = Request.Builder()
-                .url("https://itunes.apple.com/search?media=podcast&term=\"\"&limit=$limit&country=$countryCode")
-                .build()
-            val response = okHttpClient.newCall(request).executeAwait()
-            val body = response.body
-            return if (response.isSuccessful && body != null) {
-                val results: List<ITunesCollection> = try {
-                    withContext(dispatcherProvider.Io) {
-                        JSON.decodeFromStream<ITunesSearchResults>(body.byteStream()).results
-                    }
-                } catch (e: IllegalArgumentException) {
-                    CrashReporting.captureException(e)
-                    emptyList()
+        val url = "https://itunes.apple.com/search?media=podcast&term=\"\"&limit=$limit&country=$countryCode"
+        val result = networkClient.getBytes(url)
+        return if (result is NetworkResult.Success) {
+            try {
+                val searchResults = result.body.inputStream().use {
+                    JSON.decodeFromStream<ITunesSearchResults>(it)
                 }
-                results
+                searchResults.results
                     .filter {
                         it.collectionPrice == 0.0
                                 && it.collectionExplicitness.equals("notExplicit", ignoreCase = true)
                                 && it.trackCount >= 10
                     }
                     .map { it.trackId }
-            } else {
+            } catch (e: IllegalArgumentException) {
+                CrashReporting.captureException(e)
                 emptyList()
             }
-        } catch (e: UnknownHostException) {
-            return emptyList()
-        } catch (e: IOException) {
-            return emptyList()
+        } else {
+            emptyList()
         }
     }
 }
