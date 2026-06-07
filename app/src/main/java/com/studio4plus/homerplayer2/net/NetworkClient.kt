@@ -78,7 +78,6 @@ enum class FailureType {
     UnknownHost,
     Ssl,
     Timeout,
-    Cancelled,
     Io,
 }
 

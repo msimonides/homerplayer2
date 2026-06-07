@@ -24,22 +24,17 @@
 
 package com.studio4plus.homerplayer2.podcasts.usecases
 
-import com.studio4plus.homerplayer2.base.DispatcherProvider
-import com.studio4plus.homerplayer2.net.executeAwait
-import kotlinx.coroutines.runInterruptible
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
-import okhttp3.OkHttpClient
-import okhttp3.Request
+import com.studio4plus.homerplayer2.net.FailureType
+import com.studio4plus.homerplayer2.net.NetworkClient
+import com.studio4plus.homerplayer2.net.NetworkResult
+import io.ktor.http.URLProtocol
+import io.ktor.http.Url
 import org.koin.core.annotation.Factory
 import timber.log.Timber
-import java.io.IOException
-import java.net.UnknownHostException
-import javax.net.ssl.SSLException
 
 @Factory
 class DownloadPodcastFeed(
-    private val dispatcherProvider: DispatcherProvider,
-    private val okHttpClient: OkHttpClient,
+    private val networkClient: NetworkClient,
     private val parsePodcastFeed: ParsePodcastFeed,
 ) {
 
@@ -53,34 +48,49 @@ class DownloadPodcastFeed(
     }
 
     suspend operator fun invoke(url: String): Result {
-        val httpUrl = url.toHttpUrlOrNull() ?: return Result.UnknownAddress
-        try {
-            val request = Request.Builder().url(httpUrl).build()
-            val response = okHttpClient.newCall(request).executeAwait()
-            Timber.i("$url response: ${response.code}: ${response.message.take(200)}")
-            return if (response.isSuccessful) {
-                val body = runInterruptible(dispatcherProvider.Io) { response.body?.string() }
-                if (body != null) {
-                    val podcastFeed = parsePodcastFeed(body, url)
-                    if (podcastFeed != null)
-                        Result.Success(podcastFeed)
-                    else
-                        Result.ParseError
+        if (!isHttpUrl(url)) return Result.UnknownAddress
+
+        return when (val result = networkClient.getText(url)) {
+            is NetworkResult.Success -> {
+                Timber.i("$url response: ${result.code}")
+                if (result.code == 204) {
+                    Result.Error(204)
                 } else {
-                    Timber.w("Empty body")
-                    Result.Error(204) // No content
+                    val podcastFeed = parsePodcastFeed(result.body, url)
+                    if (podcastFeed != null) {
+                        Result.Success(podcastFeed)
+                    } else {
+                        Result.ParseError
+                    }
                 }
-            } else {
-                Result.Error(response.code)
             }
-        } catch (e: UnknownHostException) {
-            return Result.UnknownAddress
-        } catch (e: SSLException) {
-            Timber.w(e, "Error fetching RSS")
-            return Result.SslError
-        } catch (e: IOException) {
-            Timber.i(e, "Error fetching RSS")
-            return Result.IoError
+
+            is NetworkResult.HttpError -> {
+                Timber.i("$url response: ${result.code}")
+                Result.Error(result.code)
+            }
+
+            is NetworkResult.Failure -> {
+                when (result.type) {
+                    FailureType.UnknownHost -> Result.UnknownAddress
+                    FailureType.Ssl -> {
+                        Timber.w(result.cause, "Error fetching RSS")
+                        Result.SslError
+                    }
+                    FailureType.Timeout,
+                    FailureType.Io -> {
+                        Timber.i(result.cause, "Error fetching RSS")
+                        Result.IoError
+                    }
+                }
+            }
         }
     }
+
+    private fun isHttpUrl(url: String): Boolean = runCatching {
+        val parsed = Url(url)
+        parsed.host.isNotBlank() && (
+            parsed.protocol == URLProtocol.HTTP || parsed.protocol == URLProtocol.HTTPS
+        )
+    }.getOrDefault(false)
 }

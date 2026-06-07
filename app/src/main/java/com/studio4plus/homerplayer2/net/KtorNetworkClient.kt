@@ -185,7 +185,7 @@ class KtorNetworkClient(
         is UnknownHostException -> NetworkResult.Failure(FailureType.UnknownHost, e)
         is SSLException -> NetworkResult.Failure(FailureType.Ssl, e)
         is HttpRequestTimeoutException, is SocketTimeoutException -> NetworkResult.Failure(FailureType.Timeout, e)
-        is CancellationException -> NetworkResult.Failure(FailureType.Cancelled, e)
+        is CancellationException -> throw e
         else -> NetworkResult.Failure(FailureType.Io, e)
     }
 }
