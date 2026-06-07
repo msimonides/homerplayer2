@@ -25,6 +25,9 @@
 package com.studio4plus.homerplayer2.net
 
 import com.studio4plus.homerplayer2.base.BaseModule
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.okhttp.OkHttp as KtorOkHttp
+import io.ktor.client.plugins.HttpTimeout
 import okhttp3.OkHttpClient
 import org.koin.core.annotation.ComponentScan
 import org.koin.core.annotation.Module
@@ -36,4 +39,15 @@ class NetModule {
 
     @Single
     fun okHttpClient(): OkHttpClient = OkHttp.createOkHttpClient()
+
+    @Single
+    fun ktorHttpClient(okHttpClient: OkHttpClient): HttpClient = HttpClient(KtorOkHttp) {
+        engine {
+            preconfigured = okHttpClient
+        }
+        install(HttpTimeout)
+    }
+
+    @Single
+    fun networkClient(networkClient: KtorNetworkClient): NetworkClient = networkClient
 }
