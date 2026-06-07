@@ -30,13 +30,14 @@ import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
 import coil3.memory.MemoryCache
-import coil3.network.okhttp.OkHttpNetworkFetcherFactory
+import coil3.annotation.ExperimentalCoilApi
+import coil3.network.ktor3.KtorNetworkFetcherFactory
 import coil3.request.CachePolicy
 import com.studio4plus.homerplayer2.BuildConfig
 import com.studio4plus.homerplayer2.analytics.Analytics
 import com.studio4plus.homerplayer2.crash.CrashReporting
 import com.studio4plus.homerplayer2.logging.FileLoggerTreeProvider
-import okhttp3.OkHttpClient
+import io.ktor.client.HttpClient
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
@@ -45,7 +46,7 @@ import timber.log.Timber
 
 class HomerPlayerApp : Application(), SingletonImageLoader.Factory, Configuration.Provider {
 
-    private val okHttpClient by inject<OkHttpClient>()
+    private val httpClient by inject<HttpClient>()
     private val analytics by inject<Analytics>()
 
     override fun onCreate() {
@@ -68,14 +69,11 @@ class HomerPlayerApp : Application(), SingletonImageLoader.Factory, Configuratio
 
     }
 
+    @OptIn(ExperimentalCoilApi::class)
     override fun newImageLoader(context: PlatformContext): ImageLoader =
         ImageLoader.Builder(context)
             .components {
-                add(
-                    OkHttpNetworkFetcherFactory(
-                        callFactory = { okHttpClient }
-                    )
-                )
+                add(KtorNetworkFetcherFactory(httpClient))
             }
             .memoryCache {
                 MemoryCache.Builder()

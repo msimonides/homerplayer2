@@ -55,7 +55,7 @@ compose-ui-tooling = { module = 'androidx.compose.ui:ui-tooling', version.ref = 
 compose-ui-tooling-preview = { module = 'androidx.compose.ui:ui-tooling-preview', version.ref = 'compose' }
 
 coil-compose = { module = 'io.coil-kt.coil3:coil-compose', version.ref = 'coil' }
-coil-okhttp = { module = 'io.coil-kt.coil3:coil-network-okhttp', version.ref = 'coil' }
+coil-ktor = { module = 'io.coil-kt.coil3:coil-network-ktor3', version.ref = 'coil' }
 
 desugarjdk = 'com.android.tools:desugar_jdk_libs:2.1.5'
 
