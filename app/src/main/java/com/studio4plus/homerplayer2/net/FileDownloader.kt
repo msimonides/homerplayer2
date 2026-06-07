@@ -25,12 +25,7 @@
 package com.studio4plus.homerplayer2.net
 
 import com.studio4plus.homerplayer2.base.DispatcherProvider
-import kotlinx.coroutines.runInterruptible
 import kotlinx.coroutines.withContext
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okio.buffer
-import okio.sink
 import org.koin.core.annotation.Factory
 import timber.log.Timber
 import java.io.File
@@ -40,7 +35,7 @@ import java.io.IOException
 @Factory
 class FileDownloader(
     private val dispatcherProvider: DispatcherProvider,
-    private val okHttpClient: OkHttpClient,
+    private val networkClient: NetworkClient,
 ) {
     @Throws(IOException::class)
     suspend operator fun invoke(file: File, url: String, append: Boolean = false) {
@@ -52,28 +47,20 @@ class FileDownloader(
             return
         }
 
-        val requestBuilder = Request.Builder().url(url)
-        if (range != null) {
-            val rangeHeader = "bytes: ${range.downloadedBytes}-${range.totalBytes}"
-            Timber.i("Download range: $rangeHeader")
-            requestBuilder.addHeader("range", rangeHeader)
+        val rangeStart = range?.downloadedBytes
+        if (rangeStart != null) {
+            Timber.i("Download range: bytes=$rangeStart-")
         }
-        val call = okHttpClient.newCall(requestBuilder.build())
-        val response = call.executeAwait()
-        val body = response.body
-        Timber.i("Response: ${response.code} ${response.message.take(200)}")
-        runInterruptible(dispatcherProvider.Io) {
-            val isSuccess = response.code == 200 || response.code == 206
-            val isPartialResponse = response.code == 206
-            if (isSuccess && body != null) {
-                file.sink(append = isPartialResponse)
-                    .buffer()
-                    .use { sink -> sink.writeAll(body.source()) }
-                Timber.i("Finished download of $url")
-            } else {
-                val beginningOfResponse = body?.source()?.use { it.readUtf8(1000) }
-                Timber.w("Response: $beginningOfResponse")
-                throw FileNotFoundException("HTTP response code ${response.code}")
+
+        when (val result = networkClient.downloadToFile(url, file, append = rangeStart != null, rangeStart = rangeStart)) {
+            is NetworkResult.Success -> {
+                Timber.i("Finished download of $url (${result.body.bytesWritten} bytes, partial=${result.body.partialContent})")
+            }
+            is NetworkResult.HttpError -> {
+                throw FileNotFoundException("HTTP response code ${result.code}")
+            }
+            is NetworkResult.Failure -> {
+                throw IOException("Download failed: ${result.type}", result.cause)
             }
         }
     }
@@ -82,10 +69,13 @@ class FileDownloader(
         val fileExists = withContext(dispatcherProvider.Io) { file.exists() }
         if (!fileExists) return null
 
-        val request = Request.Builder().method("HEAD", null).url(url).build()
-        val response = okHttpClient.newCall(request).executeAwait()
-        val acceptRanges = response.headers["accept-ranges"]?.lowercase()
-        val contentLength = response.headers["content-length"]?.toLong()
+        val result = networkClient.head(url)
+        val headers = when (result) {
+            is NetworkResult.Success -> result.headers
+            is NetworkResult.HttpError, is NetworkResult.Failure -> return null
+        }
+        val acceptRanges = headers["accept-ranges"]?.lowercase()
+        val contentLength = headers["content-length"]?.toLong()
         return if (acceptRanges == "bytes" && contentLength != null) {
             val downloadedBytes = withContext(dispatcherProvider.Io) { file.length() }
             DownloadRange(downloadedBytes, contentLength)
@@ -93,6 +83,7 @@ class FileDownloader(
             null
         }
     }
+
     private data class DownloadRange(val downloadedBytes: Long, val totalBytes: Long) {
         val isFinished = downloadedBytes == totalBytes
     }
