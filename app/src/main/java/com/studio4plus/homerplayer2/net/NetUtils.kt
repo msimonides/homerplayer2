@@ -24,34 +24,6 @@
 
 package com.studio4plus.homerplayer2.net
 
-import kotlinx.coroutines.suspendCancellableCoroutine
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.Response
-import okhttp3.internal.closeQuietly
-import timber.log.Timber
-import java.io.IOException
-import kotlin.coroutines.resumeWithException
-
-
-suspend fun Call.executeAwait(): Response = suspendCancellableCoroutine { continuation ->
-    continuation.invokeOnCancellation {
-        cancel()
-    }
-    val callback = object : Callback {
-        override fun onFailure(call: Call, e: IOException) {
-            Timber.w(e, "Network call failed")
-            continuation.resumeWithException(e)
-        }
-
-        override fun onResponse(call: Call, response: Response) {
-            continuation.resume(response) {
-                response.closeQuietly()
-            }
-        }
-    }
-    enqueue(callback)
-}
 
 fun String.toHttps() = when {
     lowercase().startsWith("https://") -> this
