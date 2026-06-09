@@ -75,11 +75,6 @@ android {
         }
     }
 
-    applicationVariants.configureEach { variant ->
-        kotlin.sourceSets {
-            getByName(name) { kotlin.srcDir("build/generated/ksp/${variant.name}/kotlin") }
-        }
-    }
 
     flavorDimensions += "distribution"
     productFlavors {

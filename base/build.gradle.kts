@@ -68,11 +68,6 @@ android {
         }
     }
 
-    libraryVariants.configureEach {
-        kotlin.sourceSets {
-            getByName(name) { kotlin.srcDir("build/generated/ksp/${name}/kotlin") }
-        }
-    }
 }
 
 dependencies {

@@ -1,4 +1,3 @@
-import com.android.build.gradle.api.ApplicationVariant
 import com.studio4plus.homerplayer2.GenerateProvisioningDataTask
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -34,6 +33,8 @@ plugins {
     alias(libs.plugins.sentry)
 }
 
+val kioskVersionName = "1.5.7"
+
 android {
     namespace = "com.studio4plus.homerplayer2.kiosk"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
@@ -43,7 +44,7 @@ android {
         minSdk = 24
         targetSdk = 36
         versionCode = 8
-        versionName = "1.5.7"
+        versionName = kioskVersionName
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -87,12 +88,31 @@ android {
         }
     }
 
-    applicationVariants.configureEach {
-        kotlin.sourceSets {
-            getByName(name) { kotlin.srcDir("build/generated/ksp/${name}/kotlin") }
+}
+
+androidComponents {
+    onVariants(selector().all()) { variant ->
+        val capitalizedName =
+            variant.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+
+        tasks.register<GenerateProvisioningDataTask>("generateProvisioningData${capitalizedName}") {
+            description = "create data for provisioning QR code"
+            group = "Build"
+            dependsOn("package${capitalizedName}")
+
+            template.set(layout.projectDirectory.file("src/main/provisioning-qrcode.txt"))
+            versionName.set(kioskVersionName)
+            apkFile.set(
+                layout.buildDirectory.file("outputs/apk/${variant.name}/${project.name}-${variant.name}.apk")
+            )
+            outputDirectory.set(layout.buildDirectory.dir("outputs/qrcode/${variant.name}/"))
         }
 
-        registerProvisioningInfoTask()
+        tasks.configureEach {
+            if (name == "assemble${capitalizedName}") {
+                dependsOn("generateProvisioningData${capitalizedName}")
+            }
+        }
     }
 }
 
@@ -133,26 +153,3 @@ dependencies {
     testImplementation(libs.junit)
 }
 
-fun ApplicationVariant.registerProvisioningInfoTask() {
-    val variantName = name
-    val capitalizedName =
-        name.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
-    if (outputs.size != 1) {
-        throw IllegalArgumentException("Only single APK output is supported")
-    }
-    val output = outputs.first()
-
-    tasks.register<GenerateProvisioningDataTask>("generateProvisioningData${capitalizedName}") {
-        description = "create data for provisioning QR code"
-        group = "Build"
-        dependsOn += packageApplicationProvider.get()
-
-        template.set(layout.projectDirectory.file("src/main/provisioning-qrcode.txt"))
-        versionName.set(android.defaultConfig.versionName)
-        apkFile.set(output.outputFile)
-        outputDirectory.set(layout.buildDirectory.dir("outputs/qrcode/$variantName/"))
-    }
-
-    tasks.named("assemble${capitalizedName}").get()
-        .dependsOn += "generateProvisioningData${capitalizedName}"
-}
