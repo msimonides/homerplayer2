@@ -57,6 +57,10 @@ class HomerPlayerUiVM(
             uiThemeMode = uiSettings.uiThemeMode,
         )
     }.stateIn(viewModelScope, SharingStarted.Eagerly, null)
+
+    fun onOpenedSettings() {
+        appReviewOpportunity.emit(AppReviewOpportunity.Reason.OPENED_SETTINGS)
+    }
 }
 
 data class HomerPlayerViewState(

@@ -98,6 +98,10 @@ fun HomerPLayerUi(
                 ) {
                     MainNavDisplay(
                         navBackStack = navBackStack,
+                        onOpenSettings = {
+                            viewModel.onOpenedSettings()
+                            navBackStack.go(SettingsDestination.Default)
+                        },
                         modifier = Modifier.fillMaxSize(),
                     )
                 }
@@ -130,6 +134,7 @@ private fun rememberNavBackStack(initialDestination: NavKey): NavBackStackState<
 @Composable
 private fun MainNavDisplay(
     navBackStack: NavBackStackState<NavKey>,
+    onOpenSettings: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
@@ -155,9 +160,7 @@ private fun MainNavDisplay(
                         },
                     )
                     entry<PlayerDestination> {
-                        PlayerRoute(
-                            onOpenSettings = { navBackStack.go(SettingsDestination.Default) }
-                        )
+                        PlayerRoute(onOpenSettings = onOpenSettings)
                     }
                     settingsEntries(
                         navBackStack = navBackStack,

@@ -27,13 +27,12 @@ package com.studio4plus.homerplayer2.appreview
 import android.app.Activity
 import android.app.Application
 import com.studio4plus.homerplayer2.app.StoredAppState
-import com.studio4plus.homerplayer2.lifecycle.CurrentActivity
+import com.studio4plus.homerplayer2.testutils.FakeCurrentActivity
 import com.studio4plus.homerplayer2.testutils.FakeDataStore
+import com.studio4plus.homerplayer2.testutils.FakeReviewRequester
 import com.studio4plus.homerplayer2.testutils.TestAnalytics
 import com.studio4plus.homerplayer2.testutils.TestScopeClock
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.test.TestScope
@@ -191,22 +190,4 @@ class AppReviewTriggerTests {
         return appStateStore
     }
 
-    private class FakeCurrentActivity(initialActivity: Activity?) : CurrentActivity {
-        private val state = MutableStateFlow(initialActivity)
-
-        override fun invoke(): Flow<Activity?> = state
-
-        fun setActivity(activity: Activity?) {
-            state.value = activity
-        }
-    }
-
-    private class FakeReviewRequester : ReviewRequester {
-        var requestCount: Int = 0
-            private set
-
-        override suspend fun requestReview(activity: Activity) {
-            requestCount += 1
-        }
-    }
 }
