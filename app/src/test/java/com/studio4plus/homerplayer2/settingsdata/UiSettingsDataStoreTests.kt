@@ -30,7 +30,7 @@ import androidx.test.core.app.ApplicationProvider
 import com.studio4plus.homerplayer2.base.DispatcherProvider
 import com.studio4plus.homerplayer2.base.testing.FakeLocaleProvider
 import com.studio4plus.homerplayer2.base.testing.FakeVersionUpdate
-import com.studio4plus.homerplayer2.loccalstorage.LocalStorageModule
+import com.studio4plus.homerplayer2.localstorage.LocalStorageModule
 import com.studio4plus.homerplayer2.testutils.TestDispatcherProvider
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope

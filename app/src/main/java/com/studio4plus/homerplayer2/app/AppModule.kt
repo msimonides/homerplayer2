@@ -34,6 +34,7 @@ import androidx.room.Room
 import com.studio4plus.homerplayer2.BuildConfig
 import com.studio4plus.homerplayer2.R
 import com.studio4plus.homerplayer2.analytics.Analytics
+import com.studio4plus.homerplayer2.analytics.createAnalytics
 import com.studio4plus.homerplayer2.appreview.AppReviewModule
 import com.studio4plus.homerplayer2.audiobookfolders.AudiobookFoldersDatabase
 import com.studio4plus.homerplayer2.audiobookfolders.AudiobookFoldersModule
@@ -45,9 +46,9 @@ import com.studio4plus.homerplayer2.base.DispatcherProvider
 import com.studio4plus.homerplayer2.base.VersionUpdate
 import com.studio4plus.homerplayer2.battery.BatteryModule
 import com.studio4plus.homerplayer2.fullkioskmode.FullKioskModeModule
-import com.studio4plus.homerplayer2.loccalstorage.LOCAL_STORAGE_JSON
-import com.studio4plus.homerplayer2.loccalstorage.LocalStorageModule
-import com.studio4plus.homerplayer2.loccalstorage.createDataStore
+import com.studio4plus.homerplayer2.localstorage.LOCAL_STORAGE_JSON
+import com.studio4plus.homerplayer2.localstorage.LocalStorageModule
+import com.studio4plus.homerplayer2.localstorage.createDataStore
 import com.studio4plus.homerplayer2.logging.LoggingModule
 import com.studio4plus.homerplayer2.net.NetModule
 import com.studio4plus.homerplayer2.onboarding.OnboardingModule
@@ -57,7 +58,6 @@ import com.studio4plus.homerplayer2.podcasts.data.PodcastsDatabase
 import com.studio4plus.homerplayer2.samplebooks.SamplesDownloader
 import com.studio4plus.homerplayer2.settingsdata.SettingsDataModule
 import com.studio4plus.homerplayer2.settingsui.SettingsUiModule
-import com.studio4plus.homerplayer2.analytics.createAnalytics
 import com.studio4plus.homerplayer2.utils.Clock
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.serialization.json.Json

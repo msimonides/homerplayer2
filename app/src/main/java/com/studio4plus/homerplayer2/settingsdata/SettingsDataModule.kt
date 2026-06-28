@@ -29,9 +29,9 @@ import androidx.datastore.core.DataStore
 import com.studio4plus.homerplayer2.base.DispatcherProvider
 import com.studio4plus.homerplayer2.base.LocaleProvider
 import com.studio4plus.homerplayer2.base.VersionUpdate
-import com.studio4plus.homerplayer2.loccalstorage.LOCAL_STORAGE_JSON
-import com.studio4plus.homerplayer2.loccalstorage.LocalStorageModule
-import com.studio4plus.homerplayer2.loccalstorage.createDataStore
+import com.studio4plus.homerplayer2.localstorage.LOCAL_STORAGE_JSON
+import com.studio4plus.homerplayer2.localstorage.LocalStorageModule
+import com.studio4plus.homerplayer2.localstorage.createDataStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.serialization.json.Json
 import org.koin.core.annotation.ComponentScan

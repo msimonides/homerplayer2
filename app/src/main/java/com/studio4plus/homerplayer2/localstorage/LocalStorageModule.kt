@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.studio4plus.homerplayer2.loccalstorage
+package com.studio4plus.homerplayer2.localstorage
 
 import android.content.Context
 import androidx.datastore.core.DataMigration
