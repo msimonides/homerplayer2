@@ -17,6 +17,8 @@
     <title>
       {{- title -}}
     </title>
+    <meta property="og:url" content="{{ page.url | absolute_url }}" />
+    <meta property="og:site_name" content="Homer Audio Player" />
     <meta property="og:title" content="{{ title }}" />
     <meta property="og:image" content="{{ "/assets/img/banner-og.webp" | absolute_url }}" />
     <meta property="og:image" content="{{ "/assets/img/device_photo2_small.webp" | absolute_url }}" />
