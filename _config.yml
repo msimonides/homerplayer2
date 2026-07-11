@@ -33,6 +33,16 @@ repository: "msimonides/homerplayer2"
 #plugins:
 #  - jekyll-feed
 
+collections:
+  articles:
+    output: true
+    permalink: /blog/:name/
+
+article_order:
+  # Article slugs are taken from filenames in _articles/ without the extension.
+  # Example: _articles/installing-on-a-tablet.md -> installing-on-a-tablet
+  - rempte_management
+
 # Exclude from processing.
 # The following items will not be processed, by default.
 # Any item listed under the `exclude:` key here will be automatically added to

@@ -1,0 +1,90 @@
+---
+layout: page
+title: "Guides"
+nav_title: "How-to guides"
+meta_title: "Guides and how-to articles"
+meta_description: "How-to articles and practical setup tips for Homer Audio Player for Seniors."
+permalink: /blog/
+---
+
+<style>
+    .article-list {
+        display: grid;
+        gap: 1rem;
+    }
+
+    .article-card {
+        display: block;
+        border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+        border-radius: 0.75rem;
+        padding: 1rem 1.25rem;
+        text-decoration: none;
+        color: inherit;
+        background: color-mix(in srgb, var(--pico-background-color) 94%, var(--pico-primary) 6%);
+    }
+
+    .article-card:hover {
+        text-decoration: none;
+        border-color: color-mix(in srgb, currentColor 45%, transparent);
+        background: color-mix(in srgb, var(--pico-background-color) 88%, var(--pico-primary) 12%);
+    }
+
+    .article-card h2 {
+        margin-bottom: 0.35rem;
+        font-size: 1.35rem;
+    }
+
+    .article-card p {
+        margin-bottom: 0;
+    }
+
+    .article-meta {
+        margin-top: 0.75rem;
+        font-size: 0.9rem;
+        opacity: 0.8;
+    }
+
+    .article-empty {
+        padding: 1rem 1.25rem;
+        border: 1px dashed color-mix(in srgb, currentColor 30%, transparent);
+        border-radius: 0.75rem;
+    }
+</style>
+
+<p>
+Practical how-to articles for setting up and using Homer Audio Player for Seniors.
+</p>
+
+{% assign ordered_articles = site.article_order | default: empty %}
+{% assign alphabetical_articles = site.articles | sort: 'title' %}
+{% assign has_articles = site.articles | size %}
+
+{% if has_articles > 0 %}
+<section class="article-list">
+    {% for ordered_slug in ordered_articles %}
+        {% for article in site.articles %}
+            {% if article.slug == ordered_slug %}
+            <a class="article-card" href="{{ article.url | relative_url }}">
+                <h2>{{ article.title }}</h2>
+                <p>{{ article.summary | default: article.excerpt | strip_html }}</p>
+                <div class="article-meta">Read article</div>
+            </a>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+
+    {% for article in alphabetical_articles %}
+        {% unless ordered_articles contains article.slug %}
+        <a class="article-card" href="{{ article.url | relative_url }}">
+            <h2>{{ article.title }}</h2>
+            <p>{{ article.summary | default: article.excerpt | strip_html }}</p>
+            <div class="article-meta">Read article</div>
+        </a>
+        {% endunless %}
+    {% endfor %}
+</section>
+{% else %}
+<div class="article-empty">
+    No articles have been published yet.
+</div>
+{% endif %}

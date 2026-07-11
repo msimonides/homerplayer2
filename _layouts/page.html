@@ -4,7 +4,7 @@ extra_css:
  - page.css
 ---
 <header id="logo">
-  <img src="assets/img/logo.svg" alt=""/>
+  <img src="{{ '/assets/img/logo.svg' | relative_url }}" alt=""/>
 </header>
 <header id="main">
   {% if page.title %}
@@ -16,7 +16,7 @@ extra_css:
 </header>
 <aside id="nav">
   <nav>
-    {% assign navigation = '/,/audiobooks.html,/podcasts.html,/dedicated_device.html,/contribute.html,/postcard.html,/videos.html' | split: ',' %}
+    {% assign navigation = '/,/audiobooks.html,/podcasts.html,/dedicated_device.html,/contribute.html,/postcard.html,/videos.html,/blog/' | split: ',' %}
     <ul>
       {% for nav_url in navigation %}
         {% assign node_array = site.pages | where:'url',nav_url %}
