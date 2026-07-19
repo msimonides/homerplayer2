@@ -12,6 +12,21 @@ meta_title: "Dedicated device setup"
     border: solid 1rem #ffffff;
     border-radius: 2px;
 }
+
+.step-list {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    padding-left: 1rem;
+}
+
+.step-list li {
+    padding: 0.2rem;
+    margin-bottom: 0.3rem;
+}
+
+.step-list li strong {
+    font-weight: 600;
+}
 </style>
 
 <lite-youtube id="video" class="single-picture-landscape" videoid="mGDVdl5mI1w" params="cc_load_policy=1&rel=0">
@@ -19,95 +34,149 @@ meta_title: "Dedicated device setup"
 </lite-youtube>
 
 <p>
-With Homer you can easily make a standalone player for audiobooks and podcasts for an elderly
-user. All you need is an inexpensive Android tablet with a smart case and a bit of time to set things
-up.<br>
-Think of it as a very simple DIY project.
+With Homer you can turn an inexpensive Android tablet into a standalone
+audiobook and podcast player for an elderly user.
+<br>
+It's a simple DIY project that takes about 30 minutes.
 </p>
 
+<h3>What you'll need</h3>
+
+<ul>
+  <li>An Android tablet running <em>Android 7 or newer</em>, with a camera</li>
+  <li>A <em>"smart" cover case</em> (highly recommended) - one that wakes the tablet when opened
+      and puts it to sleep when closed (look for "auto wake/sleep" in the case
+      description). Smart cover case lets the user turn the player on
+      and off simply by opening and closing the cover, without pressing the small
+      power button.<br>
+      Tablets that support it have a Hall effect sensor. Inexpensive Lenovo tablets usually include this sensor.
+    </li>
+  <li>Wi-Fi access during setup (not needed for listening)</li>
+  <li>Audiobook files ready to load and podcasts you want to configure (see
+      <a href="/audiobooks">how to add audiobooks</a> and
+      <a href="/podcasts">how to set up podcasts</a>)</li>
+</ul>
+
+<h3>What is lockdown mode?</h3>
+
 <p>
-Homer's "lockdown mode" (also known as "kiosk mode") allows locking the user in the player UI.
-The user can't open other apps nor settings by mistake. Notifications and all distractions are hidden.
+Homer's lockdown mode (also called "kiosk mode") locks the
+user into the player interface. They can't accidentally switch to another app,
+open settings, or see notifications. The tablet becomes a single-purpose
+device: a simple audio player with no way to "break" it.
 </p>
 
-<p>
-The smart device becomes a single application device. In other words a simple, dedicated audio
-player device.<br>
-It's a great solution for non-tech-savvy seniors: there is no fear of "breaking" the player.
-</p>
-
-
-<h3>Setup</h3>
+<h3>Setting it up</h3>
 
 <p>
-Kiosk mode requires installing a special companion app, Homer Kiosk Setup, to manage your device.
-With the instructions below you will grant this app the power to over your device.<br>
-The management app allows Homer Audio Player lock down the screen and nothing else but you have
-to take the author's word for it.
+Lockdown mode uses a small helper app called Homer Kiosk Setup.<br>
+It uses a standard Android mechanism - the same one companies use to manage
+work devices - to grant Homer permission to lock the screen. The helper app
+does nothing else: it just enables that one capability.
 </p>
 
 <h4>Installation steps</h4>
 
-<p>
-<strong>The following procedure requires wiping out all data from your device. ALL DATA, ACCOUNTS
-and INSTALLED APPS will be removed.</strong> This is what you want to do for a single-app device.
+<p style="border: 1px solid #e0e0e0; background: #fff8e1; padding: 0.75rem 1rem; border-radius: 4px; margin: 1rem 0;">
+<strong>⚠️ This will erase everything on the tablet.</strong><br>
+A factory reset removes all data, accounts, and installed apps.<br>
+This is expected - you're turning the tablet into a single-purpose device. Make sure you've backed
+up anything you need before starting.
 </p>
 
 <p>
-Please read the instructions to the end before starting the procedure. You will need internet access.
+<strong>Please read all steps before you begin.</strong>
 </p>
 
-<small>
-<ol>
-<li>Start a factory reset of your device. This will remove all data from your device.</li>
-<li>Do not start configuring the device!</li>
-<li>After reset you are presented with a screen with language selection. Tap the screen 6 times
-    to start a special setup procedure.</li>
-<li>You should be prompted to configure WiFi. Follow the instructions to connect to the network.
-    Some additional components may be installed.</li>
-<li>A camera app for scanning QR codes will show up.</li>
-<li>Scan the QR code shown below. The QR code instructs the device to install an app "Homer Kiosk Setup"
-    with special privileges to manage your device. This procedure is typically used to install apps
-    for managing company-owned devices.</li>
-<li>Follow the on-screen instructions to finish installation.</li>
-<li>Open the apps screen and launch "Homer Kiosk Setup". It should say "Full kiosk mode is available".</li>
-<li>Install Homer Audio Player from Play Store (follow the on-screen instructions).</li>
-<li>Launch Homer Audio Player, configure it and open settings. You can now enable kiosk mode in "Lockdown
-    settings".</li>
+<ol class="step-list">
+  <li>
+    <strong>Factory reset the tablet.</strong><br>
+    Go to Settings → System → Reset → Factory data reset (the exact path varies
+    by device). This wipes everything and returns the tablet to its initial
+    state.
+  </li>
+  <li>
+    <strong>Stop at the welcome screen.</strong><br>
+    After the reset, you'll see a language selection screen. <em>Do not</em>
+    proceed with normal setup. Instead, tap the screen 6 times (on an empty
+    area, not on a button) to start the special provisioning mode.
+  </li>
+  <li>
+    <strong>Connect to Wi-Fi.</strong><br>
+    Follow the on-screen instructions to connect to a Wi-Fi network. The tablet
+    may download additional system components.
+  </li>
+  <li>
+    <strong>Scan the QR code.</strong><br>
+    A camera scanner will appear. Point it at the QR code below. This tells the
+    tablet to install <em>Homer Kiosk Setup</em> with device-management
+    privileges.
+  </li>
+  <li>
+    <strong>Finish the installation.</strong><br>
+    Follow any remaining on-screen prompts to complete setup.
+  </li>
+  <li>
+    <strong>Verify kiosk mode is available.</strong><br>
+    Open the apps screen and launch <em>Homer Kiosk Setup</em>. It should
+    display: "Full kiosk mode is available."
+  </li>
+  <li>
+    <strong>Install Homer Audio Player.</strong><br>
+    Open the Play Store and install <em>Homer Audio Player</em>.
+  </li>
+  <li>
+    <strong>Add content and enable lockdown.</strong><br>
+    Launch Homer, <a href="/audiobooks">add your audiobooks</a> or
+    <a href="/podcasts">set up podcasts</a>, and adjust any settings
+    (screen orientation, flip-to-stop, etc.). Then open settings →
+    <em>Lockdown settings</em> and enable kiosk mode.
+  </li>
 </ol>
-</small>
 
 <img id="kiosk_qr_code" src="assets/img/kiosk_setup_qr.png" width="360"/>
 
-<p>
-A few tips:
+<p style="border: 1px solid #e0e0e0; background: #f5f5f5; padding: 0.75rem 1rem; border-radius: 4px; margin: 1rem 0;">
+<strong>If the QR code doesn't work:</strong> Some Android devices don't support
+QR provisioning. If tapping the welcome screen 6 times doesn't open a camera
+scanner, your tablet may not be compatible. <a href="mailto:info@homeraudioplayer.app">Contact me</a>
+for an alternative setup method.
 </p>
 
+<h3>Tips</h3>
+
 <ul>
-<li>you can enable and disable the kiosk mode in Homer settings,</li>
-<li>some actions may require disabling the kiosk mode, e.g.
+  <li>You can enable and disable lockdown mode anytime in Homer's settings.</li>
+  <li>Some actions require temporarily disabling lockdown mode, e.g.:
     <ul>
-    <li>copying files from a computer,</li>
-    <li>changing settings, e.g. disabling WiFi.</li>
+      <li>copying audiobook files from a computer via USB,</li>
+      <li>changing system settings like Wi-Fi.</li>
     </ul>
-    </li>
-<li>restart the device to make sure it starts Homer Audio Player automatically (this may happen if it
-    the battery discharges completety and the device turns off).</li>
+  </li>
+  <li>
+    Restart the tablet after setup to confirm it launches Homer automatically.
+    Follow any prompt to make Homer the home app if asked.<br>
+    This also ensures the player will restart on its own if the battery runs
+    out and the device powers off.
+  </li>
+  <li>
+    For best battery life, consider enabling airplane mode if you're not using
+    podcasts that need to download new episodes.
+  </li>
 </ul>
 
-<h4>Reverting to regular device use</h4>
+<h3>Reverting to a regular tablet</h3>
 
 <ol>
-<li>Disable kiosk mode in Homer Audio Player.</li>
-<li>Open settings and perform a factory reset.</li>
-<li>Follow the regular configuration steps.</li>
+  <li>Disable lockdown mode in Homer Audio Player.</li>
+  <li>Open system settings and perform a factory reset.</li>
+  <li>Follow the normal Android setup process.</li>
 </ol>
 
 <p>
-You can also use the Homer Kiosk Setup app to drop the special privilege (it can't be undone without
-repeating the setup procedure above). You can use it if there are some issues with removing the apps.
-It is best to perform a factory reset afterwards anyway to make sure the device is fully reverted to
-its original state.
+Alternatively, use the <em>Homer Kiosk Setup</em> app to remove the management
+privilege. Either way, a factory reset afterwards ensures the device is fully
+restored to its original state.
 </p>
 
 <script type="module" src="https://cdn.jsdelivr.net/npm/@justinribeiro/lite-youtube@1/lite-youtube.min.js"></script>
