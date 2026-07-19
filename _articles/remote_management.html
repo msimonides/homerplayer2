@@ -1,9 +1,71 @@
 ---
 layout: page
-title: "Remote audiobook management for seniors"
-meta_title: "Remote audiobook management for seniors"
-meta_description: "Load and remove audiobooks for your loved ones remotely on their device via the Internet."
-summary: "Load and remove audiobooks for your loved ones remotely using a cloud provider."
+title: "Send audiobooks to your grandma from another city"
+meta_title: "Send audiobooks to your grandma from another city"
+meta_description: "Remotely manage audiobooks on a senior's Android tablet using cloud sync. Add, remove, and update books without visiting — works with Google Drive, Dropbox, or Syncthing."
+summary: "Remotely manage audiobooks on a senior's Android tablet using cloud sync. Add, remove, and update books without visiting — works with Google Drive, Dropbox, or Syncthing."
+schema_org:
+  "@context": "https://schema.org"
+  "@type": "HowTo"
+  name: "Remote audiobook management for seniors"
+  description: "How to send audiobooks to your grandma from another city using cloud sync."
+  totalTime: "PT30M"
+  datePublished: "2025-07-19"
+  tool:
+    - "@type": "HowToTool"
+      name: "Android device with Homer Audio Player"
+    - "@type": "HowToTool"
+      name: "Google account"
+    - "@type": "HowToTool"
+      name: "Autosync for Google Drive app"
+    - "@type": "HowToTool"
+      name: "Audiobook files (DRM-free)"
+  step:
+    - "@type": "HowToStep"
+      position: 1
+      name: "Install and configure an audiobook player"
+      text: "Choose an app that can read audiobooks from local folders and is easy to use for seniors. Homer Audio Player is designed for seniors, but other apps like Smart Audiobook Player or Voice Audiobook Player will also work fine."
+    - "@type": "HowToStep"
+      position: 2
+      name: "Prepare your Google Drive folder"
+      text: "Log in to the Google Drive for the account that is configured on the audio device, create a folder \"Grandma's Audiobooks\", create subfolders for each book."
+    - "@type": "HowToStep"
+      position: 3
+      name: "Configure Autosync for Google Drive"
+      text: "Install Autosync on the tablet, connect the Google account, set up sync pairs: \"Grandma's Audiobooks\" on Google Drive to \"Audiobooks\" on the device. Set sync method to Download mirror, enable automatic sync, and disable battery optimization."
+    - "@type": "HowToStep"
+      position: 4
+      name: "Configure the folder in audiobook player"
+      text: "Open the audiobook player app on the senior's device, go to settings and add a new local audiobooks folder. Navigate to and select the folder you configured in the Autosync, e.g. \"Audiobooks\"."
+    - "@type": "HowToStep"
+      position: 5
+      name: "Upload audiobooks from your computer"
+      text: "Upload book folders to Google Drive, put them inside \"Grandma's Audiobooks\". They sync automatically to the device."
+    - "@type": "HowToStep"
+      position: 6
+      name: "Remove old books"
+      text: "Delete books from Google Drive to free up space on the device."
+  mainEntity:
+    - "@type": "Question"
+      name: "Can I use Dropbox or OneDrive instead of Google Drive?"
+      acceptedAnswer:
+        "@type": "Answer"
+        text: "Yes. Autosync app variants exist for Dropbox, OneDrive and other services. P2P services like Syncthing also work."
+    - "@type": "Question"
+      name: "Does this work on iPhone or iPad?"
+      acceptedAnswer:
+        "@type": "Answer"
+        text: "Homer Audio Player is Android-only, but the same cloud-sync approach works with any app that reads from folders."
+    - "@type": "Question"
+      name: "Can two family members manage books independently?"
+      acceptedAnswer:
+        "@type": "Answer"
+        text: "Yes. All they need is access to the same cloud service account."
+    - "@type": "Question"
+      name: "Can I use a different audiobook player?"
+      acceptedAnswer:
+        "@type": "Answer"
+        text: "Yes. Homer is designed for seniors but you can use any other app that can read audiobooks from local folders. For example Voice Audiobook Player, Listen Audiobook Player, Smart Audiobook Player and others."
 ---
 
 <video class="single-picture-landscape" style="aspect-ratio: 1916/996;" autoplay muted loop controls playsinline disablepictureinpicture>
@@ -26,7 +88,7 @@ plays it.
     <li>A Google account<sup>1</sup> — the one already configured on the senior's tablet</li>
     <li>Autosync for Google Drive<sup>1</sup> — a one-time ~$5 purchase from Google Play (free version has limits but works for testing)</li>
     <li>Audiobook files (without copy protection) - check out the <a href="/audiobooks">Audiobooks</a> section to learn more</li>
-    <li>An internet connection at the listener's location. Either WiFi or a mobile data connection<sup>2</sup></li>
+    <li>An internet connection at the listener's location. Either Wi-Fi or a mobile data connection<sup>2</sup></li>
 </ul>
 
 <p>
@@ -45,6 +107,18 @@ plays it.
 </ol>
 
 <h2>Setup guide</h2>
+
+<h3>Install and configure an audiobook player</h3>
+
+<p>
+It's likely you already have chosen and installed an app, in that case go to the next step.<br>
+If not, use an app that can play audiobooks from a local folder and is easy to use for seniors.
+<a href="/">Homer Audio Player for Seniors</a> is a good choice, but there are others like Smart Audiobook Player, Voice Audiobook Player and more.
+</p>
+
+<p>
+If using Homer, check out the <a href="/dedicated_device">setup guide for making a dedicated device</a>.
+</p>
 
 <h3>Prepare your Google Drive folder</h3>
 
@@ -77,7 +151,7 @@ plays it.
 <ol>
     <li>Open the audiobook player app (Homer Audio Player, Smart AudioBook Player, etc.) on the senior's device.</li>
     <li>Go to settings and add a new local audiobooks folder.</li>
-    <li>Navigate to and select the folder you configured in step 4 above, e.g. "Audiobooks".</li>
+    <li>Navigate to and select the folder you configured in step 5 above, e.g. "Audiobooks".</li>
 </ol>
 
 <p>You can have other local folders configured if there are more audiobooks on the device.</p>
@@ -149,7 +223,7 @@ If you need to get a new device, the cost will be a bit higher.</p>
 <ul>
     <li>Keep the number of books small to keep things manageable.</li>
     <li>The battery use of the player device will be slightly higher due to data transfer, especially on mobile data.</li>
-    <li>For places with no WiFi consider a device with LTE support. It will work everywhere (home, hospital etc).</li>
+    <li>For places with no Wi-Fi consider a device with LTE support. It will work everywhere (home, hospital etc).</li>
     <li>Google Drive is the simplest to use because you're already using a Google account on an Android tablet. But you can use others like Dropbox, OneDrive or even P2P services like Syncthing. As long as files in a single folder can be synchronized, it's fine.</li>
     <li>You don't need to use Homer Audio Player. Other apps may also work and may be a better fit depending on your needs. As long as the app can read files from a local folder it should work with this setup. People often recommend Smart Audiobook Player, Voice Audiobook Player and other similar apps.</li>
 </ul>
