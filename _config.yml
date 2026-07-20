@@ -37,7 +37,7 @@ plugins:
 collections:
   articles:
     output: true
-    permalink: /blog/:name/
+    permalink: /articles/:name/
 
 article_order:
   # Article slugs are taken from filenames in _articles/ without the extension.
