@@ -31,6 +31,7 @@ import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.request.headers
 import io.ktor.client.request.prepareGet
 import io.ktor.client.request.request
+import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsChannel
 import io.ktor.client.statement.bodyAsText
@@ -55,14 +56,14 @@ class KtorNetworkClient(
     override suspend fun getText(
         url: String,
         headers: Map<String, String>,
-    ): NetworkResult<String> = execute(url, headers) { response ->
+    ): NetworkResult<String> = execute(url, headers = headers) { response ->
         response.bodyAsText()
     }
 
     override suspend fun getBytes(
         url: String,
         headers: Map<String, String>,
-    ): NetworkResult<ByteArray> = execute(url, headers) { response ->
+    ): NetworkResult<ByteArray> = execute(url, headers = headers) { response ->
         response.body()
     }
 
@@ -87,6 +88,15 @@ class KtorNetworkClient(
             mapFailure(e)
         }
     }
+
+    override suspend fun postXml(
+        url: String,
+        body: String,
+        headers: Map<String, String>
+    ): NetworkResult<String> =
+        execute(url, HttpMethod.Post, headers, body) { response ->
+            response.bodyAsText()
+        }
 
     override suspend fun downloadToFile(
         url: String,
@@ -144,14 +154,19 @@ class KtorNetworkClient(
 
     private suspend fun <T> execute(
         url: String,
-        headers: Map<String, String>,
+        httpMethod: HttpMethod = HttpMethod.Get,
+        headers: Map<String, String> = emptyMap(),
+        requestBody: String? = null,
         bodyMapper: suspend (HttpResponse) -> T,
     ): NetworkResult<T> {
         return try {
             val response = httpClient.request(normalizeUrl(url)) {
-                method = HttpMethod.Get
+                method = httpMethod
                 headers {
                     applyHeaders(headers)
+                }
+                if (requestBody != null) {
+                    setBody(requestBody)
                 }
             }
             val responseHeaders = response.headers.toMap()
@@ -171,8 +186,8 @@ class KtorNetworkClient(
 
     private fun normalizeUrl(url: String): String = url.toHttps()
 
-    private fun Headers.toMap(): Map<String, String> = names().associateWith { name ->
-        getAll(name)?.joinToString(",") ?: ""
+    private fun Headers.toMap(): Map<String, List<String>> = names().associateWith { name ->
+        getAll(name) ?: emptyList()
     }
 
     private fun io.ktor.http.HeadersBuilder.applyHeaders(headers: Map<String, String>) {

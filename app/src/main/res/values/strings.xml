@@ -49,6 +49,8 @@
     <!-- Description for card for adding a new folder with audiobooks or other audio files. -->
     <string name="content_add_dialog_folder_card_description">Select a folder with audiobooks, poetry or music albums on this device.</string>
     <string name="content_add_dialog_podcast_card_title">Podcast</string>
+    <string name="content_add_dialog_dzdn_title">Dział Zbiorów dla Niewidomych GBPiZS (Polish library)</string>
+    <string name="content_add_dialog_dzdn_description">Log in to your account at DZdN to synchronize borrowed books.\nYou need to create the account at the library website.</string>
     <string name="content_add_dialog_podcast_card_description">Add a podcast channel. Homer will be automatically updating and downloading the most recent episodes.</string>
     <string name="content_add_dialog_samples_card_title">Sample books</string>
     <string name="content_add_dialog_samples_card_description">Test the application with several sample book fragments.</string>
@@ -69,6 +71,11 @@
          Example:
          New. Alice in Wonderland -->
     <string name="content_tts_new_title">New</string>
+
+    <string name="daisyonline_login_message">Please log in to %1$s</string>
+    <string name="daisyonline_login_username_input_label">Username</string>
+    <string name="daisyonline_login_password_input_label">Password</string>
+    <string name="daisyonline_login_button_login">Log in</string>
 
     <string name="onboarding_content_title">Audiobooks and Podcasts</string>
     <string name="onboarding_content_description">Please add at least one folder with your audiobooks or one podcast.</string>
@@ -183,6 +190,7 @@
         <item quantity="other">%1$d podcasts</item>
     </plurals>
     <string name="settings_ui_content_summary_empty">(no content selected)</string>
+    <string name="settings_ui_dzdn_title">Dział Zbiorów dla Niewidomych</string>
     <string name="settings_ui_folder_title">Audiobooks folder</string>
     <string name="settings_ui_haptic_feedback_label">Haptic feedback</string>
     <string name="settings_ui_layout_settings_item">Screen margins…</string>

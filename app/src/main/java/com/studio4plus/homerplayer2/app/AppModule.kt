@@ -45,6 +45,8 @@ import com.studio4plus.homerplayer2.base.DefaultVersionUpdate
 import com.studio4plus.homerplayer2.base.DispatcherProvider
 import com.studio4plus.homerplayer2.base.VersionUpdate
 import com.studio4plus.homerplayer2.battery.BatteryModule
+import com.studio4plus.homerplayer2.daisyonline.DaisyOnlineModule
+import com.studio4plus.homerplayer2.daisyonline.data.DaisyOnlineDatabase
 import com.studio4plus.homerplayer2.fullkioskmode.FullKioskModeModule
 import com.studio4plus.homerplayer2.localstorage.LOCAL_STORAGE_JSON
 import com.studio4plus.homerplayer2.localstorage.LocalStorageModule
@@ -76,6 +78,7 @@ const val DATASTORE_APP_STATE = "appState"
         AudiobooksModule::class,
         BaseModule::class,
         BatteryModule::class,
+        DaisyOnlineModule::class,
         FullKioskModeModule::class,
         LocalStorageModule::class,
         LoggingModule::class,
@@ -124,6 +127,7 @@ class AppModule {
             AppDatabase::class,
             AudiobookFoldersDatabase::class,
             AudiobooksDatabase::class,
+            DaisyOnlineDatabase::class,
             PodcastsDatabase::class,
         ]
     )

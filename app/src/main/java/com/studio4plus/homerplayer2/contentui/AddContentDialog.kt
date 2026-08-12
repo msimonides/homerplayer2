@@ -45,6 +45,7 @@ fun AddContentDialog(
     onAddFolder: () -> Unit,
     onAddPodcast: () -> Unit,
     onDownloadSamples: () -> Unit,
+    onAddDzdnAccount: () -> Unit,
     onLearnMoreFolders: () -> Unit,
     onLearnMorePodcasts: () -> Unit,
     modifier: Modifier = Modifier,
@@ -66,6 +67,7 @@ fun AddContentDialog(
             onDownloadSamples = { onDownloadSamples(); onDismiss() },
             onLearnMoreFolders = onLearnMoreFolders,
             onLearnMorePodcasts = onLearnMorePodcasts,
+            onAddDzdnAccount = { onAddDzdnAccount(); onDismiss() },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = horizontalPadding),
@@ -79,7 +81,7 @@ private fun PreviewAddContentSelection() {
     HomerPlayer2Theme {
         AddContentDialog(
             showSamples = true,
-            {}, {}, {}, {}, {}, {},
+            {}, {}, {}, {}, {}, {}, {},
         )
     }
 }

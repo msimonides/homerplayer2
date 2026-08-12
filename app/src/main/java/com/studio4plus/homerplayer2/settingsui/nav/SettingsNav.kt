@@ -65,6 +65,7 @@ import com.studio4plus.homerplayer2.audiobookfoldersui.AudiobooksFolderEditRoute
 import com.studio4plus.homerplayer2.base.serialization.UriAsText
 import com.studio4plus.homerplayer2.base.ui.IconButtonNavigateBack
 import com.studio4plus.homerplayer2.base.ui.theme.unveilPredictivePopTransitionSpecAny
+import com.studio4plus.homerplayer2.daisyonline.ui.DaisyOnlineScreen
 import com.studio4plus.homerplayer2.nav.NavBackStackState
 import com.studio4plus.homerplayer2.podcastsui.PodcastEditRoute
 import com.studio4plus.homerplayer2.settingsui.SettingsAboutRoute
@@ -101,6 +102,7 @@ abstract class SettingsDestination() : NavKey {
                 subclass(serializer = SettingsAbout.serializer())
                 subclass(serializer = SettingsAudiobooksFolderEdit.serializer())
                 subclass(serializer = SettingsContent.serializer())
+                subclass(serializer = SettingsDzdnAccount.serializer())
                 subclass(serializer = SettingsLayout.serializer())
                 subclass(serializer = SettingsLockdownModeSetup.serializer())
                 subclass(serializer = SettingsLockdown.serializer())
@@ -121,6 +123,8 @@ abstract class SettingsDestination() : NavKey {
 
 @Serializable
 private data class SettingsAudiobooksFolderEdit(val folderUri: UriAsText) : SettingsDestination()
+
+@Serializable private data object SettingsDzdnAccount : SettingsDestination()
 
 @Serializable private object SettingsContent : SettingsDestination()
 
@@ -317,6 +321,9 @@ fun EntryProviderScope<NavKey>.settingsEntries(
     entry<SettingsAudiobooksFolderEdit>(R.string.settings_ui_folder_title) { key ->
         AudiobooksFolderEditRoute(viewModel = koinViewModel { parametersOf(key.folderUri) })
     }
+    entry<SettingsDzdnAccount>(R.string.settings_ui_dzdn_title) {
+        DaisyOnlineScreen()
+    }
     entry<SettingsContent>(R.string.settings_ui_content_title) {
         SettingsContentRoute(
             snackbarHostState,
@@ -325,6 +332,7 @@ fun EntryProviderScope<NavKey>.settingsEntries(
             onEditFolder = { folderUri ->
                 navBackStack.go(SettingsAudiobooksFolderEdit(folderUri))
             },
+            onAddDzdnAccount = { navBackStack.go(SettingsDzdnAccount) }
         )
     }
     entry<SettingsLayout>(metadata = fullscreenSettings()) {

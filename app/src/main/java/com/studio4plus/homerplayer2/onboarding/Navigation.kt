@@ -27,6 +27,7 @@ package com.studio4plus.homerplayer2.onboarding
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import com.studio4plus.homerplayer2.base.serialization.UriAsText
+import com.studio4plus.homerplayer2.daisyonline.ui.DaisyOnlineScreen
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.modules.PolymorphicModuleBuilder
 
@@ -45,6 +46,7 @@ abstract class OnboardingDestination() : NavKey {
                     OnboardingAudiobooksFolderEdit.serializer(),
                 )
                 subclass(OnboardingPodcastEdit::class, OnboardingPodcastEdit.serializer())
+                subclass(AddDzdnAccount::class, AddDzdnAccount.serializer())
             }
     }
 }
@@ -60,6 +62,9 @@ private data class OnboardingAudiobooksFolderEdit(val folderUri: UriAsText) :
 @Serializable
 private data class OnboardingPodcastEdit(val podcastUri: UriAsText?) : OnboardingDestination()
 
+@Serializable
+private data object AddDzdnAccount : OnboardingDestination()
+
 fun EntryProviderScope<NavKey>.onboardingEntries(
     navigate: (OnboardingDestination) -> Unit,
     navigateBack: () -> Unit,
@@ -72,6 +77,7 @@ fun EntryProviderScope<NavKey>.onboardingEntries(
             },
             navigateAddPodcast = { navigate(OnboardingPodcastEdit(null)) },
             navigateEditPodcast = { feedUri -> navigate(OnboardingPodcastEdit(feedUri)) },
+            navigateDzdnAccount = { navigate(AddDzdnAccount) },
             navigateNext = { navigate(OnboardingTts) },
         )
     }
@@ -81,5 +87,8 @@ fun EntryProviderScope<NavKey>.onboardingEntries(
     }
     entry<OnboardingPodcastEdit> {
         OnboardingAddPodcastRoute(podcastUri = it.podcastUri, navigateBack = navigateBack)
+    }
+    entry<AddDzdnAccount> {
+        DaisyOnlineScreen()
     }
 }

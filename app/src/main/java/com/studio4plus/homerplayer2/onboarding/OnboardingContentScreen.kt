@@ -64,6 +64,7 @@ fun OnboardingContentRoute(
     navigateEditFolder: (folderUri: Uri) -> Unit,
     navigateAddPodcast: () -> Unit,
     navigateEditPodcast: (feedUri: Uri) -> Unit,
+    navigateDzdnAccount: () -> Unit,
     navigateNext: () -> Unit,
     viewModel: OnboardingContentViewModel = koinViewModel()
 ) {
@@ -96,6 +97,7 @@ fun OnboardingContentRoute(
             },
             editPodcast = navigateEditPodcast,
             removePodcast = viewModel::removePodcast,
+            addDzdnAccount = navigateDzdnAccount,
             downloadSamples = {
                 viewModel.onEvent(ContentEvent.StartAdd.Samples)
                 viewModel.startSamplesInstall()
@@ -115,6 +117,7 @@ fun OnboardingContentScreen(
     addPodcast: () -> Unit,
     editPodcast: (feedUri: Uri) -> Unit,
     removePodcast: (PodcastItemViewState) -> Unit,
+    addDzdnAccount: () -> Unit,
     downloadSamples: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -153,6 +156,7 @@ fun OnboardingContentScreen(
                 onAddPodcast = addPodcast,
                 onEditPodcast = editPodcast,
                 onRemovePodcast = removePodcast,
+                onAddDzdnAccount = addDzdnAccount,
                 onDownloadSamples = downloadSamples,
                 horizontalPadding = HomerTheme.dimensions.screenHorizPadding,
             )
@@ -183,7 +187,7 @@ private fun PreviewOnboardingAudiobookFoldersScreen1() {
             ),
             canProceed = true
         )
-        OnboardingContentScreen(state, SnackbarHostState(), {}, {}, {}, {}, {}, {}, {}, {})
+        OnboardingContentScreen(state, SnackbarHostState(), {}, {}, {}, {}, {}, {}, {}, {}, {})
     }
 }
 
@@ -195,6 +199,6 @@ private fun PreviewOnboardingAudiobookFoldersScreen50() {
             ContentPanelViewState(PreviewData.folderItems50, emptyList(), SamplesInstallState.Idle),
             canProceed = true
         )
-        OnboardingContentScreen(state, SnackbarHostState(), {}, {}, {}, {}, {}, {}, {}, {})
+        OnboardingContentScreen(state, SnackbarHostState(), {}, {}, {}, {}, {}, {}, {}, {}, {})
     }
 }

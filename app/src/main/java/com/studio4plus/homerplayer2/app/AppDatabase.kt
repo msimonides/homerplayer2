@@ -42,6 +42,10 @@ import com.studio4plus.homerplayer2.audiobooks.AudiobookFileDuration
 import com.studio4plus.homerplayer2.audiobooks.AudiobookFileWithDuration
 import com.studio4plus.homerplayer2.audiobooks.AudiobookPlaybackState
 import com.studio4plus.homerplayer2.audiobooks.AudiobooksDatabase
+import com.studio4plus.homerplayer2.daisyonline.data.DaisyOnlineBookEntity
+import com.studio4plus.homerplayer2.daisyonline.data.DaisyOnlineBookFileEntity
+import com.studio4plus.homerplayer2.daisyonline.data.DaisyOnlineDatabase
+import com.studio4plus.homerplayer2.daisyonline.data.DaisyOnlineServiceEntity
 import com.studio4plus.homerplayer2.podcasts.data.Podcast
 import com.studio4plus.homerplayer2.podcasts.data.PodcastEpisode
 import com.studio4plus.homerplayer2.podcasts.data.PodcastsDatabase
@@ -57,6 +61,9 @@ import com.studio4plus.homerplayer2.utils.DbTypeConverters
         AudiobooksFolderSettings::class,
         Podcast::class,
         PodcastEpisode::class,
+        DaisyOnlineServiceEntity::class,
+        DaisyOnlineBookEntity::class,
+        DaisyOnlineBookFileEntity::class,
     ],
     views = [ AudiobookFileWithDuration::class ],
     version = AppDatabase.VERSION,
@@ -68,6 +75,7 @@ import com.studio4plus.homerplayer2.utils.DbTypeConverters
         AutoMigration(6, 7),
         AutoMigration(7, 8),
         AutoMigration(9, 10),
+        AutoMigration(10, 11),
     ],
 )
 @TypeConverters(DbTypeConverters::class)
@@ -75,11 +83,12 @@ abstract class AppDatabase :
     RoomDatabase(),
     AudiobooksDatabase,
     AudiobookFoldersDatabase,
+    DaisyOnlineDatabase,
     PodcastsDatabase
 {
 
     companion object {
-        const val VERSION = 10
+        const val VERSION = 11
 
         val MIGRATION_2_3 = object : Migration(2, 3) {
             override fun migrate(db: SupportSQLiteDatabase) {

@@ -60,6 +60,7 @@ fun AddContentCardsColumn(
     onAddFolder: () -> Unit,
     onAddPodcast: () -> Unit,
     onDownloadSamples: () -> Unit,
+    onAddDzdnAccount: () -> Unit,
     onLearnMoreFolders: () -> Unit,
     onLearnMorePodcasts: () -> Unit,
     modifier: Modifier = Modifier,
@@ -98,6 +99,14 @@ fun AddContentCardsColumn(
             icon = R.drawable.icon_podcasts,
             onClick = onAddPodcast,
             onLearnMoreClick = onLearnMorePodcasts,
+            modifier = cardModifier,
+        )
+
+        AddContentTypeCard(
+            title = stringResource(R.string.content_add_dialog_dzdn_title),
+            description = stringResource(R.string.content_add_dialog_dzdn_description),
+            icon = R.drawable.local_library,
+            onClick = onAddDzdnAccount,
             modifier = cardModifier,
         )
 
@@ -158,7 +167,7 @@ private fun PreviewAddContentCards() {
     HomerPlayer2Theme {
         AddContentCardsColumn(
             showSamples = SamplesCard.ShowFirst,
-            {}, {}, {}, {}, {},
+            {}, {}, {}, {}, {}, {},
         )
     }
 }

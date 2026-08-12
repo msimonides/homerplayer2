@@ -24,8 +24,8 @@
 
 package com.studio4plus.homerplayer2.contentui
 
-import androidx.compose.foundation.layout.Box
 import android.net.Uri
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
@@ -78,6 +78,7 @@ fun ContentManagementPanel(
     onEditPodcast: (feedUri: Uri) -> Unit,
     onRemovePodcast: (PodcastItemViewState) -> Unit,
     onDownloadSamples: () -> Unit,
+    onAddDzdnAccount: () -> Unit,
     modifier: Modifier = Modifier,
     header: @Composable () -> Unit = {},
     horizontalPadding: Dp = 0.dp,
@@ -105,6 +106,7 @@ fun ContentManagementPanel(
                     onAddFolder = onAddFolder,
                     onAddPodcast = onAddPodcast,
                     onDownloadSamples = onDownloadSamples,
+                    onAddDzdnAccount = onAddDzdnAccount,
                     onLearnMoreFolders = { openWebUrl(context, Constants.UrlLearnMoreAudiobooks) },
                     onLearnMorePodcasts = { openWebUrl(context, Constants.UrlLearnMorePodcasts) },
                     showSamples = SamplesCard.ShowFirst,
@@ -150,6 +152,7 @@ fun ContentManagementPanel(
                         onAddFolder = onAddFolder,
                         onAddPodcast = onAddPodcast,
                         onDownloadSamples = onDownloadSamples,
+                        onAddDzdnAccount = onAddDzdnAccount,
                         onLearnMoreFolders = { openWebUrl(context, Constants.UrlLearnMoreAudiobooks) },
                         onLearnMorePodcasts = { openWebUrl(context, Constants.UrlLearnMorePodcasts) },
                     )
@@ -256,7 +259,7 @@ private fun PreviewContentManagementPanelPodcast() {
     HomerPlayer2Theme {
         val viewState =
             ContentPanelViewState(PreviewData.folderItems1, PreviewData.podcasts1, SamplesInstallState.Idle)
-        ContentManagementPanel(viewState, {}, {}, {}, {}, {}, {}, {})
+        ContentManagementPanel(viewState, {}, {}, {}, {}, {}, {}, {}, {})
     }
 }
 
@@ -266,6 +269,6 @@ private fun PreviewContentManagementPanel50() {
     HomerPlayer2Theme {
         val viewState =
             ContentPanelViewState(PreviewData.folderItems50, emptyList(), SamplesInstallState.Idle)
-        ContentManagementPanel(viewState, {}, {}, {}, {}, {}, {}, {})
+        ContentManagementPanel(viewState, {}, {}, {}, {}, {}, {}, {}, {})
     }
 }

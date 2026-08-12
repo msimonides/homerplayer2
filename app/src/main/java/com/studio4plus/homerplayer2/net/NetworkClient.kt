@@ -42,6 +42,12 @@ interface NetworkClient {
         headers: Map<String, String> = emptyMap(),
     ): NetworkResult<Unit>
 
+    suspend fun postXml(
+        url: String,
+        body: String,
+        headers: Map<String, String> = emptyMap(),
+    ): NetworkResult<String>
+
     suspend fun downloadToFile(
         url: String,
         target: File,
@@ -59,13 +65,13 @@ data class DownloadMeta(
 sealed interface NetworkResult<out T> {
     data class Success<T>(
         val code: Int,
-        val headers: Map<String, String>,
+        val headers: Map<String, List<String>>,
         val body: T,
     ) : NetworkResult<T>
 
     data class HttpError(
         val code: Int,
-        val headers: Map<String, String>,
+        val headers: Map<String, List<String>>,
     ) : NetworkResult<Nothing>
 
     data class Failure(

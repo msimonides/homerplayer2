@@ -74,8 +74,8 @@ class FileDownloader(
             is NetworkResult.Success -> result.headers
             is NetworkResult.HttpError, is NetworkResult.Failure -> return null
         }
-        val acceptRanges = headers["accept-ranges"]?.lowercase()
-        val contentLength = headers["content-length"]?.toLong()
+        val acceptRanges = headers["accept-ranges"]?.firstOrNull()?.lowercase()
+        val contentLength = headers["content-length"]?.firstOrNull()?.toLong()
         return if (acceptRanges == "bytes" && contentLength != null) {
             val downloadedBytes = withContext(dispatcherProvider.Io) { file.length() }
             DownloadRange(downloadedBytes, contentLength)

@@ -29,15 +29,19 @@ import androidx.work.Configuration
 import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
-import coil3.memory.MemoryCache
 import coil3.annotation.ExperimentalCoilApi
+import coil3.memory.MemoryCache
 import coil3.network.ktor3.KtorNetworkFetcherFactory
 import coil3.request.CachePolicy
 import com.studio4plus.homerplayer2.BuildConfig
 import com.studio4plus.homerplayer2.analytics.Analytics
 import com.studio4plus.homerplayer2.crash.CrashReporting
+import com.studio4plus.homerplayer2.daisyonline.usecases.DownloadPendingDaisyOnlineBooks
+import com.studio4plus.homerplayer2.daisyonline.usecases.SyncDaisyOnlineBooks
 import com.studio4plus.homerplayer2.logging.FileLoggerTreeProvider
 import io.ktor.client.HttpClient
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
@@ -48,6 +52,10 @@ class HomerPlayerApp : Application(), SingletonImageLoader.Factory, Configuratio
 
     private val httpClient by inject<HttpClient>()
     private val analytics by inject<Analytics>()
+
+    private val mainScope by inject<CoroutineScope>()
+    private val daisySync by inject<SyncDaisyOnlineBooks>()
+    private val daisyDownload by inject<DownloadPendingDaisyOnlineBooks>()
 
     override fun onCreate() {
         super.onCreate()
@@ -67,6 +75,10 @@ class HomerPlayerApp : Application(), SingletonImageLoader.Factory, Configuratio
         Timber.plant(fileLoggerProvider())
         analytics.initialize(this)
 
+        mainScope.launch {
+            daisySync()
+            daisyDownload()
+        }
     }
 
     @OptIn(ExperimentalCoilApi::class)

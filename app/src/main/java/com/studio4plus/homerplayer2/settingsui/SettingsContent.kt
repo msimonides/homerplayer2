@@ -47,6 +47,7 @@ fun SettingsContentRoute(
     onAddPodcast: () -> Unit,
     onEditPodcast: (feedUri: Uri) -> Unit,
     onEditFolder: (folderUri: Uri) -> Unit,
+    onAddDzdnAccount: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SettingsContentViewModel = koinViewModel()
 ) {
@@ -75,6 +76,7 @@ fun SettingsContentRoute(
             },
             onEditPodcast= onEditPodcast,
             onRemovePodcast = viewModel::removePodcast,
+            onAddDzdnAccount = onAddDzdnAccount,
             onDownloadSamples = {
                 viewModel.onEvent(ContentEvent.StartAdd.Samples)
                 viewModel.startSamplesInstall()
