@@ -9,7 +9,7 @@ plugins {
 }
 
 def enableComposeMetrics = project.hasProperty("enableComposeMetrics") ? project["enableComposeMetrics"] : false
-def supportedTranslations = ["en", "pl", "zh"]
+def supportedTranslations = ["en", "pl", "ru", "uk", "zh"]
 
 android {
     namespace 'com.studio4plus.homerplayer2'
