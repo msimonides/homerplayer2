@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="generic_button_learn_more">Дізнайся більше</string>
+    <string name="generic_dialog_cancel">Скасувати</string>
+    <string name="generic_dialog_confirm">ОК</string>
+    <string name="generic_dialog_save">Зберегти</string>
+    <string name="generic_navigate_back">Назад</string>
+    <string name="generic_text_field_clear_content_description">Очистити</string>
+    <string name="generic_website_alternative">або перейди за посиланням:
+%1$s</string>
+</resources>
