@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="button_install_homerplayer">Установить Homer Audio Player</string>
+    <string name="button_open_homerplayer">Открыть аудиоплеер «Homer»</string>
+    <string name="button_setup_instructions_website">Открыть инструкции</string>
+    <string name="drop_privilege_button">Снять настройки режима Киоск</string>
+    <string name="drop_privilege_confirm_cancel_button">Отмена</string>
+    <string name="drop_privilege_confirm_confirm_button">Снять привилегии</string>
+    <string name="drop_privilege_confirm_message">Это действие нельзя легко отменить.
+Если вернуть устройство в обычный режим работы, использовать режим «киоск» в Homer Player больше не удастся.
+
+Вместо использования этой функции (или в дополнение к ней) воспользуйтесь сбросом на заводские настройки.</string>
+    <string name="kiosk_mode_available_description">Ты можешь включить и отключить режим киоска в настройках ограничения доступа проигрывателя Homer Audio Player.</string>
+    <string name="kiosk_mode_available_title">Режим киоска доступен</string>
+    <string name="kiosk_mode_unavailable_description">Чтобы включить режим киоска, необходимо установить приложение «Homer Kiosk Setup» в качестве приложения владельца устройства.</string>
+    <string name="kiosk_mode_unavailable_title">Режим киоска недоступен</string>
+    <string name="permission_kiosk_resume_description">Позволяет автоматически повторно включить режим блокировки после его временного отключения.</string>
+    <string name="permission_kiosk_resume_label">Вернуть режим блокировки</string>
+</resources>
