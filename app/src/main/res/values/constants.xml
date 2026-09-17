@@ -25,5 +25,5 @@
 <resources>
     <string translatable="false" name="podcastindex_key">NVKAZZV4K6TVFCHJMWP2</string>
     <string translatable="false" name="podcastindex_secret">vhmaMrEMAhfP6KHAG7CtmY3XzhhWFJvam$53KruE</string>
-    <string translatable="false" name="samples_download_url">https://github.com/msimonides/homerplayer2/releases/download/1.2.2/samples.zip</string>
+    <string translatable="false" name="samples_download_url">https://github.com/msimonides/homerplayer2/releases/download/1.5.13/samples.zip</string>
 </resources>

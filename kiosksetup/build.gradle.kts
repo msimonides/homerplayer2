@@ -33,7 +33,7 @@ plugins {
     alias(libs.plugins.sentry)
 }
 
-val kioskVersionName = "1.5.7"
+val kioskVersionName = "1.5.13"
 
 android {
     namespace = "com.studio4plus.homerplayer2.kiosk"
@@ -43,7 +43,7 @@ android {
         applicationId = "com.studio4plus.homerplayer2.kiosk"
         minSdk = 24
         targetSdk = 36
-        versionCode = 8
+        versionCode = 9
         versionName = kioskVersionName
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
