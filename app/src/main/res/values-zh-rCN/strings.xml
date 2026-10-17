@@ -15,10 +15,10 @@
     <string name="audiobook_folder_samples_downloading_label">下载中…</string>
     <string name="audiobook_folder_samples_folder_name">有声书示例</string>
     <plurals name="battery_level_charging_content_description">
-        <item quantity="other">充电中， %1$d %</item>
+        <item quantity="other">充电中， %1$d %%</item>
     </plurals>
     <plurals name="battery_level_content_description">
-        <item quantity="other">电量 %1$d %</item>
+        <item quantity="other">电量 %1$d %%</item>
     </plurals>
     <string name="browse_settings_button_accessibility_label">设置</string>
     <string name="content_add_button">添加…</string>
