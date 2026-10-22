@@ -1,0 +1,2 @@
+Fix crash when displaying battery indication and language is set to Chinese.
+Update OkHttp library to mitigate risk of recently compromised certificates.
